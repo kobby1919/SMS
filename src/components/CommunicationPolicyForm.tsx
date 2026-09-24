@@ -79,34 +79,31 @@ export default function CommunicationPolicyForm({
           <div>
             <h2 className="text-base font-black text-gray-950">Access Rules</h2>
             <p className="mt-1 text-sm font-medium leading-relaxed text-gray-500">
-              Decide whether parents can contact teachers directly and what teacher details may be visible.
+              Decide whether parents can contact teachers. When contact is off, parents are sent back to the school office path.
             </p>
           </div>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2">
-          <Toggle
-            name="enabled"
-            label="Communication policy enabled"
-            description="Keep this on so Edujay enforces one school-wide rule."
-            defaultChecked={policy.enabled}
-          />
+        <div className="mb-4 rounded-2xl border border-sky-100 bg-sky-50 p-4">
           <Toggle
             name="allowParentTeacherMessaging"
-            label="Allow parent-teacher messaging"
-            description="Parents can start approved contact flows when this is enabled."
+            label="Enable parent-teacher contact"
+            description="Start with this unchecked. Once checked and saved, Edujay activates the contact policy, routing, channels, response times, and escalations for parents."
             defaultChecked={policy.allowParentTeacherMessaging}
           />
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2">
           <Toggle
             name="exposeTeacherPhone"
             label="Show teacher phone numbers"
-            description="Only enable this if the school wants parents to see teacher phone numbers."
+            description="Only works after parent-teacher contact is enabled. Use carefully if the school wants parents to see teacher phone numbers."
             defaultChecked={policy.exposeTeacherPhone}
           />
           <Toggle
             name="exposeTeacherEmail"
             label="Show teacher email addresses"
-            description="Only enable this if the school wants parents to see teacher email addresses."
+            description="Only works after parent-teacher contact is enabled. Use carefully if the school wants parents to see teacher email addresses."
             defaultChecked={policy.exposeTeacherEmail}
           />
           <Toggle

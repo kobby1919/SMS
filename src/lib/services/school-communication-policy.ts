@@ -19,7 +19,7 @@ export const communicationRouteDefaults = {
 } as const;
 
 export const schoolCommunicationPolicyDefaults = {
-  enabled: true,
+  enabled: false,
   allowParentTeacherMessaging: false,
   allowInAppMessages: true,
   allowEmailMessages: true,

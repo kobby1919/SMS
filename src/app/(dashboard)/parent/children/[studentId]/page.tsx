@@ -561,8 +561,10 @@ export default async function ParentChildCheckupPage({
               ))}
             </div>
           ) : (
-            <p className="mt-3 rounded-xl bg-slate-50 px-3 py-3 text-sm font-semibold text-gray-400">
-              Teacher contacts have not been shared yet. Please contact the school office.
+            <p className="mt-3 rounded-xl bg-slate-50 px-3 py-3 text-sm font-semibold leading-relaxed text-gray-500">
+              {child.communicationSummary.policy.enabled && child.communicationSummary.policy.allowParentTeacherMessaging
+                ? "Teacher contact is not available yet because the school has not published the timetable or completed teacher assignments for this ward's class. Please contact the school office for now."
+                : "Parent-teacher contact is currently managed through the school office."}
             </p>
           )}
           {child.communicationSummary.recentRequests.length > 0 && (

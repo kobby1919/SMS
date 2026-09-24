@@ -6,7 +6,7 @@ const timeStringSchema = z
 
 export const schoolCommunicationPolicySchema = z
   .object({
-    enabled: z.boolean().default(true),
+    enabled: z.boolean().default(false),
     allowParentTeacherMessaging: z.boolean().default(false),
     allowInAppMessages: z.boolean().default(true),
     allowEmailMessages: z.boolean().default(true),
@@ -39,13 +39,14 @@ export const schoolCommunicationPolicySchema = z
   })
   .refine(
     (data) =>
+      !data.allowParentTeacherMessaging ||
       data.allowInAppMessages ||
       data.allowEmailMessages ||
       data.allowSmsMessages ||
       data.allowWhatsappMessages,
     {
       path: ["allowInAppMessages"],
-      message: "Enable at least one communication channel.",
+      message: "Enable at least one communication channel when parent-teacher messaging is on.",
     },
   );
 

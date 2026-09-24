@@ -23,7 +23,7 @@ export async function updateSchoolCommunicationPolicy(data: unknown) {
   const input =
     data instanceof FormData
       ? {
-          enabled: boolFromFormData(data, "enabled"),
+          enabled: false,
           allowParentTeacherMessaging: boolFromFormData(data, "allowParentTeacherMessaging"),
           allowInAppMessages: boolFromFormData(data, "allowInAppMessages"),
           allowEmailMessages: boolFromFormData(data, "allowEmailMessages"),
@@ -44,9 +44,17 @@ export async function updateSchoolCommunicationPolicy(data: unknown) {
         }
       : data;
   const parsedInput = parseActionInput(schoolCommunicationPolicySchema, input);
-  const parsed = parsedInput.allowParentTeacherMessaging
-    ? { ...parsedInput, enabled: true }
-    : parsedInput;
+  const parsed = {
+    ...parsedInput,
+    enabled: parsedInput.allowParentTeacherMessaging,
+    allowInAppMessages: parsedInput.allowParentTeacherMessaging ? parsedInput.allowInAppMessages : false,
+    allowEmailMessages: parsedInput.allowParentTeacherMessaging ? parsedInput.allowEmailMessages : false,
+    allowSmsMessages: parsedInput.allowParentTeacherMessaging ? parsedInput.allowSmsMessages : false,
+    allowWhatsappMessages: parsedInput.allowParentTeacherMessaging ? parsedInput.allowWhatsappMessages : false,
+    exposeTeacherPhone: parsedInput.allowParentTeacherMessaging ? parsedInput.exposeTeacherPhone : false,
+    exposeTeacherEmail: parsedInput.allowParentTeacherMessaging ? parsedInput.exposeTeacherEmail : false,
+    escalationEnabled: parsedInput.allowParentTeacherMessaging ? parsedInput.escalationEnabled : false,
+  };
   const routeInput = communicationRouteCategories.map((category) => ({
     category,
     target:
