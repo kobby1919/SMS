@@ -62,27 +62,95 @@ UPSTASH_REDIS_REST_URL="https://your-redis.upstash.io"
 UPSTASH_REDIS_REST_TOKEN="..."
 ```
 
-For finance background job processing, also configure a strong secret:
+For finance and notification background job processing, configure strong secrets:
 
 ```bash
 FINANCE_WORKER_SECRET="generate-a-long-random-secret"
+NOTIFICATION_WORKER_SECRET="generate-a-long-random-secret"
+PARENT_SUMMARY_WORKER_SECRET="generate-a-long-random-secret"
+PARENT_CONTACT_WORKER_SECRET="generate-a-long-random-secret"
+TEACHER_ACCOUNTABILITY_WORKER_SECRET="generate-a-long-random-secret"
 ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Production Readiness Checklist
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Before Edujay goes live, complete these items in order:
 
-## Learn More
+1. Provision production infrastructure:
+   - Production PostgreSQL database.
+   - Production Clerk instance.
+   - Production hosting target.
+   - Production Redis or equivalent shared rate limiter.
+   - Production domain.
 
-To learn more about Next.js, take a look at the following resources:
+2. Configure required environment variables:
+   - `DATABASE_URL`
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+   - `CLERK_SECRET_KEY`
+   - `NEXT_PUBLIC_APP_URL`
+   - `APP_URL`
+   - `EMAIL_PROVIDER`
+   - `RESEND_API_KEY`
+   - `EMAIL_FROM`
+   - `RESEND_WEBHOOK_SECRET`
+   - Worker secrets listed above.
+   - Payment webhook secrets when online payments are enabled.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Run database deployment safely:
+   - Apply Prisma migrations against production.
+   - Do not run seed scripts against production unless the script is explicitly production-safe.
+   - Keep demo cleanup scripts away from production data.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. Verify role onboarding:
+   - Create the first school admin through the invite/onboarding flow.
+   - Invite teacher, parent, and bursar accounts using real email addresses.
+   - Confirm each role lands on the correct dashboard.
+   - Confirm suspended or left-school users cannot operate.
 
-## Deploy on Vercel
+5. Verify source-of-truth rules:
+   - Runtime teacher, parent, attendance, homework, CA, syllabus, and report pages use published timetable data only.
+   - Draft timetable data must not create live obligations or parent updates.
+   - Finance records must never be casually deleted; use correction/reversal workflows.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+6. Verify notification delivery:
+   - In-app bell works and unread counts remain stable after refresh/navigation.
+   - Email delivery worker processes queued deliveries.
+   - Resend webhook updates sent/delivered/failed status.
+   - Notification monitor shows created notifications, delivery jobs, and failed/retrying states.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+7. Verify finance trust controls:
+   - Receipt numbers are unique.
+   - Duplicate payment references are blocked or flagged.
+   - Corrections require admin/owner approval.
+   - Reversed/voided receipts are visible as history, not proof of payment.
+   - Daily and weekly finance reports match database totals.
+
+8. Configure backups and recovery:
+   - Automated database backups.
+   - Manual pre-release backup before major migrations.
+   - Restore test on a non-production database.
+   - Document who can access backups.
+
+9. Configure monitoring:
+   - App uptime monitoring.
+   - Error tracking.
+   - Failed worker job monitoring.
+   - Failed notification delivery monitoring.
+   - Payment webhook failure monitoring.
+
+10. Run final smoke tests:
+    - Admin onboarding.
+    - Teacher invite and login.
+    - Parent invite and ward access.
+    - Bursar invite and finance dashboard.
+    - Published timetable flow.
+    - Attendance save and correction request.
+    - Homework creation/check/correction.
+    - CA entry rules.
+    - Report card readiness and submission.
+    - Fee payment, receipt, correction, and reports.
+    - Parent daily/weekly summary notifications.
+
+## Demo And Production Data Rule
+
+Local and demo data can use `default-school`, fake students, and test scripts. Production must use real school onboarding, real Clerk users, and production-safe migrations only. Do not use demo cleanup scripts on production.
