@@ -181,11 +181,14 @@ class ResendEmailProvider implements NotificationProviderAdapter {
       }),
     });
 
-    let raw: unknown = null;
-    try {
-      raw = await response.json();
-    } catch {
-      raw = await response.text();
+    const responseText = await response.text();
+    let raw: unknown = responseText;
+    if (responseText) {
+      try {
+        raw = JSON.parse(responseText);
+      } catch {
+        raw = responseText;
+      }
     }
 
     if (!response.ok) {
@@ -199,6 +202,16 @@ class ResendEmailProvider implements NotificationProviderAdapter {
     }
 
     const providerMessageId = typeof raw === "object" && raw && "id" in raw ? String(raw.id) : null;
+    if (!providerMessageId) {
+      return {
+        ok: false,
+        provider: this.name,
+        error: "Email provider accepted the message but did not return a provider message id for delivery tracking.",
+        retryAt: null,
+        raw,
+      };
+    }
+
     return {
       ok: true,
       provider: this.name,
