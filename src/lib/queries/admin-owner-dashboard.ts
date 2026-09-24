@@ -1,7 +1,7 @@
 import type {
   BillStatus,
   Day,
-  ParentDeliveryStatus,
+  AppNotificationDeliveryStatus,
   ParentTeacherContactStatus,
   PaymentStatus,
   Prisma,
@@ -167,7 +167,7 @@ export type AdminOwnerDashboardData = {
     parentsMissingPhone: number;
     unreadNotifications: number;
     failedDeliveriesThisWeek: number;
-    deliveryCountsThisWeek: Record<ParentDeliveryStatus, number>;
+    deliveryCountsThisWeek: Record<AppNotificationDeliveryStatus, number>;
     openContactRequests: number;
     escalatedContactRequests: number;
     recentContactRequests: {
@@ -506,9 +506,12 @@ export async function getAdminOwnerDashboardData(
     prisma.parentNotification.count({
       where: { schoolId, readAt: null },
     }),
-    prisma.parentNotificationDeliveryLog.groupBy({
+    prisma.appNotificationDelivery.groupBy({
       by: ["status"],
-      where: { schoolId, attemptedAt: { gte: weekStart, lte: todayEnd } },
+      where: {
+        notification: { schoolId },
+        createdAt: { gte: weekStart, lte: todayEnd },
+      },
       _count: { _all: true },
     }),
     prisma.parentTeacherContactRequest.groupBy({
@@ -681,7 +684,7 @@ export async function getAdminOwnerDashboardData(
   );
   const deliveryCountsThisWeek = applyStatusGroups(
     deliveryStatusGroups,
-    ["PENDING", "SENT", "FAILED", "SKIPPED"] as const,
+    ["PENDING", "SENT", "DELIVERED", "FAILED", "RETRYING", "CANCELLED"] as const,
   );
   const contactCounts = applyStatusGroups(
     contactStatusGroups,

@@ -24,6 +24,7 @@ import { getBursarArrearsFollowUp } from "@/src/lib/services/bursar-arrears";
 import { getClassCollectionReport } from "@/src/lib/services/class-collection-report";
 import { getReceiptIntegrityReport } from "@/src/lib/services/receipt-integrity-report";
 import { getCorrectionReversalReport } from "@/src/lib/services/correction-reversal-report";
+import WeeklyFinanceSummaryPushForm from "@/src/components/WeeklyFinanceSummaryPushForm";
 
 export const dynamic = "force-dynamic";
 
@@ -162,6 +163,7 @@ const FinanceReportsPage = async ({
             >
               <Download size={15} /> Weekly summary
             </a>
+            <WeeklyFinanceSummaryPushForm date={selectedDateValue} />
           </div>
         </div>
 

@@ -1,5 +1,6 @@
 import prisma from "@/src/lib/prisma";
 import type {
+  AppNotificationDeliveryChannel,
   ParentDeliveryChannel,
   ParentNotification,
   ParentNotificationPreference,
@@ -17,6 +18,7 @@ import {
   poweredByPlatformLine,
   type SchoolBranding,
 } from "@/src/lib/services/school-branding";
+import { createNotification, createNotificationIdempotencyKey } from "@/src/lib/services/app-notifications";
 
 const DEFAULT_SETTINGS = {
   timezone: "Africa/Accra",
@@ -224,6 +226,94 @@ function notificationHtml(notification: ParentNotification, branding: SchoolBran
   `;
 }
 
+function appNotificationHref(notification: ParentNotification) {
+  const occurredDate = dateKey(notification.occurredAt);
+  const href = notification.href || "/parent/updates";
+  if (href === "/parent/updates" || href.startsWith("/parent/updates?")) {
+    return `/parent/updates?date=${occurredDate}`;
+  }
+  return href;
+}
+
+function appNotificationPriority(notification: ParentNotification) {
+  return notification.priority === "HIGH" ? "HIGH" : "NORMAL";
+}
+
+function parentDeliveryToAppChannel(channel: ParentDeliveryChannel): AppNotificationDeliveryChannel {
+  if (channel === "EMAIL") return "EMAIL";
+  if (channel === "SMS") return "SMS";
+  return "WHATSAPP";
+}
+
+function enabledAppDeliveries(input: {
+  parent: Pick<ParentWithPreference, "email" | "phone" | "notificationPreference">;
+  settings: SchoolNotificationSetting;
+}) {
+  const deliveries = [];
+  const parentWithPreference = {
+    id: "bridge-parent",
+    email: input.parent.email,
+    phone: input.parent.phone,
+    notificationPreference: input.parent.notificationPreference,
+  } satisfies ParentWithPreference;
+
+  for (const channel of channelOrder(parentWithPreference)) {
+    if (!isChannelEnabled(channel, input.settings)) continue;
+    if (!isParentChannelEnabled(channel, input.parent.notificationPreference)) continue;
+
+    const destination = recipientForChannel(channel, parentWithPreference);
+    if (!destination) continue;
+
+    deliveries.push({
+      channel: parentDeliveryToAppChannel(channel),
+      destination,
+    });
+  }
+
+  return deliveries;
+}
+
+export async function bridgeParentNotificationToAppNotification(input: {
+  schoolId: string;
+  parentId: string;
+  notification: ParentNotification;
+  parent: Pick<ParentWithPreference, "email" | "phone" | "notificationPreference">;
+  settings: SchoolNotificationSetting;
+}) {
+  const isWeekly = input.notification.sourceModel === "ParentWeeklySummary";
+  const idempotencyPrefix = isWeekly ? "parent-weekly-summary" : "parent-daily-summary";
+  const summaryEnabled = isWeekly
+    ? input.parent.notificationPreference?.weeklySummaryEnabled !== false
+    : input.parent.notificationPreference?.dailySummaryEnabled !== false;
+
+  if (!summaryEnabled) return null;
+
+  return createNotification({
+    schoolId: input.schoolId,
+    recipientType: "PARENT",
+    recipientId: input.parentId,
+    type: "PARENT_DAILY_SUMMARY",
+    category: input.notification.body.includes("Fees:") ? "FINANCE" : "ACADEMIC",
+    priority: appNotificationPriority(input.notification),
+    title: input.notification.title,
+    body: input.notification.body,
+    href: appNotificationHref(input.notification),
+    sourceModel: "ParentNotification",
+    sourceId: input.notification.id,
+    idempotencyKey: createNotificationIdempotencyKey(idempotencyPrefix, input.parentId, input.notification.sourceId),
+    payload: {
+      parentNotificationId: input.notification.id,
+      parentSourceModel: input.notification.sourceModel,
+      parentSourceId: input.notification.sourceId,
+      parentSourceKey: input.notification.sourceKey,
+      occurredAt: input.notification.occurredAt.toISOString(),
+    },
+    deliveries: enabledAppDeliveries({
+      parent: input.parent,
+      settings: input.settings,
+    }),
+  });
+}
 async function sendThroughChannel(input: {
   channel: ParentDeliveryChannel;
   recipient: string;
@@ -264,7 +354,7 @@ export async function deliverParentDailySummary(input: {
   parentId: string;
   notification: ParentNotification;
 }) {
-  const [settings, parent, notificationPreference, branding] = await Promise.all([
+  const [settings, parent, notificationPreference] = await Promise.all([
     getOrCreateSettings(input.schoolId),
     prisma.parent.findFirst({
       where: { id: input.parentId, schoolId: input.schoolId },
@@ -275,31 +365,10 @@ export async function deliverParentDailySummary(input: {
       },
     }),
     getParentNotificationPreference({ parentId: input.parentId }),
-    getSchoolBranding(input.schoolId),
   ]);
 
   if (!parent) return null;
   const parentWithPreference = { ...parent, notificationPreference };
-  const dayStart = new Date(input.notification.occurredAt);
-  dayStart.setHours(0, 0, 0, 0);
-  if (input.notification.sourceModel === "ParentWeeklySummary") {
-    dayStart.setDate(dayStart.getDate() - 6);
-  }
-  const dayEnd = new Date(dayStart);
-  dayEnd.setDate(dayEnd.getDate() + (input.notification.sourceModel === "ParentWeeklySummary" ? 7 : 1));
-  const students = await prisma.parentActivityEvent.findMany({
-    where: {
-      schoolId: input.schoolId,
-      parentId: input.parentId,
-      occurredAt: { gte: dayStart, lt: dayEnd },
-    },
-    distinct: ["studentId"],
-    select: { student: { select: { name: true, surname: true } } },
-  });
-  const studentLabel = students
-    .map((row) => row.student ? `${row.student.name} ${row.student.surname}` : null)
-    .filter(Boolean)
-    .join(", ");
 
   const isWeeklySummary = input.notification.sourceModel === "ParentWeeklySummary";
   const summaryEnabled = isWeeklySummary
@@ -318,44 +387,33 @@ export async function deliverParentDailySummary(input: {
     });
   }
 
-  for (const channel of channelOrder(parentWithPreference)) {
-    if (!isChannelEnabled(channel, settings)) continue;
-    if (!isParentChannelEnabled(channel, notificationPreference)) continue;
+  await bridgeParentNotificationToAppNotification({
+    schoolId: input.schoolId,
+    parentId: parent.id,
+    notification: input.notification,
+    parent: parentWithPreference,
+    settings,
+  });
 
-    const recipient = recipientForChannel(channel, parentWithPreference);
-    if (!recipient) continue;
-
-    const result = await sendThroughChannel({
-      channel,
-      recipient,
-      notification: input.notification,
-      branding,
-      studentLabel,
-    });
-
-    if (result.skipped) continue;
-
-    return logDelivery({
+  const existingCentralHandoff = await prisma.parentNotificationDeliveryLog.findFirst({
+    where: {
       schoolId: input.schoolId,
       parentId: parent.id,
       notificationId: input.notification.id,
-      channel,
-      recipient,
-      status: result.ok ? "SENT" : "FAILED",
-      provider: result.provider,
-      messagePreview: `${branding.displayName} ${summaryLabel(input.notification).toLowerCase()}: ${input.notification.body}`,
-      errorMessage: result.ok ? undefined : result.message,
-    });
-  }
+      provider: "app-notification",
+    },
+  });
+  if (existingCentralHandoff) return existingCentralHandoff;
 
   return logDelivery({
     schoolId: input.schoolId,
     parentId: parent.id,
     notificationId: input.notification.id,
-    channel: notificationPreference?.preferredChannel ?? "SMS",
+    channel: notificationPreference?.preferredChannel ?? "EMAIL",
     status: "SKIPPED",
+    provider: "app-notification",
     messagePreview: input.notification.body,
-    errorMessage: "No enabled delivery channel with a reachable parent contact.",
+    errorMessage: `${isWeeklySummary ? "Weekly" : "Daily"} summary delivery is queued through the central notification system.`,
   });
 }
 
@@ -616,7 +674,7 @@ async function processSchoolDailySummaries(schoolId: string, date: Date) {
     select: { parentId: true },
   });
 
-  let delivered = 0;
+  let queued = 0;
   for (const row of parentIds) {
     const notification = await rebuildParentDailySummary({
       schoolId,
@@ -625,7 +683,7 @@ async function processSchoolDailySummaries(schoolId: string, date: Date) {
     });
     if (!notification) continue;
     await deliverParentDailySummary({ schoolId, parentId: row.parentId, notification });
-    delivered += 1;
+    queued += 1;
   }
 
   await prisma.schoolNotificationSetting.update({
@@ -633,7 +691,7 @@ async function processSchoolDailySummaries(schoolId: string, date: Date) {
     data: { lastDailySummaryRunAt: new Date() },
   });
 
-  return { parentCount: parentIds.length, delivered };
+  return { parentCount: parentIds.length, queued };
 }
 
 async function processSchoolWeeklySummaries(schoolId: string, date: Date, options: { force?: boolean } = {}) {
@@ -647,7 +705,7 @@ async function processSchoolWeeklySummaries(schoolId: string, date: Date, option
     select: { parentId: true },
   });
 
-  let delivered = 0;
+  let queued = 0;
   for (const row of parentIds) {
     const existing = await prisma.parentNotification.findUnique({
       where: {
@@ -668,7 +726,7 @@ async function processSchoolWeeklySummaries(schoolId: string, date: Date, option
     });
     if (!notification) continue;
     await deliverParentDailySummary({ schoolId, parentId: row.parentId, notification });
-    delivered += 1;
+    queued += 1;
   }
 
   await prisma.schoolNotificationSetting.update({
@@ -676,7 +734,7 @@ async function processSchoolWeeklySummaries(schoolId: string, date: Date, option
     data: { lastWeeklySummaryRunAt: new Date() },
   });
 
-  return { parentCount: parentIds.length, delivered };
+  return { parentCount: parentIds.length, queued };
 }
 
 export async function runDueParentDailySummaries(now = new Date(), options: { force?: boolean } = {}) {

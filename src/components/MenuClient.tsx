@@ -27,6 +27,7 @@ import {
   ScrollText,
   ReceiptText,
   BellRing,
+  MonitorCheck,
   ShieldCheck,
 } from "lucide-react";
 
@@ -371,6 +372,12 @@ const menuItems = [
         icon: BellRing,
         label: "Parent Notifications",
         href: "/admin/notification-settings",
+        visible: ["admin"],
+      },
+      {
+        icon: MonitorCheck,
+        label: "Notification Monitor",
+        href: "/admin/notifications",
         visible: ["admin"],
       },
       {
