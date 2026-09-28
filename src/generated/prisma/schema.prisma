@@ -331,6 +331,11 @@ enum PaymentProvider {
   OTHER
 }
 
+enum PaymentFeePayerRule {
+  SCHOOL_ABSORBS
+  PARENT_PAYS
+}
+
 enum WebhookEventStatus {
   RECEIVED
   VERIFIED
@@ -663,6 +668,7 @@ model School {
   feeStructures                  FeeStructure[]
   studentBills                   StudentBill[]
   payments                       Payment[]
+  paymentSettings                SchoolPaymentSetting?
   paymentReversals               PaymentReversal[]
   paymentCorrectionRequests      PaymentCorrectionRequest[]
   discounts                      Discount[]
@@ -890,6 +896,27 @@ model ParentStudentRelationship {
   @@index([schoolId, parentId, status])
   @@index([schoolId, studentId, status])
   @@index([schoolId, status, updatedAt])
+}
+
+model SchoolPaymentSetting {
+  id                         String              @id @default(cuid())
+  onlinePaymentsEnabled      Boolean             @default(false)
+  provider                   PaymentProvider     @default(PAYSTACK)
+  publicKey                  String?
+  encryptedSecretKey         String?
+  encryptedWebhookSecret     String?
+  acceptedPaymentMethods     PaymentMethod[]     @default([])
+  settlementAccountReference String?
+  feePayerRule               PaymentFeePayerRule @default(SCHOOL_ABSORBS)
+  configuredBy               String?
+  createdAt                  DateTime            @default(now())
+  updatedAt                  DateTime            @updatedAt
+
+  schoolId String @unique
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, onlinePaymentsEnabled])
+  @@index([provider])
 }
 
 model SchoolNotificationSetting {

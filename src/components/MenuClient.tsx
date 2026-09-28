@@ -344,6 +344,11 @@ const menuItems = [
         label: "Corrections",
         href: "/list/finance/corrections",
         visible: ["admin", "bursar"],
+      },      {
+        icon: SlidersHorizontal,
+        label: "Payment Settings",
+        href: "/admin/payment-settings",
+        visible: ["admin"],
       },
       {
         icon: ScrollText,

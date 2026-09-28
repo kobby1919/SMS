@@ -229,6 +229,22 @@ exports.Prisma.ParentStudentRelationshipScalarFieldEnum = {
   updatedById: 'updatedById'
 };
 
+exports.Prisma.SchoolPaymentSettingScalarFieldEnum = {
+  id: 'id',
+  onlinePaymentsEnabled: 'onlinePaymentsEnabled',
+  provider: 'provider',
+  publicKey: 'publicKey',
+  encryptedSecretKey: 'encryptedSecretKey',
+  encryptedWebhookSecret: 'encryptedWebhookSecret',
+  acceptedPaymentMethods: 'acceptedPaymentMethods',
+  settlementAccountReference: 'settlementAccountReference',
+  feePayerRule: 'feePayerRule',
+  configuredBy: 'configuredBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+};
+
 exports.Prisma.SchoolNotificationSettingScalarFieldEnum = {
   id: 'id',
   timezone: 'timezone',
@@ -1390,6 +1406,35 @@ exports.ParentStudentRelationshipRole = exports.$Enums.ParentStudentRelationship
   PICKUP_AUTHORIZED: 'PICKUP_AUTHORIZED'
 };
 
+exports.PaymentProvider = exports.$Enums.PaymentProvider = {
+  PAYSTACK: 'PAYSTACK',
+  FLUTTERWAVE: 'FLUTTERWAVE',
+  HUBTEL: 'HUBTEL',
+  EXPRESSPAY: 'EXPRESSPAY',
+  THETELLER: 'THETELLER',
+  STRIPE: 'STRIPE',
+  MANUAL: 'MANUAL',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  MOBILE_MONEY: 'MOBILE_MONEY',
+  OTHER: 'OTHER'
+};
+
+exports.PaymentFeePayerRule = exports.$Enums.PaymentFeePayerRule = {
+  SCHOOL_ABSORBS: 'SCHOOL_ABSORBS',
+  PARENT_PAYS: 'PARENT_PAYS'
+};
+
+exports.PaymentMethod = exports.$Enums.PaymentMethod = {
+  CASH: 'CASH',
+  MTN_MOMO: 'MTN_MOMO',
+  VODAFONE_CASH: 'VODAFONE_CASH',
+  AIRTELTIGO_MONEY: 'AIRTELTIGO_MONEY',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  CHEQUE: 'CHEQUE',
+  POS: 'POS',
+  OTHER: 'OTHER'
+};
+
 exports.ParentSummaryCadence = exports.$Enums.ParentSummaryCadence = {
   DAILY: 'DAILY',
   WEEKLY: 'WEEKLY',
@@ -1716,30 +1761,6 @@ exports.BillStatus = exports.$Enums.BillStatus = {
   WAIVED: 'WAIVED'
 };
 
-exports.PaymentMethod = exports.$Enums.PaymentMethod = {
-  CASH: 'CASH',
-  MTN_MOMO: 'MTN_MOMO',
-  VODAFONE_CASH: 'VODAFONE_CASH',
-  AIRTELTIGO_MONEY: 'AIRTELTIGO_MONEY',
-  BANK_TRANSFER: 'BANK_TRANSFER',
-  CHEQUE: 'CHEQUE',
-  POS: 'POS',
-  OTHER: 'OTHER'
-};
-
-exports.PaymentProvider = exports.$Enums.PaymentProvider = {
-  PAYSTACK: 'PAYSTACK',
-  FLUTTERWAVE: 'FLUTTERWAVE',
-  HUBTEL: 'HUBTEL',
-  EXPRESSPAY: 'EXPRESSPAY',
-  THETELLER: 'THETELLER',
-  STRIPE: 'STRIPE',
-  MANUAL: 'MANUAL',
-  BANK_TRANSFER: 'BANK_TRANSFER',
-  MOBILE_MONEY: 'MOBILE_MONEY',
-  OTHER: 'OTHER'
-};
-
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',
@@ -1956,6 +1977,7 @@ exports.Prisma.ModelName = {
   Teacher: 'Teacher',
   Parent: 'Parent',
   ParentStudentRelationship: 'ParentStudentRelationship',
+  SchoolPaymentSetting: 'SchoolPaymentSetting',
   SchoolNotificationSetting: 'SchoolNotificationSetting',
   AppNotificationSetting: 'AppNotificationSetting',
   AppNotificationPreference: 'AppNotificationPreference',

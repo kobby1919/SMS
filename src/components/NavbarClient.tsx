@@ -75,6 +75,7 @@ const roleShortcuts: Record<string, SearchItem[]> = {
     { label: "Classes", description: "Manage classes", href: "/list/classes", keywords: "classes class", icon: <GraduationCap size={15} /> },
     { label: "Attendance", description: "Track attendance records", href: "/list/attendance", keywords: "attendance absent late present", icon: <CalendarDays size={15} /> },
     { label: "Finance", description: "Bills and payments", href: "/list/finance/bills", keywords: "finance fees bills payments receipt", icon: <WalletCards size={15} /> },
+    { label: "Payment settings", description: "Online payment provider setup", href: "/admin/payment-settings", keywords: "paystack hubtel payment settings provider keys webhook settlement", icon: <Settings size={15} /> },
     { label: "Notifications", description: "Parent notification settings", href: "/admin/notification-settings", keywords: "notifications settings summary", icon: <BellRing size={15} /> },
   ],
   teacher: [
