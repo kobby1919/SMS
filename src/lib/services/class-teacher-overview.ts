@@ -2,6 +2,7 @@ import type { AttendanceStatus } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { getClassReportReadiness, type ReportReadinessBlocker } from "@/src/lib/services/report-card-readiness";
+import { syncAttendanceObligationsForDate } from "@/src/lib/services/teacher-attendance-obligations";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 const dayNames = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"] as const;
@@ -26,6 +27,19 @@ function daysAgo(days: number) {
 
 function pct(done: number, total: number) {
   return total > 0 ? Math.round((done / total) * 100) : 0;
+}
+
+function timeLabel(date: Date) {
+  return date.toLocaleTimeString("en-GH", { hour: "2-digit", minute: "2-digit" });
+}
+
+function obligationStatusLabel(status?: string) {
+  if (status === "COMPLETED") return "Completed";
+  if (status === "COMPLETED_LATE") return "Completed late";
+  if (status === "MISSED") return "Missed";
+  if (status === "ESCALATED") return "Escalated";
+  if (status === "CANCELLED") return "Cancelled";
+  return "Pending";
 }
 
 function statusLabel(status?: string) {
@@ -83,11 +97,13 @@ export async function getClassTeacherOverview({
   if (!klass) return null;
 
   const studentIds = klass.students.map((student) => student.id);
-  const lessonIds = lessons.map((lesson) => lesson.id);
   const subjectIds = Array.from(new Set(lessons.map((lesson) => lesson.subjectId)));
+  const todayLessons = lessons.filter((lesson) => lesson.day === todayDay);
+  const todayLessonIds = todayLessons.map((lesson) => lesson.id);
 
   const [
     todayAttendance,
+    attendanceObligations,
     recentAttendanceCounts,
     caRecords,
     homeworkSubmissions,
@@ -95,16 +111,17 @@ export async function getClassTeacherOverview({
     publication,
     readiness,
   ] = await Promise.all([
-    lessonIds.length > 0
+    todayLessonIds.length > 0
       ? prisma.attendance.findMany({
           where: {
             schoolId,
-            lessonId: { in: lessonIds },
+            lessonId: { in: todayLessonIds },
             date: { gte: todayStart, lte: todayEnd },
           },
           select: { studentId: true, lessonId: true, status: true },
         })
       : [],
+    syncAttendanceObligationsForDate({ schoolId, date: today }),
     studentIds.length > 0
       ? prisma.attendance.groupBy({
           by: ["studentId", "status"],
@@ -185,7 +202,12 @@ export async function getClassTeacherOverview({
   const studentCount = klass.students.length;
   const boys = klass.students.filter((student) => student.sex === "MALE").length;
   const girls = klass.students.filter((student) => student.sex === "FEMALE").length;
-  const todayLessons = lessons.filter((lesson) => lesson.day === todayDay);
+  const classAttendanceObligations = attendanceObligations.filter((obligation) =>
+    todayLessonIds.includes(obligation.lessonId),
+  );
+  const obligationByLesson = new Map(
+    classAttendanceObligations.map((obligation) => [obligation.lessonId, obligation]),
+  );
   const attendanceByLesson = new Map<number, typeof todayAttendance>();
   for (const record of todayAttendance) {
     const rows = attendanceByLesson.get(record.lessonId) ?? [];
@@ -201,17 +223,26 @@ export async function getClassTeacherOverview({
     { PRESENT: 0, ABSENT: 0, LATE: 0, EXCUSED: 0 } as Record<AttendanceStatus, number>,
   );
   const lessonAttendanceStates = todayLessons.map((lesson) => {
+    const obligation = obligationByLesson.get(lesson.id);
     const records = attendanceByLesson.get(lesson.id) ?? [];
-    const markedRecords = Math.min(records.length, studentCount);
+    const expectedRecords = obligation?.studentCount ?? studentCount;
+    const markedRecords = Math.min(obligation?.attendanceCount ?? records.length, expectedRecords);
+    const isCompleted = obligation?.status === "COMPLETED" || obligation?.status === "COMPLETED_LATE";
     return {
       id: lesson.id,
       subjectName: lesson.subject.name,
       teacherName: `${lesson.teacher.name} ${lesson.teacher.surname}`,
+      periodName: lesson.periodTemplate?.name ?? null,
+      timeRange: `${timeLabel(lesson.startTime)} - ${timeLabel(lesson.endTime)}`,
+      obligationStatus: obligation?.status ?? "PENDING",
+      obligationStatusLabel: obligationStatusLabel(obligation?.status),
+      deadlineLabel: obligation ? timeLabel(obligation.deadlineAt) : null,
+      completedAtLabel: obligation?.completedAt ? timeLabel(obligation.completedAt) : null,
       markedRecords,
-      expectedRecords: studentCount,
-      missingRecords: Math.max(studentCount - markedRecords, 0),
-      isFullyMarked: studentCount > 0 && markedRecords >= studentCount,
-      isPartiallyMarked: markedRecords > 0 && markedRecords < studentCount,
+      expectedRecords,
+      missingRecords: Math.max(expectedRecords - markedRecords, 0),
+      isFullyMarked: expectedRecords > 0 && (isCompleted || markedRecords >= expectedRecords),
+      isPartiallyMarked: markedRecords > 0 && markedRecords < expectedRecords,
       isUnmarked: markedRecords === 0,
     };
   });

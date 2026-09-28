@@ -141,7 +141,7 @@ const ClassOverviewPage = async ({
             <div className="min-w-0">
               <h2 className="text-base font-black text-edujay-ink">Today&apos;s Attendance Health</h2>
               <p className="text-xs font-semibold leading-relaxed text-gray-400">
-                Calculated from today&apos;s timetable lessons and attendance saved for this class.
+                Calculated from today&apos;s active published timetable and the same attendance duty records used on the teacher dashboard.
               </p>
             </div>
             <CalendarCheck2 size={18} className="shrink-0 text-edujay-primary" />
@@ -171,7 +171,7 @@ const ClassOverviewPage = async ({
                   </p>
                 </div>
                 <p className="rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold leading-relaxed text-blue-700">
-                  Lesson count and student-record count are different. For example, if 9 lessons are incomplete in a class of 2 students, that creates 18 missing student attendance records.
+                  These lessons come only from the active published timetable. Lesson count and student-record count are different: if 9 lessons are incomplete in a class of 2 students, that creates 18 missing student attendance records.
                 </p>
                 {overview.todayAttendance.incompleteLessons.map((lesson) => (
                   <div key={lesson.id} className="rounded-lg bg-white p-3 ring-1 ring-gray-100">
@@ -183,9 +183,16 @@ const ClassOverviewPage = async ({
                         {lesson.markedRecords}/{lesson.expectedRecords} marked
                       </p>
                     </div>
-                    <p className="mt-1 break-words text-xs font-semibold text-gray-500">
-                      Teacher: {lesson.teacherName}
-                    </p>
+                    <div className="mt-1 flex flex-col gap-1 text-xs font-semibold text-gray-500 sm:flex-row sm:flex-wrap sm:items-center">
+                      <span className="break-words">Teacher: {lesson.teacherName}</span>
+                      <span className="hidden text-gray-300 sm:inline">·</span>
+                      <span>{lesson.periodName ? `${lesson.periodName} · ` : ""}{lesson.timeRange}</span>
+                      <span className="hidden text-gray-300 sm:inline">·</span>
+                      <span className="font-black text-gray-600">{lesson.obligationStatusLabel}</span>
+                      {lesson.deadlineLabel ? (
+                        <span className="break-words text-gray-400">Deadline {lesson.deadlineLabel}</span>
+                      ) : null}
+                    </div>
                     <Link
                       href={`/list/attendance/take?lessonId=${lesson.id}`}
                       className="mt-2 inline-flex w-full items-center justify-center rounded-lg bg-edujay-soft px-3 py-2 text-xs font-black text-edujay-primary transition hover:bg-blue-100 sm:w-fit"
