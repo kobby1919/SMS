@@ -976,7 +976,13 @@ export async function requestExamScoreCorrection(data: {
     term: parsed.term,
     academicYear: parsed.academicYear,
   });
-  await assertWithinSchoolOperatingHours(schoolId, "Requesting exam score correction");
+  await assertTeacherCAEntryWindowOpen({
+    schoolId,
+    teacherId: userId,
+    classId: parsed.classId,
+    subjectId: parsed.subjectId,
+    actionLabel: "Requesting exam score correction",
+  });
 
   const config = await prisma.cAConfig.findUnique({
     where: { schoolId_academicYear: { schoolId, academicYear: parsed.academicYear } },

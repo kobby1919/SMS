@@ -391,6 +391,7 @@ const CAPage = async ({
                 activeTerm={activePeriod.currentTerm}
                 activeYear={activePeriod.academicYear}
                 examEntryStatus={examEntryWindow?.status ?? "LOCKED"}
+                scoreEntryWindowsBySubjectId={scoreEntryWindowsBySubjectId}
                 existingCA={existingCA.map((ca) => ({
                   studentId: ca.studentId,
                   subjectId: ca.subjectId,

@@ -69,6 +69,11 @@ type Props = {
   activeTerm: Term;
   activeYear: string;
   examEntryStatus: ExamEntryStatus | "LOCKED";
+  scoreEntryWindowsBySubjectId: Record<number, {
+    allowed: boolean;
+    label: string;
+    reason: string | null;
+  }>;
   existingCA?:  ExistingCA[]; // pre-loaded when editing
   activityCAProgress?: ActivityCAProgress[];
   activityCAContexts?: ActivityCAContext[];
@@ -129,7 +134,7 @@ function ScorePreview({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const CAEntryForm = ({
-  classId, className, students, subjects, activeTerm, activeYear, examEntryStatus, existingCA = [], activityCAProgress = [], activityCAContexts = [], onSuccess,
+  classId, className, students, subjects, activeTerm, activeYear, examEntryStatus, scoreEntryWindowsBySubjectId, existingCA = [], activityCAProgress = [], activityCAContexts = [], onSuccess,
 }: Props) => {
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | "">("");
   const [caConfig,          setCAConfig]          = useState<{ classworkWeight: number; examWeight: number } | null>(null);
@@ -144,6 +149,14 @@ const CAEntryForm = ({
   const selectedTerm = activeTerm;
   const selectedYear = activeYear || "2025/26";
   const examEntryOpen = examEntryStatus === "OPEN";
+  const scoreEntryWindow =
+    selectedSubjectId === ""
+      ? { allowed: false, label: "your published lesson period", reason: "Choose a subject first." }
+      : scoreEntryWindowsBySubjectId[selectedSubjectId] ?? {
+          allowed: false,
+          label: "your published lesson period",
+          reason: "CA entry is closed because Edujay could not find a published lesson window for this subject.",
+        };
 
   // Load CA config when year changes
   useEffect(() => {
@@ -229,6 +242,10 @@ const CAEntryForm = ({
       setApiError("CA configuration not loaded. Please wait or refresh.");
       return;
     }
+    if (!scoreEntryWindow.allowed) {
+      setApiError(scoreEntryWindow.reason ?? "CA entry is locked outside the published lesson period.");
+      return;
+    }
     if (!examEntryOpen) {
       setApiError("Exam entry is locked for this class period. Ask an admin to open exam entry before saving exam scores.");
       return;
@@ -289,6 +306,10 @@ const CAEntryForm = ({
     }
     if (!examCorrectionStudentId) {
       setApiError("Choose the student whose exam score needs correction.");
+      return;
+    }
+    if (!scoreEntryWindow.allowed) {
+      setApiError(scoreEntryWindow.reason ?? "Exam score corrections can only be requested during the published lesson period.");
       return;
     }
     const nextScore = Number(examCorrectionScore);
@@ -446,6 +467,17 @@ const CAEntryForm = ({
         </div>
       )}
 
+      <div
+        className={`rounded-xl border px-3 py-2 text-xs font-semibold ${
+          scoreEntryWindow.allowed
+            ? "border-emerald-100 bg-emerald-50 text-emerald-700"
+            : "border-amber-100 bg-amber-50 text-amber-700"
+        }`}
+      >
+        <span className="font-black">CA entry window: {scoreEntryWindow.allowed ? "Open" : "Closed"}</span>
+        <span className="ml-1">{scoreEntryWindow.label}.</span>
+        {!scoreEntryWindow.allowed && scoreEntryWindow.reason ? <span className="ml-1">{scoreEntryWindow.reason}</span> : null}
+      </div>
       <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
         Manual CA entry is locked. Edujay fetches CA from recorded activities and teachers enter only exam scores here.
         {!hasActivityStructure && selectedSubjectId ? " No CA bucket exists for this subject yet, so CA will show 0 until activities are created and scored." : ""}
@@ -675,7 +707,7 @@ const CAEntryForm = ({
           <button
             type="button"
             onClick={handleExamCorrectionRequest}
-            disabled={isPending}
+            disabled={isPending || !scoreEntryWindow.allowed}
             className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-sm font-black text-white transition hover:bg-slate-800 disabled:opacity-50 sm:w-auto"
           >
             {isPending ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
@@ -709,7 +741,7 @@ const CAEntryForm = ({
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={isPending || !selectedSubjectId || !examEntryOpen}
+          disabled={isPending || !selectedSubjectId || !examEntryOpen || !scoreEntryWindow.allowed}
           className="flex-1 bg-indigo-600 text-white py-2.5 rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {isPending ? (
