@@ -173,6 +173,19 @@ const CAActivityManager = ({
       selectedBucket?.isLocked,
   );
 
+  const invalidScoreEntries = useMemo(() => {
+    if (!selectedActivity) return [];
+    return Object.entries(scoreEdits)
+      .filter(([, rawScore]) => rawScore !== "")
+      .filter(([, rawScore]) => {
+        const score = Number(rawScore);
+        return !Number.isFinite(score) || score < 0 || score > selectedActivity.rawMaxScore;
+      })
+      .map(([studentId]) => studentId);
+  }, [scoreEdits, selectedActivity]);
+  const invalidScoreIds = useMemo(() => new Set(invalidScoreEntries), [invalidScoreEntries]);
+  const hasInvalidScores = invalidScoreEntries.length > 0;
+
   const usedAllocation = scopedBuckets.reduce((sum, bucket) => sum + bucket.allocationMarks, 0);
   const nextActivitySequence = activities.reduce((max, activity) => Math.max(max, activity.sequence), 0) + 1;
   const nextActivityTitle = selectedBucket
@@ -192,7 +205,7 @@ const CAActivityManager = ({
           if (rawValue === "") return null;
 
           const rawScore = Number(rawValue);
-          if (Number.isNaN(rawScore) || activity.rawMaxScore <= 0) return null;
+          if (Number.isNaN(rawScore) || rawScore < 0 || rawScore > activity.rawMaxScore || activity.rawMaxScore <= 0) return null;
 
           const allocation =
             bucket.aggregationMode === "SUM_ACTIVITIES"
@@ -334,6 +347,11 @@ const CAActivityManager = ({
     }
     if (!scoreEntryWindow.allowed) {
       setError(scoreEntryWindow.reason ?? "CA scores can only be saved during the published lesson period.");
+      return;
+    }
+
+    if (hasInvalidScores) {
+      setError(`One or more raw scores exceed the activity maximum of ${formatMark(selectedActivity.rawMaxScore)}. Correct them before saving.`);
       return;
     }
 
@@ -765,7 +783,7 @@ const CAActivityManager = ({
           <button
             type="button"
             onClick={handleSaveScores}
-            disabled={pendingAction !== null || !selectedActivity || selectedActivityLockedForEntry || !scoreEntryWindow.allowed}
+            disabled={pendingAction !== null || !selectedActivity || selectedActivityLockedForEntry || !scoreEntryWindow.allowed || hasInvalidScores}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-black text-white hover:bg-emerald-700 disabled:opacity-50 sm:w-auto"
           >
             {pendingAction === "scores" ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
@@ -773,9 +791,11 @@ const CAActivityManager = ({
               ? "Saving Scores..."
               : selectedActivityLockedForEntry
                 ? "Scores Locked"
-                : scoreEntryWindow.allowed
-                  ? "Save Scores"
-                  : "Lesson Window Closed"}
+                : hasInvalidScores
+                  ? "Fix Raw Scores"
+                  : scoreEntryWindow.allowed
+                    ? "Save Scores"
+                    : "Lesson Window Closed"}
           </button>
         </div>
 
@@ -790,6 +810,7 @@ const CAActivityManager = ({
                 const savedScore = selectedActivity.scores.find((score) => score.studentId === student.id);
                 const value = scoreEdits[student.id] ?? (savedScore ? String(savedScore.rawScore) : "");
                 const currentSubjectCA = getCurrentSubjectCAForStudent(student.id);
+                const scoreInvalid = invalidScoreIds.has(student.id);
 
                 return (
                   <div key={student.id} className="rounded-2xl border border-gray-100 bg-white p-3 shadow-sm">
@@ -816,8 +837,11 @@ const CAActivityManager = ({
                         onChange={(event) =>
                           setScoreEdits((prev) => ({ ...prev, [student.id]: event.target.value }))
                         }
-                        className="w-full rounded-xl border border-gray-200 px-3 py-3 text-center text-base font-black text-gray-800 outline-none focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
+                        className={`w-full rounded-xl border px-3 py-3 text-center text-base font-black outline-none disabled:bg-gray-50 disabled:text-gray-400 ${scoreInvalid ? "border-rose-300 bg-rose-50 text-rose-700 focus:border-rose-400" : "border-gray-200 text-gray-800 focus:border-indigo-500"}`}
                       />
+                      {scoreInvalid ? (
+                        <p className="mt-1 text-[11px] font-bold text-rose-600">Maximum allowed is {formatMark(selectedActivity.rawMaxScore)}.</p>
+                      ) : null}
                     </label>
                   </div>
                 );
@@ -835,6 +859,7 @@ const CAActivityManager = ({
                   const savedScore = selectedActivity.scores.find((score) => score.studentId === student.id);
                   const value = scoreEdits[student.id] ?? (savedScore ? String(savedScore.rawScore) : "");
                   const currentSubjectCA = getCurrentSubjectCAForStudent(student.id);
+                  const scoreInvalid = invalidScoreIds.has(student.id);
 
                   return (
                     <div key={student.id} className="grid grid-cols-[2fr_1fr_1fr] items-center gap-3 px-4 py-3">
@@ -852,8 +877,11 @@ const CAActivityManager = ({
                         onChange={(event) =>
                           setScoreEdits((prev) => ({ ...prev, [student.id]: event.target.value }))
                         }
-                        className="w-full rounded-xl border border-gray-200 px-3 py-2 text-center text-sm font-black text-gray-800 outline-none focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
+                        className={`w-full rounded-xl border px-3 py-2 text-center text-sm font-black outline-none disabled:bg-gray-50 disabled:text-gray-400 ${scoreInvalid ? "border-rose-300 bg-rose-50 text-rose-700 focus:border-rose-400" : "border-gray-200 text-gray-800 focus:border-indigo-500"}`}
                       />
+                      {scoreInvalid ? (
+                        <p className="text-right text-[11px] font-bold text-rose-600">Max {formatMark(selectedActivity.rawMaxScore)}</p>
+                      ) : null}
                       <p className="text-right text-xs font-black text-indigo-600">
                         {formatMark(currentSubjectCA)} current CA
                       </p>
