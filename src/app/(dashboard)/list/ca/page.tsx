@@ -12,6 +12,7 @@ import ExamEntryWindowControls from "@/src/components/ExamEntryWindowControls";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { getSubjectCAProgress } from "@/src/lib/services/ca-activity";
 import { getSchoolOperatingWindowStatus } from "@/src/lib/services/school-operating-hours";
+import { getTeacherCAEntryWindowStatus } from "@/src/lib/services/teacher-ca-entry-window";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 import { ClipboardList, AlertTriangle, BookOpen, Users, Layers3 } from "lucide-react";
@@ -93,13 +94,16 @@ const CAPage = async ({
   const subjectsByClass = await listClassSubjectsFromTimetable(
     schoolId,
     [activeClass.id],
-    role === "teacher" && activeClass.supervisorId !== userId ? { teacherId: userId } : {},
+    role === "teacher" ? { teacherId: userId } : {},
   );
   const subjects = Array.from(subjectsByClass.get(activeClass.id) ?? [], ([id, name]) => ({ id, name }));
+  const scopedSubjectIds = subjects.map((subject) => subject.id);
+  const scopedSubjectWhere =
+    role === "teacher" ? { subjectId: { in: scopedSubjectIds } } : {};
 
   // ── Existing CA records (pre-fill the entry form) ─────────────────────────
   const existingCA = await prisma.continuousAssessment.findMany({
-    where: { schoolId, classId: activeClass.id },
+    where: { schoolId, classId: activeClass.id, ...scopedSubjectWhere },
     select: {
       studentId: true,
       subjectId: true,
@@ -116,7 +120,7 @@ const CAPage = async ({
 
   // ── CA summary data (summary tab) ─────────────────────────────────────────
   const summaryData = await prisma.continuousAssessment.findMany({
-    where: { schoolId, classId: activeClass.id },
+    where: { schoolId, classId: activeClass.id, ...scopedSubjectWhere },
     include: {
       student: { select: { id: true, name: true, surname: true } },
       subject: { select: { id: true, name: true } },
@@ -125,7 +129,7 @@ const CAPage = async ({
   });
 
   // ── Academic years from CA configs ────────────────────────────────────────
-  const [configs, activePeriod, scoreEntryWindow] = await Promise.all([
+  const [configs, activePeriod, schoolOperatingWindow] = await Promise.all([
     prisma.cAConfig.findMany({
       where: { schoolId },
       orderBy: [{ isActive: "desc" }, { academicYear: "desc" }],
@@ -155,7 +159,7 @@ const CAPage = async ({
     where: {
       schoolId,
       classId: activeClass.id,
-      ...(subjects.length > 0 ? { subjectId: { in: subjects.map((subject) => subject.id) } } : {}),
+      ...scopedSubjectWhere,
     },
     include: {
       activities: {
@@ -216,6 +220,27 @@ const CAPage = async ({
       ).flat()
     : [];
 
+  const scoreEntryWindowsBySubjectId = Object.fromEntries(
+    await Promise.all(
+      subjects.map(async (subject) => {
+        const window =
+          role === "teacher"
+            ? await getTeacherCAEntryWindowStatus({
+                schoolId,
+                teacherId: userId,
+                classId: activeClass.id,
+                subjectId: subject.id,
+              })
+            : {
+                allowed: schoolOperatingWindow.allowed,
+                label: schoolOperatingWindow.label,
+                reason: schoolOperatingWindow.reason,
+              };
+
+        return [subject.id, window] as const;
+      }),
+    ),
+  );
   return (
     <div className="flex-1 m-3 mt-0 flex flex-col gap-4 sm:m-4 sm:mt-0">
       {/* ── Page Header ── */}
@@ -388,11 +413,7 @@ const CAPage = async ({
                 activeTerm={activePeriod.currentTerm}
                 activeYear={activePeriod.academicYear}
                 canLock={role === "admin"}
-                scoreEntryWindow={{
-                  allowed: scoreEntryWindow.allowed,
-                  label: scoreEntryWindow.label,
-                  reason: scoreEntryWindow.reason,
-                }}
+                scoreEntryWindowsBySubjectId={scoreEntryWindowsBySubjectId}
                 buckets={caBuckets.map((bucket) => ({
                   id: bucket.id,
                   name: bucket.name,

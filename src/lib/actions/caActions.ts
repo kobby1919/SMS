@@ -41,6 +41,7 @@ import { getClassReportReadiness } from "@/src/lib/services/report-card-readines
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 import { recordApprovedCorrectionParentEvent } from "@/src/lib/services/correction-parent-events";
 import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
+import { assertTeacherCAEntryWindowOpen } from "@/src/lib/services/teacher-ca-entry-window";
 import { assertClassSubjectInPublishedTimetable } from "@/src/lib/services/timetable";
 
 // ─── Ghana BECE Grading System ────────────────────────────────────────────────
@@ -236,7 +237,13 @@ export async function createCA(data: CAInput) {
   await assertClassSubjectInPublishedTimetable({ schoolId, classId: parsed.classId, subjectId: parsed.subjectId });
   await assertTeacherUsesActivePeriod({ schoolId, role, term: parsed.term, academicYear: parsed.academicYear });
   if (role === "teacher") {
-    await assertWithinSchoolOperatingHours(schoolId, "Creating an assessment record");
+    await assertTeacherCAEntryWindowOpen({
+      schoolId,
+      teacherId,
+      classId: parsed.classId,
+      subjectId: parsed.subjectId,
+      actionLabel: "Creating an assessment record",
+    });
   }
 
   // Get active config
@@ -297,7 +304,13 @@ export async function updateCA(data: CAInput) {
   await assertClassSubjectInPublishedTimetable({ schoolId, classId: parsed.classId, subjectId: parsed.subjectId });
   await assertTeacherUsesActivePeriod({ schoolId, role, term: parsed.term, academicYear: parsed.academicYear });
   if (role === "teacher") {
-    await assertWithinSchoolOperatingHours(schoolId, "Updating an assessment record");
+    await assertTeacherCAEntryWindowOpen({
+      schoolId,
+      teacherId,
+      classId: parsed.classId,
+      subjectId: parsed.subjectId,
+      actionLabel: "Updating an assessment record",
+    });
   }
 
   const config = await prisma.cAConfig.findUnique({
@@ -400,7 +413,13 @@ export async function bulkUpsertCA(
   await assertClassSubjectInPublishedTimetable({ schoolId, classId, subjectId });
   await assertTeacherUsesActivePeriod({ schoolId, role, term, academicYear });
   if (role === "teacher") {
-    await assertWithinSchoolOperatingHours(schoolId, "Saving assessment scores");
+    await assertTeacherCAEntryWindowOpen({
+      schoolId,
+      teacherId,
+      classId,
+      subjectId,
+      actionLabel: "Saving assessment scores",
+    });
   }
 
   const config = await prisma.cAConfig.findUnique({
@@ -538,6 +557,16 @@ export async function createCABucketAction(data: {
     academicYear: parsed.academicYear,
   });
 
+  if (role === "teacher") {
+    await assertTeacherCAEntryWindowOpen({
+      schoolId,
+      teacherId: userId,
+      classId: parsed.classId,
+      subjectId: parsed.subjectId,
+      actionLabel: "Creating a CA bucket",
+    });
+  }
+
   const bucket = await createCABucket({
     schoolId,
     classId: parsed.classId,
@@ -598,7 +627,13 @@ export async function createCAActivityAction(data: {
     term: bucket.term,
     academicYear: bucket.academicYear,
   });
-  await assertWithinSchoolOperatingHours(schoolId, "Creating a CA activity");
+  await assertTeacherCAEntryWindowOpen({
+    schoolId,
+    teacherId: userId,
+    classId: bucket.classId,
+    subjectId: bucket.subjectId,
+    actionLabel: "Creating a CA activity",
+  });
 
   const activity = await createCAActivity({
     schoolId,
@@ -683,7 +718,13 @@ export async function bulkUpsertCAActivityScores(data: {
     term: activity.bucket.term,
     academicYear: activity.bucket.academicYear,
   });
-  await assertWithinSchoolOperatingHours(schoolId, "Publishing CA scores");
+  await assertTeacherCAEntryWindowOpen({
+    schoolId,
+    teacherId: userId,
+    classId: activity.classId,
+    subjectId: activity.subjectId,
+    actionLabel: "Publishing CA scores",
+  });
 
   const studentIds = parsed.rows.map((row) => row.studentId);
   const uniqueStudentIds = new Set(studentIds);
@@ -808,7 +849,13 @@ export async function requestCAActivityScoreCorrection(data: {
     classId: score.activity.classId,
     subjectId: score.activity.subjectId,
   });
-  await assertWithinSchoolOperatingHours(schoolId, "Requesting a CA score correction");
+  await assertTeacherCAEntryWindowOpen({
+    schoolId,
+    teacherId: userId,
+    classId: score.activity.classId,
+    subjectId: score.activity.subjectId,
+    actionLabel: "Requesting a CA score correction",
+  });
 
   const rawMaxScore = Number(score.activity.rawMaxScore);
   if (newRawScore > rawMaxScore) {

@@ -82,11 +82,11 @@ type Props = {
   activeYear: string;
   buckets: Bucket[];
   canLock?: boolean;
-  scoreEntryWindow: {
+  scoreEntryWindowsBySubjectId: Record<number, {
     allowed: boolean;
     label: string;
     reason: string | null;
-  };
+  }>;
 };
 
 const activityTypeLabels: Record<CAActivityType, string> = {
@@ -120,10 +120,18 @@ const CAActivityManager = ({
   activeYear,
   buckets,
   canLock = false,
-  scoreEntryWindow,
+  scoreEntryWindowsBySubjectId,
 }: Props) => {
   const router = useRouter();
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | "">(subjects[0]?.id ?? "");
+  const scoreEntryWindow =
+    selectedSubjectId === ""
+      ? { allowed: false, label: "your published lesson period", reason: "Choose a subject first." }
+      : scoreEntryWindowsBySubjectId[selectedSubjectId] ?? {
+          allowed: false,
+          label: "your published lesson period",
+          reason: "CA entry is closed because Edujay could not find a published lesson window for this subject.",
+        };
   const selectedTerm = activeTerm;
   const selectedYear = activeYear || "2025/26";
   const [bucketName, setBucketName] = useState("Midterm Exam");
@@ -246,6 +254,11 @@ const CAActivityManager = ({
       return;
     }
 
+    if (!scoreEntryWindow.allowed) {
+      setError(scoreEntryWindow.reason ?? "CA buckets can only be created during the published lesson period.");
+      return;
+    }
+
     setPendingAction("bucket");
     try {
       const bucket = await createCABucketAction({
@@ -282,7 +295,7 @@ const CAActivityManager = ({
       return;
     }
     if (!scoreEntryWindow.allowed) {
-      setError(scoreEntryWindow.reason ?? "CA activities can only be created during school hours.");
+      setError(scoreEntryWindow.reason ?? "CA activities can only be created during the published lesson period.");
       return;
     }
 
@@ -320,7 +333,7 @@ const CAActivityManager = ({
       return;
     }
     if (!scoreEntryWindow.allowed) {
-      setError(scoreEntryWindow.reason ?? "CA scores can only be saved during school hours.");
+      setError(scoreEntryWindow.reason ?? "CA scores can only be saved during the published lesson period.");
       return;
     }
 
@@ -379,7 +392,7 @@ const CAActivityManager = ({
       return;
     }
     if (!scoreEntryWindow.allowed) {
-      setError(scoreEntryWindow.reason ?? "CA score corrections can only be requested during school hours.");
+      setError(scoreEntryWindow.reason ?? "CA score corrections can only be requested during the published lesson period.");
       return;
     }
 
@@ -555,7 +568,7 @@ const CAActivityManager = ({
           <button
             type="button"
             onClick={handleCreateBucket}
-            disabled={pendingAction !== null || !selectedSubjectId}
+            disabled={pendingAction !== null || !selectedSubjectId || !scoreEntryWindow.allowed}
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-black text-white hover:bg-indigo-700 disabled:opacity-50"
           >
             {pendingAction === "bucket" ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
@@ -762,7 +775,7 @@ const CAActivityManager = ({
                 ? "Scores Locked"
                 : scoreEntryWindow.allowed
                   ? "Save Scores"
-                  : "School Hours Closed"}
+                  : "Lesson Window Closed"}
           </button>
         </div>
 
