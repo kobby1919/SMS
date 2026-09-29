@@ -1029,6 +1029,35 @@ exports.Prisma.BillLineItemScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PaymentIntentScalarFieldEnum = {
+  id: 'id',
+  reference: 'reference',
+  provider: 'provider',
+  status: 'status',
+  amount: 'amount',
+  currency: 'currency',
+  checkoutUrl: 'checkoutUrl',
+  providerSessionId: 'providerSessionId',
+  providerAuthorization: 'providerAuthorization',
+  idempotencyKey: 'idempotencyKey',
+  payerEmail: 'payerEmail',
+  payerName: 'payerName',
+  lastError: 'lastError',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId',
+  parentId: 'parentId'
+};
+
+exports.Prisma.PaymentIntentLineScalarFieldEnum = {
+  id: 'id',
+  amount: 'amount',
+  createdAt: 'createdAt',
+  paymentIntentId: 'paymentIntentId',
+  studentBillId: 'studentBillId'
+};
+
 exports.Prisma.PaymentScalarFieldEnum = {
   id: 'id',
   receiptNumber: 'receiptNumber',
@@ -1761,6 +1790,15 @@ exports.BillStatus = exports.$Enums.BillStatus = {
   WAIVED: 'WAIVED'
 };
 
+exports.PaymentIntentStatus = exports.$Enums.PaymentIntentStatus = {
+  PENDING_PROVIDER: 'PENDING_PROVIDER',
+  CHECKOUT_CREATED: 'CHECKOUT_CREATED',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED'
+};
+
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',
@@ -2028,6 +2066,8 @@ exports.Prisma.ModelName = {
   FeeItem: 'FeeItem',
   StudentBill: 'StudentBill',
   BillLineItem: 'BillLineItem',
+  PaymentIntent: 'PaymentIntent',
+  PaymentIntentLine: 'PaymentIntentLine',
   Payment: 'Payment',
   PaymentCorrectionRequest: 'PaymentCorrectionRequest',
   PaymentReversal: 'PaymentReversal',

@@ -5,6 +5,7 @@ import { requirePageSession } from "@/src/lib/authz";
 import { formatGHS } from "@/src/lib/constants/finance";
 import { getParentFinanceBill } from "@/src/lib/services/parent-finance";
 import ParentFinanceQueryForm from "@/src/components/ParentFinanceQueryForm";
+import ParentOnlinePaymentForm from "@/src/components/ParentOnlinePaymentForm";
 
 export const dynamic = "force-dynamic";
 
@@ -267,6 +268,7 @@ export default async function ParentFinanceBillPage({
         </div>
 
         <aside className="flex flex-col gap-5">
+          <ParentOnlinePaymentForm studentBillId={bill.id} balance={bill.balance} disabledReason={bill.status === "WAIVED" ? "This bill has been waived by the school." : undefined} />
           <ParentFinanceQueryForm studentBillId={bill.id} />
           <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
             <p className="text-xs font-black uppercase tracking-wider text-gray-400">Transparency note</p>

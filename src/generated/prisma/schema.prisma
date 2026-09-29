@@ -104,6 +104,15 @@ enum PaymentStatus {
   REVERSED
 }
 
+enum PaymentIntentStatus {
+  PENDING_PROVIDER
+  CHECKOUT_CREATED
+  PAID
+  FAILED
+  CANCELLED
+  EXPIRED
+}
+
 enum PaymentCorrectionStatus {
   PENDING_REVIEW
   APPROVED
@@ -669,6 +678,7 @@ model School {
   studentBills                   StudentBill[]
   payments                       Payment[]
   paymentSettings                SchoolPaymentSetting?
+  paymentIntents                 PaymentIntent[]
   paymentReversals               PaymentReversal[]
   paymentCorrectionRequests      PaymentCorrectionRequest[]
   discounts                      Discount[]
@@ -861,6 +871,7 @@ model Parent {
   accessAuditLogs        ParentAccessAuditLog[]
   studentRelationships   ParentStudentRelationship[]
   acceptedInvites        ParentInvite[]                  @relation("AcceptedParentInvite")
+  paymentIntents         PaymentIntent[]
 
   @@index([schoolId])
   @@index([schoolId, createdAt])
@@ -2221,6 +2232,7 @@ model StudentBill {
   payments           Payment[]
   discounts          Discount[]
   financeQueries     FinanceQuery[]
+  paymentIntentLines PaymentIntentLine[]
   correctionRequests PaymentCorrectionRequest[]
 
   generatedBy String
@@ -2262,6 +2274,54 @@ model BillLineItem {
 // Never edited or deleted — reverse with PaymentReversal instead.
 // receiptNumber: RCP-{YYYY}-{NNN}, counter resets each calendar year.
 // referenceNo: MoMo transaction ID, cheque number, bank ref etc.
+
+model PaymentIntent {
+  id                    String              @id @default(cuid())
+  reference             String
+  provider              PaymentProvider
+  status                PaymentIntentStatus @default(PENDING_PROVIDER)
+  amount                Decimal             @db.Decimal(10, 2)
+  currency              String              @default("GHS")
+  checkoutUrl           String?
+  providerSessionId     String?
+  providerAuthorization String?
+  idempotencyKey        String
+  payerEmail            String?
+  payerName             String?
+  lastError             String?
+  expiresAt             DateTime
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  parentId String
+  parent   Parent @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  lines PaymentIntentLine[]
+
+  @@unique([schoolId, reference])
+  @@unique([schoolId, idempotencyKey])
+  @@index([schoolId, parentId, status, createdAt])
+  @@index([schoolId, status, expiresAt])
+  @@index([provider, providerSessionId])
+}
+
+model PaymentIntentLine {
+  id        String   @id @default(cuid())
+  amount    Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+
+  paymentIntentId String
+  paymentIntent   PaymentIntent @relation(fields: [paymentIntentId], references: [id], onDelete: Cascade)
+
+  studentBillId Int
+  studentBill   StudentBill @relation(fields: [studentBillId], references: [id], onDelete: Restrict)
+
+  @@unique([paymentIntentId, studentBillId])
+  @@index([studentBillId])
+}
 
 model Payment {
   id                Int              @id @default(autoincrement())
