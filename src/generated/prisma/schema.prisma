@@ -105,6 +105,7 @@ enum PaymentStatus {
 }
 
 enum PaymentIntentStatus {
+  PENDING
   PENDING_PROVIDER
   CHECKOUT_CREATED
   PAID
@@ -793,6 +794,7 @@ model Student {
   teacherContactRequests ParentTeacherContactRequest[]
   teacherContactMessages ParentTeacherContactMessage[]
   parentAccessAuditLogs  ParentAccessAuditLog[]
+  paymentIntents         PaymentIntent[]
 
   @@index([schoolId])
   @@index([schoolId, classId])
@@ -2279,7 +2281,7 @@ model PaymentIntent {
   id                    String              @id @default(cuid())
   reference             String
   provider              PaymentProvider
-  status                PaymentIntentStatus @default(PENDING_PROVIDER)
+  status                PaymentIntentStatus @default(PENDING)
   amount                Decimal             @db.Decimal(10, 2)
   currency              String              @default("GHS")
   checkoutUrl           String?
@@ -2299,11 +2301,15 @@ model PaymentIntent {
   parentId String
   parent   Parent @relation(fields: [parentId], references: [id], onDelete: Cascade)
 
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Restrict)
+
   lines PaymentIntentLine[]
 
   @@unique([schoolId, reference])
   @@unique([schoolId, idempotencyKey])
   @@index([schoolId, parentId, status, createdAt])
+  @@index([schoolId, studentId, status, createdAt])
   @@index([schoolId, status, expiresAt])
   @@index([provider, providerSessionId])
 }

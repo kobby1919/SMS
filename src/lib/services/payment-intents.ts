@@ -1,7 +1,6 @@
 import { randomUUID } from "crypto";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
-import { DEFAULT_SCHOOL_ID } from "@/src/lib/constants/tenant";
 import { decryptPaymentSecret } from "@/src/lib/services/payment-settings-secrets";
 import { createCheckoutProviderSession } from "@/src/lib/services/payment-checkout-providers";
 import { listActiveParentChildIds } from "@/src/lib/services/parent-student-relationships";
@@ -109,6 +108,15 @@ export async function createParentPaymentIntent({
 
   if (total.lte(0)) throw new Error("Checkout amount must be greater than zero.");
 
+  const studentIds = new Set(safeLines.map(({ bill }) => bill.studentId));
+  if (studentIds.size !== 1) {
+    throw new Error("One checkout can only pay bills for one child at a time.");
+  }
+  if (safeLines.length > 1) {
+    throw new Error("Multiple-bill online checkout will be enabled after multi-bill webhook finalization is connected. Please pay one bill at a time for now.");
+  }
+  const intentStudentId = safeLines[0]?.bill.studentId;
+  if (!intentStudentId) throw new Error("Selected bill is missing a student link.");
   const idempotencyKey = `parent-checkout:${parentId}:${lineKey(requestedLines)}`;
   const now = new Date();
   let intent = await prisma.paymentIntent.findUnique({
@@ -116,7 +124,7 @@ export async function createParentPaymentIntent({
     include: { lines: true },
   });
 
-  if (intent && intent.status === "CHECKOUT_CREATED" && intent.checkoutUrl && intent.expiresAt > now) {
+  if (intent && intent.status === "PENDING" && intent.checkoutUrl && intent.expiresAt > now) {
     return {
       paymentIntentId: intent.id,
       checkoutUrl: intent.checkoutUrl,
@@ -138,6 +146,7 @@ export async function createParentPaymentIntent({
       data: {
         schoolId,
         parentId,
+        studentId: intentStudentId,
         provider: settings.provider,
         reference: paymentIntentReference(),
         amount: total,
@@ -172,7 +181,8 @@ export async function createParentPaymentIntent({
         parentId,
         paymentIntentId: intent.id,
         reference: intent.reference,
-        studentBillId: safeLines.length === 1 ? primaryBill.id : undefined,
+        studentId: intentStudentId,
+        studentBillId: primaryBill.id,
         billIds: safeLines.map(({ bill }) => bill.id),
         payerName: `${parent.name} ${parent.surname}`.trim(),
         source: "parent-checkout",
@@ -182,7 +192,7 @@ export async function createParentPaymentIntent({
     const updated = await prisma.paymentIntent.update({
       where: { id: intent.id },
       data: {
-        status: "CHECKOUT_CREATED",
+        status: "PENDING",
         checkoutUrl: session.checkoutUrl,
         providerSessionId: session.providerSessionId,
         providerAuthorization: session.providerAuthorization,

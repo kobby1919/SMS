@@ -1,0 +1,1 @@
+ALTER TYPE "PaymentIntentStatus" ADD VALUE IF NOT EXISTS 'PENDING';

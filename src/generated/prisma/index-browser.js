@@ -1047,7 +1047,8 @@ exports.Prisma.PaymentIntentScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   schoolId: 'schoolId',
-  parentId: 'parentId'
+  parentId: 'parentId',
+  studentId: 'studentId'
 };
 
 exports.Prisma.PaymentIntentLineScalarFieldEnum = {
@@ -1791,6 +1792,7 @@ exports.BillStatus = exports.$Enums.BillStatus = {
 };
 
 exports.PaymentIntentStatus = exports.$Enums.PaymentIntentStatus = {
+  PENDING: 'PENDING',
   PENDING_PROVIDER: 'PENDING_PROVIDER',
   CHECKOUT_CREATED: 'CHECKOUT_CREATED',
   PAID: 'PAID',

@@ -558,6 +558,7 @@ export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
 
 
 export const PaymentIntentStatus: {
+  PENDING: 'PENDING',
   PENDING_PROVIDER: 'PENDING_PROVIDER',
   CHECKOUT_CREATED: 'CHECKOUT_CREATED',
   PAID: 'PAID',
@@ -9973,6 +9974,7 @@ export namespace Prisma {
     teacherContactRequests: number
     teacherContactMessages: number
     parentAccessAuditLogs: number
+    paymentIntents: number
   }
 
   export type StudentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9991,6 +9993,7 @@ export namespace Prisma {
     teacherContactRequests?: boolean | StudentCountOutputTypeCountTeacherContactRequestsArgs
     teacherContactMessages?: boolean | StudentCountOutputTypeCountTeacherContactMessagesArgs
     parentAccessAuditLogs?: boolean | StudentCountOutputTypeCountParentAccessAuditLogsArgs
+    paymentIntents?: boolean | StudentCountOutputTypeCountPaymentIntentsArgs
   }
 
   // Custom InputTypes
@@ -10107,6 +10110,13 @@ export namespace Prisma {
    */
   export type StudentCountOutputTypeCountParentAccessAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ParentAccessAuditLogWhereInput
+  }
+
+  /**
+   * StudentCountOutputType without action
+   */
+  export type StudentCountOutputTypeCountPaymentIntentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentIntentWhereInput
   }
 
 
@@ -17343,6 +17353,7 @@ export namespace Prisma {
     teacherContactRequests?: boolean | Student$teacherContactRequestsArgs<ExtArgs>
     teacherContactMessages?: boolean | Student$teacherContactMessagesArgs<ExtArgs>
     parentAccessAuditLogs?: boolean | Student$parentAccessAuditLogsArgs<ExtArgs>
+    paymentIntents?: boolean | Student$paymentIntentsArgs<ExtArgs>
     _count?: boolean | StudentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["student"]>
 
@@ -17429,6 +17440,7 @@ export namespace Prisma {
     teacherContactRequests?: boolean | Student$teacherContactRequestsArgs<ExtArgs>
     teacherContactMessages?: boolean | Student$teacherContactMessagesArgs<ExtArgs>
     parentAccessAuditLogs?: boolean | Student$parentAccessAuditLogsArgs<ExtArgs>
+    paymentIntents?: boolean | Student$paymentIntentsArgs<ExtArgs>
     _count?: boolean | StudentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type StudentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -17466,6 +17478,7 @@ export namespace Prisma {
       teacherContactRequests: Prisma.$ParentTeacherContactRequestPayload<ExtArgs>[]
       teacherContactMessages: Prisma.$ParentTeacherContactMessagePayload<ExtArgs>[]
       parentAccessAuditLogs: Prisma.$ParentAccessAuditLogPayload<ExtArgs>[]
+      paymentIntents: Prisma.$PaymentIntentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -17896,6 +17909,7 @@ export namespace Prisma {
     teacherContactRequests<T extends Student$teacherContactRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Student$teacherContactRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentTeacherContactRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teacherContactMessages<T extends Student$teacherContactMessagesArgs<ExtArgs> = {}>(args?: Subset<T, Student$teacherContactMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentTeacherContactMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentAccessAuditLogs<T extends Student$parentAccessAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, Student$parentAccessAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentAccessAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    paymentIntents<T extends Student$paymentIntentsArgs<ExtArgs> = {}>(args?: Subset<T, Student$paymentIntentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentIntentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -18698,6 +18712,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ParentAccessAuditLogScalarFieldEnum | ParentAccessAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * Student.paymentIntents
+   */
+  export type Student$paymentIntentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentIntent
+     */
+    select?: PaymentIntentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentIntent
+     */
+    omit?: PaymentIntentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentIntentInclude<ExtArgs> | null
+    where?: PaymentIntentWhereInput
+    orderBy?: PaymentIntentOrderByWithRelationInput | PaymentIntentOrderByWithRelationInput[]
+    cursor?: PaymentIntentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PaymentIntentScalarFieldEnum | PaymentIntentScalarFieldEnum[]
   }
 
   /**
@@ -86335,6 +86373,7 @@ export namespace Prisma {
     updatedAt: Date | null
     schoolId: string | null
     parentId: string | null
+    studentId: string | null
   }
 
   export type PaymentIntentMaxAggregateOutputType = {
@@ -86356,6 +86395,7 @@ export namespace Prisma {
     updatedAt: Date | null
     schoolId: string | null
     parentId: string | null
+    studentId: string | null
   }
 
   export type PaymentIntentCountAggregateOutputType = {
@@ -86377,6 +86417,7 @@ export namespace Prisma {
     updatedAt: number
     schoolId: number
     parentId: number
+    studentId: number
     _all: number
   }
 
@@ -86408,6 +86449,7 @@ export namespace Prisma {
     updatedAt?: true
     schoolId?: true
     parentId?: true
+    studentId?: true
   }
 
   export type PaymentIntentMaxAggregateInputType = {
@@ -86429,6 +86471,7 @@ export namespace Prisma {
     updatedAt?: true
     schoolId?: true
     parentId?: true
+    studentId?: true
   }
 
   export type PaymentIntentCountAggregateInputType = {
@@ -86450,6 +86493,7 @@ export namespace Prisma {
     updatedAt?: true
     schoolId?: true
     parentId?: true
+    studentId?: true
     _all?: true
   }
 
@@ -86558,6 +86602,7 @@ export namespace Prisma {
     updatedAt: Date
     schoolId: string
     parentId: string
+    studentId: string
     _count: PaymentIntentCountAggregateOutputType | null
     _avg: PaymentIntentAvgAggregateOutputType | null
     _sum: PaymentIntentSumAggregateOutputType | null
@@ -86598,8 +86643,10 @@ export namespace Prisma {
     updatedAt?: boolean
     schoolId?: boolean
     parentId?: boolean
+    studentId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
     lines?: boolean | PaymentIntent$linesArgs<ExtArgs>
     _count?: boolean | PaymentIntentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["paymentIntent"]>
@@ -86623,8 +86670,10 @@ export namespace Prisma {
     updatedAt?: boolean
     schoolId?: boolean
     parentId?: boolean
+    studentId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["paymentIntent"]>
 
   export type PaymentIntentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -86646,8 +86695,10 @@ export namespace Prisma {
     updatedAt?: boolean
     schoolId?: boolean
     parentId?: boolean
+    studentId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["paymentIntent"]>
 
   export type PaymentIntentSelectScalar = {
@@ -86669,22 +86720,26 @@ export namespace Prisma {
     updatedAt?: boolean
     schoolId?: boolean
     parentId?: boolean
+    studentId?: boolean
   }
 
-  export type PaymentIntentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "reference" | "provider" | "status" | "amount" | "currency" | "checkoutUrl" | "providerSessionId" | "providerAuthorization" | "idempotencyKey" | "payerEmail" | "payerName" | "lastError" | "expiresAt" | "createdAt" | "updatedAt" | "schoolId" | "parentId", ExtArgs["result"]["paymentIntent"]>
+  export type PaymentIntentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "reference" | "provider" | "status" | "amount" | "currency" | "checkoutUrl" | "providerSessionId" | "providerAuthorization" | "idempotencyKey" | "payerEmail" | "payerName" | "lastError" | "expiresAt" | "createdAt" | "updatedAt" | "schoolId" | "parentId" | "studentId", ExtArgs["result"]["paymentIntent"]>
   export type PaymentIntentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
     lines?: boolean | PaymentIntent$linesArgs<ExtArgs>
     _count?: boolean | PaymentIntentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PaymentIntentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
   }
   export type PaymentIntentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
   }
 
   export type $PaymentIntentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -86692,6 +86747,7 @@ export namespace Prisma {
     objects: {
       school: Prisma.$SchoolPayload<ExtArgs>
       parent: Prisma.$ParentPayload<ExtArgs>
+      student: Prisma.$StudentPayload<ExtArgs>
       lines: Prisma.$PaymentIntentLinePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -86713,6 +86769,7 @@ export namespace Prisma {
       updatedAt: Date
       schoolId: string
       parentId: string
+      studentId: string
     }, ExtArgs["result"]["paymentIntent"]>
     composites: {}
   }
@@ -87109,6 +87166,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     parent<T extends ParentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ParentDefaultArgs<ExtArgs>>): Prisma__ParentClient<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    student<T extends StudentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StudentDefaultArgs<ExtArgs>>): Prisma__StudentClient<$Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     lines<T extends PaymentIntent$linesArgs<ExtArgs> = {}>(args?: Subset<T, PaymentIntent$linesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentIntentLinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -87157,6 +87215,7 @@ export namespace Prisma {
     readonly updatedAt: FieldRef<"PaymentIntent", 'DateTime'>
     readonly schoolId: FieldRef<"PaymentIntent", 'String'>
     readonly parentId: FieldRef<"PaymentIntent", 'String'>
+    readonly studentId: FieldRef<"PaymentIntent", 'String'>
   }
 
 
@@ -114969,7 +115028,8 @@ export namespace Prisma {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     schoolId: 'schoolId',
-    parentId: 'parentId'
+    parentId: 'parentId',
+    studentId: 'studentId'
   };
 
   export type PaymentIntentScalarFieldEnum = (typeof PaymentIntentScalarFieldEnum)[keyof typeof PaymentIntentScalarFieldEnum]
@@ -117048,6 +117108,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestListRelationFilter
     teacherContactMessages?: ParentTeacherContactMessageListRelationFilter
     parentAccessAuditLogs?: ParentAccessAuditLogListRelationFilter
+    paymentIntents?: PaymentIntentListRelationFilter
   }
 
   export type StudentOrderByWithRelationInput = {
@@ -117085,6 +117146,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestOrderByRelationAggregateInput
     teacherContactMessages?: ParentTeacherContactMessageOrderByRelationAggregateInput
     parentAccessAuditLogs?: ParentAccessAuditLogOrderByRelationAggregateInput
+    paymentIntents?: PaymentIntentOrderByRelationAggregateInput
   }
 
   export type StudentWhereUniqueInput = Prisma.AtLeast<{
@@ -117125,6 +117187,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestListRelationFilter
     teacherContactMessages?: ParentTeacherContactMessageListRelationFilter
     parentAccessAuditLogs?: ParentAccessAuditLogListRelationFilter
+    paymentIntents?: PaymentIntentListRelationFilter
   }, "id" | "username">
 
   export type StudentOrderByWithAggregationInput = {
@@ -122826,8 +122889,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"PaymentIntent"> | Date | string
     schoolId?: StringFilter<"PaymentIntent"> | string
     parentId?: StringFilter<"PaymentIntent"> | string
+    studentId?: StringFilter<"PaymentIntent"> | string
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     parent?: XOR<ParentScalarRelationFilter, ParentWhereInput>
+    student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
     lines?: PaymentIntentLineListRelationFilter
   }
 
@@ -122850,8 +122915,10 @@ export namespace Prisma {
     updatedAt?: SortOrder
     schoolId?: SortOrder
     parentId?: SortOrder
+    studentId?: SortOrder
     school?: SchoolOrderByWithRelationInput
     parent?: ParentOrderByWithRelationInput
+    student?: StudentOrderByWithRelationInput
     lines?: PaymentIntentLineOrderByRelationAggregateInput
   }
 
@@ -122879,8 +122946,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"PaymentIntent"> | Date | string
     schoolId?: StringFilter<"PaymentIntent"> | string
     parentId?: StringFilter<"PaymentIntent"> | string
+    studentId?: StringFilter<"PaymentIntent"> | string
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     parent?: XOR<ParentScalarRelationFilter, ParentWhereInput>
+    student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
     lines?: PaymentIntentLineListRelationFilter
   }, "id" | "schoolId_reference" | "schoolId_idempotencyKey">
 
@@ -122903,6 +122972,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     schoolId?: SortOrder
     parentId?: SortOrder
+    studentId?: SortOrder
     _count?: PaymentIntentCountOrderByAggregateInput
     _avg?: PaymentIntentAvgOrderByAggregateInput
     _max?: PaymentIntentMaxOrderByAggregateInput
@@ -122932,6 +123002,7 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"PaymentIntent"> | Date | string
     schoolId?: StringWithAggregatesFilter<"PaymentIntent"> | string
     parentId?: StringWithAggregatesFilter<"PaymentIntent"> | string
+    studentId?: StringWithAggregatesFilter<"PaymentIntent"> | string
   }
 
   export type PaymentIntentLineWhereInput = {
@@ -125572,6 +125643,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateInput = {
@@ -125605,6 +125677,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUpdateInput = {
@@ -125638,6 +125711,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateInput = {
@@ -125671,6 +125745,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentCreateManyInput = {
@@ -131813,6 +131888,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     school: SchoolCreateNestedOneWithoutPaymentIntentsInput
     parent: ParentCreateNestedOneWithoutPaymentIntentsInput
+    student: StudentCreateNestedOneWithoutPaymentIntentsInput
     lines?: PaymentIntentLineCreateNestedManyWithoutPaymentIntentInput
   }
 
@@ -131835,6 +131911,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     schoolId: string
     parentId: string
+    studentId: string
     lines?: PaymentIntentLineUncheckedCreateNestedManyWithoutPaymentIntentInput
   }
 
@@ -131857,6 +131934,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutPaymentIntentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutPaymentIntentsNestedInput
+    student?: StudentUpdateOneRequiredWithoutPaymentIntentsNestedInput
     lines?: PaymentIntentLineUpdateManyWithoutPaymentIntentNestedInput
   }
 
@@ -131879,6 +131957,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
     lines?: PaymentIntentLineUncheckedUpdateManyWithoutPaymentIntentNestedInput
   }
 
@@ -131901,6 +131980,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     schoolId: string
     parentId: string
+    studentId: string
   }
 
   export type PaymentIntentUpdateManyMutationInput = {
@@ -131941,6 +132021,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
   }
 
   export type PaymentIntentLineCreateInput = {
@@ -139649,6 +139730,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     schoolId?: SortOrder
     parentId?: SortOrder
+    studentId?: SortOrder
   }
 
   export type PaymentIntentAvgOrderByAggregateInput = {
@@ -139674,6 +139756,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     schoolId?: SortOrder
     parentId?: SortOrder
+    studentId?: SortOrder
   }
 
   export type PaymentIntentMinOrderByAggregateInput = {
@@ -139695,6 +139778,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     schoolId?: SortOrder
     parentId?: SortOrder
+    studentId?: SortOrder
   }
 
   export type PaymentIntentSumOrderByAggregateInput = {
@@ -144627,6 +144711,13 @@ export namespace Prisma {
     connect?: ParentAccessAuditLogWhereUniqueInput | ParentAccessAuditLogWhereUniqueInput[]
   }
 
+  export type PaymentIntentCreateNestedManyWithoutStudentInput = {
+    create?: XOR<PaymentIntentCreateWithoutStudentInput, PaymentIntentUncheckedCreateWithoutStudentInput> | PaymentIntentCreateWithoutStudentInput[] | PaymentIntentUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: PaymentIntentCreateOrConnectWithoutStudentInput | PaymentIntentCreateOrConnectWithoutStudentInput[]
+    createMany?: PaymentIntentCreateManyStudentInputEnvelope
+    connect?: PaymentIntentWhereUniqueInput | PaymentIntentWhereUniqueInput[]
+  }
+
   export type AttendanceUncheckedCreateNestedManyWithoutStudentInput = {
     create?: XOR<AttendanceCreateWithoutStudentInput, AttendanceUncheckedCreateWithoutStudentInput> | AttendanceCreateWithoutStudentInput[] | AttendanceUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: AttendanceCreateOrConnectWithoutStudentInput | AttendanceCreateOrConnectWithoutStudentInput[]
@@ -144730,6 +144821,13 @@ export namespace Prisma {
     connectOrCreate?: ParentAccessAuditLogCreateOrConnectWithoutStudentInput | ParentAccessAuditLogCreateOrConnectWithoutStudentInput[]
     createMany?: ParentAccessAuditLogCreateManyStudentInputEnvelope
     connect?: ParentAccessAuditLogWhereUniqueInput | ParentAccessAuditLogWhereUniqueInput[]
+  }
+
+  export type PaymentIntentUncheckedCreateNestedManyWithoutStudentInput = {
+    create?: XOR<PaymentIntentCreateWithoutStudentInput, PaymentIntentUncheckedCreateWithoutStudentInput> | PaymentIntentCreateWithoutStudentInput[] | PaymentIntentUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: PaymentIntentCreateOrConnectWithoutStudentInput | PaymentIntentCreateOrConnectWithoutStudentInput[]
+    createMany?: PaymentIntentCreateManyStudentInputEnvelope
+    connect?: PaymentIntentWhereUniqueInput | PaymentIntentWhereUniqueInput[]
   }
 
   export type SchoolUpdateOneRequiredWithoutStudentsNestedInput = {
@@ -144974,6 +145072,20 @@ export namespace Prisma {
     deleteMany?: ParentAccessAuditLogScalarWhereInput | ParentAccessAuditLogScalarWhereInput[]
   }
 
+  export type PaymentIntentUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<PaymentIntentCreateWithoutStudentInput, PaymentIntentUncheckedCreateWithoutStudentInput> | PaymentIntentCreateWithoutStudentInput[] | PaymentIntentUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: PaymentIntentCreateOrConnectWithoutStudentInput | PaymentIntentCreateOrConnectWithoutStudentInput[]
+    upsert?: PaymentIntentUpsertWithWhereUniqueWithoutStudentInput | PaymentIntentUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: PaymentIntentCreateManyStudentInputEnvelope
+    set?: PaymentIntentWhereUniqueInput | PaymentIntentWhereUniqueInput[]
+    disconnect?: PaymentIntentWhereUniqueInput | PaymentIntentWhereUniqueInput[]
+    delete?: PaymentIntentWhereUniqueInput | PaymentIntentWhereUniqueInput[]
+    connect?: PaymentIntentWhereUniqueInput | PaymentIntentWhereUniqueInput[]
+    update?: PaymentIntentUpdateWithWhereUniqueWithoutStudentInput | PaymentIntentUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: PaymentIntentUpdateManyWithWhereWithoutStudentInput | PaymentIntentUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: PaymentIntentScalarWhereInput | PaymentIntentScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -145190,6 +145302,20 @@ export namespace Prisma {
     update?: ParentAccessAuditLogUpdateWithWhereUniqueWithoutStudentInput | ParentAccessAuditLogUpdateWithWhereUniqueWithoutStudentInput[]
     updateMany?: ParentAccessAuditLogUpdateManyWithWhereWithoutStudentInput | ParentAccessAuditLogUpdateManyWithWhereWithoutStudentInput[]
     deleteMany?: ParentAccessAuditLogScalarWhereInput | ParentAccessAuditLogScalarWhereInput[]
+  }
+
+  export type PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<PaymentIntentCreateWithoutStudentInput, PaymentIntentUncheckedCreateWithoutStudentInput> | PaymentIntentCreateWithoutStudentInput[] | PaymentIntentUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: PaymentIntentCreateOrConnectWithoutStudentInput | PaymentIntentCreateOrConnectWithoutStudentInput[]
+    upsert?: PaymentIntentUpsertWithWhereUniqueWithoutStudentInput | PaymentIntentUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: PaymentIntentCreateManyStudentInputEnvelope
+    set?: PaymentIntentWhereUniqueInput | PaymentIntentWhereUniqueInput[]
+    disconnect?: PaymentIntentWhereUniqueInput | PaymentIntentWhereUniqueInput[]
+    delete?: PaymentIntentWhereUniqueInput | PaymentIntentWhereUniqueInput[]
+    connect?: PaymentIntentWhereUniqueInput | PaymentIntentWhereUniqueInput[]
+    update?: PaymentIntentUpdateWithWhereUniqueWithoutStudentInput | PaymentIntentUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: PaymentIntentUpdateManyWithWhereWithoutStudentInput | PaymentIntentUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: PaymentIntentScalarWhereInput | PaymentIntentScalarWhereInput[]
   }
 
   export type SchoolCreateNestedOneWithoutTeachersInput = {
@@ -150765,6 +150891,12 @@ export namespace Prisma {
     connect?: ParentWhereUniqueInput
   }
 
+  export type StudentCreateNestedOneWithoutPaymentIntentsInput = {
+    create?: XOR<StudentCreateWithoutPaymentIntentsInput, StudentUncheckedCreateWithoutPaymentIntentsInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutPaymentIntentsInput
+    connect?: StudentWhereUniqueInput
+  }
+
   export type PaymentIntentLineCreateNestedManyWithoutPaymentIntentInput = {
     create?: XOR<PaymentIntentLineCreateWithoutPaymentIntentInput, PaymentIntentLineUncheckedCreateWithoutPaymentIntentInput> | PaymentIntentLineCreateWithoutPaymentIntentInput[] | PaymentIntentLineUncheckedCreateWithoutPaymentIntentInput[]
     connectOrCreate?: PaymentIntentLineCreateOrConnectWithoutPaymentIntentInput | PaymentIntentLineCreateOrConnectWithoutPaymentIntentInput[]
@@ -150797,6 +150929,14 @@ export namespace Prisma {
     upsert?: ParentUpsertWithoutPaymentIntentsInput
     connect?: ParentWhereUniqueInput
     update?: XOR<XOR<ParentUpdateToOneWithWhereWithoutPaymentIntentsInput, ParentUpdateWithoutPaymentIntentsInput>, ParentUncheckedUpdateWithoutPaymentIntentsInput>
+  }
+
+  export type StudentUpdateOneRequiredWithoutPaymentIntentsNestedInput = {
+    create?: XOR<StudentCreateWithoutPaymentIntentsInput, StudentUncheckedCreateWithoutPaymentIntentsInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutPaymentIntentsInput
+    upsert?: StudentUpsertWithoutPaymentIntentsInput
+    connect?: StudentWhereUniqueInput
+    update?: XOR<XOR<StudentUpdateToOneWithWhereWithoutPaymentIntentsInput, StudentUpdateWithoutPaymentIntentsInput>, StudentUncheckedUpdateWithoutPaymentIntentsInput>
   }
 
   export type PaymentIntentLineUpdateManyWithoutPaymentIntentNestedInput = {
@@ -153727,6 +153867,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutSchoolInput = {
@@ -153759,6 +153900,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutSchoolInput = {
@@ -155046,6 +155188,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     parent: ParentCreateNestedOneWithoutPaymentIntentsInput
+    student: StudentCreateNestedOneWithoutPaymentIntentsInput
     lines?: PaymentIntentLineCreateNestedManyWithoutPaymentIntentInput
   }
 
@@ -155067,6 +155210,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     parentId: string
+    studentId: string
     lines?: PaymentIntentLineUncheckedCreateNestedManyWithoutPaymentIntentInput
   }
 
@@ -157888,6 +158032,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"PaymentIntent"> | Date | string
     schoolId?: StringFilter<"PaymentIntent"> | string
     parentId?: StringFilter<"PaymentIntent"> | string
+    studentId?: StringFilter<"PaymentIntent"> | string
   }
 
   export type PaymentReversalUpsertWithWhereUniqueWithoutSchoolInput = {
@@ -161160,6 +161305,60 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type PaymentIntentCreateWithoutStudentInput = {
+    id?: string
+    reference: string
+    provider: $Enums.PaymentProvider
+    status?: $Enums.PaymentIntentStatus
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    checkoutUrl?: string | null
+    providerSessionId?: string | null
+    providerAuthorization?: string | null
+    idempotencyKey: string
+    payerEmail?: string | null
+    payerName?: string | null
+    lastError?: string | null
+    expiresAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutPaymentIntentsInput
+    parent: ParentCreateNestedOneWithoutPaymentIntentsInput
+    lines?: PaymentIntentLineCreateNestedManyWithoutPaymentIntentInput
+  }
+
+  export type PaymentIntentUncheckedCreateWithoutStudentInput = {
+    id?: string
+    reference: string
+    provider: $Enums.PaymentProvider
+    status?: $Enums.PaymentIntentStatus
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    checkoutUrl?: string | null
+    providerSessionId?: string | null
+    providerAuthorization?: string | null
+    idempotencyKey: string
+    payerEmail?: string | null
+    payerName?: string | null
+    lastError?: string | null
+    expiresAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    parentId: string
+    lines?: PaymentIntentLineUncheckedCreateNestedManyWithoutPaymentIntentInput
+  }
+
+  export type PaymentIntentCreateOrConnectWithoutStudentInput = {
+    where: PaymentIntentWhereUniqueInput
+    create: XOR<PaymentIntentCreateWithoutStudentInput, PaymentIntentUncheckedCreateWithoutStudentInput>
+  }
+
+  export type PaymentIntentCreateManyStudentInputEnvelope = {
+    data: PaymentIntentCreateManyStudentInput | PaymentIntentCreateManyStudentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SchoolUpsertWithoutStudentsInput = {
     update: XOR<SchoolUpdateWithoutStudentsInput, SchoolUncheckedUpdateWithoutStudentsInput>
     create: XOR<SchoolCreateWithoutStudentsInput, SchoolUncheckedCreateWithoutStudentsInput>
@@ -161743,6 +161942,22 @@ export namespace Prisma {
   export type ParentAccessAuditLogUpdateManyWithWhereWithoutStudentInput = {
     where: ParentAccessAuditLogScalarWhereInput
     data: XOR<ParentAccessAuditLogUpdateManyMutationInput, ParentAccessAuditLogUncheckedUpdateManyWithoutStudentInput>
+  }
+
+  export type PaymentIntentUpsertWithWhereUniqueWithoutStudentInput = {
+    where: PaymentIntentWhereUniqueInput
+    update: XOR<PaymentIntentUpdateWithoutStudentInput, PaymentIntentUncheckedUpdateWithoutStudentInput>
+    create: XOR<PaymentIntentCreateWithoutStudentInput, PaymentIntentUncheckedCreateWithoutStudentInput>
+  }
+
+  export type PaymentIntentUpdateWithWhereUniqueWithoutStudentInput = {
+    where: PaymentIntentWhereUniqueInput
+    data: XOR<PaymentIntentUpdateWithoutStudentInput, PaymentIntentUncheckedUpdateWithoutStudentInput>
+  }
+
+  export type PaymentIntentUpdateManyWithWhereWithoutStudentInput = {
+    where: PaymentIntentScalarWhereInput
+    data: XOR<PaymentIntentUpdateManyMutationInput, PaymentIntentUncheckedUpdateManyWithoutStudentInput>
   }
 
   export type SchoolCreateWithoutTeachersInput = {
@@ -163448,6 +163663,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentInput = {
@@ -163480,6 +163696,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentInput = {
@@ -163954,6 +164171,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     school: SchoolCreateNestedOneWithoutPaymentIntentsInput
+    student: StudentCreateNestedOneWithoutPaymentIntentsInput
     lines?: PaymentIntentLineCreateNestedManyWithoutPaymentIntentInput
   }
 
@@ -163975,6 +164193,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     schoolId: string
+    studentId: string
     lines?: PaymentIntentLineUncheckedCreateNestedManyWithoutPaymentIntentInput
   }
 
@@ -164676,6 +164895,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentRelationshipsInput = {
@@ -164708,6 +164928,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentRelationshipsInput = {
@@ -165046,6 +165267,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentRelationshipsInput = {
@@ -165078,6 +165300,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type ParentAccessAuditLogUpsertWithWhereUniqueWithoutRelationshipInput = {
@@ -174795,6 +175018,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentNotificationsInput = {
@@ -174827,6 +175051,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentNotificationsInput = {
@@ -175171,6 +175396,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentNotificationsInput = {
@@ -175203,6 +175429,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type ParentNotificationDeliveryLogUpsertWithWhereUniqueWithoutNotificationInput = {
@@ -176091,6 +176318,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutTeacherContactRequestsInput = {
@@ -176123,6 +176351,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutTeacherContactRequestsInput = {
@@ -176540,6 +176769,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutTeacherContactRequestsInput = {
@@ -176572,6 +176802,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type TeacherUpsertWithoutParentContactRequestsInput = {
@@ -177077,6 +177308,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutTeacherContactMessagesInput = {
@@ -177109,6 +177341,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutTeacherContactMessagesInput = {
@@ -177555,6 +177788,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutTeacherContactMessagesInput = {
@@ -177587,6 +177821,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type SchoolCreateWithoutParentActivityEventsInput = {
@@ -177863,6 +178098,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentActivityEventsInput = {
@@ -177895,6 +178131,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentActivityEventsInput = {
@@ -178276,6 +178513,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentActivityEventsInput = {
@@ -178308,6 +178546,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type TeacherUpsertWithoutParentActivityEventsInput = {
@@ -178614,6 +178853,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutGradeInput = {
@@ -178646,6 +178886,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutGradeInput = {
@@ -179383,6 +179624,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutClassInput = {
@@ -179415,6 +179657,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutClassInput = {
@@ -183304,6 +183547,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutHomeworkSubmissionsInput = {
@@ -183336,6 +183580,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutHomeworkSubmissionsInput = {
@@ -183690,6 +183935,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutHomeworkSubmissionsInput = {
@@ -183722,6 +183968,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type TeacherUpsertWithoutCheckedHomeworkInput = {
@@ -184076,6 +184323,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutResultsInput = {
@@ -184108,6 +184356,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutResultsInput = {
@@ -184413,6 +184662,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutResultsInput = {
@@ -184445,6 +184695,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type SchoolCreateWithoutAttendancesInput = {
@@ -184668,6 +184919,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutAttendancesInput = {
@@ -184700,6 +184952,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutAttendancesInput = {
@@ -185029,6 +185282,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutAttendancesInput = {
@@ -185061,6 +185315,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type LessonUpsertWithoutAttendancesInput = {
@@ -185382,6 +185637,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutAttendanceAuditLogsInput = {
@@ -185414,6 +185670,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutAttendanceAuditLogsInput = {
@@ -185741,6 +185998,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutAttendanceAuditLogsInput = {
@@ -185773,6 +186031,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type LessonUpsertWithoutAttendanceAuditLogsInput = {
@@ -189010,6 +189269,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutCaActivityScoresInput = {
@@ -189042,6 +189302,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutCaActivityScoresInput = {
@@ -189410,6 +189671,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutCaActivityScoresInput = {
@@ -189442,6 +189704,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type TeacherUpsertWithoutCaActivityScoresInput = {
@@ -190136,6 +190399,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutContinuousAssessmentsInput = {
@@ -190168,6 +190432,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutContinuousAssessmentsInput = {
@@ -190558,6 +190823,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutContinuousAssessmentsInput = {
@@ -190590,6 +190856,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type TeacherUpsertWithoutContinuousAssessmentsInput = {
@@ -194044,6 +194311,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutBillsInput = {
@@ -194076,6 +194344,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutBillsInput = {
@@ -194602,6 +194871,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutBillsInput = {
@@ -194634,6 +194904,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type FeeStructureUpsertWithoutBillsInput = {
@@ -195191,6 +195462,77 @@ export namespace Prisma {
     create: XOR<ParentCreateWithoutPaymentIntentsInput, ParentUncheckedCreateWithoutPaymentIntentsInput>
   }
 
+  export type StudentCreateWithoutPaymentIntentsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutStudentsInput
+    parent: ParentCreateNestedOneWithoutStudentsInput
+    class: ClassCreateNestedOneWithoutStudentsInput
+    grade: GradeCreateNestedOneWithoutStudentsInput
+    attendances?: AttendanceCreateNestedManyWithoutStudentInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutStudentInput
+    results?: ResultCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
+    bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
+    teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
+    teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
+    parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentUncheckedCreateWithoutPaymentIntentsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    schoolId?: string
+    parentId: string
+    classId: number
+    gradeId: number
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutStudentInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    results?: ResultUncheckedCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
+    bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
+    teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
+    teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentCreateOrConnectWithoutPaymentIntentsInput = {
+    where: StudentWhereUniqueInput
+    create: XOR<StudentCreateWithoutPaymentIntentsInput, StudentUncheckedCreateWithoutPaymentIntentsInput>
+  }
+
   export type PaymentIntentLineCreateWithoutPaymentIntentInput = {
     id?: string
     amount: Decimal | DecimalJsLike | number | string
@@ -195471,6 +195813,83 @@ export namespace Prisma {
     acceptedInvites?: ParentInviteUncheckedUpdateManyWithoutAcceptedParentNestedInput
   }
 
+  export type StudentUpsertWithoutPaymentIntentsInput = {
+    update: XOR<StudentUpdateWithoutPaymentIntentsInput, StudentUncheckedUpdateWithoutPaymentIntentsInput>
+    create: XOR<StudentCreateWithoutPaymentIntentsInput, StudentUncheckedCreateWithoutPaymentIntentsInput>
+    where?: StudentWhereInput
+  }
+
+  export type StudentUpdateToOneWithWhereWithoutPaymentIntentsInput = {
+    where?: StudentWhereInput
+    data: XOR<StudentUpdateWithoutPaymentIntentsInput, StudentUncheckedUpdateWithoutPaymentIntentsInput>
+  }
+
+  export type StudentUpdateWithoutPaymentIntentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
+    parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
+    class?: ClassUpdateOneRequiredWithoutStudentsNestedInput
+    grade?: GradeUpdateOneRequiredWithoutStudentsNestedInput
+    attendances?: AttendanceUpdateManyWithoutStudentNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutStudentNestedInput
+    results?: ResultUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
+    bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
+    teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
+    teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+  }
+
+  export type StudentUncheckedUpdateWithoutPaymentIntentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    classId?: IntFieldUpdateOperationsInput | number
+    gradeId?: IntFieldUpdateOperationsInput | number
+    attendances?: AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
+    bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
+    teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
+    teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+  }
+
   export type PaymentIntentLineUpsertWithWhereUniqueWithoutPaymentIntentInput = {
     where: PaymentIntentLineWhereUniqueInput
     update: XOR<PaymentIntentLineUpdateWithoutPaymentIntentInput, PaymentIntentLineUncheckedUpdateWithoutPaymentIntentInput>
@@ -195506,6 +195925,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     school: SchoolCreateNestedOneWithoutPaymentIntentsInput
     parent: ParentCreateNestedOneWithoutPaymentIntentsInput
+    student: StudentCreateNestedOneWithoutPaymentIntentsInput
   }
 
   export type PaymentIntentUncheckedCreateWithoutLinesInput = {
@@ -195527,6 +195947,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     schoolId: string
     parentId: string
+    studentId: string
   }
 
   export type PaymentIntentCreateOrConnectWithoutLinesInput = {
@@ -195612,6 +196033,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutPaymentIntentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutPaymentIntentsNestedInput
+    student?: StudentUpdateOneRequiredWithoutPaymentIntentsNestedInput
   }
 
   export type PaymentIntentUncheckedUpdateWithoutLinesInput = {
@@ -195633,6 +196055,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
   }
 
   export type StudentBillUpsertWithoutPaymentIntentLinesInput = {
@@ -199210,6 +199633,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutFinanceQueriesInput = {
@@ -199242,6 +199666,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutFinanceQueriesInput = {
@@ -199644,6 +200069,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutFinanceQueriesInput = {
@@ -199676,6 +200102,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentBillUpsertWithoutFinanceQueriesInput = {
@@ -202755,6 +203182,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentInviteLinksInput = {
@@ -202787,6 +203215,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentInviteLinksInput = {
@@ -202894,6 +203323,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentInviteLinksInput = {
@@ -202926,6 +203356,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type SchoolCreateWithoutParentInviteAuditLogsInput = {
@@ -204706,6 +205137,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentAccessAuditLogsInput = {
@@ -204738,6 +205170,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentAccessAuditLogsInput = {
@@ -205138,6 +205571,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentAccessAuditLogsInput = {
@@ -205170,6 +205604,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type ParentInviteUpsertWithoutAccessAuditLogsInput = {
@@ -206608,6 +207043,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     parentId: string
+    studentId: string
   }
 
   export type PaymentReversalCreateManySchoolInput = {
@@ -207202,6 +207638,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutSchoolInput = {
@@ -207234,6 +207671,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutSchoolInput = {
@@ -208589,6 +209027,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     parent?: ParentUpdateOneRequiredWithoutPaymentIntentsNestedInput
+    student?: StudentUpdateOneRequiredWithoutPaymentIntentsNestedInput
     lines?: PaymentIntentLineUpdateManyWithoutPaymentIntentNestedInput
   }
 
@@ -208610,6 +209049,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
     lines?: PaymentIntentLineUncheckedUpdateManyWithoutPaymentIntentNestedInput
   }
 
@@ -208631,6 +209071,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
   }
 
   export type PaymentReversalUpdateWithoutSchoolInput = {
@@ -210616,6 +211057,27 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type PaymentIntentCreateManyStudentInput = {
+    id?: string
+    reference: string
+    provider: $Enums.PaymentProvider
+    status?: $Enums.PaymentIntentStatus
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    checkoutUrl?: string | null
+    providerSessionId?: string | null
+    providerAuthorization?: string | null
+    idempotencyKey: string
+    payerEmail?: string | null
+    payerName?: string | null
+    lastError?: string | null
+    expiresAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    parentId: string
+  }
+
   export type AttendanceUpdateWithoutStudentInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     present?: BoolFieldUpdateOperationsInput | boolean
@@ -211320,6 +211782,71 @@ export namespace Prisma {
     performedBy?: StringFieldUpdateOperationsInput | string
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentIntentUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reference?: StringFieldUpdateOperationsInput | string
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    status?: EnumPaymentIntentStatusFieldUpdateOperationsInput | $Enums.PaymentIntentStatus
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    checkoutUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    providerSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    providerAuthorization?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: StringFieldUpdateOperationsInput | string
+    payerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    payerName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutPaymentIntentsNestedInput
+    parent?: ParentUpdateOneRequiredWithoutPaymentIntentsNestedInput
+    lines?: PaymentIntentLineUpdateManyWithoutPaymentIntentNestedInput
+  }
+
+  export type PaymentIntentUncheckedUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reference?: StringFieldUpdateOperationsInput | string
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    status?: EnumPaymentIntentStatusFieldUpdateOperationsInput | $Enums.PaymentIntentStatus
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    checkoutUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    providerSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    providerAuthorization?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: StringFieldUpdateOperationsInput | string
+    payerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    payerName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    lines?: PaymentIntentLineUncheckedUpdateManyWithoutPaymentIntentNestedInput
+  }
+
+  export type PaymentIntentUncheckedUpdateManyWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reference?: StringFieldUpdateOperationsInput | string
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    status?: EnumPaymentIntentStatusFieldUpdateOperationsInput | $Enums.PaymentIntentStatus
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    checkoutUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    providerSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    providerAuthorization?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: StringFieldUpdateOperationsInput | string
+    payerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    payerName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
   }
 
   export type LessonCreateManyTeacherInput = {
@@ -212674,6 +213201,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     schoolId: string
+    studentId: string
   }
 
   export type StudentUpdateWithoutParentInput = {
@@ -212706,6 +213234,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentInput = {
@@ -212738,6 +213267,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutParentInput = {
@@ -213248,6 +213778,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutPaymentIntentsNestedInput
+    student?: StudentUpdateOneRequiredWithoutPaymentIntentsNestedInput
     lines?: PaymentIntentLineUpdateManyWithoutPaymentIntentNestedInput
   }
 
@@ -213269,6 +213800,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
     lines?: PaymentIntentLineUncheckedUpdateManyWithoutPaymentIntentNestedInput
   }
 
@@ -213290,6 +213822,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ParentAccessAuditLogCreateManyRelationshipInput = {
@@ -214002,6 +214535,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutGradeInput = {
@@ -214034,6 +214568,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutGradeInput = {
@@ -214403,6 +214938,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutClassInput = {
@@ -214435,6 +214971,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutClassInput = {
