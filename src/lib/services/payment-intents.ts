@@ -12,6 +12,8 @@ import type { CreatePaymentIntentInput } from "@/src/lib/validation/payment-inte
 
 const CHECKOUT_TTL_MS = 30 * 60 * 1000;
 
+type IntentLineShape = { studentBillId: number; amount: Prisma.Decimal };
+
 type CreateParentPaymentIntentArgs = {
   schoolId: string;
   parentId: string;
@@ -39,6 +41,43 @@ function paymentIntentReference() {
 
 function checkoutExpiry() {
   return new Date(Date.now() + CHECKOUT_TTL_MS);
+}
+
+function sameMoney(left: Prisma.Decimal.Value, right: Prisma.Decimal.Value) {
+  return new Prisma.Decimal(left).equals(new Prisma.Decimal(right));
+}
+
+function intentMatchesRequest(
+  intent: {
+    parentId: string;
+    studentId: string;
+    provider: string;
+    amount: Prisma.Decimal;
+    lines: Array<{ studentBillId: number; amount: Prisma.Decimal }>;
+  },
+  expected: {
+    parentId: string;
+    studentId: string;
+    provider: string;
+    amount: Prisma.Decimal;
+    lines: IntentLineShape[];
+  },
+) {
+  if (intent.parentId !== expected.parentId) return false;
+  if (intent.studentId !== expected.studentId) return false;
+  if (intent.provider !== expected.provider) return false;
+  if (!sameMoney(intent.amount, expected.amount)) return false;
+  if (intent.lines.length !== expected.lines.length) return false;
+
+  const expectedLines = new Map(expected.lines.map((line) => [line.studentBillId, line.amount]));
+  return intent.lines.every((line) => {
+    const amount = expectedLines.get(line.studentBillId);
+    return amount ? sameMoney(line.amount, amount) : false;
+  });
+}
+
+function isUniqueConstraintError(error: unknown) {
+  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002";
 }
 
 export async function createParentPaymentIntent({
@@ -117,12 +156,36 @@ export async function createParentPaymentIntent({
   }
   const intentStudentId = safeLines[0]?.bill.studentId;
   if (!intentStudentId) throw new Error("Selected bill is missing a student link.");
+  const intentLines = safeLines.map(({ bill, amount }) => ({ studentBillId: bill.id, amount }));
   const idempotencyKey = `parent-checkout:${parentId}:${lineKey(requestedLines)}`;
   const now = new Date();
   let intent = await prisma.paymentIntent.findUnique({
     where: { schoolId_idempotencyKey: { schoolId, idempotencyKey } },
     include: { lines: true },
   });
+  let shouldInitializeProvider = false;
+
+  if (intent && !intentMatchesRequest(intent, {
+    parentId,
+    studentId: intentStudentId,
+    provider: settings.provider,
+    amount: total,
+    lines: intentLines,
+  })) {
+    throw new Error("Existing checkout record does not match this bill. Refresh the bill and try again.");
+  }
+
+  if (intent?.status === "PAID") {
+    throw new Error("This checkout has already been paid. Refresh the bill to see the latest balance.");
+  }
+
+  if (intent && intent.expiresAt <= now && intent.status !== "EXPIRED") {
+    intent = await prisma.paymentIntent.update({
+      where: { id: intent.id },
+      data: { status: "EXPIRED", lastError: "Checkout expired before provider confirmation." },
+      include: { lines: true },
+    });
+  }
 
   if (intent && intent.status === "PENDING" && intent.checkoutUrl && intent.expiresAt > now) {
     return {
@@ -134,35 +197,66 @@ export async function createParentPaymentIntent({
     };
   }
 
-  if (!intent || intent.status === "PAID" || intent.status === "CANCELLED" || intent.expiresAt <= now) {
-    if (intent && intent.expiresAt <= now && intent.status !== "PAID") {
-      await prisma.paymentIntent.update({
-        where: { id: intent.id },
-        data: { status: "EXPIRED", lastError: "Checkout expired before provider confirmation." },
+  if (!intent) {
+    try {
+      intent = await prisma.paymentIntent.create({
+        data: {
+          schoolId,
+          parentId,
+          studentId: intentStudentId,
+          provider: settings.provider,
+          reference: paymentIntentReference(),
+          amount: total,
+          idempotencyKey,
+          payerEmail: parent.email,
+          payerName: `${parent.name} ${parent.surname}`.trim(),
+          expiresAt: checkoutExpiry(),
+          lines: {
+            create: intentLines,
+          },
+        },
+        include: { lines: true },
       });
+      shouldInitializeProvider = true;
+    } catch (error) {
+      if (!isUniqueConstraintError(error)) throw error;
+      intent = await prisma.paymentIntent.findUnique({
+        where: { schoolId_idempotencyKey: { schoolId, idempotencyKey } },
+        include: { lines: true },
+      });
+      if (!intent) throw error;
+      if (intent.status === "PENDING" && intent.checkoutUrl && intent.expiresAt > new Date()) {
+        return {
+          paymentIntentId: intent.id,
+          checkoutUrl: intent.checkoutUrl,
+          reference: intent.reference,
+          amount: Number(intent.amount),
+          reused: true,
+        };
+      }
+      throw new Error("Checkout is already being prepared. Please wait a moment and try again.");
     }
-
-    intent = await prisma.paymentIntent.create({
+  } else if (["FAILED", "CANCELLED", "EXPIRED", "PENDING_PROVIDER", "CHECKOUT_CREATED"].includes(intent.status)) {
+    intent = await prisma.paymentIntent.update({
+      where: { id: intent.id },
       data: {
-        schoolId,
-        parentId,
-        studentId: intentStudentId,
-        provider: settings.provider,
+        status: "PENDING",
         reference: paymentIntentReference(),
-        amount: total,
-        idempotencyKey,
+        checkoutUrl: null,
+        providerSessionId: null,
+        providerAuthorization: null,
+        lastError: null,
         payerEmail: parent.email,
         payerName: `${parent.name} ${parent.surname}`.trim(),
         expiresAt: checkoutExpiry(),
-        lines: {
-          create: safeLines.map(({ bill, amount }) => ({
-            studentBillId: bill.id,
-            amount,
-          })),
-        },
       },
       include: { lines: true },
     });
+    shouldInitializeProvider = true;
+  }
+
+  if (!shouldInitializeProvider) {
+    throw new Error("Checkout is already being prepared. Please wait a moment and try again.");
   }
 
   const primaryBill = safeLines[0]?.bill;
