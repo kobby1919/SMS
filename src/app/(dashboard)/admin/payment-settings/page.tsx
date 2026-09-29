@@ -1,5 +1,5 @@
 import { CreditCard } from "lucide-react";
-import AdminPaymentSettingsForm from "@/src/components/AdminPaymentSettingsForm";
+import AdminPaymentSettingsForm, { type AdminPaymentSettingsFormValue } from "@/src/components/AdminPaymentSettingsForm";
 import { requirePageSession } from "@/src/lib/authz";
 import { ensureDefaultSchoolPaymentSettings } from "@/src/lib/services/school-payment-settings";
 
@@ -8,7 +8,16 @@ export const dynamic = "force-dynamic";
 const AdminPaymentSettingsPage = async () => {
   const { schoolId } = await requirePageSession(["admin"]);
   const settings = await ensureDefaultSchoolPaymentSettings(schoolId);
-
+  const formSettings: AdminPaymentSettingsFormValue = {
+    onlinePaymentsEnabled: settings.onlinePaymentsEnabled,
+    provider: settings.provider === "HUBTEL" || settings.provider === "FLUTTERWAVE" ? settings.provider : "PAYSTACK",
+    publicKey: settings.publicKey,
+    hasSecretKey: Boolean(settings.encryptedSecretKey),
+    hasWebhookSecret: Boolean(settings.encryptedWebhookSecret),
+    acceptedPaymentMethods: settings.acceptedPaymentMethods,
+    settlementAccountReference: settings.settlementAccountReference,
+    feePayerRule: settings.feePayerRule,
+  };
   return (
     <div className="flex flex-col gap-5 p-4">
       <div className="rounded-2xl border border-slate-200 bg-slate-950 p-5 text-white shadow-sm">
@@ -26,7 +35,7 @@ const AdminPaymentSettingsPage = async () => {
         </div>
       </div>
 
-      <AdminPaymentSettingsForm settings={settings} />
+      <AdminPaymentSettingsForm settings={formSettings} />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import type { PaymentMethod } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
-import { encryptPaymentSecret, hasPaymentSecret } from "@/src/lib/services/payment-settings-secrets";
+import { encryptPaymentSecret } from "@/src/lib/services/payment-settings-secrets";
 import type { SchoolPaymentSettingsInput } from "@/src/lib/validation/payment-settings";
 
 const defaultAcceptedPaymentMethods: PaymentMethod[] = [
@@ -22,22 +22,6 @@ export async function ensureDefaultSchoolPaymentSettings(schoolId: string) {
     },
     update: {},
   });
-}
-
-export function isSchoolPaymentProviderConfigured(settings: {
-  onlinePaymentsEnabled: boolean;
-  publicKey: string | null;
-  encryptedSecretKey: string | null;
-  encryptedWebhookSecret: string | null;
-  acceptedPaymentMethods: PaymentMethod[];
-}) {
-  return (
-    settings.onlinePaymentsEnabled &&
-    Boolean(settings.publicKey) &&
-    hasPaymentSecret(settings.encryptedSecretKey) &&
-    hasPaymentSecret(settings.encryptedWebhookSecret) &&
-    settings.acceptedPaymentMethods.length > 0
-  );
 }
 
 export async function updateSchoolPaymentSettings({

@@ -3,12 +3,11 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { CreditCard, KeyRound, Landmark, ShieldCheck } from "lucide-react";
-import type { SchoolPaymentSetting } from "@/src/generated/prisma";
 import {
   saveSchoolPaymentSettingsWithState,
   type SchoolPaymentSettingsActionState,
 } from "@/src/lib/actions/schoolPaymentSettingsActions";
-import { isSchoolPaymentProviderConfigured } from "@/src/lib/services/school-payment-settings";
+import { isSchoolPaymentProviderConfigured } from "@/src/lib/payment-settings-readiness";
 
 const initialState: SchoolPaymentSettingsActionState = {
   status: "idle",
@@ -22,6 +21,17 @@ const methodOptions = [
   { value: "BANK_TRANSFER", label: "Bank transfer" },
   { value: "POS", label: "POS" },
 ] as const;
+
+export type AdminPaymentSettingsFormValue = {
+  onlinePaymentsEnabled: boolean;
+  provider: "PAYSTACK" | "HUBTEL" | "FLUTTERWAVE";
+  publicKey: string | null;
+  hasSecretKey: boolean;
+  hasWebhookSecret: boolean;
+  acceptedPaymentMethods: string[];
+  settlementAccountReference: string | null;
+  feePayerRule: "SCHOOL_ABSORBS" | "PARENT_PAYS";
+};
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -39,7 +49,7 @@ function SubmitButton() {
 export default function AdminPaymentSettingsForm({
   settings,
 }: {
-  settings: SchoolPaymentSetting;
+  settings: AdminPaymentSettingsFormValue;
 }) {
   const [state, formAction] = useActionState(saveSchoolPaymentSettingsWithState, initialState);
   const providerReady = isSchoolPaymentProviderConfigured(settings);
@@ -133,7 +143,7 @@ export default function AdminPaymentSettingsForm({
             <input
               name="secretKey"
               type="password"
-              placeholder={settings.encryptedSecretKey ? "Saved - leave blank to keep" : "sk_test_..."}
+              placeholder={settings.hasSecretKey ? "Saved - leave blank to keep" : "sk_test_..."}
               autoComplete="off"
               className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm font-semibold outline-none focus:border-sky-400"
             />
@@ -143,7 +153,7 @@ export default function AdminPaymentSettingsForm({
             <input
               name="webhookSecret"
               type="password"
-              placeholder={settings.encryptedWebhookSecret ? "Saved - leave blank to keep" : "Provider webhook secret"}
+              placeholder={settings.hasWebhookSecret ? "Saved - leave blank to keep" : "Provider webhook secret"}
               autoComplete="off"
               className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm font-semibold outline-none focus:border-sky-400"
             />
