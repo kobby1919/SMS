@@ -1,11 +1,7 @@
 import prisma from "@/src/lib/prisma";
 import { Prisma } from "@/src/generated/prisma";
 import type { PaymentProvider, PaymentStatus, PaymentWebhookEvent } from "@/src/generated/prisma";
-import {
-  generateReceiptNumber,
-  recomputeBillStatus,
-  writeAuditLog,
-} from "@/src/lib/actions/financeActions";
+
 import { enqueueFinanceJob } from "@/src/lib/services/finance-queue";
 import { verifyProviderPayment } from "@/src/lib/services/payment-checkout-providers";
 import { decryptPaymentSecret } from "@/src/lib/services/payment-settings-secrets";
@@ -140,6 +136,45 @@ function verificationStatusToPaymentStatus(status: "SUCCESS" | "FAILED" | "PENDI
   if (status === "SUCCESS") return "CONFIRMED" as const;
   if (status === "FAILED") return "FAILED" as const;
   return "PENDING" as const;
+}
+
+async function generateReceiptNumberInTransaction(
+  tx: Prisma.TransactionClient,
+  schoolId: string,
+) {
+  const year = new Date().getFullYear();
+
+  await tx.receiptCounter.upsert({
+    where: { schoolId_year: { schoolId, year } },
+    create: { schoolId, year, lastCounter: 0 },
+    update: {},
+  });
+
+  const counter = await tx.receiptCounter.update({
+    where: { schoolId_year: { schoolId, year } },
+    data: { lastCounter: { increment: 1 } },
+  });
+
+  return `RCP-${year}-${String(counter.lastCounter).padStart(3, "0")}`;
+}
+
+function billStatusAfterPayment(input: {
+  totalAmount: Prisma.Decimal.Value;
+  amountPaid: Prisma.Decimal.Value;
+  discountAmount: Prisma.Decimal.Value;
+  currentStatus: string;
+}) {
+  if (input.currentStatus === "WAIVED") return { balance: money(0), status: "WAIVED" as const };
+
+  const total = new Prisma.Decimal(input.totalAmount);
+  const paid = new Prisma.Decimal(input.amountPaid);
+  const discount = new Prisma.Decimal(input.discountAmount);
+  const balance = total.sub(paid).sub(discount).toDecimalPlaces(2);
+
+  if (balance.lessThan(0)) return { balance, status: "OVERPAID" as const };
+  if (balance.equals(0)) return { balance, status: "PAID" as const };
+  if (paid.greaterThan(0)) return { balance, status: "PARTIAL" as const };
+  return { balance, status: "UNPAID" as const };
 }
 
 async function verifyWebhookPaymentWithProvider(
@@ -373,7 +408,6 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
       return markWebhookProcessed(webhookEventId, payment.id, "PROCESSED");
     }
 
-    const receiptNumber = await generateReceiptNumber(normalized.schoolId);
     const paymentResult = await prisma.$transaction(async (tx) => {
       const freshBill = await tx.studentBill.findFirst({
         where: { id: normalized.studentBillId, schoolId: normalized.schoolId },
@@ -389,8 +423,30 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
 
       let createdPayment;
       let shouldApplyBalance = true;
+      let receiptNumber: string;
 
       if (existingPayment) {
+        const currentBeforeUpdate = await tx.payment.findUnique({ where: { id: existingPayment.id } });
+        if (!currentBeforeUpdate) throw new Error("Existing payment disappeared during webhook confirmation.");
+        if (currentBeforeUpdate.status === "CONFIRMED") {
+          await tx.paymentWebhookEvent.update({
+            where: { id: webhookEventId },
+            data: { paymentId: currentBeforeUpdate.id },
+          });
+
+          await tx.paymentIntent.update({
+            where: { id: intent.id },
+            data: { status: "PAID", lastError: null },
+          });
+
+          return {
+            payment: currentBeforeUpdate,
+            receiptNumber: currentBeforeUpdate.receiptNumber,
+            balanceApplied: false,
+          };
+        }
+
+        receiptNumber = await generateReceiptNumberInTransaction(tx, normalized.schoolId);
         const confirmed = await tx.payment.updateMany({
           where: { id: existingPayment.id, status: { not: "CONFIRMED" } },
           data: {
@@ -409,6 +465,7 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
         createdPayment = currentPayment;
         shouldApplyBalance = confirmed.count > 0;
       } else {
+        receiptNumber = await generateReceiptNumberInTransaction(tx, normalized.schoolId);
         createdPayment = await tx.payment.create({
           data: {
             receiptNumber,
@@ -440,13 +497,23 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
           data: { status: "PAID", lastError: null },
         });
 
-        return { payment: createdPayment, balanceApplied: false };
+        return { payment: createdPayment, receiptNumber: createdPayment.receiptNumber, balanceApplied: false };
       }
+
+      const nextBillPaid = new Prisma.Decimal(freshBill.amountPaid).add(normalized.amount);
+      const nextBill = billStatusAfterPayment({
+        totalAmount: freshBill.totalAmount,
+        amountPaid: nextBillPaid,
+        discountAmount: freshBill.discountAmount,
+        currentStatus: freshBill.status,
+      });
 
       await tx.studentBill.update({
         where: { id: normalized.studentBillId },
         data: {
-          amountPaid: { increment: normalized.amount },
+          amountPaid: nextBillPaid,
+          balance: nextBill.balance,
+          status: nextBill.status,
         },
       });
 
@@ -486,37 +553,39 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
         data: { status: "PAID", lastError: null },
       });
 
-      return { payment: createdPayment, balanceApplied: true };
+      await tx.financeAuditLog.create({
+        data: {
+          schoolId: normalized.schoolId,
+          action: "PAYMENT_RECORDED",
+          performedBy: "system:webhook",
+          entityType: "Payment",
+          entityId: String(createdPayment.id),
+          metadata: {
+            receiptNumber,
+            amount: normalized.amount.toNumber(),
+            provider: event.provider,
+            providerEventId: event.providerEventId,
+            externalReference: normalized.externalReference,
+            studentBillId: normalized.studentBillId,
+            studentName: `${bill.student.name} ${bill.student.surname}`,
+          } as Prisma.InputJsonValue,
+        },
+      });
+
+      return { payment: createdPayment, receiptNumber, balanceApplied: true };
     });
 
     const payment = paymentResult.payment;
+    const receiptNumber = paymentResult.receiptNumber;
 
     if (!paymentResult.balanceApplied) {
       return markWebhookProcessed(webhookEventId, payment.id, "PROCESSED");
     }
 
-    await recomputeBillStatus(normalized.studentBillId, normalized.schoolId);
     const updatedBill = await prisma.studentBill.findFirst({
       where: { id: normalized.studentBillId, schoolId: normalized.schoolId },
       include: {
         feeStructure: { select: { title: true } },
-      },
-    });
-
-    await writeAuditLog({
-      schoolId: normalized.schoolId,
-      action: "PAYMENT_RECORDED",
-      performedBy: "system:webhook",
-      entityType: "Payment",
-      entityId: String(payment.id),
-      metadata: {
-        receiptNumber,
-        amount: normalized.amount.toNumber(),
-        provider: event.provider,
-        providerEventId: event.providerEventId,
-        externalReference: normalized.externalReference,
-        studentBillId: normalized.studentBillId,
-        studentName: `${bill.student.name} ${bill.student.surname}`,
       },
     });
 
