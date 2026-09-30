@@ -33,7 +33,12 @@ export function resolveWebhookEventType(payload: WebhookPayload) {
 export function resolveWebhookReference(payload: WebhookPayload) {
   const data = asRecord(payload.data);
   const metadata = asRecord(data.metadata ?? payload.metadata);
+  const transaction = asRecord(data.transaction);
+  const transactionMetadata = asRecord(transaction.metadata);
   return readString(
+    transaction.reference,
+    transaction.id,
+    transactionMetadata.reference,
     data.reference,
     data.id,
     data.payment_intent,

@@ -78,10 +78,15 @@ function normalizePaymentWebhook(event: WebhookRecord): NormalizedPaymentWebhook
   const payload = asRecord(event.payload);
   const data = asRecord(payload.data);
   const metadata = asRecord(data.metadata ?? payload.metadata);
+  const transaction = asRecord(data.transaction);
+  const transactionMetadata = asRecord(transaction.metadata);
   const schoolId = readString(event.schoolId, payload.schoolId, data.schoolId, metadata.schoolId);
-  const studentBillId = readNumber(payload.studentBillId, data.studentBillId, metadata.studentBillId);
+  const studentBillId = readNumber(payload.studentBillId, data.studentBillId, metadata.studentBillId, transactionMetadata.studentBillId);
   const amount = normalizeAmount(event.provider, payload, data);
   const externalReference = readString(
+    transaction.reference,
+    transaction.id,
+    transactionMetadata.reference,
     data.reference,
     data.id,
     data.payment_intent,
@@ -111,11 +116,13 @@ function normalizePaymentWebhook(event: WebhookRecord): NormalizedPaymentWebhook
     status === "cancelled" ||
     status === "canceled";
 
-  if (!schoolId || !studentBillId || !amount || !externalReference) return null;
+  const isReversalEvent = isProviderReversalEvent(event.eventType);
+  if (!schoolId || !amount || !externalReference) return null;
+  if (!studentBillId && !isReversalEvent) return null;
 
   return {
     schoolId,
-    studentBillId,
+    studentBillId: studentBillId ?? 0,
     amount,
     externalReference,
     paidBy,
@@ -136,6 +143,30 @@ function verificationStatusToPaymentStatus(status: "SUCCESS" | "FAILED" | "PENDI
   if (status === "SUCCESS") return "CONFIRMED" as const;
   if (status === "FAILED") return "FAILED" as const;
   return "PENDING" as const;
+}
+
+function isProviderReversalEvent(eventType: string) {
+  const normalized = eventType.toLowerCase();
+  return normalized.includes("refund") || normalized.includes("reversal") || normalized.includes("reversed");
+}
+
+function isFinalProviderReversal(event: WebhookRecord) {
+  const eventType = event.eventType.toLowerCase();
+  const payload = asRecord(event.payload);
+  const data = asRecord(payload.data);
+  const status = readString(payload.status, data.status)?.toLowerCase();
+
+  return (
+    eventType.includes("processed") ||
+    eventType.includes("success") ||
+    eventType.includes("succeeded") ||
+    eventType.includes("reversed") ||
+    status === "success" ||
+    status === "succeeded" ||
+    status === "processed" ||
+    status === "reversed" ||
+    status === "refunded"
+  );
 }
 
 async function generateReceiptNumberInTransaction(
@@ -447,6 +478,226 @@ async function markWebhookFailed(eventId: string, error: unknown) {
   });
 }
 
+async function processVerifiedProviderReversal(
+  event: WebhookRecord,
+  normalized: NormalizedPaymentWebhook,
+  webhookEventId: string,
+) {
+  if (!isFinalProviderReversal(event)) {
+    return markWebhookProcessed(webhookEventId, null, "IGNORED");
+  }
+
+  const payment = await prisma.payment.findFirst({
+    where: {
+      schoolId: normalized.schoolId,
+      externalProvider: event.provider,
+      externalReference: normalized.externalReference,
+    },
+    include: {
+      reversal: true,
+      studentBill: {
+        include: {
+          student: { select: { id: true, name: true, surname: true } },
+          lineItems: true,
+          feeStructure: { select: { title: true } },
+        },
+      },
+    },
+  });
+
+  if (!payment) {
+    throw new Error("Provider reversal reference does not match any Edujay online payment.");
+  }
+
+  if (!sameMoney(payment.amount, normalized.amount)) {
+    throw new Error("Partial provider refunds are not automated yet. Review this payment manually before adjusting the bill.");
+  }
+
+  if (payment.status === "REVERSED" || payment.reversal) {
+    await prisma.paymentWebhookEvent.update({
+      where: { id: webhookEventId },
+      data: { paymentId: payment.id },
+    });
+    return markWebhookProcessed(webhookEventId, payment.id, "PROCESSED");
+  }
+
+  if (payment.status !== "CONFIRMED") {
+    throw new Error("Only confirmed online payments can be reversed by provider webhook.");
+  }
+
+  const amountToReverse = new Prisma.Decimal(payment.amount);
+  const reversedAt = new Date();
+  const reason = `Verified ${event.provider} reversal/refund webhook ${event.providerEventId}`;
+
+  const reversal = await prisma.$transaction(async (tx) => {
+    await tx.payment.update({
+      where: { id: payment.id },
+      data: { status: "REVERSED" },
+    });
+
+    const createdReversal = await tx.paymentReversal.create({
+      data: {
+        schoolId: normalized.schoolId,
+        paymentId: payment.id,
+        reason,
+        reversedBy: "system:webhook",
+        reversedAt,
+      },
+    });
+
+    const decrementedBill = await tx.studentBill.update({
+      where: { id: payment.studentBillId },
+      data: { amountPaid: { decrement: amountToReverse } },
+      select: {
+        totalAmount: true,
+        amountPaid: true,
+        discountAmount: true,
+        status: true,
+      },
+    });
+
+    const nextBill = billStatusAfterPayment({
+      totalAmount: decrementedBill.totalAmount,
+      amountPaid: decrementedBill.amountPaid,
+      discountAmount: decrementedBill.discountAmount,
+      currentStatus: decrementedBill.status,
+    });
+
+    await tx.studentBill.update({
+      where: { id: payment.studentBillId },
+      data: {
+        balance: nextBill.balance,
+        status: nextBill.status,
+      },
+    });
+
+    let toUnwind = new Prisma.Decimal(amountToReverse);
+    const sortedLines = [...payment.studentBill.lineItems].sort((a, b) => b.id - a.id);
+
+    for (const line of sortedLines) {
+      if (toUnwind.lte(0)) break;
+
+      const paid = new Prisma.Decimal(line.amountPaid);
+      const toDeduct = Prisma.Decimal.min(toUnwind, paid);
+      if (toDeduct.lte(0)) continue;
+
+      const newPaid = paid.sub(toDeduct);
+      const newBalance = new Prisma.Decimal(line.amount).sub(newPaid);
+
+      await tx.billLineItem.update({
+        where: { id: line.id },
+        data: {
+          amountPaid: Prisma.Decimal.max(newPaid, 0),
+          balance: newBalance,
+          isPaid: false,
+        },
+      });
+
+      toUnwind = toUnwind.sub(toDeduct);
+    }
+
+    await tx.paymentWebhookEvent.update({
+      where: { id: webhookEventId },
+      data: { paymentId: payment.id },
+    });
+
+    await tx.financeAuditLog.create({
+      data: {
+        schoolId: normalized.schoolId,
+        action: "PAYMENT_REVERSED",
+        performedBy: "system:webhook",
+        entityType: "Payment",
+        entityId: String(payment.id),
+        metadata: {
+          paymentId: payment.id,
+          receiptNumber: payment.receiptNumber,
+          amount: amountToReverse.toNumber(),
+          provider: event.provider,
+          providerEventId: event.providerEventId,
+          externalReference: normalized.externalReference,
+          studentBillId: payment.studentBillId,
+          reason,
+        } as Prisma.InputJsonValue,
+      },
+    });
+
+    return createdReversal;
+  }, {
+    isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+  });
+
+  await recordParentActivityEvents({
+    schoolId: normalized.schoolId,
+    studentIds: [payment.studentBill.studentId],
+    type: "PAYMENT",
+    title: `Online payment reversed: ${payment.receiptNumber}`,
+    body: `A verified provider reversal/refund of GHS ${amountToReverse.toFixed(2)} was applied. Receipt ${payment.receiptNumber} is now voided and remains visible only for history.`,
+    href: `/parent/finance/bills/${payment.studentBillId}`,
+    sourceModel: "PaymentReversal",
+    sourceId: String(payment.id),
+    sourceKey: `payment:${payment.id}:provider-reversed`,
+    occurredAt: reversedAt,
+    payload: {
+      paymentId: payment.id,
+      reversalId: reversal.id,
+      receiptNumber: payment.receiptNumber,
+      amount: amountToReverse.toNumber(),
+      provider: event.provider,
+      externalReference: normalized.externalReference,
+      reason,
+    },
+  });
+
+  await Promise.all([
+    notifyRole({
+      schoolId: normalized.schoolId,
+      recipientType: "BURSAR",
+      type: "PAYMENT_CORRECTION",
+      title: `Online receipt reversed: ${payment.receiptNumber}`,
+      body: `${event.provider} reversed GHS ${amountToReverse.toFixed(2)} for ${payment.studentBill.student.name} ${payment.studentBill.student.surname}.`,
+      category: "FINANCE",
+      priority: "HIGH",
+      href: `/list/finance/bills/${payment.studentBillId}`,
+      sourceModel: "PaymentReversal",
+      sourceId: String(reversal.id),
+      idempotencyKey: createNotificationIdempotencyKey("online-payment-reversed-bursar", String(reversal.id)),
+    }),
+    notifyRole({
+      schoolId: normalized.schoolId,
+      recipientType: "ADMIN",
+      type: "PAYMENT_CORRECTION",
+      title: `Online receipt reversed: ${payment.receiptNumber}`,
+      body: `${event.provider} reversed GHS ${amountToReverse.toFixed(2)} for ${payment.studentBill.student.name} ${payment.studentBill.student.surname}.`,
+      category: "FINANCE",
+      priority: "HIGH",
+      href: `/list/finance/bills/${payment.studentBillId}`,
+      sourceModel: "PaymentReversal",
+      sourceId: String(reversal.id),
+      idempotencyKey: createNotificationIdempotencyKey("online-payment-reversed-admin", String(reversal.id)),
+    }),
+    enqueueFinanceJob({
+      schoolId: normalized.schoolId,
+      type: "RECOMPUTE_FINANCE_SUMMARY",
+      payload: {
+        reason: "PAYMENT_PROVIDER_REVERSAL",
+        paymentId: payment.id,
+        studentBillId: payment.studentBillId,
+      },
+      idempotencyKey: `finance-summary:${normalized.schoolId}:payment-reversal:${payment.id}`,
+      createdBy: "system:webhook",
+    }),
+    enqueueFinanceJob({
+      schoolId: normalized.schoolId,
+      type: "GENERATE_DAILY_REPORT",
+      payload: { date: reversedAt.toISOString().slice(0, 10) },
+      idempotencyKey: `daily-report:${normalized.schoolId}:${reversedAt.toISOString().slice(0, 10)}`,
+      createdBy: "system:webhook",
+    }),
+  ]);
+
+  return markWebhookProcessed(webhookEventId, payment.id, "PROCESSED");
+}
+
 export async function processPaymentWebhookEvent(webhookEventId: string) {
   const event = await prisma.paymentWebhookEvent.findUnique({
     where: { id: webhookEventId },
@@ -464,6 +715,10 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
     const normalized = normalizePaymentWebhook(event as WebhookRecord);
     if (!normalized) {
       return markWebhookProcessed(webhookEventId, null, "IGNORED");
+    }
+
+    if (isProviderReversalEvent(event.eventType)) {
+      return processVerifiedProviderReversal(event as WebhookRecord, normalized, webhookEventId);
     }
 
     const { intent, verification } = await verifyWebhookPaymentWithProvider(event as WebhookRecord, normalized);
