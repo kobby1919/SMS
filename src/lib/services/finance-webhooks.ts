@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from "crypto";
 import prisma from "@/src/lib/prisma";
 import { Prisma } from "@/src/generated/prisma";
-import type { PaymentProvider, WebhookEventStatus } from "@/src/generated/prisma";
+import type { PaymentProvider, PaymentWebhookEvent, WebhookEventStatus } from "@/src/generated/prisma";
 import { enqueueFinanceJob } from "@/src/lib/services/finance-queue";
 
 export type StorePaymentWebhookInput = {
@@ -34,29 +34,75 @@ export function verifyHmacSignature(input: {
   return timingSafeEqual(expectedBuffer, actualBuffer);
 }
 
-export async function storePaymentWebhookEvent(input: StorePaymentWebhookInput) {
-  const event = await prisma.paymentWebhookEvent.upsert({
+function canRefreshWebhookEvent(status: WebhookEventStatus) {
+  return status === "RECEIVED" || status === "VERIFIED" || status === "FAILED";
+}
+
+function canQueueWebhookEvent(status: WebhookEventStatus) {
+  return status === "RECEIVED" || status === "VERIFIED" || status === "FAILED";
+}
+
+function isUniqueConstraintError(error: unknown) {
+  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002";
+}
+
+async function findExistingWebhookEvent(input: StorePaymentWebhookInput) {
+  return prisma.paymentWebhookEvent.findUnique({
     where: {
       provider_providerEventId: {
         provider: input.provider,
         providerEventId: input.providerEventId,
       },
     },
-    update: {},
-    create: {
-      provider: input.provider,
-      providerEventId: input.providerEventId,
+  });
+}
+
+async function refreshExistingWebhookEvent(
+  event: PaymentWebhookEvent,
+  input: StorePaymentWebhookInput,
+) {
+  if (!canRefreshWebhookEvent(event.status)) return event;
+
+  return prisma.paymentWebhookEvent.update({
+    where: { id: event.id },
+    data: {
       eventType: input.eventType,
       payload: input.payload as Prisma.InputJsonValue,
-      signature: input.signature ?? null,
-      schoolId: input.schoolId ?? null,
-      status: input.verified ? "VERIFIED" : "RECEIVED",
+      signature: input.signature ?? event.signature,
+      schoolId: input.schoolId ?? event.schoolId,
+      status: input.verified ? "VERIFIED" : event.status,
+      lastError: input.verified ? null : event.lastError,
     },
   });
+}
 
-  if (input.schoolId && event.status !== "PROCESSED") {
+export async function storePaymentWebhookEvent(input: StorePaymentWebhookInput) {
+  let event: PaymentWebhookEvent;
+
+  try {
+    event = await prisma.paymentWebhookEvent.create({
+      data: {
+        provider: input.provider,
+        providerEventId: input.providerEventId,
+        eventType: input.eventType,
+        payload: input.payload as Prisma.InputJsonValue,
+        signature: input.signature ?? null,
+        schoolId: input.schoolId ?? null,
+        status: input.verified ? "VERIFIED" : "RECEIVED",
+      },
+    });
+  } catch (error) {
+    if (!isUniqueConstraintError(error)) throw error;
+
+    const existing = await findExistingWebhookEvent(input);
+    if (!existing) throw error;
+    event = await refreshExistingWebhookEvent(existing, input);
+  }
+
+  const queueSchoolId = input.schoolId ?? event.schoolId;
+  if (queueSchoolId && canQueueWebhookEvent(event.status)) {
     await enqueueFinanceJob({
-      schoolId: input.schoolId,
+      schoolId: queueSchoolId,
       type: "PROCESS_PAYMENT_WEBHOOK",
       payload: {
         webhookEventId: event.id,

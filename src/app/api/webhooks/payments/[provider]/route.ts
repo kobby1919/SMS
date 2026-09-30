@@ -21,34 +21,24 @@ type PaymentWebhookRouteContext = {
 
 const PROVIDERS: Record<string, PaymentProvider> = {
   paystack: "PAYSTACK",
-  flutterwave: "FLUTTERWAVE",
-  hubtel: "HUBTEL",
-  expresspay: "EXPRESSPAY",
-  theteller: "THETELLER",
-  stripe: "STRIPE",
-  manual: "MANUAL",
-  bank: "BANK_TRANSFER",
-  "bank-transfer": "BANK_TRANSFER",
-  momo: "MOBILE_MONEY",
-  "mobile-money": "MOBILE_MONEY",
-  other: "OTHER",
 };
 
 function providerEnvSecret(provider: PaymentProvider) {
-  if (provider === "PAYSTACK") return process.env.PAYSTACK_WEBHOOK_SECRET;
-  if (provider === "FLUTTERWAVE") return process.env.FLUTTERWAVE_WEBHOOK_SECRET;
-  if (provider === "HUBTEL") return process.env.HUBTEL_WEBHOOK_SECRET;
-  if (provider === "EXPRESSPAY") return process.env.EXPRESSPAY_WEBHOOK_SECRET;
-  if (provider === "THETELLER") return process.env.THETELLER_WEBHOOK_SECRET;
-  if (provider === "STRIPE") return process.env.STRIPE_WEBHOOK_SECRET;
-  return process.env.PAYMENT_WEBHOOK_SECRET;
+  if (provider === "PAYSTACK") {
+    return process.env.PAYSTACK_WEBHOOK_SECRET ?? process.env.PAYSTACK_SECRET_KEY;
+  }
+  return undefined;
 }
 
 function providerSignatureAlgorithm(provider: PaymentProvider) {
   return provider === "PAYSTACK" ? "sha512" : "sha256";
 }
 
-async function resolveSchoolWebhookSecret(provider: PaymentProvider, reference: string | null) {
+function uniqueSecrets(secrets: Array<string | null | undefined>) {
+  return [...new Set(secrets.filter((secret): secret is string => Boolean(secret)))];
+}
+
+async function resolveSchoolWebhookSecrets(provider: PaymentProvider, reference: string | null) {
   if (!reference) return null;
 
   const intent = await prisma.paymentIntent.findFirst({
@@ -58,33 +48,41 @@ async function resolveSchoolWebhookSecret(provider: PaymentProvider, reference: 
       school: {
         select: {
           paymentSettings: {
-            select: { encryptedWebhookSecret: true },
+            select: {
+              encryptedSecretKey: true,
+              encryptedWebhookSecret: true,
+            },
           },
         },
       },
     },
   });
 
-  if (!intent?.school.paymentSettings?.encryptedWebhookSecret) {
-    return intent ? { schoolId: intent.schoolId, secret: null } : null;
-  }
+  if (!intent) return null;
 
+  const settings = intent.school.paymentSettings;
   return {
     schoolId: intent.schoolId,
-    secret: decryptPaymentSecret(intent.school.paymentSettings.encryptedWebhookSecret),
+    secrets: provider === "PAYSTACK"
+      ? uniqueSecrets([
+          settings?.encryptedSecretKey
+            ? decryptPaymentSecret(settings.encryptedSecretKey)
+            : null,
+          settings?.encryptedWebhookSecret
+            ? decryptPaymentSecret(settings.encryptedWebhookSecret)
+            : null,
+        ])
+      : uniqueSecrets([
+          settings?.encryptedWebhookSecret
+            ? decryptPaymentSecret(settings.encryptedWebhookSecret)
+            : null,
+        ]),
   };
 }
 
 function providerSignature(req: NextRequest, provider: PaymentProvider) {
   if (provider === "PAYSTACK") return req.headers.get("x-paystack-signature");
-  if (provider === "FLUTTERWAVE") {
-    return req.headers.get("verif-hash") ?? req.headers.get("x-flutterwave-signature");
-  }
-  if (provider === "HUBTEL") return req.headers.get("x-hubtel-signature");
-  if (provider === "EXPRESSPAY") return req.headers.get("x-expresspay-signature");
-  if (provider === "THETELLER") return req.headers.get("x-theteller-signature");
-  if (provider === "STRIPE") return req.headers.get("stripe-signature");
-  return req.headers.get("x-edujay-signature");
+  return null;
 }
 
 export async function POST(req: NextRequest, context: PaymentWebhookRouteContext) {
@@ -122,21 +120,15 @@ export async function POST(req: NextRequest, context: PaymentWebhookRouteContext
 
   const payload = parsed.data;
   const reference = resolveWebhookReference(payload);
-  const schoolSecret = await resolveSchoolWebhookSecret(provider, reference);
+  const schoolSecrets = await resolveSchoolWebhookSecrets(provider, reference);
   const algorithm = providerSignatureAlgorithm(provider);
-  const verifiedBySchoolSecret = verifyHmacSignature({
-    rawBody,
-    signature,
-    secret: schoolSecret?.secret ?? undefined,
-    algorithm,
-  });
-  const verifiedByEnvSecret = verifyHmacSignature({
-    rawBody,
-    signature,
-    secret: providerEnvSecret(provider),
-    algorithm,
-  });
-  const verified = verifiedBySchoolSecret || verifiedByEnvSecret;
+  const secretCandidates = [
+    ...(schoolSecrets?.secrets ?? []),
+    providerEnvSecret(provider),
+  ].filter((secret): secret is string => Boolean(secret));
+  const verified = secretCandidates.some((secret) =>
+    verifyHmacSignature({ rawBody, signature, secret, algorithm }),
+  );
 
   if (!verified) {
     return NextResponse.json({ error: "Invalid webhook signature." }, { status: 401 });
@@ -152,7 +144,7 @@ export async function POST(req: NextRequest, context: PaymentWebhookRouteContext
     );
   }
 
-  const schoolId = schoolSecret?.schoolId ?? resolveWebhookSchoolId(payload);
+  const schoolId = schoolSecrets?.schoolId ?? resolveWebhookSchoolId(payload);
   const event = await storePaymentWebhookEvent({
     provider,
     providerEventId,
