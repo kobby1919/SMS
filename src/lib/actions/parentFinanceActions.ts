@@ -11,7 +11,7 @@ import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-e
 import { listActiveParentChildIds } from "@/src/lib/services/parent-student-relationships";
 
 const QUERY_REASON_LABELS: Record<string, string> = {
-  ALREADY_PAID: "I have already paid",
+  ALREADY_PAID: "Offline payment not showing",
   WRONG_AMOUNT: "Wrong amount",
   NEED_CLARIFICATION: "Need clarification",
   RECEIPT_ISSUE: "Receipt issue",

@@ -30,7 +30,7 @@ const STATE_LABELS = {
 };
 
 const QUERY_REASON_LABELS: Record<string, string> = {
-  ALREADY_PAID: "Already paid",
+  ALREADY_PAID: "Offline payment not showing",
   WRONG_AMOUNT: "Wrong amount",
   NEED_CLARIFICATION: "Needs clarification",
   RECEIPT_ISSUE: "Receipt issue",

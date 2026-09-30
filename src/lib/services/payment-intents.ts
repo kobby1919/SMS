@@ -270,6 +270,7 @@ export async function createParentPaymentIntent({
       amount: Number(intent.amount),
       reference: intent.reference,
       callbackUrl: `${appUrl()}/parent/finance/bills/${primaryBill.id}?payment=return&intent=${encodeURIComponent(intent.id)}`,
+      acceptedPaymentMethods: settings.acceptedPaymentMethods,
       metadata: {
         schoolId,
         parentId,

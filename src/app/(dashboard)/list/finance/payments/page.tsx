@@ -33,6 +33,7 @@ const TERM_LABELS: Record<string, string> = {
 };
 const PAYMENT_STATUSES = ["PENDING", "CONFIRMED", "FAILED", "REVERSED"] as const;
 const PAYMENT_METHODS = [
+  "CARD",
   "CASH",
   "MTN_MOMO",
   "VODAFONE_CASH",

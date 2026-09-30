@@ -1,13 +1,13 @@
 import { z } from "zod";
 
-export const paymentProviderSchema = z.enum(["PAYSTACK", "HUBTEL", "FLUTTERWAVE"]);
+export const paymentProviderSchema = z.enum(["PAYSTACK"]);
 export const paymentFeePayerRuleSchema = z.enum(["SCHOOL_ABSORBS", "PARENT_PAYS"]);
 export const onlinePaymentMethodSchema = z.enum([
+  "CARD",
   "MTN_MOMO",
   "VODAFONE_CASH",
   "AIRTELTIGO_MONEY",
   "BANK_TRANSFER",
-  "POS",
 ]);
 
 const optionalCredentialSchema = z

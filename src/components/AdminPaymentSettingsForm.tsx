@@ -15,16 +15,16 @@ const initialState: SchoolPaymentSettingsActionState = {
 };
 
 const methodOptions = [
+  { value: "CARD", label: "Card" },
   { value: "MTN_MOMO", label: "MTN Mobile Money" },
   { value: "VODAFONE_CASH", label: "Telecel Cash" },
   { value: "AIRTELTIGO_MONEY", label: "AT Money" },
   { value: "BANK_TRANSFER", label: "Bank transfer" },
-  { value: "POS", label: "POS" },
 ] as const;
 
 export type AdminPaymentSettingsFormValue = {
   onlinePaymentsEnabled: boolean;
-  provider: "PAYSTACK" | "HUBTEL" | "FLUTTERWAVE";
+  provider: "PAYSTACK";
   publicKey: string | null;
   hasSecretKey: boolean;
   hasWebhookSecret: boolean;
@@ -75,7 +75,7 @@ export default function AdminPaymentSettingsForm({
             <span>
               <span className="block text-sm font-black text-slate-900">Enable online payments</span>
               <span className="block text-xs font-semibold leading-5 text-slate-500">
-                Parents can pay online only after this is enabled.
+                Parents can pay online only after this is enabled. The provider confirms successful payments automatically.
               </span>
             </span>
           </label>
@@ -88,8 +88,8 @@ export default function AdminPaymentSettingsForm({
               className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm font-semibold outline-none focus:border-sky-400"
             >
               <option value="PAYSTACK">Paystack</option>
-              <option value="HUBTEL">Hubtel</option>
-              <option value="FLUTTERWAVE">Flutterwave</option>
+              <option value="HUBTEL" disabled>Hubtel - coming later</option>
+              <option value="FLUTTERWAVE" disabled>Flutterwave - coming later</option>
             </select>
           </label>
 
@@ -169,7 +169,7 @@ export default function AdminPaymentSettingsForm({
           <div>
             <h2 className="text-base font-black text-slate-950">Methods And Settlement</h2>
             <p className="mt-1 text-sm font-semibold leading-6 text-slate-500">
-              Choose what parents are allowed to use and how the school identifies the provider settlement account.
+              Choose what the provider may show on checkout and how the school identifies the settlement account.
             </p>
           </div>
         </div>

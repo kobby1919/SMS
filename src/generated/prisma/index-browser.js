@@ -1455,6 +1455,7 @@ exports.PaymentFeePayerRule = exports.$Enums.PaymentFeePayerRule = {
 };
 
 exports.PaymentMethod = exports.$Enums.PaymentMethod = {
+  CARD: 'CARD',
   CASH: 'CASH',
   MTN_MOMO: 'MTN_MOMO',
   VODAFONE_CASH: 'VODAFONE_CASH',

@@ -87,6 +87,7 @@ enum BillStatus {
 }
 
 enum PaymentMethod {
+  CARD
   CASH
   MTN_MOMO
   VODAFONE_CASH

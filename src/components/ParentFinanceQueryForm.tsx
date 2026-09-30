@@ -6,7 +6,7 @@ import { openParentFinanceQuery } from "@/src/lib/actions/parentFinanceActions";
 
 const REASONS = [
   { value: "NEED_CLARIFICATION", label: "Need clarification" },
-  { value: "ALREADY_PAID", label: "I have already paid" },
+  { value: "ALREADY_PAID", label: "Offline payment not showing" },
   { value: "WRONG_AMOUNT", label: "Wrong amount" },
   { value: "RECEIPT_ISSUE", label: "Receipt issue" },
   { value: "OTHER", label: "Other" },
@@ -77,7 +77,7 @@ export default function ParentFinanceQueryForm({ studentBillId, paymentId }: Pro
           onChange={(event) => setMessage(event.target.value)}
           rows={4}
           maxLength={1000}
-          placeholder="Example: I paid by MoMo yesterday but the balance still shows unpaid."
+          placeholder="Example: I paid at the office or through the school account, but the balance still shows unpaid."
           className="w-full resize-none rounded-xl border border-gray-200 px-3 py-3 text-sm font-semibold text-gray-700 outline-none focus:border-amber-400"
         />
 

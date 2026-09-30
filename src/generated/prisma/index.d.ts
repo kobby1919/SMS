@@ -534,6 +534,7 @@ export type BillStatus = (typeof BillStatus)[keyof typeof BillStatus]
 
 
 export const PaymentMethod: {
+  CARD: 'CARD',
   CASH: 'CASH',
   MTN_MOMO: 'MTN_MOMO',
   VODAFONE_CASH: 'VODAFONE_CASH',

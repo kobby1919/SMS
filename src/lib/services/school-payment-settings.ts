@@ -4,6 +4,7 @@ import { encryptPaymentSecret } from "@/src/lib/services/payment-settings-secret
 import type { SchoolPaymentSettingsInput } from "@/src/lib/validation/payment-settings";
 
 const defaultAcceptedPaymentMethods: PaymentMethod[] = [
+  "CARD",
   "MTN_MOMO",
   "VODAFONE_CASH",
   "AIRTELTIGO_MONEY",

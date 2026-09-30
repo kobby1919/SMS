@@ -3,6 +3,7 @@ import { Prisma } from "@/src/generated/prisma";
 
 // 1. Payment Method Labels
 export const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  CARD: "Card",
   CASH: "Cash",
   MTN_MOMO: "MTN Mobile Money",
   VODAFONE_CASH: "Vodafone Cash",

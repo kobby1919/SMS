@@ -10,7 +10,7 @@ const AdminPaymentSettingsPage = async () => {
   const settings = await ensureDefaultSchoolPaymentSettings(schoolId);
   const formSettings: AdminPaymentSettingsFormValue = {
     onlinePaymentsEnabled: settings.onlinePaymentsEnabled,
-    provider: settings.provider === "HUBTEL" || settings.provider === "FLUTTERWAVE" ? settings.provider : "PAYSTACK",
+    provider: "PAYSTACK",
     publicKey: settings.publicKey,
     hasSecretKey: Boolean(settings.encryptedSecretKey),
     hasWebhookSecret: Boolean(settings.encryptedWebhookSecret),

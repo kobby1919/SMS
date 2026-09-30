@@ -21,6 +21,7 @@ export const dynamic = "force-dynamic";
 
 const PAYMENT_STATUSES = ["CONFIRMED", "REVERSED", "PENDING", "FAILED"] as const;
 const PAYMENT_METHODS = [
+  "CARD",
   "CASH",
   "MTN_MOMO",
   "VODAFONE_CASH",
