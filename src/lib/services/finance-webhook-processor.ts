@@ -500,18 +500,28 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
         return { payment: createdPayment, receiptNumber: createdPayment.receiptNumber, balanceApplied: false };
       }
 
-      const nextBillPaid = new Prisma.Decimal(freshBill.amountPaid).add(normalized.amount);
+      const incrementedBill = await tx.studentBill.update({
+        where: { id: normalized.studentBillId },
+        data: {
+          amountPaid: { increment: normalized.amount },
+        },
+        select: {
+          totalAmount: true,
+          amountPaid: true,
+          discountAmount: true,
+          status: true,
+        },
+      });
       const nextBill = billStatusAfterPayment({
-        totalAmount: freshBill.totalAmount,
-        amountPaid: nextBillPaid,
-        discountAmount: freshBill.discountAmount,
-        currentStatus: freshBill.status,
+        totalAmount: incrementedBill.totalAmount,
+        amountPaid: incrementedBill.amountPaid,
+        discountAmount: incrementedBill.discountAmount,
+        currentStatus: incrementedBill.status,
       });
 
       await tx.studentBill.update({
         where: { id: normalized.studentBillId },
         data: {
-          amountPaid: nextBillPaid,
           balance: nextBill.balance,
           status: nextBill.status,
         },
@@ -573,6 +583,8 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
       });
 
       return { payment: createdPayment, receiptNumber, balanceApplied: true };
+    }, {
+      isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
     });
 
     const payment = paymentResult.payment;
