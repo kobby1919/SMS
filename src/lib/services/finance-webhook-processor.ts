@@ -373,45 +373,75 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
       return markWebhookProcessed(webhookEventId, payment.id, "PROCESSED");
     }
 
-    assertCanRecordPayment(bill.status);
-    assertPaymentWithinAllowedOverpay({
-      amount: normalized.amount,
-      currentBalance: bill.balance,
-    });
-
     const receiptNumber = await generateReceiptNumber(normalized.schoolId);
-    const payment = await prisma.$transaction(async (tx) => {
-      const createdPayment = existingPayment
-        ? await tx.payment.update({
-            where: { id: existingPayment.id },
-            data: {
-              receiptNumber,
-              amount: normalized.amount,
-              paymentDate: effectivePaymentDate,
-              paidBy: effectivePaidBy,
-              referenceNo: normalized.externalReference,
-              notes: `Confirmed from ${event.provider} webhook ${event.providerEventId}`,
-              status: "CONFIRMED",
-            },
-          })
-        : await tx.payment.create({
-            data: {
-              receiptNumber,
-              amount: normalized.amount,
-              schoolId: normalized.schoolId,
-              paymentMethod: "OTHER",
-              paymentDate: effectivePaymentDate,
-              paidBy: effectivePaidBy,
-              referenceNo: normalized.externalReference,
-              externalProvider: event.provider,
-              externalReference: normalized.externalReference,
-              idempotencyKey,
-              notes: `Recorded from ${event.provider} webhook ${event.providerEventId}`,
-              status: "CONFIRMED",
-              studentBillId: normalized.studentBillId,
-              recordedBy: "system:webhook",
-            },
-          });
+    const paymentResult = await prisma.$transaction(async (tx) => {
+      const freshBill = await tx.studentBill.findFirst({
+        where: { id: normalized.studentBillId, schoolId: normalized.schoolId },
+        include: { lineItems: true },
+      });
+      if (!freshBill) throw new Error("Webhook payment bill not found during final confirmation.");
+
+      assertCanRecordPayment(freshBill.status);
+      assertPaymentWithinAllowedOverpay({
+        amount: normalized.amount,
+        currentBalance: freshBill.balance,
+      });
+
+      let createdPayment;
+      let shouldApplyBalance = true;
+
+      if (existingPayment) {
+        const confirmed = await tx.payment.updateMany({
+          where: { id: existingPayment.id, status: { not: "CONFIRMED" } },
+          data: {
+            receiptNumber,
+            amount: normalized.amount,
+            paymentDate: effectivePaymentDate,
+            paidBy: effectivePaidBy,
+            referenceNo: normalized.externalReference,
+            notes: `Confirmed from ${event.provider} webhook ${event.providerEventId}`,
+            status: "CONFIRMED",
+          },
+        });
+
+        const currentPayment = await tx.payment.findUnique({ where: { id: existingPayment.id } });
+        if (!currentPayment) throw new Error("Existing payment disappeared during webhook confirmation.");
+        createdPayment = currentPayment;
+        shouldApplyBalance = confirmed.count > 0;
+      } else {
+        createdPayment = await tx.payment.create({
+          data: {
+            receiptNumber,
+            amount: normalized.amount,
+            schoolId: normalized.schoolId,
+            paymentMethod: "OTHER",
+            paymentDate: effectivePaymentDate,
+            paidBy: effectivePaidBy,
+            referenceNo: normalized.externalReference,
+            externalProvider: event.provider,
+            externalReference: normalized.externalReference,
+            idempotencyKey,
+            notes: `Recorded from ${event.provider} webhook ${event.providerEventId}`,
+            status: "CONFIRMED",
+            studentBillId: normalized.studentBillId,
+            recordedBy: "system:webhook",
+          },
+        });
+      }
+
+      if (!shouldApplyBalance) {
+        await tx.paymentWebhookEvent.update({
+          where: { id: webhookEventId },
+          data: { paymentId: createdPayment.id },
+        });
+
+        await tx.paymentIntent.update({
+          where: { id: intent.id },
+          data: { status: "PAID", lastError: null },
+        });
+
+        return { payment: createdPayment, balanceApplied: false };
+      }
 
       await tx.studentBill.update({
         where: { id: normalized.studentBillId },
@@ -421,7 +451,7 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
       });
 
       let remaining = new Prisma.Decimal(normalized.amount);
-      const sortedLines = [...bill.lineItems].sort((a, b) => a.id - b.id);
+      const sortedLines = [...freshBill.lineItems].sort((a, b) => a.id - b.id);
 
       for (const line of sortedLines) {
         if (remaining.lte(0)) break;
@@ -456,8 +486,14 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
         data: { status: "PAID", lastError: null },
       });
 
-      return createdPayment;
+      return { payment: createdPayment, balanceApplied: true };
     });
+
+    const payment = paymentResult.payment;
+
+    if (!paymentResult.balanceApplied) {
+      return markWebhookProcessed(webhookEventId, payment.id, "PROCESSED");
+    }
 
     await recomputeBillStatus(normalized.studentBillId, normalized.schoolId);
     const updatedBill = await prisma.studentBill.findFirst({
