@@ -27,6 +27,50 @@ type PaystackInitializeResponse = {
   };
 };
 
+type PaystackVerifyResponse = {
+  status?: boolean;
+  message?: string;
+  data?: {
+    id?: number | string;
+    status?: string;
+    reference?: string;
+    amount?: number;
+    currency?: string;
+    paid_at?: string | null;
+    gateway_response?: string;
+    metadata?: Record<string, unknown>;
+    customer?: {
+      email?: string | null;
+      first_name?: string | null;
+      last_name?: string | null;
+    };
+  };
+};
+
+export type ProviderPaymentVerificationInput = {
+  provider: PaymentProvider;
+  secretKey: string;
+  reference: string;
+};
+
+export type ProviderPaymentVerificationStatus = "SUCCESS" | "FAILED" | "PENDING";
+
+export type ProviderPaymentVerification = {
+  provider: PaymentProvider;
+  reference: string;
+  amount: number;
+  currency: string;
+  status: ProviderPaymentVerificationStatus;
+  providerStatus: string;
+  providerMessage?: string | null;
+  paidAt?: Date | null;
+  customerEmail?: string | null;
+  paidBy?: string | null;
+  raw: Record<string, unknown>;
+};
+
+type PaystackCustomer = NonNullable<NonNullable<PaystackVerifyResponse["data"]>["customer"]>;
+
 function paystackChannels(methods: PaymentMethod[]) {
   const channels = new Set<string>();
 
@@ -85,5 +129,69 @@ export async function createCheckoutProviderSession(input: CheckoutProviderInput
     checkoutUrl: body.data?.authorization_url ?? "",
     providerSessionId: body.data?.reference ?? input.reference,
     providerAuthorization: body.data?.access_code ?? null,
+  };
+}
+
+function normalizeProviderStatus(status: string | undefined | null): ProviderPaymentVerificationStatus {
+  const normalized = status?.toLowerCase();
+  if (normalized === "success" || normalized === "succeeded" || normalized === "paid") return "SUCCESS";
+  if (normalized === "failed" || normalized === "abandoned" || normalized === "cancelled" || normalized === "canceled") return "FAILED";
+  return "PENDING";
+}
+
+function customerName(customer?: PaystackCustomer | null) {
+  if (!customer || typeof customer !== "object") return null;
+  const firstName = "first_name" in customer && typeof customer.first_name === "string" ? customer.first_name : "";
+  const lastName = "last_name" in customer && typeof customer.last_name === "string" ? customer.last_name : "";
+  return `${firstName} ${lastName}`.trim() || null;
+}
+
+function validDate(value: string | null | undefined) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+export async function verifyProviderPayment(
+  input: ProviderPaymentVerificationInput,
+): Promise<ProviderPaymentVerification> {
+  if (input.provider !== "PAYSTACK") {
+    throw new Error(`${input.provider} payment verification is not enabled yet. Use Paystack for the first online payment rollout.`);
+  }
+
+  const response = await fetch(
+    `https://api.paystack.co/transaction/verify/${encodeURIComponent(input.reference)}`,
+    {
+      method: "GET",
+      headers: { Authorization: `Bearer ${input.secretKey}` },
+      cache: "no-store",
+    },
+  );
+
+  const body = await response.json().catch(() => ({})) as PaystackVerifyResponse;
+  if (!response.ok || !body.status || !body.data?.reference) {
+    throw new Error(body.message || `Paystack payment verification failed. Provider status: ${response.status}.`);
+  }
+
+  const amount = typeof body.data.amount === "number" && Number.isFinite(body.data.amount)
+    ? body.data.amount / 100
+    : NaN;
+  if (!Number.isFinite(amount)) {
+    throw new Error("Paystack verification response did not include a valid amount.");
+  }
+
+  const customer = body.data.customer;
+  return {
+    provider: input.provider,
+    reference: body.data.reference,
+    amount,
+    currency: body.data.currency ?? "",
+    status: normalizeProviderStatus(body.data.status),
+    providerStatus: body.data.status ?? "unknown",
+    providerMessage: body.data.gateway_response ?? body.message ?? null,
+    paidAt: validDate(body.data.paid_at),
+    customerEmail: customer?.email ?? null,
+    paidBy: customerName(customer) ?? customer?.email ?? "Online payment",
+    raw: body as Record<string, unknown>,
   };
 }

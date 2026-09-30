@@ -7,6 +7,8 @@ import {
   writeAuditLog,
 } from "@/src/lib/actions/financeActions";
 import { enqueueFinanceJob } from "@/src/lib/services/finance-queue";
+import { verifyProviderPayment } from "@/src/lib/services/payment-checkout-providers";
+import { decryptPaymentSecret } from "@/src/lib/services/payment-settings-secrets";
 import {
   assertCanRecordPayment,
   assertPaymentWithinAllowedOverpay,
@@ -126,6 +128,107 @@ function provisionalReceiptNumber(provider: PaymentProvider, externalReference: 
   return `WEB-${provider}-${cleanRef || Date.now()}`;
 }
 
+function money(value: Prisma.Decimal.Value) {
+  return new Prisma.Decimal(value).toDecimalPlaces(2);
+}
+
+function sameMoney(left: Prisma.Decimal.Value, right: Prisma.Decimal.Value) {
+  return money(left).equals(money(right));
+}
+
+function verificationStatusToPaymentStatus(status: "SUCCESS" | "FAILED" | "PENDING") {
+  if (status === "SUCCESS") return "CONFIRMED" as const;
+  if (status === "FAILED") return "FAILED" as const;
+  return "PENDING" as const;
+}
+
+async function verifyWebhookPaymentWithProvider(
+  event: WebhookRecord,
+  normalized: NormalizedPaymentWebhook,
+) {
+  const intent = await prisma.paymentIntent.findFirst({
+    where: {
+      schoolId: normalized.schoolId,
+      provider: event.provider,
+      reference: normalized.externalReference,
+    },
+    include: {
+      lines: true,
+      school: {
+        select: {
+          paymentSettings: {
+            select: {
+              provider: true,
+              encryptedSecretKey: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!intent) {
+    throw new Error("Verified webhook reference does not match any Edujay payment intent.");
+  }
+
+  if (intent.provider !== event.provider) {
+    throw new Error("Webhook provider does not match the payment intent provider.");
+  }
+
+  if (intent.school.paymentSettings?.provider !== event.provider) {
+    throw new Error("School payment provider settings do not match this webhook provider.");
+  }
+
+  if (!intent.school.paymentSettings?.encryptedSecretKey) {
+    throw new Error("School payment provider secret key is missing, so payment cannot be verified.");
+  }
+
+  if (intent.currency !== "GHS") {
+    throw new Error(`Unsupported payment intent currency: ${intent.currency}.`);
+  }
+
+  if (!sameMoney(intent.amount, normalized.amount)) {
+    throw new Error("Webhook amount does not match the Edujay payment intent amount.");
+  }
+
+  if (intent.lines.length !== 1) {
+    throw new Error("Webhook verification supports one-bill online payment intents only.");
+  }
+
+  const intentLine = intent.lines[0];
+  if (!intentLine || intentLine.studentBillId !== normalized.studentBillId) {
+    throw new Error("Webhook bill does not match the Edujay payment intent bill.");
+  }
+
+  if (!sameMoney(intentLine.amount, normalized.amount)) {
+    throw new Error("Webhook bill amount does not match the Edujay payment intent line amount.");
+  }
+
+  const verification = await verifyProviderPayment({
+    provider: event.provider,
+    secretKey: decryptPaymentSecret(intent.school.paymentSettings.encryptedSecretKey),
+    reference: normalized.externalReference,
+  });
+
+  if (verification.provider !== event.provider) {
+    throw new Error("Provider verification returned the wrong provider.");
+  }
+
+  if (verification.reference !== normalized.externalReference) {
+    throw new Error("Provider verification reference does not match the webhook reference.");
+  }
+
+  if (verification.currency !== intent.currency) {
+    throw new Error("Provider verification currency does not match the Edujay payment intent currency.");
+  }
+
+  if (!sameMoney(verification.amount, intent.amount)) {
+    throw new Error("Provider verification amount does not match the Edujay payment intent amount.");
+  }
+
+  return { intent, verification };
+}
+
 async function markWebhookProcessed(eventId: string, paymentId: number | null, status: "PROCESSED" | "IGNORED") {
   return prisma.paymentWebhookEvent.update({
     where: { id: eventId },
@@ -167,6 +270,11 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
       return markWebhookProcessed(webhookEventId, null, "IGNORED");
     }
 
+    const { intent, verification } = await verifyWebhookPaymentWithProvider(event as WebhookRecord, normalized);
+    const effectivePaymentStatus = verificationStatusToPaymentStatus(verification.status);
+    const effectivePaidBy = verification.paidBy ?? normalized.paidBy;
+    const effectivePaymentDate = verification.paidAt ?? new Date();
+
     const idempotencyKey = `payment:${event.provider}:${normalized.externalReference}`;
     let existingPayment = await prisma.payment.findFirst({
       where: {
@@ -182,6 +290,10 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
     });
 
     if (existingPayment && existingPayment.status === "CONFIRMED") {
+      await prisma.paymentIntent.update({
+        where: { id: intent.id },
+        data: { status: "PAID", lastError: null },
+      });
       return markWebhookProcessed(webhookEventId, existingPayment.id, "PROCESSED");
     }
 
@@ -195,53 +307,61 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
 
     if (!bill) throw new Error("Webhook payment bill not found.");
 
-    if (normalized.paymentStatus !== "CONFIRMED") {
+    if (effectivePaymentStatus !== "CONFIRMED") {
       const payment = existingPayment ?? await prisma.payment.create({
         data: {
           receiptNumber: provisionalReceiptNumber(event.provider, normalized.externalReference),
           amount: normalized.amount,
           schoolId: normalized.schoolId,
           paymentMethod: "OTHER",
-          paymentDate: new Date(),
-          paidBy: normalized.paidBy,
+          paymentDate: effectivePaymentDate,
+          paidBy: effectivePaidBy,
           referenceNo: normalized.externalReference,
           externalProvider: event.provider,
           externalReference: normalized.externalReference,
           idempotencyKey,
-          notes: `${normalized.paymentStatus.toLowerCase()} ${event.provider} payment webhook ${event.providerEventId}`,
-          status: normalized.paymentStatus,
+          notes: `${effectivePaymentStatus.toLowerCase()} ${event.provider} payment webhook ${event.providerEventId}`,
+          status: effectivePaymentStatus,
           studentBillId: normalized.studentBillId,
           recordedBy: "system:webhook",
         },
       });
 
-      if (existingPayment && existingPayment.status !== normalized.paymentStatus) {
+      if (existingPayment && existingPayment.status !== effectivePaymentStatus) {
         existingPayment = await prisma.payment.update({
           where: { id: existingPayment.id },
           data: {
-            status: normalized.paymentStatus,
-            notes: `${normalized.paymentStatus.toLowerCase()} ${event.provider} payment webhook ${event.providerEventId}`,
+            status: effectivePaymentStatus,
+            notes: `${effectivePaymentStatus.toLowerCase()} ${event.provider} payment webhook ${event.providerEventId}`,
           },
         });
       }
+
+      await prisma.paymentIntent.update({
+        where: { id: intent.id },
+        data: {
+          status: effectivePaymentStatus === "FAILED" ? "FAILED" : "PENDING_PROVIDER",
+          lastError: verification.providerMessage ?? `Provider status: ${verification.providerStatus}`,
+        },
+      });
 
       await recordParentActivityEvents({
         schoolId: normalized.schoolId,
         studentIds: [bill.studentId],
         type: "PAYMENT",
-        title: normalized.paymentStatus === "FAILED" ? "Online payment failed" : "Online payment pending",
-        body: `${event.provider} payment of GHS ${normalized.amount.toFixed(2)} for ${bill.student.name} ${bill.student.surname} is ${normalized.paymentStatus.toLowerCase()}.`,
+        title: effectivePaymentStatus === "FAILED" ? "Online payment failed" : "Online payment pending",
+        body: `${event.provider} payment of GHS ${normalized.amount.toFixed(2)} for ${bill.student.name} ${bill.student.surname} is ${effectivePaymentStatus.toLowerCase()}.`,
         href: `/parent/finance/bills/${bill.id}`,
         sourceModel: "Payment",
         sourceId: String(payment.id),
-        sourceKey: `payment:${payment.id}:${normalized.paymentStatus.toLowerCase()}`,
+        sourceKey: `payment:${payment.id}:${effectivePaymentStatus.toLowerCase()}`,
         occurredAt: new Date(),
         payload: {
           paymentId: payment.id,
           provider: event.provider,
           externalReference: normalized.externalReference,
           amount: normalized.amount.toNumber(),
-          status: normalized.paymentStatus,
+          status: effectivePaymentStatus,
         },
       });
 
@@ -267,8 +387,8 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
             data: {
               receiptNumber,
               amount: normalized.amount,
-              paymentDate: new Date(),
-              paidBy: normalized.paidBy,
+              paymentDate: effectivePaymentDate,
+              paidBy: effectivePaidBy,
               referenceNo: normalized.externalReference,
               notes: `Confirmed from ${event.provider} webhook ${event.providerEventId}`,
               status: "CONFIRMED",
@@ -280,8 +400,8 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
               amount: normalized.amount,
               schoolId: normalized.schoolId,
               paymentMethod: "OTHER",
-              paymentDate: new Date(),
-              paidBy: normalized.paidBy,
+              paymentDate: effectivePaymentDate,
+              paidBy: effectivePaidBy,
               referenceNo: normalized.externalReference,
               externalProvider: event.provider,
               externalReference: normalized.externalReference,
@@ -329,6 +449,11 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
       await tx.paymentWebhookEvent.update({
         where: { id: webhookEventId },
         data: { paymentId: createdPayment.id },
+      });
+
+      await tx.paymentIntent.update({
+        where: { id: intent.id },
+        data: { status: "PAID", lastError: null },
       });
 
       return createdPayment;
@@ -384,6 +509,7 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
         amount: normalized.amount.toNumber(),
         provider: event.provider,
         paymentDate: payment.paymentDate.toISOString(),
+        providerStatus: verification.providerStatus,
       },
     });
 

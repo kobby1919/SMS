@@ -51,7 +51,7 @@ export function resolveWebhookSchoolId(payload: WebhookPayload) {
 export function resolveWebhookEventId(payload: WebhookPayload) {
   const data = asRecord(payload.data);
   const directId = readString(payload.id, data.id, data.event_id, data.eventId);
-  if (directId) return directId;
+  if (directId) return `${resolveWebhookEventType(payload)}:${directId}`;
 
   const reference = resolveWebhookReference(payload);
   const eventType = resolveWebhookEventType(payload);
