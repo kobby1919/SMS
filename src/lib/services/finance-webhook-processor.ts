@@ -124,10 +124,6 @@ function normalizePaymentWebhook(event: WebhookRecord): NormalizedPaymentWebhook
   };
 }
 
-function provisionalReceiptNumber(provider: PaymentProvider, externalReference: string) {
-  const cleanRef = externalReference.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 48);
-  return `WEB-${provider}-${cleanRef || Date.now()}`;
-}
 
 function money(value: Prisma.Decimal.Value) {
   return new Prisma.Decimal(value).toDecimalPlaces(2);
@@ -507,35 +503,6 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
     if (!bill) throw new Error("Webhook payment bill not found.");
 
     if (effectivePaymentStatus !== "CONFIRMED") {
-      const payment = existingPayment ?? await prisma.payment.create({
-        data: {
-          receiptNumber: provisionalReceiptNumber(event.provider, normalized.externalReference),
-          amount: normalized.amount,
-          schoolId: normalized.schoolId,
-          paymentMethod: "OTHER",
-          paymentDate: effectivePaymentDate,
-          paidBy: effectivePaidBy,
-          referenceNo: normalized.externalReference,
-          externalProvider: event.provider,
-          externalReference: normalized.externalReference,
-          idempotencyKey,
-          notes: `${effectivePaymentStatus.toLowerCase()} ${event.provider} payment webhook ${event.providerEventId}`,
-          status: effectivePaymentStatus,
-          studentBillId: normalized.studentBillId,
-          recordedBy: "system:webhook",
-        },
-      });
-
-      if (existingPayment && existingPayment.status !== effectivePaymentStatus) {
-        existingPayment = await prisma.payment.update({
-          where: { id: existingPayment.id },
-          data: {
-            status: effectivePaymentStatus,
-            notes: `${effectivePaymentStatus.toLowerCase()} ${event.provider} payment webhook ${event.providerEventId}`,
-          },
-        });
-      }
-
       await prisma.paymentIntent.update({
         where: { id: intent.id },
         data: {
@@ -551,12 +518,12 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
         title: effectivePaymentStatus === "FAILED" ? "Online payment failed" : "Online payment pending",
         body: `${event.provider} payment of GHS ${normalized.amount.toFixed(2)} for ${bill.student.name} ${bill.student.surname} is ${effectivePaymentStatus.toLowerCase()}.`,
         href: `/parent/finance/bills/${bill.id}`,
-        sourceModel: "Payment",
-        sourceId: String(payment.id),
-        sourceKey: `payment:${payment.id}:${effectivePaymentStatus.toLowerCase()}`,
+        sourceModel: "PaymentIntent",
+        sourceId: intent.id,
+        sourceKey: `payment-intent:${intent.id}:${effectivePaymentStatus.toLowerCase()}`,
         occurredAt: new Date(),
         payload: {
-          paymentId: payment.id,
+          paymentIntentId: intent.id,
           provider: event.provider,
           externalReference: normalized.externalReference,
           amount: normalized.amount.toNumber(),
@@ -564,12 +531,7 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
         },
       });
 
-      await prisma.paymentWebhookEvent.update({
-        where: { id: webhookEventId },
-        data: { paymentId: payment.id },
-      });
-
-      return markWebhookProcessed(webhookEventId, payment.id, "PROCESSED");
+      return markWebhookProcessed(webhookEventId, null, "PROCESSED");
     }
 
     const paymentResult = await prisma.$transaction(async (tx) => {
