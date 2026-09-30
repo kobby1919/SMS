@@ -534,7 +534,14 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
       return markWebhookProcessed(webhookEventId, null, "PROCESSED");
     }
 
-    const paymentResult = await prisma.$transaction(async (tx) => {
+    let paymentResult: {
+      payment: { id: number; receiptNumber: string; createdAt: Date; paymentDate: Date };
+      receiptNumber: string;
+      balanceApplied: boolean;
+    };
+
+    try {
+      paymentResult = await prisma.$transaction(async (tx) => {
       const freshBill = await tx.studentBill.findFirst({
         where: { id: normalized.studentBillId, schoolId: normalized.schoolId },
         include: { lineItems: true },
@@ -709,9 +716,36 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
       });
 
       return { payment: createdPayment, receiptNumber, balanceApplied: true };
-    }, {
-      isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-    });
+      }, {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+        const duplicatePayment = await prisma.payment.findFirst({
+          where: {
+            schoolId: normalized.schoolId,
+            status: "CONFIRMED",
+            OR: [
+              { idempotencyKey },
+              {
+                externalProvider: event.provider,
+                externalReference: normalized.externalReference,
+              },
+            ],
+          },
+        });
+
+        if (duplicatePayment) {
+          await prisma.paymentIntent.update({
+            where: { id: intent.id },
+            data: { status: "PAID", lastError: null },
+          });
+          return markWebhookProcessed(webhookEventId, duplicatePayment.id, "PROCESSED");
+        }
+      }
+
+      throw error;
+    }
 
     const payment = paymentResult.payment;
     const receiptNumber = paymentResult.receiptNumber;

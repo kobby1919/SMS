@@ -157,105 +157,127 @@ export async function createParentPaymentIntent({
   const intentStudentId = safeLines[0]?.bill.studentId;
   if (!intentStudentId) throw new Error("Selected bill is missing a student link.");
   const intentLines = safeLines.map(({ bill, amount }) => ({ studentBillId: bill.id, amount }));
-  const idempotencyKey = `parent-checkout:${parentId}:${lineKey(requestedLines)}`;
+  const checkoutFingerprint = lineKey(requestedLines);
+  const baseIdempotencyKey = `parent-checkout:${parentId}:${checkoutFingerprint}`;
+  const baseIdempotencyPrefix = `${baseIdempotencyKey}:`;
   const now = new Date();
-  let intent = await prisma.paymentIntent.findUnique({
-    where: { schoolId_idempotencyKey: { schoolId, idempotencyKey } },
-    include: { lines: true },
-  });
-  let shouldInitializeProvider = false;
-
-  if (intent && !intentMatchesRequest(intent, {
+  const expectedIntent = {
     parentId,
     studentId: intentStudentId,
     provider: settings.provider,
     amount: total,
     lines: intentLines,
-  })) {
-    throw new Error("Existing checkout record does not match this bill. Refresh the bill and try again.");
+  };
+
+  const candidateIntents = await prisma.paymentIntent.findMany({
+    where: {
+      schoolId,
+      parentId,
+      studentId: intentStudentId,
+      provider: settings.provider,
+      OR: [
+          { idempotencyKey: baseIdempotencyKey },
+          { idempotencyKey: { startsWith: baseIdempotencyPrefix } },
+        ],
+    },
+    include: { lines: true },
+    orderBy: { createdAt: "desc" },
+    take: 12,
+  });
+  const matchingIntents = candidateIntents.filter((candidate) => intentMatchesRequest(candidate, expectedIntent));
+
+  for (const staleIntent of matchingIntents) {
+    if (
+      staleIntent.expiresAt <= now &&
+      ["PENDING", "PENDING_PROVIDER", "CHECKOUT_CREATED"].includes(staleIntent.status)
+    ) {
+      await prisma.paymentIntent.update({
+        where: { id: staleIntent.id },
+        data: { status: "EXPIRED", lastError: "Checkout expired before provider confirmation." },
+      });
+      staleIntent.status = "EXPIRED";
+    }
   }
 
-  if (intent?.status === "PAID") {
+  const paidIntent = matchingIntents.find((candidate) => candidate.status === "PAID");
+  if (paidIntent) {
     throw new Error("This checkout has already been paid. Refresh the bill to see the latest balance.");
   }
 
-  if (intent && intent.expiresAt <= now && intent.status !== "EXPIRED") {
-    intent = await prisma.paymentIntent.update({
-      where: { id: intent.id },
-      data: { status: "EXPIRED", lastError: "Checkout expired before provider confirmation." },
-      include: { lines: true },
-    });
-  }
-
-  if (intent && intent.status === "PENDING" && intent.checkoutUrl && intent.expiresAt > now) {
+  const activeIntent = matchingIntents.find(
+    (candidate) => candidate.status === "PENDING" && candidate.checkoutUrl && candidate.expiresAt > now,
+  );
+  if (activeIntent) {
+    const checkoutUrl = activeIntent.checkoutUrl;
+    if (!checkoutUrl) throw new Error("Checkout is already being prepared. Please wait a moment and try again.");
     return {
-      paymentIntentId: intent.id,
-      checkoutUrl: intent.checkoutUrl,
-      reference: intent.reference,
-      amount: Number(intent.amount),
+      paymentIntentId: activeIntent.id,
+      checkoutUrl,
+      reference: activeIntent.reference,
+      amount: Number(activeIntent.amount),
       reused: true,
     };
   }
 
-  if (!intent) {
-    try {
-      intent = await prisma.paymentIntent.create({
-        data: {
-          schoolId,
-          parentId,
-          studentId: intentStudentId,
-          provider: settings.provider,
-          reference: paymentIntentReference(),
-          amount: total,
-          idempotencyKey,
-          payerEmail: parent.email,
-          payerName: `${parent.name} ${parent.surname}`.trim(),
-          expiresAt: checkoutExpiry(),
-          lines: {
-            create: intentLines,
-          },
-        },
-        include: { lines: true },
-      });
-      shouldInitializeProvider = true;
-    } catch (error) {
-      if (!isUniqueConstraintError(error)) throw error;
-      intent = await prisma.paymentIntent.findUnique({
-        where: { schoolId_idempotencyKey: { schoolId, idempotencyKey } },
-        include: { lines: true },
-      });
-      if (!intent) throw error;
-      if (intent.status === "PENDING" && intent.checkoutUrl && intent.expiresAt > new Date()) {
-        return {
-          paymentIntentId: intent.id,
-          checkoutUrl: intent.checkoutUrl,
-          reference: intent.reference,
-          amount: Number(intent.amount),
-          reused: true,
-        };
-      }
-      throw new Error("Checkout is already being prepared. Please wait a moment and try again.");
-    }
-  } else if (["FAILED", "CANCELLED", "EXPIRED", "PENDING_PROVIDER", "CHECKOUT_CREATED"].includes(intent.status)) {
-    intent = await prisma.paymentIntent.update({
-      where: { id: intent.id },
+  const preparingIntent = matchingIntents.find(
+    (candidate) =>
+      ["PENDING", "PENDING_PROVIDER", "CHECKOUT_CREATED"].includes(candidate.status) && candidate.expiresAt > now,
+  );
+  if (preparingIntent) {
+    throw new Error("Checkout is already being prepared. Please wait a moment and try again.");
+  }
+
+  let intent;
+  try {
+    const reference = paymentIntentReference();
+    intent = await prisma.paymentIntent.create({
       data: {
-        status: "PENDING",
-        reference: paymentIntentReference(),
-        checkoutUrl: null,
-        providerSessionId: null,
-        providerAuthorization: null,
-        lastError: null,
+        schoolId,
+        parentId,
+        studentId: intentStudentId,
+        provider: settings.provider,
+        reference,
+        amount: total,
+        idempotencyKey: `${baseIdempotencyKey}:${reference}`,
         payerEmail: parent.email,
         payerName: `${parent.name} ${parent.surname}`.trim(),
         expiresAt: checkoutExpiry(),
+        lines: {
+          create: intentLines,
+        },
       },
       include: { lines: true },
     });
-    shouldInitializeProvider = true;
-  }
-
-  if (!shouldInitializeProvider) {
+  } catch (error) {
+    if (!isUniqueConstraintError(error)) throw error;
+    const concurrentIntent = await prisma.paymentIntent.findFirst({
+      where: {
+        schoolId,
+        parentId,
+        studentId: intentStudentId,
+        provider: settings.provider,
+        OR: [
+          { idempotencyKey: baseIdempotencyKey },
+          { idempotencyKey: { startsWith: baseIdempotencyPrefix } },
+        ],
+        status: "PENDING",
+        checkoutUrl: { not: null },
+        expiresAt: { gt: new Date() },
+      },
+      include: { lines: true },
+      orderBy: { createdAt: "desc" },
+    });
+    if (concurrentIntent && intentMatchesRequest(concurrentIntent, expectedIntent)) {
+      const checkoutUrl = concurrentIntent.checkoutUrl;
+      if (!checkoutUrl) throw new Error("Checkout is already being prepared. Please wait a moment and try again.");
+      return {
+        paymentIntentId: concurrentIntent.id,
+        checkoutUrl,
+        reference: concurrentIntent.reference,
+        amount: Number(concurrentIntent.amount),
+        reused: true,
+      };
+    }
     throw new Error("Checkout is already being prepared. Please wait a moment and try again.");
   }
 
