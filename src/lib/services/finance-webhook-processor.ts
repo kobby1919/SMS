@@ -179,22 +179,30 @@ async function notifyConfirmedOnlinePayment(input: {
   const amountLabel = `GHS ${input.amount.toFixed(2)}`;
   const balanceLabel = `GHS ${new Prisma.Decimal(input.balance).toFixed(2)}`;
   const receiptHref = `/api/finance/receipt?billId=${input.billId}&receiptNumber=${encodeURIComponent(input.receiptNumber)}`;
-  const parentRows = await prisma.parentStudentRelationship.findMany({
-    where: {
-      schoolId: input.schoolId,
-      studentId: input.studentId,
-      status: "ACTIVE",
-      canViewFees: true,
-      parent: { schoolId: input.schoolId },
-      student: { schoolId: input.schoolId },
-    },
-    select: {
-      parent: { select: { id: true, email: true } },
-    },
-  });
-  const parents = parentRows.map((row) => row.parent);
+  const [parentRows, relationshipCount] = await Promise.all([
+    prisma.parentStudentRelationship.findMany({
+      where: {
+        schoolId: input.schoolId,
+        studentId: input.studentId,
+        status: "ACTIVE",
+        canViewFees: true,
+        parent: { schoolId: input.schoolId },
+        student: { schoolId: input.schoolId },
+      },
+      select: {
+        parent: { select: { id: true, email: true } },
+      },
+    }),
+    prisma.parentStudentRelationship.count({
+      where: {
+        schoolId: input.schoolId,
+        studentId: input.studentId,
+      },
+    }),
+  ]);
+  const parentsById = new Map(parentRows.map((row) => [row.parent.id, row.parent]));
 
-  if (parents.length === 0) {
+  if (parentsById.size === 0 && relationshipCount === 0) {
     const legacyStudent = await prisma.student.findFirst({
       where: { id: input.studentId, schoolId: input.schoolId },
       select: {
@@ -202,9 +210,14 @@ async function notifyConfirmedOnlinePayment(input: {
       },
     });
     if (legacyStudent?.parent?.schoolId === input.schoolId) {
-      parents.push({ id: legacyStudent.parent.id, email: legacyStudent.parent.email });
+      parentsById.set(legacyStudent.parent.id, {
+        id: legacyStudent.parent.id,
+        email: legacyStudent.parent.email,
+      });
     }
   }
+
+  const parents = [...parentsById.values()];
 
   await Promise.all([
     ...parents.map((parent) => createNotification({
