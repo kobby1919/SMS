@@ -43,6 +43,19 @@ function classSortKey(name: string) {
 
 export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
   const { start, end } = dayBounds(date);
+  const now = new Date();
+
+  await prisma.paymentIntent.updateMany({
+    where: {
+      schoolId,
+      status: { in: ["PENDING", "PENDING_PROVIDER", "CHECKOUT_CREATED"] },
+      expiresAt: { lte: now },
+    },
+    data: {
+      status: "EXPIRED",
+      lastError: "Checkout expired before provider confirmation.",
+    },
+  });
 
   const [
     todayByMethod,
@@ -56,6 +69,8 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
     highOutstandingBills,
     classBills,
     recentPayments,
+    onlineAttemptCounts,
+    onlineAttempts,
   ] = await Promise.all([
     prisma.payment.groupBy({
       by: ["paymentMethod"],
@@ -272,7 +287,71 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
       orderBy: { createdAt: "desc" },
       take: 6,
     }),
+    prisma.paymentIntent.groupBy({
+      by: ["status"],
+      where: {
+        schoolId,
+        status: { in: ["PENDING", "PENDING_PROVIDER", "CHECKOUT_CREATED", "FAILED", "EXPIRED", "CANCELLED"] },
+        OR: [
+          { createdAt: { gte: start, lte: end } },
+          { updatedAt: { gte: start, lte: end } },
+          { status: { in: ["PENDING", "PENDING_PROVIDER", "CHECKOUT_CREATED"] } },
+        ],
+      },
+      _count: { _all: true },
+    }),
+    prisma.paymentIntent.findMany({
+      where: {
+        schoolId,
+        status: { in: ["PENDING", "PENDING_PROVIDER", "CHECKOUT_CREATED", "FAILED", "EXPIRED", "CANCELLED"] },
+        OR: [
+          { createdAt: { gte: start, lte: end } },
+          { updatedAt: { gte: start, lte: end } },
+          { status: { in: ["PENDING", "PENDING_PROVIDER", "CHECKOUT_CREATED"] } },
+        ],
+      },
+      select: {
+        id: true,
+        reference: true,
+        provider: true,
+        status: true,
+        amount: true,
+        payerName: true,
+        payerEmail: true,
+        lastError: true,
+        expiresAt: true,
+        createdAt: true,
+        updatedAt: true,
+        parentId: true,
+        student: {
+          select: {
+            id: true,
+            name: true,
+            surname: true,
+            class: { select: { name: true } },
+          },
+        },
+        lines: {
+          take: 1,
+          select: { studentBillId: true },
+        },
+      },
+      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+      take: 8,
+    }),
   ]);
+
+  const onlineAttemptCountByStatus = Object.fromEntries(
+    onlineAttemptCounts.map((row) => [row.status, row._count._all]),
+  ) as Partial<Record<typeof onlineAttemptCounts[number]["status"], number>>;
+  const activeOnlineAttemptCount =
+    (onlineAttemptCountByStatus.PENDING ?? 0) +
+    (onlineAttemptCountByStatus.PENDING_PROVIDER ?? 0) +
+    (onlineAttemptCountByStatus.CHECKOUT_CREATED ?? 0);
+  const failedOrExpiredOnlineAttemptCount =
+    (onlineAttemptCountByStatus.FAILED ?? 0) +
+    (onlineAttemptCountByStatus.EXPIRED ?? 0) +
+    (onlineAttemptCountByStatus.CANCELLED ?? 0);
 
   const paymentsReceivedToday = todayByMethod.reduce((sum, row) => sum + row._count._all, 0);
   const amountReceivedToday = todayByMethod.reduce(
@@ -376,6 +455,8 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
   const quietFinanceDay =
     paymentsReceivedToday === 0 &&
     pendingConfirmationCount === 0 &&
+    activeOnlineAttemptCount === 0 &&
+    failedOrExpiredOnlineAttemptCount === 0 &&
     reversalsToday.length === 0 &&
     openFinanceQueries.length === 0;
 
@@ -390,6 +471,17 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
     methodBreakdown,
     pendingConfirmations,
     pendingConfirmationCount,
+    onlineAttempts,
+    onlineAttemptCounts: {
+      active: activeOnlineAttemptCount,
+      failedOrExpired: failedOrExpiredOnlineAttemptCount,
+      pending: onlineAttemptCountByStatus.PENDING ?? 0,
+      pendingProvider: onlineAttemptCountByStatus.PENDING_PROVIDER ?? 0,
+      checkoutCreated: onlineAttemptCountByStatus.CHECKOUT_CREATED ?? 0,
+      failed: onlineAttemptCountByStatus.FAILED ?? 0,
+      expired: onlineAttemptCountByStatus.EXPIRED ?? 0,
+      cancelled: onlineAttemptCountByStatus.CANCELLED ?? 0,
+    },
     receiptsIssuedToday,
     reversalsToday,
     reversalCountToday: reversalsToday.length,

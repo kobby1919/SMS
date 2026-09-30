@@ -126,9 +126,9 @@ const BursarPage = async ({
       color: "bg-emerald-50 text-emerald-700",
     },
     {
-      label: "Pending confirmations",
-      value: moneyPulse.pendingConfirmationCount,
-      sub: "Transfers or proof needing review",
+      label: "Online attempts",
+      value: moneyPulse.onlineAttemptCounts.active + moneyPulse.onlineAttemptCounts.failedOrExpired,
+      sub: `${moneyPulse.onlineAttemptCounts.active} active - ${moneyPulse.onlineAttemptCounts.failedOrExpired} failed/expired`,
       href: "/list/finance/payments?status=PENDING",
       icon: <Clock size={18} />,
       color: "bg-amber-50 text-amber-700",
@@ -250,7 +250,7 @@ const BursarPage = async ({
           </div>
         )}
 
-        <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-2 2xl:grid-cols-4">
           <div className="rounded-2xl border border-gray-100 bg-white p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -299,6 +299,44 @@ const BursarPage = async ({
             </div>
           </div>
 
+          <div className="rounded-2xl border border-gray-100 bg-white p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-black text-gray-900">Online checkout attempts</h3>
+                <p className="text-xs font-semibold text-gray-400">Started payments waiting, failed, or expired.</p>
+              </div>
+              <Clock size={18} className="text-amber-500" />
+            </div>
+            <div className="mt-3 space-y-2">
+              {moneyPulse.onlineAttempts.length === 0 ? (
+                <p className="rounded-xl bg-gray-50 p-4 text-sm font-semibold text-gray-400">No pending or failed online checkout attempt.</p>
+              ) : moneyPulse.onlineAttempts.slice(0, 5).map((attempt) => {
+                const billId = attempt.lines[0]?.studentBillId;
+                const isActive = attempt.status === "PENDING" || attempt.status === "PENDING_PROVIDER" || attempt.status === "CHECKOUT_CREATED";
+                return (
+                  <Link key={attempt.id} href={billId ? `/list/finance/bills/${billId}` : "/list/finance/payments?status=PENDING"} className="block rounded-xl border border-gray-100 p-3 transition hover:bg-amber-50/50">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="truncate text-sm font-black text-gray-800">
+                        {attempt.student.name} {attempt.student.surname}
+                      </p>
+                      <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black uppercase ${isActive ? "bg-amber-50 text-amber-700" : "bg-rose-50 text-rose-700"}`}>
+                        {attempt.status.replaceAll("_", " ").toLowerCase()}
+                      </span>
+                    </div>
+                    <p className="mt-1 truncate text-xs font-semibold text-gray-500">
+                      {attempt.student.class?.name ?? "No class"} - {attempt.provider} - {formatGHS(attempt.amount)}
+                    </p>
+                    <p className="mt-1 truncate text-[11px] font-semibold text-gray-400">
+                      Ref: {attempt.reference} - Expires {shortDate(attempt.expiresAt)}
+                    </p>
+                    {attempt.lastError && (
+                      <p className="mt-2 rounded-lg bg-rose-50 px-2 py-1 text-[11px] font-bold text-rose-700">{attempt.lastError}</p>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
           <div className="rounded-2xl border border-gray-100 bg-white p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
