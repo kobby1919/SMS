@@ -6,7 +6,6 @@ import { enqueueFinanceJob } from "@/src/lib/services/finance-queue";
 import { verifyProviderPayment } from "@/src/lib/services/payment-checkout-providers";
 import { decryptPaymentSecret } from "@/src/lib/services/payment-settings-secrets";
 import {
-  assertCanRecordPayment,
   assertPaymentWithinAllowedOverpay,
 } from "@/src/lib/services/finance-policy";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
@@ -324,7 +323,9 @@ function billStatusAfterPayment(input: {
   discountAmount: Prisma.Decimal.Value;
   currentStatus: string;
 }) {
-  if (input.currentStatus === "WAIVED") return { balance: money(0), status: "WAIVED" as const };
+  if (input.currentStatus === "WAIVED") {
+    return { balance: money(new Prisma.Decimal(input.amountPaid).neg()), status: "OVERPAID" as const };
+  }
 
   const total = new Prisma.Decimal(input.totalAmount);
   const paid = new Prisma.Decimal(input.amountPaid);
@@ -548,11 +549,13 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
       });
       if (!freshBill) throw new Error("Webhook payment bill not found during final confirmation.");
 
-      assertCanRecordPayment(freshBill.status);
-      assertPaymentWithinAllowedOverpay({
-        amount: normalized.amount,
-        currentBalance: freshBill.balance,
-      });
+      const alreadySettledBeforeWebhook = freshBill.status === "PAID" || freshBill.status === "OVERPAID" || freshBill.status === "WAIVED";
+      if (!alreadySettledBeforeWebhook) {
+        assertPaymentWithinAllowedOverpay({
+          amount: normalized.amount,
+          currentBalance: freshBill.balance,
+        });
+      }
 
       let createdPayment;
       let shouldApplyBalance = true;
