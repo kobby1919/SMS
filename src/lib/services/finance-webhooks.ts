@@ -18,10 +18,11 @@ export function verifyHmacSignature(input: {
   rawBody: string;
   signature: string | null;
   secret: string | undefined;
+  algorithm?: "sha256" | "sha512";
 }) {
   if (!input.secret || !input.signature) return false;
 
-  const expected = createHmac("sha256", input.secret)
+  const expected = createHmac(input.algorithm ?? "sha256", input.secret)
     .update(input.rawBody)
     .digest("hex");
 

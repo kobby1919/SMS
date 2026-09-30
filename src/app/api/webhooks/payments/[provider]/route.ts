@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/src/lib/prisma";
 import type { PaymentProvider } from "@/src/generated/prisma";
 import { enforceRateLimit } from "@/src/lib/rate-limit";
 import {
   storePaymentWebhookEvent,
   verifyHmacSignature,
 } from "@/src/lib/services/finance-webhooks";
+import { decryptPaymentSecret } from "@/src/lib/services/payment-settings-secrets";
 import {
   paymentWebhookPayloadSchema,
   resolveWebhookEventId,
   resolveWebhookEventType,
+  resolveWebhookReference,
+  resolveWebhookSchoolId,
 } from "@/src/lib/validation/finance-webhooks";
 
 type PaymentWebhookRouteContext = {
@@ -30,7 +34,7 @@ const PROVIDERS: Record<string, PaymentProvider> = {
   other: "OTHER",
 };
 
-function providerSecret(provider: PaymentProvider) {
+function providerEnvSecret(provider: PaymentProvider) {
   if (provider === "PAYSTACK") return process.env.PAYSTACK_WEBHOOK_SECRET;
   if (provider === "FLUTTERWAVE") return process.env.FLUTTERWAVE_WEBHOOK_SECRET;
   if (provider === "HUBTEL") return process.env.HUBTEL_WEBHOOK_SECRET;
@@ -38,6 +42,37 @@ function providerSecret(provider: PaymentProvider) {
   if (provider === "THETELLER") return process.env.THETELLER_WEBHOOK_SECRET;
   if (provider === "STRIPE") return process.env.STRIPE_WEBHOOK_SECRET;
   return process.env.PAYMENT_WEBHOOK_SECRET;
+}
+
+function providerSignatureAlgorithm(provider: PaymentProvider) {
+  return provider === "PAYSTACK" ? "sha512" : "sha256";
+}
+
+async function resolveSchoolWebhookSecret(provider: PaymentProvider, reference: string | null) {
+  if (!reference) return null;
+
+  const intent = await prisma.paymentIntent.findFirst({
+    where: { provider, reference },
+    select: {
+      schoolId: true,
+      school: {
+        select: {
+          paymentSettings: {
+            select: { encryptedWebhookSecret: true },
+          },
+        },
+      },
+    },
+  });
+
+  if (!intent?.school.paymentSettings?.encryptedWebhookSecret) {
+    return intent ? { schoolId: intent.schoolId, secret: null } : null;
+  }
+
+  return {
+    schoolId: intent.schoolId,
+    secret: decryptPaymentSecret(intent.school.paymentSettings.encryptedWebhookSecret),
+  };
 }
 
 function providerSignature(req: NextRequest, provider: PaymentProvider) {
@@ -69,15 +104,6 @@ export async function POST(req: NextRequest, context: PaymentWebhookRouteContext
 
   const rawBody = await req.text();
   const signature = providerSignature(req, provider);
-  const verified = verifyHmacSignature({
-    rawBody,
-    signature,
-    secret: providerSecret(provider),
-  });
-
-  if (!verified) {
-    return NextResponse.json({ error: "Invalid webhook signature." }, { status: 401 });
-  }
 
   let json: unknown;
   try {
@@ -95,19 +121,51 @@ export async function POST(req: NextRequest, context: PaymentWebhookRouteContext
   }
 
   const payload = parsed.data;
+  const reference = resolveWebhookReference(payload);
+  const schoolSecret = await resolveSchoolWebhookSecret(provider, reference);
+  const algorithm = providerSignatureAlgorithm(provider);
+  const verifiedBySchoolSecret = verifyHmacSignature({
+    rawBody,
+    signature,
+    secret: schoolSecret?.secret ?? undefined,
+    algorithm,
+  });
+  const verifiedByEnvSecret = verifyHmacSignature({
+    rawBody,
+    signature,
+    secret: providerEnvSecret(provider),
+    algorithm,
+  });
+  const verified = verifiedBySchoolSecret || verifiedByEnvSecret;
+
+  if (!verified) {
+    return NextResponse.json({ error: "Invalid webhook signature." }, { status: 401 });
+  }
+
+  let providerEventId: string;
+  try {
+    providerEventId = resolveWebhookEventId(payload);
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Webhook payload is missing a stable id." },
+      { status: 400 },
+    );
+  }
+
+  const schoolId = schoolSecret?.schoolId ?? resolveWebhookSchoolId(payload);
   const event = await storePaymentWebhookEvent({
     provider,
-    providerEventId: resolveWebhookEventId(payload),
+    providerEventId,
     eventType: resolveWebhookEventType(payload),
     payload,
     signature,
-    schoolId: payload.schoolId ?? null,
+    schoolId,
     verified,
   });
 
   return NextResponse.json({
     received: true,
-    queued: Boolean(payload.schoolId),
+    queued: Boolean(schoolId),
     eventId: event.id,
   }, { status: 202 });
 }
