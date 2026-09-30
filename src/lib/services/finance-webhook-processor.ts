@@ -11,6 +11,11 @@ import {
 } from "@/src/lib/services/finance-policy";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
 import { PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
+import {
+  createNotification,
+  createNotificationIdempotencyKey,
+  notifyRole,
+} from "@/src/lib/services/app-notifications";
 
 type WebhookRecord = PaymentWebhookEvent & {
   payload: Prisma.JsonValue;
@@ -156,6 +161,152 @@ async function generateReceiptNumberInTransaction(
   });
 
   return `RCP-${year}-${String(counter.lastCounter).padStart(3, "0")}`;
+}
+
+async function notifyConfirmedOnlinePayment(input: {
+  schoolId: string;
+  studentId: string;
+  studentName: string;
+  billId: number;
+  billTitle: string;
+  amount: Prisma.Decimal;
+  balance: Prisma.Decimal.Value;
+  status: string;
+  provider: PaymentProvider;
+  receiptNumber: string;
+  paymentId: number;
+}) {
+  const amountLabel = `GHS ${input.amount.toFixed(2)}`;
+  const balanceLabel = `GHS ${new Prisma.Decimal(input.balance).toFixed(2)}`;
+  const receiptHref = `/api/finance/receipt?billId=${input.billId}&receiptNumber=${encodeURIComponent(input.receiptNumber)}`;
+  const parentRows = await prisma.parentStudentRelationship.findMany({
+    where: {
+      schoolId: input.schoolId,
+      studentId: input.studentId,
+      status: "ACTIVE",
+      canViewFees: true,
+      parent: { schoolId: input.schoolId },
+      student: { schoolId: input.schoolId },
+    },
+    select: {
+      parent: { select: { id: true, email: true } },
+    },
+  });
+  const parents = parentRows.map((row) => row.parent);
+
+  if (parents.length === 0) {
+    const legacyStudent = await prisma.student.findFirst({
+      where: { id: input.studentId, schoolId: input.schoolId },
+      select: {
+        parent: { select: { id: true, email: true, schoolId: true } },
+      },
+    });
+    if (legacyStudent?.parent?.schoolId === input.schoolId) {
+      parents.push({ id: legacyStudent.parent.id, email: legacyStudent.parent.email });
+    }
+  }
+
+  await Promise.all([
+    ...parents.map((parent) => createNotification({
+      schoolId: input.schoolId,
+      recipientType: "PARENT",
+      recipientId: parent.id,
+      type: "SYSTEM",
+      category: "FINANCE",
+      priority: "HIGH",
+      title: `Receipt ready: ${amountLabel}`,
+      body: [
+        `Payment received for ${input.studentName}.`,
+        `Bill: ${input.billTitle}`,
+        `Receipt: ${input.receiptNumber}`,
+        `Provider: ${input.provider}`,
+        `Current balance: ${balanceLabel}`,
+      ].join("\n"),
+      href: receiptHref,
+      sourceModel: "Payment",
+      sourceId: String(input.paymentId),
+      idempotencyKey: createNotificationIdempotencyKey("online-payment-receipt", String(input.paymentId)),
+      payload: {
+        paymentId: input.paymentId,
+        billId: input.billId,
+        studentId: input.studentId,
+        receiptNumber: input.receiptNumber,
+        amount: input.amount.toNumber(),
+        balance: new Prisma.Decimal(input.balance).toNumber(),
+        provider: input.provider,
+      },
+      deliveries: [
+        { channel: "IN_APP", destination: parent.id },
+        ...(parent.email ? [{ channel: "EMAIL" as const, destination: parent.email }] : []),
+      ],
+    })),
+    notifyRole({
+      schoolId: input.schoolId,
+      recipientType: "BURSAR",
+      type: "SYSTEM",
+      category: "FINANCE",
+      priority: "HIGH",
+      title: `Online payment confirmed: ${amountLabel}`,
+      body: [
+        `Student: ${input.studentName}`,
+        `Bill: ${input.billTitle}`,
+        `Receipt: ${input.receiptNumber}`,
+        `Provider: ${input.provider}`,
+        `Balance after payment: ${balanceLabel}`,
+      ].join("\n"),
+      href: `/list/finance/receipts?search=${encodeURIComponent(input.receiptNumber)}`,
+      sourceModel: "Payment",
+      sourceId: String(input.paymentId),
+      idempotencyKey: createNotificationIdempotencyKey("online-payment-bursar", String(input.paymentId)),
+      payload: {
+        paymentId: input.paymentId,
+        billId: input.billId,
+        studentId: input.studentId,
+        receiptNumber: input.receiptNumber,
+        amount: input.amount.toNumber(),
+        provider: input.provider,
+      },
+    }),
+    notifyRole({
+      schoolId: input.schoolId,
+      recipientType: "ADMIN",
+      type: "SYSTEM",
+      category: "FINANCE",
+      priority: "NORMAL",
+      title: `Online payment included in reports: ${amountLabel}`,
+      body: [
+        `Student: ${input.studentName}`,
+        `Bill: ${input.billTitle}`,
+        `Receipt: ${input.receiptNumber}`,
+        `This payment is now part of Today’s Money Pulse and finance reports.`,
+      ].join("\n"),
+      href: `/list/finance/reports?search=${encodeURIComponent(input.receiptNumber)}`,
+      sourceModel: "Payment",
+      sourceId: String(input.paymentId),
+      idempotencyKey: createNotificationIdempotencyKey("online-payment-admin-report", String(input.paymentId)),
+      payload: {
+        paymentId: input.paymentId,
+        billId: input.billId,
+        studentId: input.studentId,
+        receiptNumber: input.receiptNumber,
+        amount: input.amount.toNumber(),
+        provider: input.provider,
+      },
+    }),
+  ]);
+}
+
+async function safelyNotifyConfirmedOnlinePayment(input: Parameters<typeof notifyConfirmedOnlinePayment>[0]) {
+  try {
+    await notifyConfirmedOnlinePayment(input);
+  } catch (error) {
+    console.error("[finance-webhook-processor] payment notification failed", {
+      schoolId: input.schoolId,
+      paymentId: input.paymentId,
+      receiptNumber: input.receiptNumber,
+      error,
+    });
+  }
 }
 
 function billStatusAfterPayment(input: {
@@ -628,6 +779,20 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
         paymentDate: payment.paymentDate.toISOString(),
         providerStatus: verification.providerStatus,
       },
+    });
+
+    await safelyNotifyConfirmedOnlinePayment({
+      schoolId: normalized.schoolId,
+      studentId: bill.studentId,
+      studentName: `${bill.student.name} ${bill.student.surname}`,
+      billId: normalized.studentBillId,
+      billTitle: updatedBill?.feeStructure.title ?? "School fees",
+      amount: normalized.amount,
+      balance: updatedBill?.balance ?? 0,
+      status: updatedBill?.status ?? "UPDATED",
+      provider: event.provider,
+      receiptNumber,
+      paymentId: payment.id,
     });
 
     await Promise.all([
