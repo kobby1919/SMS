@@ -176,6 +176,11 @@ export default async function ParentFinanceBillPage({
                             corrected from {payment.originalReceiptNumber}
                           </span>
                         )}
+                        {payment.isOnlineVerified && (
+                          <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-black uppercase text-emerald-700">
+                            online verified
+                          </span>
+                        )}
                       </div>
                       <p className="mt-0.5 text-xs font-semibold text-gray-400">
                         {payment.methodLabel} - {formatDate(payment.date)}

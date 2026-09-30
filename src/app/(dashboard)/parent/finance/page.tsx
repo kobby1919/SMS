@@ -179,11 +179,18 @@ export default async function ParentFinancePage({
                     {payment.methodLabel} - {formatDate(payment.date)}
                     {payment.referenceNo ? ` - Ref: ${payment.referenceNo}` : ""}
                   </p>
-                  {payment.originalReceiptNumber && (
-                    <p className="mt-1 inline-flex rounded-lg bg-emerald-50 px-2 py-1 text-[10px] font-black text-emerald-700">
-                      Corrected from {payment.originalReceiptNumber}
-                    </p>
-                  )}
+                  <div className="mt-1 flex flex-wrap gap-1.5">
+                    {payment.isOnlineVerified && (
+                      <span className="inline-flex rounded-lg bg-emerald-50 px-2 py-1 text-[10px] font-black text-emerald-700">
+                        Online verified
+                      </span>
+                    )}
+                    {payment.originalReceiptNumber && (
+                      <span className="inline-flex rounded-lg bg-emerald-50 px-2 py-1 text-[10px] font-black text-emerald-700">
+                        Corrected from {payment.originalReceiptNumber}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center justify-between gap-3 sm:justify-end">
                   <span className="text-sm font-black text-emerald-700">{formatGHS(payment.amount)}</span>

@@ -138,6 +138,7 @@ export default async function ReceiptsPage({
       { receiptNumber: { contains: search, mode: "insensitive" } },
       { paidBy: { contains: search, mode: "insensitive" } },
       { referenceNo: { contains: search, mode: "insensitive" } },
+      { externalReference: { contains: search, mode: "insensitive" } },
       { studentBill: { student: { name: { contains: search, mode: "insensitive" } } } },
       { studentBill: { student: { surname: { contains: search, mode: "insensitive" } } } },
       { studentBill: { student: { class: { name: { contains: search, mode: "insensitive" } } } } },
@@ -325,9 +326,19 @@ export default async function ReceiptsPage({
               const meta = STATUS_META[receipt.status];
               const student = receipt.studentBill.student;
               const feeStructure = receipt.studentBill.feeStructure;
-              const receivedBy = receipt.recordedBy === "system:webhook"
-                ? "Online payment provider"
-                : bursarNames.get(receipt.recordedBy) ?? adminNames.get(receipt.recordedBy) ?? "Finance office";
+              const isOnlineVerified = Boolean(receipt.externalProvider && receipt.externalReference && receipt.recordedBy === "system:webhook");
+              const providerLabel = receipt.externalProvider ? receipt.externalProvider.replaceAll("_", " ") : "";
+              const methodLabel = isOnlineVerified
+                ? `Online verified - ${providerLabel || "Provider"}`
+                : PAYMENT_METHOD_LABELS[receipt.paymentMethod] ?? receipt.paymentMethod;
+              const referenceLabel = isOnlineVerified
+                ? receipt.externalReference
+                : receipt.referenceNo;
+              const receivedBy = isOnlineVerified
+                ? "ONLINE_PROVIDER"
+                : receipt.recordedBy === "system:webhook"
+                  ? "Online payment provider"
+                  : bursarNames.get(receipt.recordedBy) ?? adminNames.get(receipt.recordedBy) ?? "Finance office";
               const correction = receipt.correctionRequests[0];
               const correctedFrom = receipt.correctedPaymentCorrections[0]?.originalPayment.receiptNumber;
               const canDownload = receipt.status === "CONFIRMED";
@@ -366,7 +377,7 @@ export default async function ReceiptsPage({
                         <div>
                           <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Paid by / method</p>
                           <p className="font-bold text-gray-700">{receipt.paidBy}</p>
-                          <p className="text-xs font-semibold text-gray-500">{PAYMENT_METHOD_LABELS[receipt.paymentMethod] ?? receipt.paymentMethod}{receipt.referenceNo ? ` - Ref: ${receipt.referenceNo}` : ""}</p>
+                          <p className="text-xs font-semibold text-gray-500">{methodLabel}{referenceLabel ? ` - Ref: ${referenceLabel}` : ""}</p>
                         </div>
                         <div>
                           <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Received by / time</p>
@@ -374,7 +385,7 @@ export default async function ReceiptsPage({
                           <p className="text-xs font-semibold text-gray-500">{formatDateTime(receipt.paymentDate)}</p>
                         </div>
                       </div>
-                      <p className="mt-3 rounded-xl bg-gray-50 px-3 py-2 text-xs font-semibold text-gray-500">{meta.note}</p>
+                      <p className="mt-3 rounded-xl bg-gray-50 px-3 py-2 text-xs font-semibold text-gray-500">{isOnlineVerified ? `Online verified receipt. Provider: ${providerLabel || "Provider"}. Reference: ${referenceLabel ?? "Saved on payment record"}.` : meta.note}</p>
                       {receipt.status === "REVERSED" && receipt.reversal && (
                         <p className="mt-2 inline-flex items-center gap-2 rounded-xl bg-rose-50 px-3 py-2 text-xs font-bold text-rose-700">
                           <RotateCcw size={13} /> Voided: {receipt.reversal.reason}

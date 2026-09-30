@@ -277,6 +277,10 @@ type ReceiptPDFProps = {
   academicYear: string;
   lineItems: LineItem[];
   recordedBy: string;
+  receivedByLabel: string;
+  isOnlineVerified: boolean;
+  providerLabel: string;
+  providerReference: string;
 };
 
 function ReceiptPDF(p: ReceiptPDFProps) {
@@ -327,7 +331,7 @@ function ReceiptPDF(p: ReceiptPDFProps) {
         {/* Header */}
         <View style={[S.header, { backgroundColor: p.schoolPrimaryColor }]}>
           <View style={S.headerLeft}>
-            <Text style={S.headerTag}>OFFICIAL PAYMENT RECEIPT</Text>
+            <Text style={S.headerTag}>{p.isOnlineVerified ? "OFFICIAL ONLINE VERIFIED RECEIPT" : "OFFICIAL PAYMENT RECEIPT"}</Text>
             <Text style={S.headerTitle}>{p.schoolName}</Text>
             <Text style={S.headerSub}>
               {poweredByPlatformLine()}
@@ -371,7 +375,10 @@ function ReceiptPDF(p: ReceiptPDFProps) {
           </View>
           <View style={S.infoBox}>
             <Text style={S.infoLbl}>RECEIVED BY</Text>
-            <Text style={S.infoVal}>{p.recordedBy}</Text>
+            <Text style={S.infoVal}>{p.receivedByLabel}</Text>
+            <Text style={S.infoSub}>
+              {p.isOnlineVerified ? `Verified by ${p.providerLabel}` : `Recorded by ${p.recordedBy}`}
+            </Text>
             <Text style={S.infoSub}>Generated: {formattedToday}</Text>
           </View>
         </View>
@@ -381,10 +388,10 @@ function ReceiptPDF(p: ReceiptPDFProps) {
           <View>
             <Text style={S.paymentLbl}>Amount Received</Text>
             <Text style={S.paymentMethod}>
-              {PAYMENT_METHOD_LABELS[p.paymentMethod] ?? p.paymentMethod}
+              {p.isOnlineVerified ? `Online verified - ${p.providerLabel}` : PAYMENT_METHOD_LABELS[p.paymentMethod] ?? p.paymentMethod}
             </Text>
-            {p.referenceNo ? (
-              <Text style={S.paymentRef}>Ref: {p.referenceNo}</Text>
+            {p.providerReference || p.referenceNo ? (
+              <Text style={S.paymentRef}>Ref: {p.providerReference || p.referenceNo}</Text>
             ) : null}
           </View>
           <Text style={S.paymentAmt}>{formatGHS(p.paymentAmount)}</Text>
@@ -486,6 +493,18 @@ function ReceiptPDF(p: ReceiptPDFProps) {
               {formatGHS(p.billPaid)}
             </Text>
           </View>
+          {p.isOnlineVerified ? (
+            <View style={S.summaryRow}>
+              <Text style={S.summaryLbl}>Online verification</Text>
+              <Text style={[S.summaryVal, { color: "#059669" }]}>Verified by {p.providerLabel}</Text>
+            </View>
+          ) : null}
+          {p.providerReference ? (
+            <View style={S.summaryRow}>
+              <Text style={S.summaryLbl}>Provider reference</Text>
+              <Text style={[S.summaryVal, { color: "#6b7280" }]}>{p.providerReference}</Text>
+            </View>
+          ) : null}
           {p.notes ? (
             <View style={S.summaryRow}>
               <Text style={S.summaryLbl}>Notes</Text>
@@ -517,7 +536,7 @@ function ReceiptPDF(p: ReceiptPDFProps) {
         {/* Signatures */}
         <Text style={S.sectionHd}>AUTHORISATION</Text>
         <View style={S.sigRow}>
-          {["Received by (Bursar)", "Verified by", "Parent / Guardian"].map(
+          {(p.isOnlineVerified ? ["Received by ONLINE_PROVIDER", "Online verified", "Parent / Guardian"] : ["Received by (Bursar)", "Verified by", "Parent / Guardian"]).map(
             (label) => (
               <View key={label} style={S.sigBox}>
                 <View style={{ height: 28 }} />
@@ -631,10 +650,14 @@ export async function GET(req: NextRequest) {
     }
 
     // Load who recorded the payment. Receipts must name the real source where possible.
-    let recordedByName = "Finance office";
+    const isOnlineVerified = Boolean(payment.externalProvider && payment.externalReference && payment.recordedBy === "system:webhook");
+    const providerLabel = payment.externalProvider ? payment.externalProvider.replaceAll("_", " ") : "";
+    const providerReference = payment.externalReference ?? payment.referenceNo ?? "";
+    const receivedByLabel = isOnlineVerified ? "ONLINE_PROVIDER" : "Finance office";
+    let recordedByName = receivedByLabel;
     try {
       if (payment.recordedBy === "system:webhook") {
-        recordedByName = "Online payment provider";
+        recordedByName = isOnlineVerified ? "ONLINE_PROVIDER" : "Online payment provider";
       } else {
         const [admin, bursar] = await Promise.all([
           prisma.admin.findFirst({
@@ -669,6 +692,8 @@ export async function GET(req: NextRequest) {
         payment.id,
         branding.displayName,
         branding.primaryColor,
+        isOnlineVerified ? "online-verified" : "manual",
+        providerReference,
       ],
       tags: [
         documentTag(ctx.schoolId, "receipt"),
@@ -711,6 +736,10 @@ export async function GET(req: NextRequest) {
           isPaid: l.isPaid,
         }))}
         recordedBy={recordedByName}
+        receivedByLabel={receivedByLabel}
+        isOnlineVerified={isOnlineVerified}
+        providerLabel={providerLabel || "Online provider"}
+        providerReference={providerReference}
       />,
       ),
     });

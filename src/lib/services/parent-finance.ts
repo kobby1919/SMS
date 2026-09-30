@@ -20,6 +20,8 @@ export type ParentFinancePayment = {
   date: Date;
   status: PaymentStatus;
   referenceNo?: string | null;
+  isOnlineVerified: boolean;
+  providerLabel?: string | null;
   receiptHref: string;
   correctionStatus?: string | null;
   correctedReceiptNumber?: string | null;
@@ -295,15 +297,22 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
       payments: bill.payments.map((payment) => {
         const correction = payment.correctionRequests[0];
         const originalCorrection = payment.correctedPaymentCorrections[0];
+        const isOnlineVerified = Boolean(payment.externalProvider && payment.externalReference && payment.recordedBy === "system:webhook");
+        const providerLabel = payment.externalProvider ? payment.externalProvider.replaceAll("_", " ") : null;
+        const referenceNo = isOnlineVerified ? payment.externalReference : payment.referenceNo;
         return {
           id: payment.id,
           receiptNumber: payment.receiptNumber,
           amount: toNumber(payment.amount),
           method: payment.paymentMethod,
-          methodLabel: PAYMENT_METHOD_LABELS[payment.paymentMethod] ?? payment.paymentMethod,
+          methodLabel: isOnlineVerified
+            ? `Online verified - ${providerLabel ?? "Provider"}`
+            : PAYMENT_METHOD_LABELS[payment.paymentMethod] ?? payment.paymentMethod,
           date: payment.paymentDate,
           status: payment.status,
-          referenceNo: payment.referenceNo,
+          referenceNo,
+          isOnlineVerified,
+          providerLabel,
           receiptHref: `/api/finance/receipt?billId=${bill.id}&receiptNumber=${encodeURIComponent(payment.receiptNumber)}`,
           correctionStatus: correction?.status ?? null,
           correctedReceiptNumber: correction?.correctedPayment?.receiptNumber ?? null,
