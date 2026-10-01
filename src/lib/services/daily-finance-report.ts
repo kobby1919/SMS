@@ -11,6 +11,9 @@ export type DailyFinanceReportPayment = {
   paymentDate: Date;
   paidBy: string;
   referenceNo: string | null;
+  providerLabel: string | null;
+  providerReference: string | null;
+  isOnlineVerified: boolean;
   studentName: string;
   className: string;
   billTitle: string;
@@ -79,6 +82,22 @@ function studentName(student: { name: string; surname: string }) {
   return `${student.name} ${student.surname}`.trim();
 }
 
+function providerLabel(provider: string | null | undefined) {
+  if (!provider) return null;
+  return provider.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (value) => value.toUpperCase());
+}
+
+function paymentMethodLabel(payment: {
+  paymentMethod: string;
+  externalProvider?: string | null;
+  externalReference?: string | null;
+  recordedBy?: string | null;
+}) {
+  const onlineVerified = Boolean(payment.externalProvider && payment.externalReference && payment.recordedBy === "system:webhook");
+  if (!onlineVerified) return PAYMENT_METHOD_LABELS[payment.paymentMethod] ?? payment.paymentMethod;
+  return `Online verified - ${providerLabel(payment.externalProvider) ?? "Provider"}`;
+}
+
 export function parseDailyReportDate(value?: string | null) {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return new Date();
   const parsed = new Date(value);
@@ -113,7 +132,14 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
         status: "CONFIRMED",
         paymentDate: { gte: start, lte: end },
       },
-      select: { id: true, amount: true, paymentMethod: true },
+      select: {
+        id: true,
+        amount: true,
+        paymentMethod: true,
+        externalProvider: true,
+        externalReference: true,
+        recordedBy: true,
+      },
     }),
     prisma.payment.findMany({
       where: {
@@ -129,6 +155,9 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
         paymentDate: true,
         paidBy: true,
         referenceNo: true,
+        externalProvider: true,
+        externalReference: true,
+        recordedBy: true,
         studentBill: {
           select: {
             feeStructure: { select: { title: true } },
@@ -260,34 +289,45 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
   const byMethod = new Map<string, { count: number; amount: number }>();
 
   for (const payment of paymentsForTotals) {
-    const current = byMethod.get(payment.paymentMethod) ?? { count: 0, amount: 0 };
+    const methodKey = payment.externalProvider && payment.externalReference && payment.recordedBy === "system:webhook"
+      ? `ONLINE:${payment.externalProvider}`
+      : payment.paymentMethod;
+    const current = byMethod.get(methodKey) ?? { count: 0, amount: 0 };
     current.count += 1;
     current.amount += asNumber(payment.amount);
-    byMethod.set(payment.paymentMethod, current);
+    byMethod.set(methodKey, current);
   }
 
   const methodBreakdown = Array.from(byMethod.entries())
     .map(([method, value]) => ({
       method,
-      label: PAYMENT_METHOD_LABELS[method] ?? method,
+      label: method.startsWith("ONLINE:")
+        ? `Online verified - ${providerLabel(method.slice("ONLINE:".length)) ?? "Provider"}`
+        : PAYMENT_METHOD_LABELS[method] ?? method,
       count: value.count,
       amount: value.amount,
     }))
     .sort((a, b) => b.amount - a.amount || a.label.localeCompare(b.label));
 
-  const recentPayments = recentPaymentRows.map((payment) => ({
-    id: payment.id,
-    receiptNumber: payment.receiptNumber,
-    amount: asNumber(payment.amount),
-    paymentMethod: payment.paymentMethod,
-    paymentMethodLabel: PAYMENT_METHOD_LABELS[payment.paymentMethod] ?? payment.paymentMethod,
-    paymentDate: payment.paymentDate,
-    paidBy: payment.paidBy,
-    referenceNo: payment.referenceNo,
-    studentName: studentName(payment.studentBill.student),
-    className: payment.studentBill.student.class?.name ?? "No class",
-    billTitle: payment.studentBill.feeStructure.title,
-  }));
+  const recentPayments = recentPaymentRows.map((payment) => {
+    const isOnlineVerified = Boolean(payment.externalProvider && payment.externalReference && payment.recordedBy === "system:webhook");
+    return {
+      id: payment.id,
+      receiptNumber: payment.receiptNumber,
+      amount: asNumber(payment.amount),
+      paymentMethod: payment.paymentMethod,
+      paymentMethodLabel: paymentMethodLabel(payment),
+      paymentDate: payment.paymentDate,
+      paidBy: payment.paidBy,
+      referenceNo: isOnlineVerified ? payment.externalReference : payment.referenceNo,
+      providerLabel: providerLabel(payment.externalProvider),
+      providerReference: payment.externalReference,
+      isOnlineVerified,
+      studentName: studentName(payment.studentBill.student),
+      className: payment.studentBill.student.class?.name ?? "No class",
+      billTitle: payment.studentBill.feeStructure.title,
+    };
+  });
 
   const ownerUpdates: DailyFinanceReportIssue[] = [
     ...pendingConfirmations.map((payment) => ({

@@ -235,7 +235,14 @@ export async function getWeeklyFinanceSummary(schoolId: string, date = new Date(
         status: { notIn: ["FAILED", "REVERSED"] },
         studentBill: { schoolId, student: { schoolId } },
       },
-      select: { id: true, paymentMethod: true, referenceNo: true },
+      select: {
+        id: true,
+        paymentMethod: true,
+        referenceNo: true,
+        externalProvider: true,
+        externalReference: true,
+        recordedBy: true,
+      },
     }),
     prisma.payment.findMany({
       where: { schoolId, studentBill: { schoolId, student: { schoolId } } },
@@ -379,9 +386,11 @@ export async function getWeeklyFinanceSummary(schoolId: string, date = new Date(
   const previousTotalCollected = previousPayments.reduce((sum, payment) => sum + asNumber(payment.amount), 0);
   const referenceGroups = new Map<string, number>();
   for (const payment of activeReferenceRows) {
-    const reference = payment.referenceNo?.trim();
+    const onlineVerified = Boolean(payment.externalProvider && payment.externalReference && payment.recordedBy === "system:webhook");
+    const reference = (onlineVerified ? payment.externalReference : payment.referenceNo)?.trim();
     if (!reference) continue;
-    const key = `${payment.paymentMethod}:${reference.toLowerCase()}`;
+    const methodKey = onlineVerified ? `ONLINE:${payment.externalProvider}` : payment.paymentMethod;
+    const key = `${methodKey}:${reference.toLowerCase()}`;
     referenceGroups.set(key, (referenceGroups.get(key) ?? 0) + 1);
   }
   const duplicateReferenceWarnings = Array.from(referenceGroups.values()).filter((count) => count > 1).length;

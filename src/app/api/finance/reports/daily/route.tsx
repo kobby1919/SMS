@@ -20,7 +20,7 @@ import {
 } from "@react-pdf/renderer";
 import React from "react";
 
-const DAILY_MONEY_REPORT_TEMPLATE_VERSION = "owner-readable-v2";
+const DAILY_MONEY_REPORT_TEMPLATE_VERSION = "owner-readable-v3";
 
 const S = StyleSheet.create({
   page: {
@@ -116,6 +116,9 @@ type PaymentRegisterRow = {
   amount: unknown;
   paymentMethod: string;
   referenceNo: string | null;
+  externalProvider: string | null;
+  externalReference: string | null;
+  recordedBy: string | null;
   paidBy: string;
   studentBill: {
     student: { name: string; surname: string; class: { name: string } | null };
@@ -125,6 +128,23 @@ type PaymentRegisterRow = {
 
 function studentName(student: { name: string; surname: string }) {
   return `${student.name} ${student.surname}`.trim();
+}
+
+function providerLabel(provider: string | null | undefined) {
+  if (!provider) return null;
+  return provider.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (value) => value.toUpperCase());
+}
+
+function paymentRegisterMethod(payment: PaymentRegisterRow) {
+  const onlineVerified = Boolean(payment.externalProvider && payment.externalReference && payment.recordedBy === "system:webhook");
+  if (!onlineVerified) return PAYMENT_METHOD_LABELS[payment.paymentMethod] ?? payment.paymentMethod;
+  return `Online verified - ${providerLabel(payment.externalProvider) ?? "Provider"}`;
+}
+
+function paymentRegisterReference(payment: PaymentRegisterRow) {
+  const onlineVerified = Boolean(payment.externalProvider && payment.externalReference && payment.recordedBy === "system:webhook");
+  if (onlineVerified) return payment.externalReference;
+  return payment.referenceNo ?? payment.paidBy;
 }
 
 function SummaryBox({ label, value, sub, color = "#111827", borderColor = "#e5e7eb" }: {
@@ -195,6 +215,9 @@ export async function GET(req: NextRequest) {
           amount: true,
           paymentMethod: true,
           referenceNo: true,
+          externalProvider: true,
+          externalReference: true,
+          recordedBy: true,
           paidBy: true,
           studentBill: {
             select: {
@@ -372,7 +395,7 @@ export async function GET(req: NextRequest) {
             <View style={S.section} break>
               <Text style={S.sectionKicker}>PAYMENT REGISTER</Text>
               <Text style={S.sectionTitle}>Confirmed receipts for the day</Text>
-              <Text style={[S.bandNote, { marginBottom: 6 }]}>This is the receipt register for the day. It supports reconciliation and can be checked against cash, mobile money, bank, POS, and cheque records.</Text>
+              <Text style={[S.bandNote, { marginBottom: 6 }]}>This is the receipt register for the day. It supports reconciliation across manual collections and provider-verified online payments.</Text>
               {paymentRegister.length === 0 ? <EmptyText text="No confirmed receipts for this date." /> : (
                 <View style={S.table}>
                   <View style={S.tHead} fixed>
@@ -388,8 +411,8 @@ export async function GET(req: NextRequest) {
                       <Text style={[S.td, { flex: 1.6, fontFamily: "Helvetica-Bold" }]}>{payment.receiptNumber}</Text>
                       <Text style={[S.td, { flex: 2.2 }]}>{studentName(payment.studentBill.student)}</Text>
                       <Text style={[S.tdMuted, { flex: 1.2 }]}>{payment.studentBill.student.class?.name ?? "No class"}</Text>
-                      <Text style={[S.tdMuted, { flex: 1.6 }]}>{PAYMENT_METHOD_LABELS[payment.paymentMethod] ?? payment.paymentMethod}</Text>
-                      <Text style={[S.tdMuted, { flex: 1.6 }]}>{payment.referenceNo ?? payment.paidBy}</Text>
+                      <Text style={[S.tdMuted, { flex: 1.6 }]}>{paymentRegisterMethod(payment)}</Text>
+                      <Text style={[S.tdMuted, { flex: 1.6 }]}>{paymentRegisterReference(payment)}</Text>
                       <Text style={[S.tdMoney, { flex: 1.3 }]}>{formatGHS(payment.amount as number)}</Text>
                     </View>
                   ))}
