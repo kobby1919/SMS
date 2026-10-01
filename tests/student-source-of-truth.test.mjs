@@ -106,6 +106,9 @@ test("student bulk import keeps intake strict and account-free", () => {
   assertContains(studentImportAction, "MAX_IMPORT_FILE_BYTES", "Student import must limit upload size.");
   assertContains(studentImportService, "REQUIRED_HEADERS", "Student import must define required columns.");
   assertContains(studentImportService, "if (rowErrors.length > 0)", "Student import must reject invalid files before writing.");
+  assertContains(studentImportService, "values.length > headers.length", "Student import must reject malformed CSV rows with extra values.");
+  assertContains(studentImportService, "parentContactByEmail", "Student import must detect inconsistent guardian contacts inside the CSV.");
+  assertContains(studentImportService, "resolveExistingParentForRow", "Student import must not guess when guardian email and phone match different existing parents.");
   assertContains(studentImportService, "prisma.$transaction", "Student import must write in a database transaction.");
   assertContains(studentImportService, "admissionNumber: { in: admissionNumbers }", "Student import must block duplicate admission numbers.");
   assertContains(studentImportService, "parentStudentRelationship.upsert", "Student import must link guardians to imported students.");

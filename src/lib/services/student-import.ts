@@ -33,6 +33,12 @@ type ParsedStudentRow = Record<StudentImportHeader, string> & {
   rowNumber: number;
 };
 
+type ExistingParentIdentity = {
+  id: string;
+  email: string | null;
+  phone: string | null;
+};
+
 export type StudentImportResult = {
   imported: number;
   parentsCreated: number;
@@ -102,6 +108,11 @@ function parseStudentCsv(csv: string) {
 
   return lines.slice(1).map((line, index) => {
     const values = parseCsvLine(line);
+    if (values.length > headers.length) {
+      throw new StudentImportError(
+        `Row ${index + 2} has more values than the header row. If a value contains a comma, wrap it in quotes.`,
+      );
+    }
     const row = { rowNumber: index + 2 } as ParsedStudentRow;
     for (const header of STUDENT_IMPORT_HEADERS) {
       const headerIndex = headers.indexOf(header);
@@ -121,7 +132,8 @@ function normalizeEmail(value: string) {
 }
 
 function normalizePhone(value: string) {
-  return value.trim() || null;
+  const phone = value.replace(/\s+/g, "").trim();
+  return phone || null;
 }
 
 function normalizeClassName(value: string) {
@@ -144,6 +156,12 @@ function parentIdentityKey(row: ParsedStudentRow) {
   return null;
 }
 
+function parentIdentityDisplay(row: ParsedStudentRow) {
+  const email = normalizeEmail(row.parentEmail);
+  const phone = normalizePhone(row.parentPhone);
+  return [email, phone].filter(Boolean).join(" / ");
+}
+
 function generatedParentUsername(schoolId: string, identityKey: string) {
   const hash = createHash("sha256").update(`${schoolId}:${identityKey}`).digest("hex").slice(0, 24);
   return `parent:${schoolId}:${hash}`;
@@ -152,6 +170,8 @@ function generatedParentUsername(schoolId: string, identityKey: string) {
 function validateRows(rows: ParsedStudentRow[]) {
   const errors: string[] = [];
   const seenAdmissionNumbers = new Set<string>();
+  const parentContactByEmail = new Map<string, string | null>();
+  const parentContactByPhone = new Map<string, string | null>();
 
   rows.forEach((row) => {
     const rowLabel = `Row ${row.rowNumber}`;
@@ -177,9 +197,49 @@ function validateRows(rows: ParsedStudentRow[]) {
     if (row.studentEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.studentEmail.trim())) {
       errors.push(`${rowLabel}: studentEmail is not valid.`);
     }
+
+    const parentEmail = normalizeEmail(row.parentEmail);
+    const parentPhone = normalizePhone(row.parentPhone);
+    if (parentEmail) {
+      const previousPhone = parentContactByEmail.get(parentEmail);
+      if (parentContactByEmail.has(parentEmail) && previousPhone !== parentPhone) {
+        errors.push(`${rowLabel}: parentEmail ${parentEmail} appears with different phone numbers.`);
+      }
+      parentContactByEmail.set(parentEmail, parentPhone);
+    }
+    if (parentPhone) {
+      const previousEmail = parentContactByPhone.get(parentPhone);
+      if (parentContactByPhone.has(parentPhone) && previousEmail !== parentEmail) {
+        errors.push(`${rowLabel}: parentPhone ${parentPhone} appears with different email addresses.`);
+      }
+      parentContactByPhone.set(parentPhone, parentEmail);
+    }
   });
 
   return errors;
+}
+
+function resolveExistingParentForRow(
+  row: ParsedStudentRow,
+  parentsByEmail: Map<string, ExistingParentIdentity>,
+  parentsByPhone: Map<string, ExistingParentIdentity>,
+) {
+  const parentEmail = normalizeEmail(row.parentEmail);
+  const parentPhone = normalizePhone(row.parentPhone);
+  const emailMatch = parentEmail ? parentsByEmail.get(parentEmail) ?? null : null;
+  const phoneMatch = parentPhone ? parentsByPhone.get(parentPhone) ?? null : null;
+
+  if (emailMatch && phoneMatch && emailMatch.id !== phoneMatch.id) {
+    throw new StudentImportError(
+      "Fix guardian contact conflicts and upload again.",
+      400,
+      [
+        `Row ${row.rowNumber}: ${parentIdentityDisplay(row)} matches two different guardian records already in Edujay.`,
+      ],
+    );
+  }
+
+  return emailMatch ?? phoneMatch ?? null;
 }
 
 export async function importStudentsFromCsv(schoolId: string, csv: string): Promise<StudentImportResult> {
@@ -196,7 +256,10 @@ export async function importStudentsFromCsv(schoolId: string, csv: string): Prom
   const admissionNumbers = rows.map((row) => normalizeAdmissionNumber(row.admissionNumber));
   const classNames = Array.from(new Set(rows.map((row) => normalizeClassName(row.className))));
 
-  const [existingStudents, classes] = await Promise.all([
+  const parentEmails = rows.map((row) => normalizeEmail(row.parentEmail)).filter((email): email is string => Boolean(email));
+  const parentPhones = rows.map((row) => normalizePhone(row.parentPhone)).filter((phone): phone is string => Boolean(phone));
+
+  const [existingStudents, classes, existingParents] = await Promise.all([
     prisma.student.findMany({
       where: { schoolId, admissionNumber: { in: admissionNumbers } },
       select: { admissionNumber: true },
@@ -205,10 +268,30 @@ export async function importStudentsFromCsv(schoolId: string, csv: string): Prom
       where: { schoolId },
       select: { id: true, name: true, gradeId: true },
     }),
+    prisma.parent.findMany({
+      where: {
+        schoolId,
+        OR: [
+          ...(parentEmails.length ? [{ email: { in: parentEmails, mode: Prisma.QueryMode.insensitive } }] : []),
+          ...(parentPhones.length ? [{ phone: { in: parentPhones } }] : []),
+        ],
+      },
+      select: { id: true, email: true, phone: true },
+    }),
   ]);
 
   const existingAdmissionNumbers = new Set(existingStudents.map((student) => student.admissionNumber?.toUpperCase()));
   const classByName = new Map(classes.map((klass) => [normalizeClassName(klass.name), klass]));
+  const parentsByEmail = new Map(
+    existingParents
+      .map((parent) => parent.email ? [parent.email.toLowerCase(), parent] as const : null)
+      .filter((entry): entry is readonly [string, ExistingParentIdentity] => Boolean(entry)),
+  );
+  const parentsByPhone = new Map(
+    existingParents
+      .map((parent) => parent.phone ? [normalizePhone(parent.phone), parent] as const : null)
+      .filter((entry): entry is readonly [string, ExistingParentIdentity] => Boolean(entry?.[0])),
+  );
   const lookupErrors: string[] = [];
 
   for (const row of rows) {
@@ -219,6 +302,12 @@ export async function importStudentsFromCsv(schoolId: string, csv: string): Prom
     }
     if (!classByName.has(className)) {
       lookupErrors.push(`Row ${row.rowNumber}: className "${row.className}" does not match an Edujay class.`);
+    }
+    try {
+      resolveExistingParentForRow(row, parentsByEmail, parentsByPhone);
+    } catch (error) {
+      if (error instanceof StudentImportError) lookupErrors.push(...error.errors);
+      else throw error;
     }
   }
 
@@ -245,16 +334,7 @@ export async function importStudentsFromCsv(schoolId: string, csv: string): Prom
         if (!parentId) {
           const parentEmail = normalizeEmail(row.parentEmail);
           const parentPhone = normalizePhone(row.parentPhone);
-          const existingParent = await tx.parent.findFirst({
-            where: {
-              schoolId,
-              OR: [
-                ...(parentEmail ? [{ email: { equals: parentEmail, mode: Prisma.QueryMode.insensitive } }] : []),
-                ...(parentPhone ? [{ phone: parentPhone }] : []),
-              ],
-            },
-            select: { id: true },
-          });
+          const existingParent = resolveExistingParentForRow(row, parentsByEmail, parentsByPhone);
 
           if (existingParent) {
             parentId = existingParent.id;
