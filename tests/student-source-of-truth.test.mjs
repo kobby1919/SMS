@@ -25,6 +25,7 @@ const studentApiUpdate = read("src/app/api/students/[id]/route.ts");
 const studentForm = read("src/components/StudentForm.tsx");
 const legacyActions = read("src/lib/actions/actions.ts");
 const seed = read("prisma/seed.ts");
+const studentListPage = read("src/app/(dashboard)/list/students/page.tsx");
 
 test("student records have lifecycle and admission source of truth", () => {
   assertContains(schema, "enum StudentStatus", "Student lifecycle must be modeled explicitly.");
@@ -70,4 +71,13 @@ test("student delete is blocked in favor of lifecycle status", () => {
   );
   assertContains(deleteStudentBlock, "Student records cannot be deleted", "Student deletion must be blocked.");
   assertNotContains(deleteStudentBlock, "prisma.student.delete", "Student delete action must not hard-delete records.");
+  assertNotContains(studentListPage, "type=\"delete\"", "Student list must not show casual delete controls.");
+});
+
+test("student list is an operational source-of-truth page", () => {
+  assertContains(studentListPage, "STUDENT_STATUS_LABELS", "Student list must show lifecycle status.");
+  assertContains(studentListPage, "name=\"classId\"", "Student list must support class filtering.");
+  assertContains(studentListPage, "name=\"status\"", "Student list must support status filtering.");
+  assertContains(studentListPage, "Missing Admission", "Student list must expose admission-number gaps.");
+  assertContains(studentListPage, "No contact saved", "Student list must safely handle missing parent contact.");
 });

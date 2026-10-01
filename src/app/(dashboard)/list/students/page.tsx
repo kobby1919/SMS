@@ -5,13 +5,39 @@ import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, Eye, Plus, BookOpen, Users } from "lucide-react";
+import { AlertCircle, ChevronRight, Eye, Plus, BookOpen, Users } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import prisma from "@/src/lib/prisma";
-import { Prisma } from "@/src/generated/prisma";
+import { Prisma, StudentStatus } from "@/src/generated/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
+
+const STUDENT_STATUS_LABELS = {
+  INCOMPLETE_SETUP: "Needs setup",
+  ACTIVE: "Active",
+  TRANSFERRED: "Transferred",
+  GRADUATED: "Graduated",
+  WITHDRAWN: "Withdrawn",
+} as const;
+
+const STUDENT_STATUS_BADGES = {
+  INCOMPLETE_SETUP: "bg-amber-50 text-amber-700 border-amber-100",
+  ACTIVE: "bg-emerald-50 text-emerald-700 border-emerald-100",
+  TRANSFERRED: "bg-sky-50 text-sky-700 border-sky-100",
+  GRADUATED: "bg-violet-50 text-violet-700 border-violet-100",
+  WITHDRAWN: "bg-rose-50 text-rose-700 border-rose-100",
+} as const;
+
+function parsePositiveInt(value?: string) {
+  if (!value) return null;
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
+function isStudentStatus(value?: string): value is StudentStatus {
+  return Boolean(value && Object.values(StudentStatus).includes(value as StudentStatus));
+}
 
 const StudentListPage = async ({
   searchParams,
@@ -36,7 +62,13 @@ const StudentListPage = async ({
             );
             break;
           case "classId":
-            query.classId = parseInt(value);
+            {
+              const classId = parsePositiveInt(value);
+              if (classId) query.classId = classId;
+            }
+            break;
+          case "status":
+            if (isStudentStatus(value)) query.status = value;
             break;
           case "search":
             const search = value.trim();
@@ -277,12 +309,16 @@ const StudentListPage = async ({
     );
   }
 
-  const [students, count, totalClasses, boys, girls] = await Promise.all([
+  const baseSchoolWhere: Prisma.StudentWhereInput = { schoolId };
+  const [students, count, totalStudents, totalClasses, boys, girls, activeStudents, incompleteStudents, archivedStudents, missingAdmissionStudents, classOptions] = await Promise.all([
     prisma.student.findMany({
       where: query,
       include: {
         class: {
           include: { grade: { select: { level: true } } },
+        },
+        parent: {
+          select: { name: true, surname: true, phone: true, email: true },
         },
       },
       orderBy: { name: "asc" },
@@ -290,10 +326,33 @@ const StudentListPage = async ({
       skip: ITEM_PER_PAGE * (p - 1),
     }),
     prisma.student.count({ where: query }),
+    prisma.student.count({ where: baseSchoolWhere }),
     prisma.class.count({ where: { schoolId } }),
-    prisma.student.count({ where: { ...query, sex: "MALE" } }),
-    prisma.student.count({ where: { ...query, sex: "FEMALE" } }),
+    prisma.student.count({ where: { ...baseSchoolWhere, sex: "MALE" } }),
+    prisma.student.count({ where: { ...baseSchoolWhere, sex: "FEMALE" } }),
+    prisma.student.count({ where: { ...baseSchoolWhere, status: StudentStatus.ACTIVE } }),
+    prisma.student.count({ where: { ...baseSchoolWhere, status: StudentStatus.INCOMPLETE_SETUP } }),
+    prisma.student.count({
+      where: {
+        ...baseSchoolWhere,
+        status: { in: [StudentStatus.TRANSFERRED, StudentStatus.GRADUATED, StudentStatus.WITHDRAWN] },
+      },
+    }),
+    prisma.student.count({ where: { ...baseSchoolWhere, admissionNumber: null } }),
+    prisma.class.findMany({
+      where: { schoolId },
+      select: { id: true, name: true, grade: { select: { level: true, order: true } } },
+      orderBy: [{ grade: { order: "asc" } }, { name: "asc" }],
+    }),
   ]);
+
+  const selectedStatus = isStudentStatus(queryParams.status) ? queryParams.status : "";
+  const selectedClassId = parsePositiveInt(queryParams.classId);
+  const activeFilterCount = [
+    queryParams.search?.trim() ? "search" : null,
+    selectedClassId ? "class" : null,
+    selectedStatus ? "status" : null,
+  ].filter(Boolean).length;
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
@@ -303,19 +362,54 @@ const StudentListPage = async ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-xl font-black text-gray-800 tracking-tight">Students</h1>
-            <p className="text-sm text-gray-400 mt-0.5 font-medium">{count} members registered</p>
+            <p className="text-sm text-gray-400 mt-0.5 font-medium">
+              {count} shown from {totalStudents} student record{totalStudents === 1 ? "" : "s"}
+            </p>
           </div>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 w-full lg:w-auto">
             <TableSearch />
+            <form className="grid grid-cols-2 gap-2 sm:flex sm:items-center" action="/list/students">
+              {queryParams.search ? <input type="hidden" name="search" value={queryParams.search} /> : null}
+              <select
+                name="classId"
+                defaultValue={selectedClassId ?? ""}
+                className="min-w-0 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-bold text-gray-600 outline-none focus:border-indigo-400"
+                aria-label="Filter by class"
+              >
+                <option value="">All classes</option>
+                {classOptions.map((klass) => (
+                  <option key={klass.id} value={klass.id}>
+                    {klass.name} · {klass.grade.level}
+                  </option>
+                ))}
+              </select>
+              <select
+                name="status"
+                defaultValue={selectedStatus}
+                className="min-w-0 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-bold text-gray-600 outline-none focus:border-indigo-400"
+                aria-label="Filter by student status"
+              >
+                <option value="">All statuses</option>
+                {Object.entries(STUDENT_STATUS_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
+              <button
+                type="submit"
+                className="rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-black text-white transition hover:bg-slate-800"
+              >
+                Apply
+              </button>
+              {activeFilterCount > 0 ? (
+                <Link
+                  href="/list/students"
+                  className="rounded-xl bg-gray-100 px-4 py-2.5 text-center text-sm font-black text-gray-600 transition hover:bg-gray-200"
+                >
+                  Clear
+                </Link>
+              ) : null}
+            </form>
             <div className="flex items-center gap-2">
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <Image src="/filter.png" alt="" width={16} height={16} />
-                <span className="hidden sm:inline">Filter</span>
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <Image src="/sort.png" alt="" width={16} height={16} />
-                <span className="hidden sm:inline">Sort</span>
-              </button>
               {role === "admin" && <FormModal table="student" type="create" />}
             </div>
           </div>
@@ -325,10 +419,10 @@ const StudentListPage = async ({
       {/* ── Stats — real DB values ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Total Students",  value: count,         icon: <Users size={16} />,    color: "bg-indigo-50 text-indigo-600"   },
-          { label: "Active Classes",  value: totalClasses,  icon: <BookOpen size={16} />, color: "bg-amber-50 text-amber-600"    },
-          { label: "Boys",  value: boys,  icon: <Users size={16} />, color: "bg-emerald-50 text-emerald-600" },
-          { label: "Girls", value: girls, icon: <Plus size={16} />,  color: "bg-violet-50 text-violet-600"  },
+          { label: "Active Students", value: activeStudents, icon: <Users size={16} />, color: "bg-emerald-50 text-emerald-600" },
+          { label: "Needs Setup", value: incompleteStudents, icon: <AlertCircle size={16} />, color: "bg-amber-50 text-amber-600" },
+          { label: "Left / Completed", value: archivedStudents, icon: <BookOpen size={16} />, color: "bg-violet-50 text-violet-600" },
+          { label: "Missing Admission", value: missingAdmissionStudents, icon: <Plus size={16} />, color: "bg-rose-50 text-rose-600" },
         ].map((stat) => (
           <div key={stat.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
@@ -342,24 +436,86 @@ const StudentListPage = async ({
         ))}
       </div>
 
+      <div className="grid grid-cols-1 gap-3 rounded-2xl border border-gray-100 bg-white p-4 text-xs font-semibold text-gray-500 shadow-sm sm:grid-cols-3">
+        <p><span className="font-black text-gray-800">{totalClasses}</span> active class records</p>
+        <p><span className="font-black text-gray-800">{boys}</span> boys · <span className="font-black text-gray-800">{girls}</span> girls</p>
+        <p>
+          {activeFilterCount > 0
+            ? `${activeFilterCount} filter${activeFilterCount === 1 ? "" : "s"} applied`
+            : "Showing all student records"}
+        </p>
+      </div>
+
       {/* ── Table ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-1">
-        <div className="w-full overflow-x-auto">
+        <div className="grid divide-y divide-gray-50 md:hidden">
+          {students.length === 0 ? (
+            <div className="p-8 text-center">
+              <Users size={28} className="mx-auto mb-3 text-gray-300" />
+              <p className="text-sm font-black text-gray-500">No students match this view.</p>
+              <p className="mt-1 text-xs font-semibold text-gray-400">Clear filters or add a student record.</p>
+            </div>
+          ) : students.map((item) => (
+            <Link
+              key={item.id}
+              href={`/list/students/${item.id}`}
+              className="block p-4 transition hover:bg-indigo-50/40"
+            >
+              <div className="flex items-start gap-3">
+                <Image
+                  src={item.img || "/noAvatar.png"}
+                  alt={item.name}
+                  width={44}
+                  height={44}
+                  className="h-11 w-11 rounded-xl object-cover ring-2 ring-gray-100"
+                />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-black text-gray-800">{item.name} {item.surname}</p>
+                      <p className="truncate text-xs font-semibold text-gray-400">Admission: {item.admissionNumber ?? item.username}</p>
+                    </div>
+                    <span className={`shrink-0 rounded-full border px-2 py-1 text-[10px] font-black ${STUDENT_STATUS_BADGES[item.status]}`}>
+                      {STUDENT_STATUS_LABELS[item.status]}
+                    </span>
+                  </div>
+                  <div className="mt-3 grid gap-1 text-xs font-semibold text-gray-500">
+                    <p>{item.class.name} · {item.class.grade.level}</p>
+                    <p>
+                      Parent: {item.parent ? `${item.parent.name} ${item.parent.surname}` : "No parent saved"}
+                    </p>
+                    <p>{item.parent?.phone || item.parent?.email || item.phone || "No contact saved"}</p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <div className="hidden w-full overflow-x-auto md:block">
           <table className="w-full min-w-[360px]">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/60">
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Student</th>
                 <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Class</th>
-                <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Grade</th>
-                <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">Phone</th>
-                <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">Address</th>
+                <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">Status</th>
+                <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">Parent</th>
+                <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">Contact</th>
                 {role === "admin" && (
                   <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[120px]">Actions</th>
                 )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {students.map((item) => (
+              {students.length === 0 ? (
+                <tr>
+                  <td colSpan={role === "admin" ? 6 : 5} className="px-5 py-10 text-center">
+                    <Users size={28} className="mx-auto mb-3 text-gray-300" />
+                    <p className="text-sm font-black text-gray-500">No students match this view.</p>
+                    <p className="mt-1 text-xs font-semibold text-gray-400">Clear filters or add a student record.</p>
+                  </td>
+                </tr>
+              ) : students.map((item) => (
                 <tr key={item.id} className="hover:bg-indigo-50/30 transition-colors duration-150 group">
 
                   {/* Student info */}
@@ -383,24 +539,31 @@ const StudentListPage = async ({
 
                   {/* Class name */}
                   <td className="px-3 py-3.5 hidden md:table-cell">
-                    <span className="text-sm font-semibold text-gray-700">{item.class.name}</span>
+                    <div>
+                      <span className="text-sm font-semibold text-gray-700">{item.class.name}</span>
+                      <p className="text-[11px] font-bold text-indigo-500">{item.class.grade.level}</p>
+                    </div>
                   </td>
 
-                  {/* Grade level — fixed: was "Grade Class 3A", now "Class 3" */}
-                  <td className="px-3 py-3.5 hidden md:table-cell">
-                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600">
-                      {item.class.grade.level}
+                  {/* Status */}
+                  <td className="px-3 py-3.5 hidden lg:table-cell">
+                    <span className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black ${STUDENT_STATUS_BADGES[item.status]}`}>
+                      {STUDENT_STATUS_LABELS[item.status]}
                     </span>
                   </td>
 
-                  {/* Phone */}
-                  <td className="px-3 py-3.5 hidden lg:table-cell">
-                    <span className="text-sm text-gray-600 font-medium">{item.phone ?? "—"}</span>
+                  {/* Parent */}
+                  <td className="px-3 py-3.5 hidden xl:table-cell">
+                    <span className="block max-w-[180px] truncate text-sm font-semibold text-gray-700">
+                      {item.parent ? `${item.parent.name} ${item.parent.surname}` : "No parent saved"}
+                    </span>
                   </td>
 
-                  {/* Address */}
-                  <td className="px-3 py-3.5 hidden xl:table-cell">
-                    <span className="text-sm text-gray-500 truncate max-w-[160px] block">{item.address}</span>
+                  {/* Contact */}
+                  <td className="px-3 py-3.5 hidden lg:table-cell">
+                    <span className="block max-w-[170px] truncate text-sm font-medium text-gray-600">
+                      {item.parent?.phone || item.parent?.email || item.phone || "No contact saved"}
+                    </span>
                   </td>
 
                   {/* Actions */}
@@ -412,7 +575,6 @@ const StudentListPage = async ({
                         </button>
                       </Link>
                       {role === "admin" && <FormModal table="student" type="update" data={item} />}
-                      {role === "admin" && <FormModal table="student" type="delete" id={item.id} />}
                     </div>
                   </td>
                 </tr>
