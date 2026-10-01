@@ -169,6 +169,22 @@ function isFinalProviderReversal(event: WebhookRecord) {
   );
 }
 
+async function markProviderReversalAlreadyApplied(webhookEventId: string, paymentId: number) {
+  const existingReversal = await prisma.paymentReversal.findUnique({
+    where: { paymentId },
+    select: { id: true },
+  });
+
+  if (!existingReversal) return null;
+
+  await prisma.paymentWebhookEvent.update({
+    where: { id: webhookEventId },
+    data: { paymentId },
+  });
+
+  return markWebhookProcessed(webhookEventId, paymentId, "PROCESSED");
+}
+
 async function generateReceiptNumberInTransaction(
   tx: Prisma.TransactionClient,
   schoolId: string,
@@ -529,7 +545,10 @@ async function processVerifiedProviderReversal(
   const reversedAt = new Date();
   const reason = `Verified ${event.provider} reversal/refund webhook ${event.providerEventId}`;
 
-  const reversal = await prisma.$transaction(async (tx) => {
+  let reversal: { id: number };
+
+  try {
+    reversal = await prisma.$transaction(async (tx) => {
     await tx.payment.update({
       where: { id: payment.id },
       data: { status: "REVERSED" },
@@ -625,6 +644,14 @@ async function processVerifiedProviderReversal(
   }, {
     isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
   });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      const processed = await markProviderReversalAlreadyApplied(webhookEventId, payment.id);
+      if (processed) return processed;
+    }
+
+    throw error;
+  }
 
   await recordParentActivityEvents({
     schoolId: normalized.schoolId,
