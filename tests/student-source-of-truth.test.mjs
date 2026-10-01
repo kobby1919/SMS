@@ -55,8 +55,15 @@ test("new student onboarding creates records, not Clerk student accounts", () =>
   assertContains(createStudentBlock, "prisma.$transaction", "Student creation must create the student and parent link atomically.");
   assertContains(createStudentBlock, "syncParentRelationshipsForStudentLifecycle", "Student creation must create the parent link through lifecycle sync.");
   assertContains(studentApi, "{ userId }", "Student creation audit must use the signed-in admin as actor.");
+  assertContains(userManagement, "resolveSmartParentForStudent", "Student creation must support smart parent linking.");
+  assertContains(userManagement, "Guardian email and phone match two different parents", "Smart parent linking must not guess when contacts conflict.");
+  assertContains(userManagement, "generatedParentUsername", "Smart parent creation must use deterministic internal parent usernames.");
+  assertContains(userManagement, "parentEmail", "Smart parent linking must match by guardian email.");
+  assertContains(userManagement, "parentPhone", "Smart parent linking must match by guardian phone.");
   assertNotContains(createStudentBlock, "clerk.users.createUser", "Student creation must not create a Clerk user yet.");
   assertContains(studentApi, "admissionNumber: formData.get(\"admissionNumber\")", "Student create API must accept admission number.");
+  assertContains(studentApi, "parentEmail: formData.get(\"parentEmail\")", "Student create API must accept guardian email for smart linking.");
+  assertContains(studentApi, "parentPhone: formData.get(\"parentPhone\")", "Student create API must accept guardian phone for smart linking.");
   assertNotContains(studentApi, "password: formData.get(\"password\")", "Student create API must not ask for student login password.");
 });
 
@@ -65,6 +72,9 @@ test("student updates and forms expose status without restoring account fields",
   assertNotContains(studentApiUpdate, "status: formData.get(\"status\") || \"ACTIVE\"", "Student update API must not silently activate incomplete records.");
   assertContains(studentForm, "Admission Number", "Student form must show admission number.");
   assertContains(studentForm, "Student Status", "Student form must expose lifecycle status on update.");
+  assertContains(studentForm, "Smart Parent Linking", "Student form must expose smart parent linking during enrolment.");
+  assertContains(studentForm, "Guardian Email", "Student form must collect guardian email for smart linking.");
+  assertContains(studentForm, "Guardian Phone", "Student form must collect guardian phone for smart linking.");
   assertNotContains(studentForm, "Password", "Student form must not expose student password.");
   assertNotContains(studentForm, "Username", "Student form must not expose student username.");
 });

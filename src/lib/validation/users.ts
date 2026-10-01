@@ -15,7 +15,7 @@ export const parentCreateSchema = z.object({
 
 export const parentUpdateSchema = parentCreateSchema.omit({ username: true });
 
-export const studentCreateSchema = z.object({
+const studentBaseSchema = z.object({
   admissionNumber: z.string().trim().min(2, "Admission number is required.").max(40),
   email: z.string().email().optional().nullable().or(z.literal("")),
   name: nonEmptyStringSchema,
@@ -25,12 +25,44 @@ export const studentCreateSchema = z.object({
   bloodType: nonEmptyStringSchema,
   sex: userSexSchema,
   classId: positiveIntSchema,
-  parentId: nonEmptyStringSchema,
+  parentId: z.string().trim().optional().nullable().or(z.literal("")),
+  parentName: z.string().trim().optional().nullable().or(z.literal("")),
+  parentSurname: z.string().trim().optional().nullable().or(z.literal("")),
+  parentEmail: z.string().email().optional().nullable().or(z.literal("")),
+  parentPhone: z.string().trim().optional().nullable().or(z.literal("")),
 });
 
-export const studentUpdateSchema = studentCreateSchema.extend({
+export const studentCreateSchema = studentBaseSchema.superRefine((value, ctx) => {
+  if (value.parentId) return;
+
+  if (!value.parentName?.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["parentName"],
+      message: "Guardian first name is required when no existing parent is selected.",
+    });
+  }
+
+  if (!value.parentSurname?.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["parentSurname"],
+      message: "Guardian last name is required when no existing parent is selected.",
+    });
+  }
+
+  if (!value.parentEmail?.trim() && !value.parentPhone?.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["parentEmail"],
+      message: "Provide guardian email or phone so Edujay can match or create the parent.",
+    });
+  }
+});
+
+export const studentUpdateSchema = studentBaseSchema.extend({
   status: studentStatusSchema,
-}).omit({ email: true });
+}).omit({ email: true, parentName: true, parentSurname: true, parentEmail: true, parentPhone: true });
 
 export const teacherCreateSchema = z.object({
   username: z.string().trim().min(3).max(20),

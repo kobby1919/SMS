@@ -26,8 +26,38 @@ const createSchema = z.object({
   sex:       z.enum(["MALE", "FEMALE"]),
   status:    z.enum(["INCOMPLETE_SETUP", "ACTIVE", "TRANSFERRED", "GRADUATED", "WITHDRAWN"]).default("ACTIVE"),
   classId:   z.coerce.number().min(1, "Class is required"),
-  parentId:  z.string().min(1, "Parent is required"),
+  parentId:  z.string().optional(),
+  parentName: z.string().optional(),
+  parentSurname: z.string().optional(),
+  parentEmail: z.string().email("Invalid email").optional().or(z.literal("")),
+  parentPhone: z.string().optional(),
   img:       z.custom<FileList>().optional(),
+}).superRefine((value, ctx) => {
+  if (value.parentId) return;
+
+  if (!value.parentName?.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["parentName"],
+      message: "Guardian first name is required",
+    });
+  }
+
+  if (!value.parentSurname?.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["parentSurname"],
+      message: "Guardian last name is required",
+    });
+  }
+
+  if (!value.parentEmail?.trim() && !value.parentPhone?.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["parentEmail"],
+      message: "Provide guardian email or phone",
+    });
+  }
 });
 
 const updateSchema = z.object({
@@ -70,6 +100,7 @@ const StudentForm = ({
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<CreateInputs>({
     resolver: zodResolver(schema) as Resolver<CreateInputs>,
@@ -88,6 +119,7 @@ const StudentForm = ({
         }
       : { sex: "MALE" },
   });
+  const selectedParentId = watch("parentId");
 
   // Load classes and parents
   useEffect(() => {
@@ -256,6 +288,48 @@ const StudentForm = ({
             </select>
             {errors.parentId && <p className="text-[10px] text-red-500 font-medium">{errors.parentId.message}</p>}
           </div>
+
+          {type === "create" && (
+            <div className="w-full rounded-lg border border-gray-200 bg-gray-50 p-3">
+              <div className="mb-3">
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Smart Parent Linking</p>
+                <p className="mt-1 text-xs text-gray-500">
+                  Select an existing parent above, or leave it blank and Edujay will match by email/phone or create the parent profile.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-4">
+                <InputField
+                  label="Guardian First Name"
+                  name="parentName"
+                  register={register}
+                  error={errors.parentName}
+                  inputProps={{ disabled: Boolean(selectedParentId) }}
+                />
+                <InputField
+                  label="Guardian Last Name"
+                  name="parentSurname"
+                  register={register}
+                  error={errors.parentSurname}
+                  inputProps={{ disabled: Boolean(selectedParentId) }}
+                />
+                <InputField
+                  label="Guardian Email"
+                  name="parentEmail"
+                  type="email"
+                  register={register}
+                  error={errors.parentEmail}
+                  inputProps={{ disabled: Boolean(selectedParentId) }}
+                />
+                <InputField
+                  label="Guardian Phone"
+                  name="parentPhone"
+                  register={register}
+                  error={errors.parentPhone}
+                  inputProps={{ disabled: Boolean(selectedParentId) }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

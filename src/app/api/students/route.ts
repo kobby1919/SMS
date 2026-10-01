@@ -30,6 +30,10 @@ export async function POST(req: NextRequest) {
       sex: formData.get("sex"),
       classId: formData.get("classId"),
       parentId: formData.get("parentId"),
+      parentName: formData.get("parentName"),
+      parentSurname: formData.get("parentSurname"),
+      parentEmail: formData.get("parentEmail"),
+      parentPhone: formData.get("parentPhone"),
     });
     if (!parsed.ok) return parsed.response;
 

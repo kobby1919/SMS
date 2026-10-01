@@ -1,5 +1,5 @@
 import { clerkClient } from "@clerk/nextjs/server";
-import { randomUUID } from "crypto";
+import { createHash, randomUUID } from "crypto";
 import type { z } from "zod";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
@@ -40,6 +40,124 @@ export function studentRecordUsername(schoolId: string, admissionNumber: string)
 
 function studentSetupStatus(input: { parentId?: string | null; classId?: number | null }) {
   return input.parentId && input.classId ? "ACTIVE" as const : "INCOMPLETE_SETUP" as const;
+}
+
+function normalizeEmail(value?: string | null) {
+  const email = value?.trim().toLowerCase() ?? "";
+  return email || null;
+}
+
+function normalizePhone(value?: string | null) {
+  const phone = value?.replace(/\s+/g, "").trim() ?? "";
+  return phone || null;
+}
+
+function generatedParentUsername(schoolId: string, identityKey: string) {
+  const hash = createHash("sha256").update(`${schoolId}:${identityKey}`).digest("hex").slice(0, 24);
+  return `parent:${schoolId}:${hash}`;
+}
+
+function smartParentIdentityKey(input: StudentCreateInput) {
+  const email = normalizeEmail(input.parentEmail);
+  const phone = normalizePhone(input.parentPhone);
+  if (email) return `email:${email}`;
+  if (phone) return `phone:${phone}`;
+  return null;
+}
+
+async function resolveSmartParentForStudent(
+  tx: Prisma.TransactionClient,
+  schoolId: string,
+  input: StudentCreateInput,
+) {
+  if (input.parentId?.trim()) {
+    const parent = await tx.parent.findFirst({
+      where: { id: input.parentId.trim(), schoolId },
+      select: { id: true },
+    });
+    if (!parent) throw new UserManagementError("Parent not found.", 404);
+    return parent.id;
+  }
+
+  const parentEmail = normalizeEmail(input.parentEmail);
+  const parentPhone = normalizePhone(input.parentPhone);
+  const parentName = input.parentName?.trim();
+  const parentSurname = input.parentSurname?.trim();
+  const identityKey = smartParentIdentityKey(input);
+
+  if (!parentName || !parentSurname || !identityKey) {
+    throw new UserManagementError(
+      "Select an existing parent or provide guardian name plus email or phone.",
+      400,
+    );
+  }
+
+  const matchingParents = await tx.parent.findMany({
+    where: {
+      schoolId,
+      OR: [
+        ...(parentEmail ? [{ email: { equals: parentEmail, mode: Prisma.QueryMode.insensitive } }] : []),
+        ...(parentPhone ? [{ phone: parentPhone }] : []),
+      ],
+    },
+    select: { id: true, email: true, phone: true },
+  });
+
+  const emailMatches = parentEmail
+    ? matchingParents.filter((parent) => parent.email?.toLowerCase() === parentEmail)
+    : [];
+  const phoneMatches = parentPhone
+    ? matchingParents.filter((parent) => normalizePhone(parent.phone) === parentPhone)
+    : [];
+
+  if (emailMatches.length > 1 || phoneMatches.length > 1) {
+    throw new UserManagementError(
+      "Multiple parent records match this guardian contact. Clean up the parent records before linking this student.",
+      409,
+    );
+  }
+
+  const emailMatch = emailMatches[0] ?? null;
+  const phoneMatch = phoneMatches[0] ?? null;
+
+  if (emailMatch && phoneMatch && emailMatch.id !== phoneMatch.id) {
+    throw new UserManagementError(
+      "Guardian email and phone match two different parents. Fix the parent records before linking this student.",
+      409,
+    );
+  }
+
+  const existingParent = emailMatch ?? phoneMatch;
+  if (existingParent) {
+    const updateMissingContact: Prisma.ParentUpdateInput = {};
+    if (parentEmail && !existingParent.email) updateMissingContact.email = parentEmail;
+    if (parentPhone && !existingParent.phone) updateMissingContact.phone = parentPhone;
+
+    if (Object.keys(updateMissingContact).length > 0) {
+      await tx.parent.update({
+        where: { id: existingParent.id },
+        data: updateMissingContact,
+      });
+    }
+
+    return existingParent.id;
+  }
+
+  const parent = await tx.parent.create({
+    data: {
+      id: `par_${randomUUID()}`,
+      schoolId,
+      username: generatedParentUsername(schoolId, identityKey),
+      name: parentName,
+      surname: parentSurname,
+      email: parentEmail,
+      phone: parentPhone,
+      address: input.address || "Not provided",
+    },
+    select: { id: true },
+  });
+
+  return parent.id;
 }
 
 export class UserManagementError extends Error {
@@ -163,14 +281,10 @@ export async function createStudent(
   actor: { userId: string } = { userId: "system" },
 ) {
   const admissionNumber = input.admissionNumber.trim().toUpperCase();
-  const [studentClass, parent, existingAdmission] = await Promise.all([
+  const [studentClass, existingAdmission] = await Promise.all([
     prisma.class.findFirst({
       where: { id: input.classId, schoolId },
       select: { gradeId: true },
-    }),
-    prisma.parent.findFirst({
-      where: { id: input.parentId, schoolId },
-      select: { id: true },
     }),
     prisma.student.findFirst({
       where: { schoolId, admissionNumber },
@@ -179,11 +293,12 @@ export async function createStudent(
   ]);
 
   if (!studentClass) throw new UserManagementError("Class not found.", 404);
-  if (!parent) throw new UserManagementError("Parent not found.", 404);
   if (existingAdmission) throw new UserManagementError("Admission number already exists for this school.", 409);
 
   try {
     const student = await prisma.$transaction(async (tx) => {
+      const parentId = await resolveSmartParentForStudent(tx, schoolId, input);
+
       const row = await tx.student.create({
         data: {
           id: `stu_${randomUUID()}`,
@@ -197,16 +312,16 @@ export async function createStudent(
           address: input.address,
           bloodType: input.bloodType,
           sex: input.sex,
-          status: studentSetupStatus({ parentId: input.parentId, classId: input.classId }),
+          status: studentSetupStatus({ parentId, classId: input.classId }),
           classId: input.classId,
           gradeId: studentClass.gradeId,
-          parentId: input.parentId,
+          parentId,
         },
       });
 
       await syncParentRelationshipsForStudentLifecycle(tx, {
         schoolId,
-        parentId: input.parentId,
+        parentId,
         studentId: row.id,
         nextStatus: row.status,
         actorId: actor.userId,
@@ -216,6 +331,7 @@ export async function createStudent(
     });
 
     revalidateReferenceData(schoolId, "students");
+    revalidateReferenceData(schoolId, "parents");
     revalidateDashboard(schoolId);
     return student;
   } catch (error) {
@@ -372,6 +488,9 @@ export async function updateStudent(
   actor: { userId: string } = { userId: "system" },
 ) {
   const admissionNumber = input.admissionNumber.trim().toUpperCase();
+  const parentId = input.parentId?.trim();
+  if (!parentId) throw new UserManagementError("Parent is required.", 400);
+
   const [student, studentClass, parent, existingAdmission] = await Promise.all([
     prisma.student.findFirst({
       where: { id: studentId, schoolId },
@@ -382,7 +501,7 @@ export async function updateStudent(
       select: { gradeId: true },
     }),
     prisma.parent.findFirst({
-      where: { id: input.parentId, schoolId },
+      where: { id: parentId, schoolId },
       select: { id: true },
     }),
     prisma.student.findFirst({
@@ -411,13 +530,13 @@ export async function updateStudent(
           status: input.status,
           classId: input.classId,
           gradeId: studentClass.gradeId,
-          parentId: input.parentId,
+          parentId,
         },
       });
 
       await syncParentRelationshipsForStudentLifecycle(tx, {
         schoolId,
-        parentId: input.parentId,
+        parentId,
         studentId,
         nextStatus: input.status,
         actorId: actor.userId,
