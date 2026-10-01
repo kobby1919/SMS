@@ -24,6 +24,7 @@ const studentApi = read("src/app/api/students/route.ts");
 const studentApiUpdate = read("src/app/api/students/[id]/route.ts");
 const studentForm = read("src/components/StudentForm.tsx");
 const legacyActions = read("src/lib/actions/actions.ts");
+const seed = read("prisma/seed.ts");
 
 test("student records have lifecycle and admission source of truth", () => {
   assertContains(schema, "enum StudentStatus", "Student lifecycle must be modeled explicitly.");
@@ -48,11 +49,18 @@ test("new student onboarding creates records, not Clerk student accounts", () =>
 });
 
 test("student updates and forms expose status without restoring account fields", () => {
-  assertContains(studentApiUpdate, "status: formData.get(\"status\") || \"ACTIVE\"", "Student update API must accept lifecycle status.");
+  assertContains(studentApiUpdate, "status: formData.get(\"status\")", "Student update API must accept lifecycle status.");
+  assertNotContains(studentApiUpdate, "status: formData.get(\"status\") || \"ACTIVE\"", "Student update API must not silently activate incomplete records.");
   assertContains(studentForm, "Admission Number", "Student form must show admission number.");
   assertContains(studentForm, "Student Status", "Student form must expose lifecycle status on update.");
   assertNotContains(studentForm, "Password", "Student form must not expose student password.");
   assertNotContains(studentForm, "Username", "Student form must not expose student username.");
+});
+
+test("seeded demo students follow the same source-of-truth rules", () => {
+  assertContains(seed, "StudentStatus", "Seed script must set student lifecycle status explicitly.");
+  assertContains(seed, "const admissionNumber", "Seed script must create admission numbers for demo students.");
+  assertContains(seed, "admissionNumber,", "Seeded students must store admission numbers.");
 });
 
 test("student delete is blocked in favor of lifecycle status", () => {

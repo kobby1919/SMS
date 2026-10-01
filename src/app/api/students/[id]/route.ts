@@ -34,7 +34,7 @@ export async function PUT(
       sex: formData.get("sex"),
       classId: formData.get("classId"),
       parentId: formData.get("parentId"),
-      status: formData.get("status") || "ACTIVE",
+      status: formData.get("status"),
     });
     if (!parsed.ok) return parsed.response;
     return NextResponse.json(await updateStudent(schoolId, id, parsed.data));

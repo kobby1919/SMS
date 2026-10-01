@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { Day, UserSex } from "../src/generated/prisma";
+import { Day, StudentStatus, UserSex } from "../src/generated/prisma";
 import { PrismaClient } from "../src/generated/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
 
@@ -285,12 +285,17 @@ async function main() {
   for (const cls of allClasses) {
     for (let s = 0; s < 2; s++) {
       const parentId = `parent${((studentIndex - 1) % 25) + 1}`;
+      const admissionNumber = `EDJ-${String(studentIndex).padStart(4, "0")}`;
       await prisma.student.upsert({
         where:  { username: `student${studentIndex}` },
-        update: {},
+        update: {
+          admissionNumber,
+          status: StudentStatus.ACTIVE,
+        },
         create: {
           id:        `student${studentIndex}`,
           username:  `student${studentIndex}`,
+          admissionNumber,
           name:      `Student`,
           surname:   `${studentIndex}`,
           email:     `student${studentIndex}@school.edu.gh`,
@@ -298,6 +303,7 @@ async function main() {
           address:   `Accra, Ghana`,
           bloodType: "B+",
           sex:       studentIndex % 2 === 0 ? UserSex.MALE : UserSex.FEMALE,
+          status:    StudentStatus.ACTIVE,
           schoolId:  DEFAULT_SCHOOL_ID,
           parentId,
           gradeId:   cls.gradeId,

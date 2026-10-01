@@ -29,7 +29,7 @@ export const studentCreateSchema = z.object({
 });
 
 export const studentUpdateSchema = studentCreateSchema.extend({
-  status: studentStatusSchema.default("ACTIVE"),
+  status: studentStatusSchema,
 }).omit({ email: true });
 
 export const teacherCreateSchema = z.object({
