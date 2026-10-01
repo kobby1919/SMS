@@ -29,6 +29,14 @@ const STUDENT_STATUS_BADGES = {
   WITHDRAWN: "bg-rose-50 text-rose-700 border-rose-100",
 } as const;
 
+const STUDENT_STATUS_DOTS = {
+  INCOMPLETE_SETUP: "bg-amber-400",
+  ACTIVE: "bg-emerald-400",
+  TRANSFERRED: "bg-sky-400",
+  GRADUATED: "bg-violet-400",
+  WITHDRAWN: "bg-rose-400",
+} as const;
+
 function parsePositiveInt(value?: string) {
   if (!value) return null;
   const parsed = Number.parseInt(value, 10);
@@ -96,6 +104,7 @@ const StudentListPage = async ({
     const requestedClassId = queryParams.classId ? parseInt(queryParams.classId) : null;
     const teacherQuery: Prisma.StudentWhereInput = {
       schoolId,
+      status: StudentStatus.ACTIVE,
       classId: {
         in: requestedClassId && scopedClassIds.includes(requestedClassId)
           ? [requestedClassId]
@@ -456,10 +465,9 @@ const StudentListPage = async ({
               <p className="mt-1 text-xs font-semibold text-gray-400">Clear filters or add a student record.</p>
             </div>
           ) : students.map((item) => (
-            <Link
+            <article
               key={item.id}
-              href={`/list/students/${item.id}`}
-              className="block p-4 transition hover:bg-indigo-50/40"
+              className="p-4 transition hover:bg-indigo-50/40"
             >
               <div className="flex items-start gap-3">
                 <Image
@@ -486,9 +494,18 @@ const StudentListPage = async ({
                     </p>
                     <p>{item.parent?.phone || item.parent?.email || item.phone || "No contact saved"}</p>
                   </div>
+                  <div className="mt-3 flex items-center gap-2">
+                    <Link
+                      href={`/list/students/${item.id}`}
+                      className="inline-flex flex-1 items-center justify-center rounded-xl bg-indigo-50 px-3 py-2 text-xs font-black text-indigo-600 transition hover:bg-indigo-100"
+                    >
+                      View profile
+                    </Link>
+                    {role === "admin" ? <FormModal table="student" type="update" data={item} /> : null}
+                  </div>
                 </div>
               </div>
-            </Link>
+            </article>
           ))}
         </div>
 
@@ -528,7 +545,7 @@ const StudentListPage = async ({
                           width={38} height={38}
                           className="w-9 h-9 rounded-xl object-cover ring-2 ring-gray-100"
                         />
-                        <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white" />
+                        <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white ${STUDENT_STATUS_DOTS[item.status]}`} />
                       </div>
                       <div className="min-w-0">
                         <p className="font-bold text-sm text-gray-800 truncate">{item.name} {item.surname}</p>
@@ -569,10 +586,12 @@ const StudentListPage = async ({
                   {/* Actions */}
                   <td className="px-5 py-4 w-[120px]">
                     <div className="flex items-center justify-end gap-2">
-                      <Link href={`/list/students/${item.id}`}>
-                        <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors">
-                          <Eye size={14} />
-                        </button>
+                      <Link
+                        href={`/list/students/${item.id}`}
+                        className="w-8 h-8 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
+                        aria-label={`View ${item.name} ${item.surname}`}
+                      >
+                        <Eye size={14} />
                       </Link>
                       {role === "admin" && <FormModal table="student" type="update" data={item} />}
                     </div>

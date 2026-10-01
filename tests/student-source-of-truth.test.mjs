@@ -76,8 +76,11 @@ test("student delete is blocked in favor of lifecycle status", () => {
 
 test("student list is an operational source-of-truth page", () => {
   assertContains(studentListPage, "STUDENT_STATUS_LABELS", "Student list must show lifecycle status.");
+  assertContains(studentListPage, "STUDENT_STATUS_DOTS", "Student list must not show one misleading status dot for every lifecycle state.");
   assertContains(studentListPage, "name=\"classId\"", "Student list must support class filtering.");
   assertContains(studentListPage, "name=\"status\"", "Student list must support status filtering.");
   assertContains(studentListPage, "Missing Admission", "Student list must expose admission-number gaps.");
   assertContains(studentListPage, "No contact saved", "Student list must safely handle missing parent contact.");
+  assertContains(studentListPage, "status: StudentStatus.ACTIVE", "Teacher student scope must exclude non-active student records.");
+  assertContains(studentListPage, "View profile", "Mobile student cards must keep a clear profile action.");
 });
