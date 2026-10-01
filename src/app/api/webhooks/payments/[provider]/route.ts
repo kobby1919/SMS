@@ -12,6 +12,7 @@ import {
   resolveWebhookEventId,
   resolveWebhookEventType,
   resolveWebhookReference,
+  resolveWebhookSchoolId,
 } from "@/src/lib/validation/finance-webhooks";
 
 type PaymentWebhookRouteContext = {
@@ -30,11 +31,19 @@ function uniqueSecrets(secrets: Array<string | null | undefined>) {
   return [...new Set(secrets.filter((secret): secret is string => Boolean(secret)))];
 }
 
-async function resolveSchoolWebhookSecrets(provider: PaymentProvider, reference: string | null) {
+async function resolveSchoolWebhookSecrets(
+  provider: PaymentProvider,
+  reference: string | null,
+  payloadSchoolId: string | null,
+) {
   if (!reference) return null;
 
-  const intent = await prisma.paymentIntent.findFirst({
-    where: { provider, reference },
+  const intents = await prisma.paymentIntent.findMany({
+    where: {
+      provider,
+      reference,
+      ...(payloadSchoolId ? { schoolId: payloadSchoolId } : {}),
+    },
     select: {
       schoolId: true,
       school: {
@@ -48,8 +57,11 @@ async function resolveSchoolWebhookSecrets(provider: PaymentProvider, reference:
         },
       },
     },
+    take: 2,
   });
 
+  if (intents.length !== 1) return null;
+  const intent = intents[0];
   if (!intent) return null;
 
   const settings = intent.school.paymentSettings;
@@ -112,7 +124,11 @@ export async function POST(req: NextRequest, context: PaymentWebhookRouteContext
 
   const payload = parsed.data;
   const reference = resolveWebhookReference(payload);
-  const schoolSecrets = await resolveSchoolWebhookSecrets(provider, reference);
+  const schoolSecrets = await resolveSchoolWebhookSecrets(
+    provider,
+    reference,
+    resolveWebhookSchoolId(payload),
+  );
   const algorithm = providerSignatureAlgorithm(provider);
 
   if (!reference || !schoolSecrets?.schoolId || schoolSecrets.secrets.length === 0) {
