@@ -2,6 +2,7 @@
 
 import { requireRole } from "@/src/lib/authz";
 import {
+  emptyStudentImportResult,
   importStudentsFromCsv,
   StudentImportError,
   type StudentImportResult,
@@ -55,6 +56,7 @@ export async function importStudentsWithState(
         ok: false,
         message: error.message,
         errors: error.errors.slice(0, 12),
+        result: emptyStudentImportResult(error.errors, error.rowCount),
       };
     }
 

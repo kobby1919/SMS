@@ -8,6 +8,15 @@ import {
   type StudentImportState,
 } from "@/src/lib/actions/studentImportActions";
 
+function ResultItem({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-lg border border-gray-100 bg-white px-3 py-2">
+      <p className="text-[10px] font-black uppercase tracking-wide text-gray-400">{label}</p>
+      <p className="mt-1 text-lg font-black text-gray-900">{value}</p>
+    </div>
+  );
+}
+
 function SubmitButton() {
   const { pending } = useFormStatus();
 
@@ -62,9 +71,13 @@ export default function StudentImportForm() {
             <div>
               <p>{state.message}</p>
               {state.result ? (
-                <p className="mt-1 text-xs opacity-80">
-                  {state.result.parentsCreated} guardian record{state.result.parentsCreated === 1 ? "" : "s"} created · {state.result.parentsLinked} guardian link{state.result.parentsLinked === 1 ? "" : "s"} reused.
-                </p>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+                  <ResultItem label="Students created" value={state.result.createdStudents} />
+                  <ResultItem label="Parents linked" value={state.result.linkedParents} />
+                  <ResultItem label="Parent profiles" value={state.result.createdParentProfiles} />
+                  <ResultItem label="Rows skipped" value={state.result.rowsSkipped} />
+                  <ResultItem label="Need correction" value={state.result.rowsNeedingCorrection} />
+                </div>
               ) : null}
             </div>
           </div>
@@ -79,6 +92,11 @@ export default function StudentImportForm() {
               <li key={error}>• {error}</li>
             ))}
           </ul>
+          {state.result?.correctionReport.length && state.result.correctionReport.length > state.errors.length ? (
+            <p className="mt-2 text-[11px] font-semibold text-gray-500">
+              Showing the first {state.errors.length} issue{state.errors.length === 1 ? "" : "s"}. Keep the CSV and fix every row marked for correction before uploading again.
+            </p>
+          ) : null}
         </div>
       ) : null}
     </form>

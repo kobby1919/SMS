@@ -41,15 +41,42 @@ type ExistingParentIdentity = {
 
 export type StudentImportResult = {
   imported: number;
+  createdStudents: number;
+  linkedParents: number;
+  createdParentProfiles: number;
+  matchedExistingParentProfiles: number;
   parentsCreated: number;
   parentsLinked: number;
+  rowsSkipped: number;
+  rowsNeedingCorrection: number;
+  correctionReport: string[];
 };
 
 export class StudentImportError extends Error {
-  constructor(message: string, readonly status = 400, readonly errors: string[] = []) {
+  constructor(
+    message: string,
+    readonly status = 400,
+    readonly errors: string[] = [],
+    readonly rowCount = 0,
+  ) {
     super(message);
     this.name = "StudentImportError";
   }
+}
+
+export function emptyStudentImportResult(errors: string[] = [], rowCount = 0): StudentImportResult {
+  return {
+    imported: 0,
+    createdStudents: 0,
+    linkedParents: 0,
+    createdParentProfiles: 0,
+    matchedExistingParentProfiles: 0,
+    parentsCreated: 0,
+    parentsLinked: 0,
+    rowsSkipped: rowCount,
+    rowsNeedingCorrection: countRowsNeedingCorrection(errors),
+    correctionReport: errors,
+  };
 }
 
 function normalizeHeader(value: string) {
@@ -219,6 +246,15 @@ function validateRows(rows: ParsedStudentRow[]) {
   return errors;
 }
 
+function countRowsNeedingCorrection(errors: string[]) {
+  const rowNumbers = new Set<number>();
+  for (const error of errors) {
+    const match = error.match(/^Row\s+(\d+)/i);
+    if (match?.[1]) rowNumbers.add(Number(match[1]));
+  }
+  return rowNumbers.size || (errors.length > 0 ? 1 : 0);
+}
+
 function resolveExistingParentForRow(
   row: ParsedStudentRow,
   parentsByEmail: Map<string, ExistingParentIdentity>,
@@ -250,7 +286,7 @@ export async function importStudentsFromCsv(schoolId: string, csv: string): Prom
 
   const rowErrors = validateRows(rows);
   if (rowErrors.length > 0) {
-    throw new StudentImportError("Fix the CSV errors and upload again.", 400, rowErrors);
+    throw new StudentImportError("Fix the CSV errors and upload again.", 400, rowErrors, rows.length);
   }
 
   const admissionNumbers = rows.map((row) => normalizeAdmissionNumber(row.admissionNumber));
@@ -317,11 +353,11 @@ export async function importStudentsFromCsv(schoolId: string, csv: string): Prom
   }
 
   if (lookupErrors.length > 0) {
-    throw new StudentImportError("Fix the CSV lookup errors and upload again.", 400, lookupErrors);
+    throw new StudentImportError("Fix the CSV lookup errors and upload again.", 400, lookupErrors, rows.length);
   }
 
   let parentsCreated = 0;
-  let parentsLinked = 0;
+  let matchedExistingParentProfiles = 0;
   const parentIdByIdentity = new Map<string, string>();
 
   try {
@@ -338,7 +374,7 @@ export async function importStudentsFromCsv(schoolId: string, csv: string): Prom
 
           if (existingParent) {
             parentId = existingParent.id;
-            parentsLinked++;
+            matchedExistingParentProfiles++;
           } else {
             const parentName = splitParentName(row.parentName);
             const parent = await tx.parent.create({
@@ -359,7 +395,7 @@ export async function importStudentsFromCsv(schoolId: string, csv: string): Prom
           }
           parentIdByIdentity.set(identityKey, parentId);
         } else {
-          parentsLinked++;
+          matchedExistingParentProfiles++;
         }
 
         const admissionNumber = normalizeAdmissionNumber(row.admissionNumber);
@@ -431,7 +467,14 @@ export async function importStudentsFromCsv(schoolId: string, csv: string): Prom
 
   return {
     imported: rows.length,
+    createdStudents: rows.length,
+    linkedParents: rows.length,
+    createdParentProfiles: parentsCreated,
+    matchedExistingParentProfiles,
     parentsCreated,
-    parentsLinked,
+    parentsLinked: rows.length,
+    rowsSkipped: 0,
+    rowsNeedingCorrection: 0,
+    correctionReport: [],
   };
 }

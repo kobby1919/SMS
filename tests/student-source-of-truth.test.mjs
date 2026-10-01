@@ -131,6 +131,16 @@ test("student bulk import keeps intake strict and account-free", () => {
   assertContains(studentImportService, "prisma.$transaction", "Student import must write in a database transaction.");
   assertContains(studentImportService, "admissionNumber: { in: admissionNumbers }", "Student import must block duplicate admission numbers.");
   assertContains(studentImportService, "parentStudentRelationship.upsert", "Student import must link guardians to imported students.");
+  assertContains(studentImportService, "createdStudents", "Student import result must report created students.");
+  assertContains(studentImportService, "linkedParents", "Student import result must report parent links.");
+  assertContains(studentImportService, "createdParentProfiles", "Student import result must report created parent profiles.");
+  assertContains(studentImportService, "rowsSkipped", "Student import result must report skipped rows.");
+  assertContains(studentImportService, "rowsNeedingCorrection", "Student import result must report rows needing correction.");
+  assertContains(studentImportService, "correctionReport", "Student import result must preserve correction report details.");
+  assertContains(studentImportAction, "emptyStudentImportResult", "Failed student import must return structured zero-save result details.");
+  assertContains(studentImportForm, "Students created", "Student import UI must show created student count.");
+  assertContains(studentImportForm, "Rows skipped", "Student import UI must show skipped rows.");
+  assertContains(studentImportForm, "Need correction", "Student import UI must show correction count.");
   assertNotContains(studentImportService, "clerk.users.createUser", "Student import must not create student login accounts.");
 });
 
