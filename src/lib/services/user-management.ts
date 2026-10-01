@@ -15,7 +15,10 @@ import {
   revalidateDashboard,
   revalidateReferenceData,
 } from "@/src/lib/cacheTags";
-import { ensurePrimaryParentStudentRelationship } from "@/src/lib/services/parent-student-relationships";
+import {
+  ensurePrimaryParentStudentRelationship,
+  syncParentRelationshipsForStudentLifecycle,
+} from "@/src/lib/services/parent-student-relationships";
 import { writeParentAccessAudit } from "@/src/lib/services/parent-access-audit";
 import { nextTeacherProfileStatus } from "@/src/lib/services/teacher-profile-completion";
 import { assertTeacherSubjectRemovalAllowed } from "@/src/lib/services/teacher-assignment-safety";
@@ -360,6 +363,7 @@ export async function updateStudent(
   schoolId: string,
   studentId: string,
   input: StudentUpdateInput,
+  actor: { userId: string } = { userId: "system" },
 ) {
   const admissionNumber = input.admissionNumber.trim().toUpperCase();
   const [student, studentClass, parent, existingAdmission] = await Promise.all([
@@ -386,28 +390,34 @@ export async function updateStudent(
   if (existingAdmission) throw new UserManagementError("Admission number already exists for this school.", 409);
 
   try {
-    const updated = await prisma.student.update({
-      where: { id: studentId },
-      data: {
-        username: studentRecordUsername(schoolId, admissionNumber),
-        admissionNumber,
-        name: input.name,
-        surname: input.surname,
-        phone: input.phone || null,
-        address: input.address,
-        bloodType: input.bloodType,
-        sex: input.sex,
-        status: input.status,
-        classId: input.classId,
-        gradeId: studentClass.gradeId,
-        parentId: input.parentId,
-      },
-    });
+    const updated = await prisma.$transaction(async (tx) => {
+      const row = await tx.student.update({
+        where: { id: studentId },
+        data: {
+          username: studentRecordUsername(schoolId, admissionNumber),
+          admissionNumber,
+          name: input.name,
+          surname: input.surname,
+          phone: input.phone || null,
+          address: input.address,
+          bloodType: input.bloodType,
+          sex: input.sex,
+          status: input.status,
+          classId: input.classId,
+          gradeId: studentClass.gradeId,
+          parentId: input.parentId,
+        },
+      });
 
-    await ensurePrimaryParentStudentRelationship({
-      schoolId,
-      parentId: input.parentId,
-      studentId,
+      await syncParentRelationshipsForStudentLifecycle(tx, {
+        schoolId,
+        parentId: input.parentId,
+        studentId,
+        nextStatus: input.status,
+        actorId: actor.userId,
+      });
+
+      return row;
     });
 
     revalidateReferenceData(schoolId, "students");

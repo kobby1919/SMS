@@ -1,4 +1,11 @@
 import prisma from "@/src/lib/prisma";
+import type {
+  ParentAccessAuditAction,
+  ParentStudentRelationshipStatus,
+  Prisma,
+  StudentStatus,
+} from "@/src/generated/prisma";
+import { writeParentAccessAudit } from "@/src/lib/services/parent-access-audit";
 
 export const ACTIVE_PARENT_STUDENT_STATUSES = ["ACTIVE"];
 
@@ -7,6 +14,8 @@ type ParentChildPermission = "fees" | "reports" | "messages";
 type ParentChildAccessOptions = {
   permission?: ParentChildPermission;
 };
+
+type ParentStudentRelationshipDb = Prisma.TransactionClient;
 
 const childSelect = {
   id: true,
@@ -249,4 +258,178 @@ export async function ensurePrimaryParentStudentRelationship({
       updatedById: actorId ?? null,
     },
   });
+}
+
+export function parentRelationshipStatusForStudentLifecycle(
+  status: StudentStatus,
+): ParentStudentRelationshipStatus {
+  if (status === "ACTIVE") return "ACTIVE";
+  if (status === "TRANSFERRED") return "TRANSFERRED";
+  if (status === "GRADUATED") return "GRADUATED";
+  return "REMOVED";
+}
+
+function auditActionForStudentLifecycle(
+  status: StudentStatus,
+): ParentAccessAuditAction {
+  if (status === "ACTIVE") return "ACCESS_RESTORED";
+  if (status === "TRANSFERRED") return "CHILD_TRANSFERRED";
+  if (status === "GRADUATED") return "CHILD_GRADUATED";
+  return "CHILD_REMOVED";
+}
+
+function studentLifecycleRelationshipNote(status: StudentStatus) {
+  if (status === "ACTIVE") return null;
+  if (status === "INCOMPLETE_SETUP") return "Student setup is incomplete, so parent portal access is paused.";
+  if (status === "TRANSFERRED") return "Student has been marked as transferred.";
+  if (status === "GRADUATED") return "Student has been marked as graduated.";
+  return "Student has been marked as withdrawn.";
+}
+
+export async function syncParentRelationshipsForStudentLifecycle(
+  db: ParentStudentRelationshipDb,
+  {
+    schoolId,
+    studentId,
+    parentId,
+    nextStatus,
+    actorId,
+  }: {
+    schoolId: string;
+    studentId: string;
+    parentId: string;
+    nextStatus: StudentStatus;
+    actorId?: string | null;
+  },
+) {
+  const nextRelationshipStatus = parentRelationshipStatusForStudentLifecycle(nextStatus);
+  const isActive = nextRelationshipStatus === "ACTIVE";
+  const endedAt = isActive ? null : new Date();
+  const note = studentLifecycleRelationshipNote(nextStatus);
+  const performedBy = actorId ?? "system";
+
+  const existingRelationships = await db.parentStudentRelationship.findMany({
+    where: { schoolId, studentId },
+    select: {
+      id: true,
+      parentId: true,
+      status: true,
+      role: true,
+    },
+  });
+  const currentPrimary = existingRelationships.find(
+    (relationship) => relationship.parentId === parentId,
+  );
+
+  const primaryRelationship = await db.parentStudentRelationship.upsert({
+    where: {
+      schoolId_parentId_studentId: {
+        schoolId,
+        parentId,
+        studentId,
+      },
+    },
+    create: {
+      schoolId,
+      parentId,
+      studentId,
+      status: nextRelationshipStatus,
+      role: "PRIMARY_GUARDIAN",
+      canViewFees: isActive,
+      canViewReports: isActive,
+      canMessageSchool: isActive,
+      endedAt,
+      note,
+      createdById: actorId ?? null,
+      updatedById: actorId ?? null,
+    },
+    update: {
+      status: nextRelationshipStatus,
+      role: "PRIMARY_GUARDIAN",
+      canViewFees: isActive,
+      canViewReports: isActive,
+      canMessageSchool: isActive,
+      endedAt,
+      note,
+      updatedById: actorId ?? null,
+    },
+    select: {
+      id: true,
+      parentId: true,
+      status: true,
+    },
+  });
+
+  if (!currentPrimary || currentPrimary.status !== nextRelationshipStatus) {
+    await writeParentAccessAudit(db, {
+      schoolId,
+      parentId,
+      studentId,
+      relationshipId: primaryRelationship.id,
+      action: currentPrimary
+        ? auditActionForStudentLifecycle(nextStatus)
+        : isActive
+          ? "CHILD_LINKED"
+          : auditActionForStudentLifecycle(nextStatus),
+      performedBy,
+      metadata: {
+        source: "student-lifecycle",
+        studentStatus: nextStatus,
+        relationshipStatus: nextRelationshipStatus,
+        previousRelationshipStatus: currentPrimary?.status ?? null,
+      },
+    });
+  }
+
+  const relationshipsToClose = isActive
+    ? existingRelationships.filter(
+        (relationship) =>
+          relationship.parentId !== parentId &&
+          relationship.role === "PRIMARY_GUARDIAN" &&
+          relationship.status === "ACTIVE",
+      )
+    : existingRelationships.filter(
+        (relationship) =>
+          relationship.parentId !== parentId && relationship.status === "ACTIVE",
+      );
+
+  if (relationshipsToClose.length === 0) return primaryRelationship;
+
+  await db.parentStudentRelationship.updateMany({
+    where: {
+      schoolId,
+      studentId,
+      id: { in: relationshipsToClose.map((relationship) => relationship.id) },
+    },
+    data: {
+      status: isActive ? "REMOVED" : nextRelationshipStatus,
+      canViewFees: false,
+      canViewReports: false,
+      canMessageSchool: false,
+      endedAt: new Date(),
+      note: isActive
+        ? "Primary guardian changed from the student profile."
+        : note,
+      updatedById: actorId ?? null,
+    },
+  });
+
+  for (const relationship of relationshipsToClose) {
+    await writeParentAccessAudit(db, {
+      schoolId,
+      parentId: relationship.parentId,
+      studentId,
+      relationshipId: relationship.id,
+      action: isActive ? "CHILD_REMOVED" : auditActionForStudentLifecycle(nextStatus),
+      performedBy,
+      metadata: {
+        source: "student-lifecycle",
+        studentStatus: nextStatus,
+        relationshipStatus: isActive ? "REMOVED" : nextRelationshipStatus,
+        previousRelationshipStatus: relationship.status,
+      },
+    });
+  }
+
+  return primaryRelationship;
 }

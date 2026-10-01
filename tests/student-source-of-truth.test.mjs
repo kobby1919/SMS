@@ -31,6 +31,7 @@ const studentImportService = read("src/lib/services/student-import.ts");
 const studentImportAction = read("src/lib/actions/studentImportActions.ts");
 const studentImportPage = read("src/app/(dashboard)/list/students/import/page.tsx");
 const studentImportForm = read("src/components/StudentImportForm.tsx");
+const parentStudentRelationships = read("src/lib/services/parent-student-relationships.ts");
 
 test("student records have lifecycle and admission source of truth", () => {
   assertContains(schema, "enum StudentStatus", "Student lifecycle must be modeled explicitly.");
@@ -113,4 +114,25 @@ test("student bulk import keeps intake strict and account-free", () => {
   assertContains(studentImportService, "admissionNumber: { in: admissionNumbers }", "Student import must block duplicate admission numbers.");
   assertContains(studentImportService, "parentStudentRelationship.upsert", "Student import must link guardians to imported students.");
   assertNotContains(studentImportService, "clerk.users.createUser", "Student import must not create student login accounts.");
+});
+
+test("student lifecycle changes synchronize parent access safely", () => {
+  const updateStudentBlock = userManagement.slice(
+    userManagement.indexOf("export async function updateStudent"),
+    userManagement.indexOf("export async function updateParent"),
+  );
+
+  assertContains(updateStudentBlock, "prisma.$transaction", "Student lifecycle updates must be transactional.");
+  assertContains(updateStudentBlock, "syncParentRelationshipsForStudentLifecycle", "Student lifecycle updates must sync parent access.");
+  assertContains(studentApiUpdate, "{ userId }", "Student lifecycle audit must use the signed-in admin as actor.");
+  assertContains(parentStudentRelationships, "parentRelationshipStatusForStudentLifecycle", "Student lifecycle must map to relationship status.");
+  assertContains(parentStudentRelationships, "if (status === \"TRANSFERRED\") return \"TRANSFERRED\"", "Transferred students must transfer parent relationship access.");
+  assertContains(parentStudentRelationships, "if (status === \"GRADUATED\") return \"GRADUATED\"", "Graduated students must graduate parent relationship access.");
+  assertContains(parentStudentRelationships, "return \"REMOVED\"", "Incomplete or withdrawn students must not remain visible to parents.");
+  assertContains(parentStudentRelationships, "canViewFees: isActive", "Inactive lifecycle statuses must remove fee access.");
+  assertContains(parentStudentRelationships, "canViewReports: isActive", "Inactive lifecycle statuses must remove report access.");
+  assertContains(parentStudentRelationships, "canMessageSchool: isActive", "Inactive lifecycle statuses must remove messaging access.");
+  assertContains(parentStudentRelationships, "Primary guardian changed from the student profile.", "Changing the primary parent must close the old primary relationship.");
+  assertContains(parentStudentRelationships, "writeParentAccessAudit", "Lifecycle relationship changes must be audited.");
+  assertNotContains(updateStudentBlock, "await ensurePrimaryParentStudentRelationship({", "Student update must not blindly reactivate parent access.");
 });

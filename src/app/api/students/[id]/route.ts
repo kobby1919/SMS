@@ -37,7 +37,7 @@ export async function PUT(
       status: formData.get("status"),
     });
     if (!parsed.ok) return parsed.response;
-    return NextResponse.json(await updateStudent(schoolId, id, parsed.data));
+    return NextResponse.json(await updateStudent(schoolId, id, parsed.data, { userId }));
   } catch (error) {
     if (error instanceof UserManagementError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
