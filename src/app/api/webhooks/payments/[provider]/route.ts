@@ -12,7 +12,6 @@ import {
   resolveWebhookEventId,
   resolveWebhookEventType,
   resolveWebhookReference,
-  resolveWebhookSchoolId,
 } from "@/src/lib/validation/finance-webhooks";
 
 type PaymentWebhookRouteContext = {
@@ -22,13 +21,6 @@ type PaymentWebhookRouteContext = {
 const PROVIDERS: Record<string, PaymentProvider> = {
   paystack: "PAYSTACK",
 };
-
-function providerEnvSecret(provider: PaymentProvider) {
-  if (provider === "PAYSTACK") {
-    return process.env.PAYSTACK_WEBHOOK_SECRET ?? process.env.PAYSTACK_SECRET_KEY;
-  }
-  return undefined;
-}
 
 function providerSignatureAlgorithm(provider: PaymentProvider) {
   return provider === "PAYSTACK" ? "sha512" : "sha256";
@@ -122,10 +114,15 @@ export async function POST(req: NextRequest, context: PaymentWebhookRouteContext
   const reference = resolveWebhookReference(payload);
   const schoolSecrets = await resolveSchoolWebhookSecrets(provider, reference);
   const algorithm = providerSignatureAlgorithm(provider);
-  const secretCandidates = [
-    ...(schoolSecrets?.secrets ?? []),
-    providerEnvSecret(provider),
-  ].filter((secret): secret is string => Boolean(secret));
+
+  if (!reference || !schoolSecrets?.schoolId || schoolSecrets.secrets.length === 0) {
+    return NextResponse.json(
+      { error: "Webhook does not match a configured Edujay payment intent." },
+      { status: 401 },
+    );
+  }
+
+  const secretCandidates = schoolSecrets.secrets;
   const verified = secretCandidates.some((secret) =>
     verifyHmacSignature({ rawBody, signature, secret, algorithm }),
   );
@@ -144,20 +141,19 @@ export async function POST(req: NextRequest, context: PaymentWebhookRouteContext
     );
   }
 
-  const schoolId = schoolSecrets?.schoolId ?? resolveWebhookSchoolId(payload);
   const event = await storePaymentWebhookEvent({
     provider,
     providerEventId,
     eventType: resolveWebhookEventType(payload),
     payload,
     signature,
-    schoolId,
+    schoolId: schoolSecrets.schoolId,
     verified,
   });
 
   return NextResponse.json({
     received: true,
-    queued: Boolean(schoolId),
+    queued: true,
     eventId: event.id,
   }, { status: 202 });
 }
