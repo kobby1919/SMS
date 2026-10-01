@@ -64,7 +64,7 @@ export async function listActiveParentChildren(
       parentId,
       status: "ACTIVE",
       ...permissionWhere(options.permission),
-      student: { schoolId },
+      student: { schoolId, status: "ACTIVE" },
     },
     include: {
       student: { select: childSelect },
@@ -85,7 +85,7 @@ export async function listActiveParentChildren(
   }
 
   return prisma.student.findMany({
-    where: { schoolId, parentId },
+    where: { schoolId, parentId, status: "ACTIVE" },
     select: childSelect,
     orderBy: [{ name: "asc" }, { surname: "asc" }],
   });
@@ -122,7 +122,7 @@ export async function parentCanAccessStudent({
         status: "ACTIVE",
         ...permissionWhere(permission),
         parent: { schoolId },
-        student: { schoolId },
+        student: { schoolId, status: "ACTIVE" },
       },
       select: { id: true },
     });
@@ -131,7 +131,7 @@ export async function parentCanAccessStudent({
   }
 
   const legacyStudent = await prisma.student.findFirst({
-    where: { id: studentId, schoolId, parentId },
+    where: { id: studentId, schoolId, parentId, status: "ACTIVE" },
     select: { id: true },
   });
 
@@ -187,7 +187,7 @@ export async function getActiveParentIdsByStudent(schoolId: string, studentIds: 
         studentId: { in: uniqueStudentIds },
         status: "ACTIVE",
         parent: { schoolId },
-        student: { schoolId },
+        student: { schoolId, status: "ACTIVE" },
       },
       select: { studentId: true, parentId: true },
     }),
@@ -210,7 +210,7 @@ export async function getActiveParentIdsByStudent(schoolId: string, studentIds: 
 
   if (legacyStudentIds.length > 0) {
     const legacyStudents = await prisma.student.findMany({
-      where: { schoolId, id: { in: legacyStudentIds } },
+      where: { schoolId, id: { in: legacyStudentIds }, status: "ACTIVE" },
       select: { id: true, parentId: true },
     });
 
@@ -360,7 +360,12 @@ export async function syncParentRelationshipsForStudentLifecycle(
     },
   });
 
-  if (!currentPrimary || currentPrimary.status !== nextRelationshipStatus) {
+  const primaryRelationshipChanged =
+    !currentPrimary ||
+    currentPrimary.status !== nextRelationshipStatus ||
+    currentPrimary.role !== "PRIMARY_GUARDIAN";
+
+  if (primaryRelationshipChanged) {
     await writeParentAccessAudit(db, {
       schoolId,
       parentId,
@@ -377,6 +382,8 @@ export async function syncParentRelationshipsForStudentLifecycle(
         studentStatus: nextStatus,
         relationshipStatus: nextRelationshipStatus,
         previousRelationshipStatus: currentPrimary?.status ?? null,
+        previousRelationshipRole: currentPrimary?.role ?? null,
+        relationshipRole: "PRIMARY_GUARDIAN",
       },
     });
   }

@@ -32,6 +32,8 @@ const studentImportAction = read("src/lib/actions/studentImportActions.ts");
 const studentImportPage = read("src/app/(dashboard)/list/students/import/page.tsx");
 const studentImportForm = read("src/components/StudentImportForm.tsx");
 const parentStudentRelationships = read("src/lib/services/parent-student-relationships.ts");
+const parentRelationshipActions = read("src/lib/actions/parentRelationshipActions.ts");
+const parentInvites = read("src/lib/services/parent-invites.ts");
 
 test("student records have lifecycle and admission source of truth", () => {
   assertContains(schema, "enum StudentStatus", "Student lifecycle must be modeled explicitly.");
@@ -50,6 +52,9 @@ test("new student onboarding creates records, not Clerk student accounts", () =>
   assertContains(createStudentBlock, "admissionNumber", "Student creation must use admission number.");
   assertContains(createStudentBlock, "randomUUID", "Student creation must create an internal record id.");
   assertContains(createStudentBlock, "studentRecordUsername", "Legacy username must be derived internally.");
+  assertContains(createStudentBlock, "prisma.$transaction", "Student creation must create the student and parent link atomically.");
+  assertContains(createStudentBlock, "syncParentRelationshipsForStudentLifecycle", "Student creation must create the parent link through lifecycle sync.");
+  assertContains(studentApi, "{ userId }", "Student creation audit must use the signed-in admin as actor.");
   assertNotContains(createStudentBlock, "clerk.users.createUser", "Student creation must not create a Clerk user yet.");
   assertContains(studentApi, "admissionNumber: formData.get(\"admissionNumber\")", "Student create API must accept admission number.");
   assertNotContains(studentApi, "password: formData.get(\"password\")", "Student create API must not ask for student login password.");
@@ -129,10 +134,20 @@ test("student lifecycle changes synchronize parent access safely", () => {
   assertContains(parentStudentRelationships, "if (status === \"TRANSFERRED\") return \"TRANSFERRED\"", "Transferred students must transfer parent relationship access.");
   assertContains(parentStudentRelationships, "if (status === \"GRADUATED\") return \"GRADUATED\"", "Graduated students must graduate parent relationship access.");
   assertContains(parentStudentRelationships, "return \"REMOVED\"", "Incomplete or withdrawn students must not remain visible to parents.");
+  assertContains(parentStudentRelationships, "student: { schoolId, status: \"ACTIVE\" }", "Active parent relationship reads must also require an active student record.");
+  assertContains(parentStudentRelationships, "where: { schoolId, parentId, status: \"ACTIVE\" }", "Legacy parent-child fallback must not expose inactive students.");
   assertContains(parentStudentRelationships, "canViewFees: isActive", "Inactive lifecycle statuses must remove fee access.");
   assertContains(parentStudentRelationships, "canViewReports: isActive", "Inactive lifecycle statuses must remove report access.");
   assertContains(parentStudentRelationships, "canMessageSchool: isActive", "Inactive lifecycle statuses must remove messaging access.");
   assertContains(parentStudentRelationships, "Primary guardian changed from the student profile.", "Changing the primary parent must close the old primary relationship.");
+  assertContains(parentStudentRelationships, "previousRelationshipRole", "Primary guardian role changes must be visible in audit metadata.");
   assertContains(parentStudentRelationships, "writeParentAccessAudit", "Lifecycle relationship changes must be audited.");
   assertNotContains(updateStudentBlock, "await ensurePrimaryParentStudentRelationship({", "Student update must not blindly reactivate parent access.");
+});
+
+test("parent link and invite workflows cannot reactivate inactive students", () => {
+  assertContains(parentRelationshipActions, "student.status !== \"ACTIVE\"", "Manual parent-ward linking must reject inactive wards.");
+  assertContains(parentRelationshipActions, "relationship.student.status !== \"ACTIVE\"", "Manual parent access restore must reject inactive wards.");
+  assertContains(parentInvites, "status: \"ACTIVE\"", "Parent invite creation must only include active wards.");
+  assertContains(parentInvites, "student.status !== \"ACTIVE\"", "Parent invite acceptance must reject wards that became inactive after invite creation.");
 });

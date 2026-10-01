@@ -238,6 +238,7 @@ export async function createParentInvite(
       where: {
         schoolId: context.schoolId,
         id: { in: uniqueStudentIds },
+        status: "ACTIVE",
       },
       select: {
         id: true,
@@ -268,7 +269,7 @@ export async function createParentInvite(
 
   if (students.length !== uniqueStudentIds.length) {
     throw new ParentInviteServiceError(
-      "One or more selected wards do not belong to this school.",
+      "One or more selected wards are not active or do not belong to this school.",
       409,
     );
   }
@@ -616,7 +617,7 @@ export async function acceptParentInviteForUser(input: {
       },
       students: {
         include: {
-          student: { select: { id: true, schoolId: true, name: true, surname: true } },
+          student: { select: { id: true, schoolId: true, status: true, name: true, surname: true } },
         },
       },
     },
@@ -649,6 +650,13 @@ export async function acceptParentInviteForUser(input: {
   if (inviteStudents.some((student) => student.schoolId !== invite.schoolId)) {
     throw new ParentInviteServiceError(
       "This invite contains a ward outside the school. Ask the school admin to send a fresh invite.",
+      409,
+    );
+  }
+
+  if (inviteStudents.some((student) => student.status !== "ACTIVE")) {
+    throw new ParentInviteServiceError(
+      "This invite contains a ward that is no longer active. Ask the school admin to send a fresh invite.",
       409,
     );
   }

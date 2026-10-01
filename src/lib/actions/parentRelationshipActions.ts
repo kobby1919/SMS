@@ -103,7 +103,10 @@ export async function addParentWardLinkAction(input: unknown): Promise<ParentRel
 
     const [parent, student, existingRelationship] = await Promise.all([
       prisma.parent.findFirst({ where: { id: data.parentId, schoolId }, select: { id: true } }),
-      prisma.student.findFirst({ where: { id: data.studentId, schoolId }, select: { id: true } }),
+      prisma.student.findFirst({
+        where: { id: data.studentId, schoolId },
+        select: { id: true, status: true },
+      }),
       prisma.parentStudentRelationship.findUnique({
         where: {
           schoolId_parentId_studentId: {
@@ -118,6 +121,12 @@ export async function addParentWardLinkAction(input: unknown): Promise<ParentRel
 
     if (!parent) return { ok: false, message: "Parent not found for this school." };
     if (!student) return { ok: false, message: "Ward not found for this school." };
+    if (student.status !== "ACTIVE") {
+      return {
+        ok: false,
+        message: "This ward is not active, so parent access cannot be linked.",
+      };
+    }
 
     const relationship = await prisma.parentStudentRelationship.upsert({
       where: {
@@ -203,10 +212,17 @@ export async function updateParentWardLinkStatusAction(input: unknown): Promise<
         canViewFees: true,
         canViewReports: true,
         canMessageSchool: true,
+        student: { select: { status: true } },
       },
     });
 
     if (!relationship) return { ok: false, message: "Parent-ward link not found." };
+    if (data.status === "ACTIVE" && relationship.student.status !== "ACTIVE") {
+      return {
+        ok: false,
+        message: "This ward is not active, so parent access cannot be restored.",
+      };
+    }
 
     const isActive = data.status === "ACTIVE";
     await prisma.parentStudentRelationship.update({

@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     });
     if (!parsed.ok) return parsed.response;
 
-    return NextResponse.json(await createStudent(schoolId, parsed.data), {
+    return NextResponse.json(await createStudent(schoolId, parsed.data, { userId }), {
       status: 201,
     });
   } catch (error) {
