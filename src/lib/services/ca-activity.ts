@@ -382,10 +382,10 @@ export async function upsertCAActivityScore(input: CAActivityScoreInput): Promis
   }
 
   const student = await prisma.student.findFirst({
-    where: { id: input.studentId, schoolId: input.schoolId, classId: activity.classId },
+    where: { id: input.studentId, schoolId: input.schoolId, classId: activity.classId, status: "ACTIVE" },
     select: { id: true },
   });
-  if (!student) throw new Error("Student does not belong to this CA activity class.");
+  if (!student) throw new Error("Student is not an active member of this CA activity class.");
 
   const allocation =
     activity.bucket.aggregationMode === "SUM_ACTIVITIES"

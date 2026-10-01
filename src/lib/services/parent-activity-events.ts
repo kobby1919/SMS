@@ -23,6 +23,7 @@ export async function recordParentActivityEvents(input: ActivityEventInput) {
   const students = await prisma.student.findMany({
     where: {
       schoolId: input.schoolId,
+      status: "ACTIVE",
       ...(input.studentIds?.length ? { id: { in: input.studentIds } } : {}),
       ...(!input.studentIds?.length && input.classId ? { classId: input.classId } : {}),
     },

@@ -34,6 +34,10 @@ const studentImportForm = read("src/components/StudentImportForm.tsx");
 const parentStudentRelationships = read("src/lib/services/parent-student-relationships.ts");
 const parentRelationshipActions = read("src/lib/actions/parentRelationshipActions.ts");
 const parentInvites = read("src/lib/services/parent-invites.ts");
+const billActions = read("src/lib/actions/billActions.ts");
+const attendanceService = read("src/lib/services/attendance.ts");
+const caActivityService = read("src/lib/services/ca-activity.ts");
+const parentActivityEvents = read("src/lib/services/parent-activity-events.ts");
 
 test("student records have lifecycle and admission source of truth", () => {
   assertContains(schema, "enum StudentStatus", "Student lifecycle must be modeled explicitly.");
@@ -195,6 +199,18 @@ test("student lifecycle changes synchronize parent access safely", () => {
 test("parent link and invite workflows cannot reactivate inactive students", () => {
   assertContains(parentRelationshipActions, "student.status !== \"ACTIVE\"", "Manual parent-ward linking must reject inactive wards.");
   assertContains(parentRelationshipActions, "relationship.student.status !== \"ACTIVE\"", "Manual parent access restore must reject inactive wards.");
+  assertContains(parentStudentRelationships, "Only active students can be linked to parent portal access.", "Shared parent-link helper must reject inactive wards.");
   assertContains(parentInvites, "status: \"ACTIVE\"", "Parent invite creation must only include active wards.");
   assertContains(parentInvites, "student.status !== \"ACTIVE\"", "Parent invite acceptance must reject wards that became inactive after invite creation.");
+});
+
+test("inactive students are excluded from live school operations", () => {
+  assertContains(billActions, "classId: { in: input.classIds }, status: \"ACTIVE\"", "Bill generation must only create new bills for active students.");
+  assertContains(attendanceService, "id: { in: studentIds }, status: \"ACTIVE\"", "Attendance submission must only accept active students.");
+  assertContains(attendanceService, "One or more students are not active members of this lesson's class.", "Attendance errors must explain inactive student rejection.");
+  assertContains(attendanceService, "where: { schoolId, classId, status: \"ACTIVE\" }", "Class attendance stats must exclude inactive students.");
+  assertContains(attendanceService, "where: { schoolId, status: \"ACTIVE\" }", "School attendance health must exclude inactive students.");
+  assertContains(caActivityService, "classId: activity.classId, status: \"ACTIVE\"", "CA activity scores must only be saved for active students.");
+  assertContains(caActivityService, "Student is not an active member of this CA activity class.", "CA activity errors must explain inactive student rejection.");
+  assertContains(parentActivityEvents, "status: \"ACTIVE\"", "Parent activity events must not be created for inactive students.");
 });

@@ -260,11 +260,11 @@ export async function saveAttendance({
   }
 
   const validStudents = await prisma.student.findMany({
-    where: { schoolId, classId: lesson.classId, id: { in: studentIds } },
+    where: { schoolId, classId: lesson.classId, id: { in: studentIds }, status: "ACTIVE" },
     select: { id: true, name: true, surname: true },
   });
   if (validStudents.length !== studentIds.length) {
-    throw new Error("One or more students do not belong to this lesson's class.");
+    throw new Error("One or more students are not active members of this lesson's class.");
   }
   const validStudentById = new Map(validStudents.map((student) => [student.id, student]));
 
@@ -511,7 +511,7 @@ export async function getStudentAttendanceStats(schoolId: string, studentId: str
 
 export async function getClassAttendanceStats(schoolId: string, classId: number) {
   const students = await prisma.student.findMany({
-    where: { schoolId, classId },
+    where: { schoolId, classId, status: "ACTIVE" },
     select: { id: true, name: true, surname: true, img: true },
   });
   if (students.length === 0) return [];
@@ -554,7 +554,7 @@ export async function getSchoolAttendanceOverview(schoolId: string) {
   const [counts, students] = await Promise.all([
     getAttendanceStatusCounts({ schoolId, start: today, end: todayEnd }),
     prisma.student.findMany({
-      where: { schoolId },
+      where: { schoolId, status: "ACTIVE" },
       select: { id: true, name: true, surname: true, class: { select: { name: true } } },
     }),
   ]);

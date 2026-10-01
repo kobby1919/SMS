@@ -151,7 +151,7 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
   );
 
   const students = await prisma.student.findMany({
-    where:  { schoolId, classId: { in: input.classIds } },
+    where:  { schoolId, classId: { in: input.classIds }, status: "ACTIVE" },
     select: { id: true, classId: true },
   });
 

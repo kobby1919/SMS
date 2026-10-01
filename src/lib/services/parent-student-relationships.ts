@@ -235,6 +235,21 @@ export async function ensurePrimaryParentStudentRelationship({
   studentId: string;
   actorId?: string | null;
 }) {
+  const [parent, student] = await Promise.all([
+    prisma.parent.findFirst({ where: { id: parentId, schoolId }, select: { id: true } }),
+    prisma.student.findFirst({
+      where: { id: studentId, schoolId, status: "ACTIVE" },
+      select: { id: true },
+    }),
+  ]);
+
+  if (!parent) {
+    throw new Error("Parent was not found for this school.");
+  }
+  if (!student) {
+    throw new Error("Only active students can be linked to parent portal access.");
+  }
+
   return prisma.parentStudentRelationship.upsert({
     where: {
       schoolId_parentId_studentId: {
