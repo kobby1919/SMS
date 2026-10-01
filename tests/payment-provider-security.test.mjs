@@ -23,6 +23,8 @@ function assertMatches(source, pattern, message) {
 const paymentIntents = read("src/lib/services/payment-intents.ts");
 const webhookProcessor = read("src/lib/services/finance-webhook-processor.ts");
 const webhookRoute = read("src/app/api/webhooks/payments/[provider]/route.ts");
+const webhookStore = read("src/lib/services/finance-webhooks.ts");
+const schema = read("prisma/schema.prisma");
 const parentBillPage = read("src/app/(dashboard)/parent/finance/bills/[id]/page.tsx");
 
 test("successful provider payment is applied only inside webhook processor transaction", () => {
@@ -93,4 +95,17 @@ test("provider reversal or refund events reverse only verified online payments",
   assertContains(webhookProcessor, "Provider reversal reference does not match any Edujay online payment.", "Provider reversal must match an existing online payment.");
   assertContains(webhookProcessor, "Partial provider refunds are not automated yet.", "Partial refunds must not silently adjust bill balances.");
   assertContains(webhookProcessor, 'reversedBy: "system:webhook"', "Provider reversal must be stamped as webhook/system action.");
+});
+
+test("final payment provider safeguards are backed by database uniqueness and webhook idempotency", () => {
+  assertContains(schema, "@@unique([schoolId, reference])", "PaymentIntent references must be unique per school.");
+  assertContains(schema, "@@unique([schoolId, idempotencyKey])", "PaymentIntent idempotency keys must be unique per school.");
+  assertContains(schema, "@@unique([schoolId, receiptNumber])", "Receipt numbers must be unique per school.");
+  assertContains(schema, "@@unique([schoolId, externalProvider, externalReference])", "Provider payment references must be unique per school.");
+  assertContains(schema, "@@unique([schoolId, idempotencyKey])", "Payment idempotency keys must be protected by the database.");
+  assertContains(schema, "paymentId Int     @unique", "A payment must not be reversed more than once.");
+  assertContains(schema, "@@unique([provider, providerEventId])", "Provider webhook events must not be stored twice.");
+  assertContains(webhookStore, "provider_providerEventId", "Webhook storage must look up existing provider events by provider event id.");
+  assertContains(webhookStore, "canRefreshWebhookEvent", "Webhook storage must only refresh events that are safe to retry.");
+  assertContains(webhookStore, "idempotencyKey: `webhook:${input.provider}:${input.providerEventId}`", "Webhook processing jobs must be deduped by provider event id.");
 });
