@@ -25,6 +25,7 @@ export async function PUT(
     const { id } = await params;
     const formData = await req.formData();
     const parsed = parseBody(studentUpdateSchema, {
+      admissionNumber: formData.get("admissionNumber"),
       name: formData.get("name"),
       surname: formData.get("surname"),
       phone: formData.get("phone"),
@@ -33,6 +34,7 @@ export async function PUT(
       sex: formData.get("sex"),
       classId: formData.get("classId"),
       parentId: formData.get("parentId"),
+      status: formData.get("status") || "ACTIVE",
     });
     if (!parsed.ok) return parsed.response;
     return NextResponse.json(await updateStudent(schoolId, id, parsed.data));

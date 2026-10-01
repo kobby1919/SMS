@@ -22,6 +22,14 @@ import { getGradeBandByGrade, computeAggregate, ordinal, TERM_LABELS } from "@/s
 import type { Term } from "@/src/generated/prisma";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
+const STUDENT_STATUS_LABELS = {
+  INCOMPLETE_SETUP: "Incomplete setup",
+  ACTIVE: "Active",
+  TRANSFERRED: "Transferred",
+  GRADUATED: "Graduated",
+  WITHDRAWN: "Withdrawn",
+} as const;
+
 const SingleStudentPage = async ({
   params,
 }: {
@@ -214,6 +222,8 @@ const SingleStudentPage = async ({
             <div className="flex flex-wrap justify-center sm:justify-start gap-2.5">
               {[
                 { icon: <Droplets size={13} />, label: student.bloodType },
+                { icon: <FileText size={13} />, label: `Admission: ${student.admissionNumber ?? student.username}` },
+                { icon: <AlertCircle size={13} />, label: STUDENT_STATUS_LABELS[student.status] },
                 { icon: <Calendar size={13} />, label: `Enrolled: ${enrolYear}` },
                 { icon: <Users    size={13} />, label: student.sex === "MALE" ? "Male" : "Female" },
                 ...(student.email ? [{ icon: <Mail  size={13} />, label: student.email }] : []),

@@ -20,9 +20,8 @@ export async function POST(req: NextRequest) {
     if (limited) return limited;
     const formData = await req.formData();
     const parsed = parseBody(studentCreateSchema, {
-      username: formData.get("username"),
+      admissionNumber: formData.get("admissionNumber"),
       email: formData.get("email") || "",
-      password: formData.get("password"),
       name: formData.get("name"),
       surname: formData.get("surname"),
       phone: formData.get("phone") || null,

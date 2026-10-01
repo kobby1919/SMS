@@ -43,6 +43,7 @@ const StudentListPage = async ({
             query.OR = [
               { name: { contains: search, mode: "insensitive" } },
               { surname: { contains: search, mode: "insensitive" } },
+              { admissionNumber: { contains: search, mode: "insensitive" } },
               { username: { contains: search, mode: "insensitive" } },
               { email: { contains: search, mode: "insensitive" } },
               { phone: { contains: search, mode: "insensitive" } },
@@ -83,6 +84,7 @@ const StudentListPage = async ({
           OR: [
             { name: { contains: search, mode: "insensitive" } },
             { surname: { contains: search, mode: "insensitive" } },
+            { admissionNumber: { contains: search, mode: "insensitive" } },
             { username: { contains: search, mode: "insensitive" } },
             { email: { contains: search, mode: "insensitive" } },
             { phone: { contains: search, mode: "insensitive" } },
@@ -100,6 +102,7 @@ const StudentListPage = async ({
         name: true,
         surname: true,
         username: true,
+        admissionNumber: true,
         email: true,
         phone: true,
         img: true,
@@ -255,7 +258,7 @@ const StudentListPage = async ({
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-black text-gray-800">{student.name} {student.surname}</p>
                         <p className="truncate text-xs font-semibold text-gray-400">
-                          {student.email ?? student.username}
+                          Admission: {student.admissionNumber ?? student.username}
                           {student.phone ? ` · ${student.phone}` : ""}
                         </p>
                       </div>
@@ -373,7 +376,7 @@ const StudentListPage = async ({
                       </div>
                       <div className="min-w-0">
                         <p className="font-bold text-sm text-gray-800 truncate">{item.name} {item.surname}</p>
-                        <p className="text-xs text-gray-400 truncate">{item.email ?? item.username}</p>
+                        <p className="text-xs text-gray-400 truncate">Admission: {item.admissionNumber ?? item.username}</p>
                       </div>
                     </div>
                   </td>

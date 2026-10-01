@@ -2,6 +2,7 @@ import { z } from "zod";
 import { nonEmptyStringSchema, positiveIntSchema } from "./common";
 
 export const userSexSchema = z.enum(["MALE", "FEMALE"]);
+export const studentStatusSchema = z.enum(["INCOMPLETE_SETUP", "ACTIVE", "TRANSFERRED", "GRADUATED", "WITHDRAWN"]);
 
 export const parentCreateSchema = z.object({
   username: nonEmptyStringSchema,
@@ -15,9 +16,8 @@ export const parentCreateSchema = z.object({
 export const parentUpdateSchema = parentCreateSchema.omit({ username: true });
 
 export const studentCreateSchema = z.object({
-  username: z.string().trim().min(3).max(20),
+  admissionNumber: z.string().trim().min(2, "Admission number is required.").max(40),
   email: z.string().email().optional().nullable().or(z.literal("")),
-  password: z.string().min(8),
   name: nonEmptyStringSchema,
   surname: nonEmptyStringSchema,
   phone: z.string().trim().optional().nullable(),
@@ -28,11 +28,9 @@ export const studentCreateSchema = z.object({
   parentId: nonEmptyStringSchema,
 });
 
-export const studentUpdateSchema = studentCreateSchema.omit({
-  username: true,
-  email: true,
-  password: true,
-});
+export const studentUpdateSchema = studentCreateSchema.extend({
+  status: studentStatusSchema.default("ACTIVE"),
+}).omit({ email: true });
 
 export const teacherCreateSchema = z.object({
   username: z.string().trim().min(3).max(20),

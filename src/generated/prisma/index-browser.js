@@ -164,6 +164,7 @@ exports.Prisma.BursarScalarFieldEnum = {
 exports.Prisma.StudentScalarFieldEnum = {
   id: 'id',
   username: 'username',
+  admissionNumber: 'admissionNumber',
   name: 'name',
   surname: 'surname',
   email: 'email',
@@ -172,7 +173,9 @@ exports.Prisma.StudentScalarFieldEnum = {
   img: 'img',
   bloodType: 'bloodType',
   sex: 'sex',
+  status: 'status',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   schoolId: 'schoolId',
   parentId: 'parentId',
   classId: 'classId',
@@ -1410,6 +1413,14 @@ exports.BursarStatus = exports.$Enums.BursarStatus = {
   ACTIVE: 'ACTIVE',
   SUSPENDED: 'SUSPENDED',
   LEFT_SCHOOL: 'LEFT_SCHOOL'
+};
+
+exports.StudentStatus = exports.$Enums.StudentStatus = {
+  INCOMPLETE_SETUP: 'INCOMPLETE_SETUP',
+  ACTIVE: 'ACTIVE',
+  TRANSFERRED: 'TRANSFERRED',
+  GRADUATED: 'GRADUATED',
+  WITHDRAWN: 'WITHDRAWN'
 };
 
 exports.TeacherStatus = exports.$Enums.TeacherStatus = {

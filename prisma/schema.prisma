@@ -272,6 +272,14 @@ enum BursarStatus {
   LEFT_SCHOOL
 }
 
+enum StudentStatus {
+  INCOMPLETE_SETUP
+  ACTIVE
+  TRANSFERRED
+  GRADUATED
+  WITHDRAWN
+}
+
 enum TeacherStatus {
   INVITED
   ACTIVE
@@ -758,17 +766,20 @@ model Bursar {
 }
 
 model Student {
-  id        String   @id
-  username  String   @unique
-  name      String
-  surname   String
-  email     String?
-  phone     String?
-  address   String
-  img       String?
-  bloodType String
-  sex       UserSex
-  createdAt DateTime @default(now())
+  id              String        @id
+  username        String        @unique
+  admissionNumber String?
+  name            String
+  surname         String
+  email           String?
+  phone           String?
+  address         String
+  img             String?
+  bloodType       String
+  sex             UserSex
+  status          StudentStatus @default(ACTIVE)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
@@ -799,9 +810,11 @@ model Student {
 
   @@index([schoolId])
   @@index([schoolId, classId])
+  @@index([schoolId, status])
   @@index([parentId])
   @@index([schoolId, parentId])
   @@index([schoolId, createdAt])
+  @@unique([schoolId, admissionNumber])
 }
 
 model Teacher {

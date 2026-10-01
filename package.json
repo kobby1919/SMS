@@ -10,7 +10,8 @@
     "typecheck": "node --max-old-space-size=8192 ./node_modules/typescript/bin/tsc --noEmit",
     "test:onboarding": "node --test tests/*.test.mjs",
     "test:payments": "node --test tests/payment-provider-security.test.mjs",
-    "test:finance-reports": "node --test tests/payment-report-integration.test.mjs"
+    "test:finance-reports": "node --test tests/payment-report-integration.test.mjs",
+    "test:students": "node --test tests/student-source-of-truth.test.mjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.39.2",

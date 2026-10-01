@@ -573,11 +573,10 @@ export async function deleteTeacher(id: string) {
 
 export async function deleteStudent(id: string) {
   ({ id } = parseActionInput(stringIdActionSchema, { id }));
-  const { schoolId } = await requireAdmin();
-  await prisma.student.deleteMany({ where: { id, schoolId } });
-  revalidatePath("/list/students");
-  revalidateReferenceData(schoolId, "students");
-  revalidateDashboard(schoolId);
+  await requireAdmin();
+  throw new Error(
+    "Student records cannot be deleted because they may have attendance, CA, report, fee, receipt, parent-link, and audit history. Mark the student as transferred, graduated, withdrawn, or incomplete setup instead.",
+  );
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

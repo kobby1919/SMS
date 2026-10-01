@@ -1,5 +1,7 @@
 import { clerkClient } from "@clerk/nextjs/server";
+import { randomUUID } from "crypto";
 import type { z } from "zod";
+import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import {
   parentCreateSchema,
@@ -29,6 +31,15 @@ type TeacherUpdateInput = z.infer<typeof teacherUpdateSchema>;
 function displayName(user: { name: string; surname?: string | null }) {
   return [user.name, user.surname].filter(Boolean).join(" ");
 }
+
+function studentRecordUsername(schoolId: string, admissionNumber: string) {
+  return `student:${schoolId}:${admissionNumber.trim().toUpperCase()}`;
+}
+
+function studentSetupStatus(input: { parentId?: string | null; classId?: number | null }) {
+  return input.parentId && input.classId ? "ACTIVE" as const : "INCOMPLETE_SETUP" as const;
+}
+
 export class UserManagementError extends Error {
   constructor(message: string, readonly status: number) {
     super(message);
@@ -148,7 +159,8 @@ export async function createStudent(
   schoolId: string,
   input: StudentCreateInput,
 ) {
-  const [studentClass, parent] = await Promise.all([
+  const admissionNumber = input.admissionNumber.trim().toUpperCase();
+  const [studentClass, parent, existingAdmission] = await Promise.all([
     prisma.class.findFirst({
       where: { id: input.classId, schoolId },
       select: { gradeId: true },
@@ -157,36 +169,23 @@ export async function createStudent(
       where: { id: input.parentId, schoolId },
       select: { id: true },
     }),
+    prisma.student.findFirst({
+      where: { schoolId, admissionNumber },
+      select: { id: true },
+    }),
   ]);
 
   if (!studentClass) throw new UserManagementError("Class not found.", 404);
   if (!parent) throw new UserManagementError("Parent not found.", 404);
-
-  const clerk = await clerkClient();
-  let clerkUserId: string;
-  try {
-    const clerkUser = await clerk.users.createUser({
-      username: input.username,
-      ...(input.email ? { emailAddress: [input.email] } : {}),
-      password: input.password,
-      firstName: input.name,
-      lastName: input.surname,
-      publicMetadata: { role: "student", schoolId },
-    });
-    clerkUserId = clerkUser.id;
-  } catch (error) {
-    if (isClerkIdentifierExistsError(error)) {
-      throw new UserManagementError("Username or email already exists.", 409);
-    }
-    throw error;
-  }
+  if (existingAdmission) throw new UserManagementError("Admission number already exists for this school.", 409);
 
   try {
     const student = await prisma.student.create({
       data: {
-        id: clerkUserId,
+        id: `stu_${randomUUID()}`,
         schoolId,
-        username: input.username,
+        username: studentRecordUsername(schoolId, admissionNumber),
+        admissionNumber,
         name: input.name,
         surname: input.surname,
         email: input.email || null,
@@ -194,6 +193,7 @@ export async function createStudent(
         address: input.address,
         bloodType: input.bloodType,
         sex: input.sex,
+        status: studentSetupStatus({ parentId: input.parentId, classId: input.classId }),
         classId: input.classId,
         gradeId: studentClass.gradeId,
         parentId: input.parentId,
@@ -210,7 +210,9 @@ export async function createStudent(
     revalidateDashboard(schoolId);
     return student;
   } catch (error) {
-    await removeClerkUserQuietly(clerkUserId);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      throw new UserManagementError("Admission number already exists for this school.", 409);
+    }
     throw error;
   }
 }
@@ -359,7 +361,8 @@ export async function updateStudent(
   studentId: string,
   input: StudentUpdateInput,
 ) {
-  const [student, studentClass, parent] = await Promise.all([
+  const admissionNumber = input.admissionNumber.trim().toUpperCase();
+  const [student, studentClass, parent, existingAdmission] = await Promise.all([
     prisma.student.findFirst({
       where: { id: studentId, schoolId },
       select: { id: true, name: true, surname: true },
@@ -372,27 +375,29 @@ export async function updateStudent(
       where: { id: input.parentId, schoolId },
       select: { id: true },
     }),
+    prisma.student.findFirst({
+      where: { schoolId, admissionNumber, NOT: { id: studentId } },
+      select: { id: true },
+    }),
   ]);
   if (!student) throw new UserManagementError("Student not found.", 404);
   if (!studentClass) throw new UserManagementError("Class not found.", 404);
   if (!parent) throw new UserManagementError("Parent not found.", 404);
-
-  const clerk = await clerkClient();
-  await clerk.users.updateUser(studentId, {
-    firstName: input.name,
-    lastName: input.surname,
-  });
+  if (existingAdmission) throw new UserManagementError("Admission number already exists for this school.", 409);
 
   try {
     const updated = await prisma.student.update({
       where: { id: studentId },
       data: {
+        username: studentRecordUsername(schoolId, admissionNumber),
+        admissionNumber,
         name: input.name,
         surname: input.surname,
         phone: input.phone || null,
         address: input.address,
         bloodType: input.bloodType,
         sex: input.sex,
+        status: input.status,
         classId: input.classId,
         gradeId: studentClass.gradeId,
         parentId: input.parentId,
@@ -409,7 +414,9 @@ export async function updateStudent(
     revalidateDashboard(schoolId);
     return updated;
   } catch (error) {
-    await restoreClerkNameQuietly(studentId, student.name, student.surname);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      throw new UserManagementError("Admission number already exists for this school.", 409);
+    }
     throw error;
   }
 }

@@ -15,9 +15,8 @@ type ParentOption = { id: string; name: string; surname: string };
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
 const createSchema = z.object({
-  username:  z.string().min(3, "Too short!").max(20, "Too long!"),
+  admissionNumber: z.string().trim().min(2, "Admission number is required").max(40, "Too long"),
   email:     z.string().email("Invalid email").optional().or(z.literal("")),
-  password:  z.string().min(8, "At least 8 characters"),
   name:      z.string().min(1, "First name required"),
   surname:   z.string().min(1, "Last name required"),
   phone:     z.string().optional(),
@@ -25,12 +24,14 @@ const createSchema = z.object({
   bloodType: z.string().min(1, "Required"),
   birthday:  z.string().min(1, "Required"),
   sex:       z.enum(["MALE", "FEMALE"]),
+  status:    z.enum(["INCOMPLETE_SETUP", "ACTIVE", "TRANSFERRED", "GRADUATED", "WITHDRAWN"]).default("ACTIVE"),
   classId:   z.coerce.number().min(1, "Class is required"),
   parentId:  z.string().min(1, "Parent is required"),
   img:       z.custom<FileList>().optional(),
 });
 
 const updateSchema = z.object({
+  admissionNumber: z.string().trim().min(2, "Admission number is required").max(40, "Too long"),
   name:      z.string().min(1, "First name required"),
   surname:   z.string().min(1, "Last name required"),
   phone:     z.string().optional(),
@@ -38,6 +39,7 @@ const updateSchema = z.object({
   bloodType: z.string().min(1, "Required"),
   birthday:  z.string().optional(),
   sex:       z.enum(["MALE", "FEMALE"]),
+  status:    z.enum(["INCOMPLETE_SETUP", "ACTIVE", "TRANSFERRED", "GRADUATED", "WITHDRAWN"]).default("ACTIVE"),
   classId:   z.coerce.number().min(1, "Class is required"),
   parentId:  z.string().min(1, "Parent is required"),
   img:       z.custom<FileList>().optional(),
@@ -73,12 +75,14 @@ const StudentForm = ({
     resolver: zodResolver(schema) as Resolver<CreateInputs>,
     defaultValues: data
       ? {
+          admissionNumber: data.admissionNumber ?? "",
           name:      data.name      ?? "",
           surname:   data.surname   ?? "",
           phone:     data.phone     ?? "",
           address:   data.address   ?? "",
           bloodType: data.bloodType ?? "",
           sex:       data.sex       ?? "MALE",
+          status:    data.status    ?? "ACTIVE",
           classId:   data.classId,
           parentId:  data.parentId  ?? "",
         }
@@ -155,22 +159,12 @@ const StudentForm = ({
         </div>
       )}
 
-      {/* ── Auth Info (create only) ── */}
-      {type === "create" && (
-        <div className="flex flex-col gap-4">
-          <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">Account Info</span>
-          <div className="flex flex-wrap gap-4">
-            <InputField label="Username" name="username" register={register} error={errors.username} />
-            <InputField label="Email"    name="email"    type="email"    register={register} error={errors.email} />
-            <InputField label="Password" name="password" type="password" register={register} error={errors.password} />
-          </div>
-        </div>
-      )}
-
       {/* ── Personal Info ── */}
       <div className="flex flex-col gap-4">
         <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">Personal Info</span>
         <div className="flex flex-wrap gap-4">
+          <InputField label="Admission Number" name="admissionNumber" register={register} error={errors.admissionNumber} />
+          {type === "create" && <InputField label="Email (optional)" name="email" type="email" register={register} error={errors.email} />}
           <InputField label="First Name"  name="name"      register={register} error={errors.name} />
           <InputField label="Last Name"   name="surname"   register={register} error={errors.surname} />
           <InputField label="Phone"       name="phone"     register={register} error={errors.phone} />
@@ -190,6 +184,23 @@ const StudentForm = ({
             </select>
             {errors.sex && <p className="text-[10px] text-red-500 font-medium">{errors.sex.message}</p>}
           </div>
+
+          {type === "update" && (
+            <div className="flex flex-col gap-1 w-full md:w-[31%]">
+              <label className="text-xs text-gray-500 font-semibold">Student Status</label>
+              <select
+                {...register("status")}
+                className="ring-[1.5px] ring-gray-200 p-2.5 rounded-xl text-sm focus:ring-indigo-600 outline-none bg-white h-[42px]"
+              >
+                <option value="INCOMPLETE_SETUP">Incomplete setup</option>
+                <option value="ACTIVE">Active</option>
+                <option value="TRANSFERRED">Transferred</option>
+                <option value="GRADUATED">Graduated</option>
+                <option value="WITHDRAWN">Withdrawn</option>
+              </select>
+              {errors.status && <p className="text-[10px] text-red-500 font-medium">{errors.status.message}</p>}
+            </div>
+          )}
 
           {/* Photo */}
           <div className="flex flex-col gap-2 w-full md:w-[31%] justify-center">
