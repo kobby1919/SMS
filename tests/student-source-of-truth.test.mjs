@@ -128,6 +128,10 @@ test("student bulk import keeps intake strict and account-free", () => {
   assertContains(studentImportService, "values.length > headers.length", "Student import must reject malformed CSV rows with extra values.");
   assertContains(studentImportService, "parentContactByEmail", "Student import must detect inconsistent guardian contacts inside the CSV.");
   assertContains(studentImportService, "resolveExistingParentForRow", "Student import must not guess when guardian email and phone match different existing parents.");
+  assertContains(studentImportService, "buildExistingParentMaps", "Student import must normalize existing parent contacts before matching.");
+  assertContains(studentImportService, "Existing parent records share email", "Student import must block duplicate existing parent emails.");
+  assertContains(studentImportService, "Existing parent records share phone", "Student import must block duplicate existing parent phones.");
+  assertContains(studentImportService, "phone: { not: null }", "Student import must not rely on exact stored phone formatting.");
   assertContains(studentImportService, "prisma.$transaction", "Student import must write in a database transaction.");
   assertContains(studentImportService, "admissionNumber: { in: admissionNumbers }", "Student import must block duplicate admission numbers.");
   assertContains(studentImportService, "parentStudentRelationship.upsert", "Student import must link guardians to imported students.");
@@ -137,6 +141,8 @@ test("student bulk import keeps intake strict and account-free", () => {
   assertContains(studentImportService, "rowsSkipped", "Student import result must report skipped rows.");
   assertContains(studentImportService, "rowsNeedingCorrection", "Student import result must report rows needing correction.");
   assertContains(studentImportService, "correctionReport", "Student import result must preserve correction report details.");
+  assertContains(studentImportService, "Header: missing", "Header errors must produce correction-report details.");
+  assertContains(studentImportService, "too many values for the header row", "Malformed CSV rows must produce correction-report details.");
   assertContains(studentImportAction, "emptyStudentImportResult", "Failed student import must return structured zero-save result details.");
   assertContains(studentImportForm, "Students created", "Student import UI must show created student count.");
   assertContains(studentImportForm, "Rows skipped", "Student import UI must show skipped rows.");

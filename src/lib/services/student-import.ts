@@ -39,6 +39,12 @@ type ExistingParentIdentity = {
   phone: string | null;
 };
 
+type ExistingParentMaps = {
+  parentsByEmail: Map<string, ExistingParentIdentity>;
+  parentsByPhone: Map<string, ExistingParentIdentity>;
+  duplicateIdentityErrors: string[];
+};
+
 export type StudentImportResult = {
   imported: number;
   createdStudents: number;
@@ -124,13 +130,18 @@ function parseStudentCsv(csv: string) {
     .filter((line) => line.trim().length > 0);
 
   if (lines.length < 2) {
-    throw new StudentImportError("Upload a CSV file with a header row and at least one student row.");
+    throw new StudentImportError("Upload a CSV file with a header row and at least one student row.", 400, [], 0);
   }
 
   const headers = parseCsvLine(lines[0]).map(normalizeHeader);
   const missingHeaders = REQUIRED_HEADERS.filter((header) => !headers.includes(header));
   if (missingHeaders.length > 0) {
-    throw new StudentImportError(`Missing required column${missingHeaders.length === 1 ? "" : "s"}: ${missingHeaders.join(", ")}.`);
+    throw new StudentImportError(
+      `Missing required column${missingHeaders.length === 1 ? "" : "s"}: ${missingHeaders.join(", ")}.`,
+      400,
+      [`Header: missing ${missingHeaders.join(", ")}.`],
+      Math.max(lines.length - 1, 0),
+    );
   }
 
   return lines.slice(1).map((line, index) => {
@@ -138,6 +149,9 @@ function parseStudentCsv(csv: string) {
     if (values.length > headers.length) {
       throw new StudentImportError(
         `Row ${index + 2} has more values than the header row. If a value contains a comma, wrap it in quotes.`,
+        400,
+        [`Row ${index + 2}: too many values for the header row.`],
+        Math.max(lines.length - 1, 0),
       );
     }
     const row = { rowNumber: index + 2 } as ParsedStudentRow;
@@ -255,6 +269,36 @@ function countRowsNeedingCorrection(errors: string[]) {
   return rowNumbers.size || (errors.length > 0 ? 1 : 0);
 }
 
+function buildExistingParentMaps(existingParents: ExistingParentIdentity[]): ExistingParentMaps {
+  const parentsByEmail = new Map<string, ExistingParentIdentity>();
+  const parentsByPhone = new Map<string, ExistingParentIdentity>();
+  const duplicateIdentityErrors: string[] = [];
+
+  for (const parent of existingParents) {
+    const email = normalizeEmail(parent.email ?? "");
+    if (email) {
+      const previous = parentsByEmail.get(email);
+      if (previous && previous.id !== parent.id) {
+        duplicateIdentityErrors.push(`Existing parent records share email ${email}. Clean them up before importing.`);
+      } else {
+        parentsByEmail.set(email, parent);
+      }
+    }
+
+    const phone = normalizePhone(parent.phone ?? "");
+    if (phone) {
+      const previous = parentsByPhone.get(phone);
+      if (previous && previous.id !== parent.id) {
+        duplicateIdentityErrors.push(`Existing parent records share phone ${phone}. Clean them up before importing.`);
+      } else {
+        parentsByPhone.set(phone, parent);
+      }
+    }
+  }
+
+  return { parentsByEmail, parentsByPhone, duplicateIdentityErrors };
+}
+
 function resolveExistingParentForRow(
   row: ParsedStudentRow,
   parentsByEmail: Map<string, ExistingParentIdentity>,
@@ -309,7 +353,7 @@ export async function importStudentsFromCsv(schoolId: string, csv: string): Prom
         schoolId,
         OR: [
           ...(parentEmails.length ? [{ email: { in: parentEmails, mode: Prisma.QueryMode.insensitive } }] : []),
-          ...(parentPhones.length ? [{ phone: { in: parentPhones } }] : []),
+          ...(parentPhones.length ? [{ phone: { not: null } }] : []),
         ],
       },
       select: { id: true, email: true, phone: true },
@@ -318,17 +362,9 @@ export async function importStudentsFromCsv(schoolId: string, csv: string): Prom
 
   const existingAdmissionNumbers = new Set(existingStudents.map((student) => student.admissionNumber?.toUpperCase()));
   const classByName = new Map(classes.map((klass) => [normalizeClassName(klass.name), klass]));
-  const parentsByEmail = new Map(
-    existingParents
-      .map((parent) => parent.email ? [parent.email.toLowerCase(), parent] as const : null)
-      .filter((entry): entry is readonly [string, ExistingParentIdentity] => Boolean(entry)),
-  );
-  const parentsByPhone = new Map(
-    existingParents
-      .map((parent) => parent.phone ? [normalizePhone(parent.phone), parent] as const : null)
-      .filter((entry): entry is readonly [string, ExistingParentIdentity] => Boolean(entry?.[0])),
-  );
+  const { parentsByEmail, parentsByPhone, duplicateIdentityErrors } = buildExistingParentMaps(existingParents);
   const lookupErrors: string[] = [];
+  lookupErrors.push(...duplicateIdentityErrors);
 
   for (const row of rows) {
     const admissionNumber = normalizeAdmissionNumber(row.admissionNumber);
@@ -456,7 +492,12 @@ export async function importStudentsFromCsv(schoolId: string, csv: string): Prom
     });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      throw new StudentImportError("A duplicate admission number or generated guardian identity was found. Review the CSV and upload again.");
+      throw new StudentImportError(
+        "A duplicate admission number or generated guardian identity was found. Review the CSV and upload again.",
+        409,
+        ["Import conflict: duplicate admission number or generated guardian identity."],
+        rows.length,
+      );
     }
     throw error;
   }
