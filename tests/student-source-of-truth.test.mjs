@@ -26,6 +26,7 @@ const studentForm = read("src/components/StudentForm.tsx");
 const legacyActions = read("src/lib/actions/actions.ts");
 const seed = read("prisma/seed.ts");
 const studentListPage = read("src/app/(dashboard)/list/students/page.tsx");
+const studentDetailPage = read("src/app/(dashboard)/list/students/[id]/page.tsx");
 
 test("student records have lifecycle and admission source of truth", () => {
   assertContains(schema, "enum StudentStatus", "Student lifecycle must be modeled explicitly.");
@@ -83,4 +84,12 @@ test("student list is an operational source-of-truth page", () => {
   assertContains(studentListPage, "No contact saved", "Student list must safely handle missing parent contact.");
   assertContains(studentListPage, "status: StudentStatus.ACTIVE", "Teacher student scope must exclude non-active student records.");
   assertContains(studentListPage, "View profile", "Mobile student cards must keep a clear profile action.");
+});
+
+test("student detail page respects source-of-truth and access rules", () => {
+  assertContains(studentDetailPage, "student.status !== StudentStatus.ACTIVE", "Teachers must not open non-active student profiles.");
+  assertContains(studentDetailPage, "canViewParentContact", "Parent contact must be gated by role/class-teacher responsibility.");
+  assertContains(studentDetailPage, "student:      { status: StudentStatus.ACTIVE }", "Class position must exclude inactive students.");
+  assertContains(studentDetailPage, "No published timetable lessons", "Student profile must explain missing published timetable data.");
+  assertNotContains(studentDetailPage, "student.results", "Student profile must not fall back to old Result.score data for CA averages.");
 });
