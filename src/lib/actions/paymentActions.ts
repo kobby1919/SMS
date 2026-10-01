@@ -28,6 +28,9 @@ import {
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
 import { PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 
+function isProviderConfirmedPayment(payment: { externalProvider: unknown; externalReference: unknown }) {
+  return Boolean(payment.externalProvider && payment.externalReference);
+}
 const REFERENCE_REQUIRED_PAYMENT_METHODS = new Set<PaymentMethod>([
   "MTN_MOMO",
   "VODAFONE_CASH",

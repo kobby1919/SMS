@@ -13,6 +13,9 @@ import { revalidateDashboard, revalidateDocument } from "@/src/lib/cacheTags";
 import { enqueueFinanceJob } from "@/src/lib/services/finance-queue";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
 
+function isProviderConfirmedPayment(payment: { externalProvider: unknown; externalReference: unknown }) {
+  return Boolean(payment.externalProvider && payment.externalReference);
+}
 export type RequestPaymentCorrectionInput = {
   paymentId: number;
   type: string;
@@ -252,6 +255,10 @@ export async function requestPaymentCorrection(input: RequestPaymentCorrectionIn
     throw new Error("Only confirmed payments can enter the correction workflow. Pending, failed, or already reversed payments cannot be corrected again.");
   }
 
+  if (isProviderConfirmedPayment(payment)) {
+    throw new Error("Provider-confirmed online payments cannot enter the manual correction workflow. Use the provider reversal/refund flow so Edujay keeps provider and school records consistent.");
+  }
+
   if (payment.reversal) {
     throw new Error("This payment has already been reversed. Create a new approved finance record instead of correcting a reversed receipt.");
   }
@@ -391,6 +398,10 @@ export async function reviewPaymentCorrection(input: ReviewPaymentCorrectionInpu
       throw new Error("Only corrections for confirmed payments can be approved. Reject this request and create a fresh correction if needed.");
     }
 
+    if (isProviderConfirmedPayment(correction.originalPayment)) {
+      throw new Error("Provider-confirmed online payments cannot be approved through manual correction. Use the provider reversal/refund workflow instead.");
+    }
+
     if (correction.originalPayment.reversal) {
       throw new Error("This payment has already been reversed. Reject this request and review the reversal history instead.");
     }
@@ -512,6 +523,10 @@ export async function applyPaymentCorrection(input: ApplyPaymentCorrectionInput)
 
   if (correction.originalPayment.status !== "CONFIRMED" || correction.originalPayment.reversal) {
     throw new Error("The original payment is no longer valid for correction application. It may already be reversed or changed.");
+  }
+
+  if (isProviderConfirmedPayment(correction.originalPayment)) {
+    throw new Error("Provider-confirmed online payments cannot be applied through manual correction. Use the provider reversal/refund workflow instead.");
   }
 
   const correctedPaymentActions = ["REPLACE_PAYMENT", "MOVE_PAYMENT", "FIX_REFERENCE_OR_METHOD"];

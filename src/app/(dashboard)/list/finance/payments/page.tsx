@@ -254,7 +254,11 @@ const PaymentsPage = async ({
 
   const onlineReferences = onlineAttempts.map((attempt) => attempt.reference);
   const onlinePaymentIds = onlineAttempts.flatMap((attempt) =>
-    attempt.lines.flatMap((line) => line.studentBill.payments.map((payment) => payment.id)),
+    attempt.lines.flatMap((line) =>
+      line.studentBill.payments
+        .filter((payment) => payment.externalReference === attempt.reference)
+        .map((payment) => payment.id),
+    ),
   );
   const webhookLookups: Prisma.PaymentWebhookEventWhereInput[] = [
     ...onlineReferences.map((reference) => ({ providerEventId: { contains: reference } })),
@@ -283,7 +287,9 @@ const PaymentsPage = async ({
     const referenceFromId = onlineReferences.find((item) => event.providerEventId.includes(item));
     const referenceFromPayment = onlineAttempts.find((attempt) =>
       attempt.lines.some((line) =>
-        line.studentBill.payments.some((payment) => payment.id === event.paymentId),
+        line.studentBill.payments.some(
+          (payment) => payment.id === event.paymentId && payment.externalReference === attempt.reference,
+        ),
       ),
     )?.reference;
     const reference = referenceFromId ?? referenceFromPayment;
