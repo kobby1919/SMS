@@ -27,6 +27,10 @@ const legacyActions = read("src/lib/actions/actions.ts");
 const seed = read("prisma/seed.ts");
 const studentListPage = read("src/app/(dashboard)/list/students/page.tsx");
 const studentDetailPage = read("src/app/(dashboard)/list/students/[id]/page.tsx");
+const studentImportService = read("src/lib/services/student-import.ts");
+const studentImportAction = read("src/lib/actions/studentImportActions.ts");
+const studentImportPage = read("src/app/(dashboard)/list/students/import/page.tsx");
+const studentImportForm = read("src/components/StudentImportForm.tsx");
 
 test("student records have lifecycle and admission source of truth", () => {
   assertContains(schema, "enum StudentStatus", "Student lifecycle must be modeled explicitly.");
@@ -92,4 +96,18 @@ test("student detail page respects source-of-truth and access rules", () => {
   assertContains(studentDetailPage, "student:      { status: StudentStatus.ACTIVE }", "Class position must exclude inactive students.");
   assertContains(studentDetailPage, "No published timetable lessons", "Student profile must explain missing published timetable data.");
   assertNotContains(studentDetailPage, "student.results", "Student profile must not fall back to old Result.score data for CA averages.");
+});
+
+test("student bulk import keeps intake strict and account-free", () => {
+  assertContains(studentListPage, "/list/students/import", "Student list must expose the import workflow to admins.");
+  assertContains(studentImportPage, "Download template", "Student import page must provide a CSV template.");
+  assertContains(studentImportForm, "accept=\".csv,text/csv\"", "Student import form must accept CSV files only.");
+  assertContains(studentImportAction, "requireRole([\"admin\"])", "Student import must be admin-only.");
+  assertContains(studentImportAction, "MAX_IMPORT_FILE_BYTES", "Student import must limit upload size.");
+  assertContains(studentImportService, "REQUIRED_HEADERS", "Student import must define required columns.");
+  assertContains(studentImportService, "if (rowErrors.length > 0)", "Student import must reject invalid files before writing.");
+  assertContains(studentImportService, "prisma.$transaction", "Student import must write in a database transaction.");
+  assertContains(studentImportService, "admissionNumber: { in: admissionNumbers }", "Student import must block duplicate admission numbers.");
+  assertContains(studentImportService, "parentStudentRelationship.upsert", "Student import must link guardians to imported students.");
+  assertNotContains(studentImportService, "clerk.users.createUser", "Student import must not create student login accounts.");
 });

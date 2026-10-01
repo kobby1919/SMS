@@ -5,7 +5,7 @@ import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
 import Image from "next/image";
 import Link from "next/link";
-import { AlertCircle, ChevronRight, Eye, Plus, BookOpen, Users } from "lucide-react";
+import { AlertCircle, ChevronRight, Eye, Plus, BookOpen, Upload, Users } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import prisma from "@/src/lib/prisma";
 import { Prisma, StudentStatus } from "@/src/generated/prisma";
@@ -419,7 +419,18 @@ const StudentListPage = async ({
               ) : null}
             </form>
             <div className="flex items-center gap-2">
-              {role === "admin" && <FormModal table="student" type="create" />}
+              {role === "admin" ? (
+                <>
+                  <Link
+                    href="/list/students/import"
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-indigo-50 px-3 text-sm font-black text-indigo-700 transition hover:bg-indigo-100"
+                  >
+                    <Upload size={15} />
+                    <span className="hidden sm:inline">Import</span>
+                  </Link>
+                  <FormModal table="student" type="create" />
+                </>
+              ) : null}
             </div>
           </div>
         </div>

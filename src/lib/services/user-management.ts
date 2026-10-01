@@ -32,7 +32,7 @@ function displayName(user: { name: string; surname?: string | null }) {
   return [user.name, user.surname].filter(Boolean).join(" ");
 }
 
-function studentRecordUsername(schoolId: string, admissionNumber: string) {
+export function studentRecordUsername(schoolId: string, admissionNumber: string) {
   return `student:${schoolId}:${admissionNumber.trim().toUpperCase()}`;
 }
 
