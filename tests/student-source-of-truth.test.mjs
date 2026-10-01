@@ -57,6 +57,9 @@ test("new student onboarding creates records, not Clerk student accounts", () =>
   assertContains(studentApi, "{ userId }", "Student creation audit must use the signed-in admin as actor.");
   assertContains(userManagement, "resolveSmartParentForStudent", "Student creation must support smart parent linking.");
   assertContains(userManagement, "Guardian email and phone match two different parents", "Smart parent linking must not guess when contacts conflict.");
+  assertContains(userManagement, "Guardian phone matches an existing parent, but the email is different", "Smart parent linking must reject phone matches with conflicting email.");
+  assertContains(userManagement, "Guardian email matches an existing parent, but the phone is different", "Smart parent linking must reject email matches with conflicting phone.");
+  assertContains(userManagement, "phone: { not: null }", "Smart parent linking must compare normalized stored phones instead of relying on exact formatting.");
   assertContains(userManagement, "generatedParentUsername", "Smart parent creation must use deterministic internal parent usernames.");
   assertContains(userManagement, "parentEmail", "Smart parent linking must match by guardian email.");
   assertContains(userManagement, "parentPhone", "Smart parent linking must match by guardian phone.");

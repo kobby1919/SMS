@@ -97,7 +97,7 @@ async function resolveSmartParentForStudent(
       schoolId,
       OR: [
         ...(parentEmail ? [{ email: { equals: parentEmail, mode: Prisma.QueryMode.insensitive } }] : []),
-        ...(parentPhone ? [{ phone: parentPhone }] : []),
+        ...(parentPhone ? [{ phone: { not: null } }] : []),
       ],
     },
     select: { id: true, email: true, phone: true },
@@ -129,6 +129,23 @@ async function resolveSmartParentForStudent(
 
   const existingParent = emailMatch ?? phoneMatch;
   if (existingParent) {
+    const existingEmail = normalizeEmail(existingParent.email);
+    const existingPhone = normalizePhone(existingParent.phone);
+
+    if (parentEmail && existingEmail && existingEmail !== parentEmail) {
+      throw new UserManagementError(
+        "Guardian phone matches an existing parent, but the email is different. Fix the parent record before linking this student.",
+        409,
+      );
+    }
+
+    if (parentPhone && existingPhone && existingPhone !== parentPhone) {
+      throw new UserManagementError(
+        "Guardian email matches an existing parent, but the phone is different. Fix the parent record before linking this student.",
+        409,
+      );
+    }
+
     const updateMissingContact: Prisma.ParentUpdateInput = {};
     if (parentEmail && !existingParent.email) updateMissingContact.email = parentEmail;
     if (parentPhone && !existingParent.phone) updateMissingContact.phone = parentPhone;
