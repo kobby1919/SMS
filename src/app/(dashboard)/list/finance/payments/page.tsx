@@ -1,5 +1,4 @@
 // src/app/(dashboard)/list/finance/payments/page.tsx
- 
 
 import { revalidatePath } from "next/cache";
 import { requirePageSession } from "@/src/lib/authz";
@@ -15,15 +14,17 @@ import {
   Download,
   CalendarDays,
   Clock,
+  RefreshCw,
+  ShieldCheck,
 } from "lucide-react";
 import { formatGHS, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import Pagination from "@/src/components/pagination";
 import PaymentReverseButton from "@/src/components/PaymentReverseButton";
 import { requestPaymentCorrection } from "@/src/lib/actions/paymentCorrectionActions";
+import { verifyOnlinePaymentIntent } from "@/src/lib/actions/paymentIntentActions";
 import { Prisma } from "@/src/generated/prisma";
-import type { PaymentMethod, PaymentStatus } from "@/src/generated/prisma";
-
+import type { PaymentIntentStatus, PaymentMethod, PaymentStatus } from "@/src/generated/prisma";
 export const dynamic = "force-dynamic";
 
 const TERM_LABELS: Record<string, string> = {
@@ -84,6 +85,16 @@ const PAYMENT_STATUS_META: Record<PaymentStatus, {
     amount: "text-rose-400 line-through",
     badge: "bg-rose-100 text-rose-600",
   },
+};
+
+const PAYMENT_INTENT_STATUS_META: Record<PaymentIntentStatus, { label: string; badge: string; helper: string }> = {
+  PENDING: { label: "Pending", badge: "bg-amber-50 text-amber-700", helper: "Checkout started but provider has not confirmed money." },
+  PENDING_PROVIDER: { label: "Checking provider", badge: "bg-blue-50 text-blue-700", helper: "Edujay is waiting for provider verification." },
+  CHECKOUT_CREATED: { label: "Checkout created", badge: "bg-indigo-50 text-indigo-700", helper: "Parent has a provider checkout link." },
+  PAID: { label: "Successful", badge: "bg-emerald-50 text-emerald-700", helper: "Provider-confirmed and applied to bill." },
+  FAILED: { label: "Failed", badge: "bg-rose-50 text-rose-700", helper: "Provider did not confirm this payment." },
+  CANCELLED: { label: "Cancelled", badge: "bg-gray-100 text-gray-600", helper: "Payment attempt was cancelled." },
+  EXPIRED: { label: "Expired", badge: "bg-gray-100 text-gray-600", helper: "Checkout expired without confirmation." },
 };
 
 function parsePaymentStatus(value: string | undefined): PaymentStatus | undefined {
@@ -203,6 +214,81 @@ const PaymentsPage = async ({
     prisma.payment.count({ where }),
   ]);
 
+  const onlineAttempts = await prisma.paymentIntent.findMany({
+    where: { schoolId },
+    include: {
+      lines: {
+        include: {
+          studentBill: {
+            include: {
+              student: {
+                select: {
+                  name: true,
+                  surname: true,
+                  class: { select: { name: true } },
+                },
+              },
+              feeStructure: {
+                select: { title: true, term: true, academicYear: true },
+              },
+              payments: {
+                where: { externalReference: { not: null } },
+                select: {
+                  id: true,
+                  receiptNumber: true,
+                  status: true,
+                  externalProvider: true,
+                  externalReference: true,
+                },
+                orderBy: { createdAt: "desc" },
+                take: 3,
+              },
+            },
+          },
+        },
+      },
+    },
+    orderBy: { updatedAt: "desc" },
+    take: 10,
+  });
+
+  const onlineReferences = onlineAttempts.map((attempt) => attempt.reference);
+  const onlinePaymentIds = onlineAttempts.flatMap((attempt) =>
+    attempt.lines.flatMap((line) => line.studentBill.payments.map((payment) => payment.id)),
+  );
+  const webhookLookups: Prisma.PaymentWebhookEventWhereInput[] = [
+    ...onlineReferences.map((reference) => ({ providerEventId: { contains: reference } })),
+    ...(onlinePaymentIds.length ? [{ paymentId: { in: onlinePaymentIds } }] : []),
+  ];
+  const onlineWebhookEvents = webhookLookups.length
+    ? await prisma.paymentWebhookEvent.findMany({
+        where: { schoolId, OR: webhookLookups },
+        select: {
+          id: true,
+          providerEventId: true,
+          eventType: true,
+          status: true,
+          paymentId: true,
+          processedAt: true,
+          receivedAt: true,
+          lastError: true,
+        },
+        orderBy: { receivedAt: "desc" },
+        take: 50,
+      })
+    : [];
+
+  const latestWebhookByReference = new Map<string, (typeof onlineWebhookEvents)[number]>();
+  for (const event of onlineWebhookEvents) {
+    const referenceFromId = onlineReferences.find((item) => event.providerEventId.includes(item));
+    const referenceFromPayment = onlineAttempts.find((attempt) =>
+      attempt.lines.some((line) =>
+        line.studentBill.payments.some((payment) => payment.id === event.paymentId),
+      ),
+    )?.reference;
+    const reference = referenceFromId ?? referenceFromPayment;
+    if (reference && !latestWebhookByReference.has(reference)) latestWebhookByReference.set(reference, event);
+  }
   // ── Today's collection ─────────────────────────────────────────────────────
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
@@ -426,6 +512,107 @@ const PaymentsPage = async ({
         ))}
       </div>
 
+      {/* Online provider attempts */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-black text-gray-800">Online Provider Attempts</p>
+            <p className="text-xs font-semibold text-gray-400">
+              Pending, successful, failed, and provider-verified payment attempts.
+            </p>
+          </div>
+          <span className="inline-flex w-fit items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-blue-700">
+            <ShieldCheck size={12} /> Provider-controlled
+          </span>
+        </div>
+
+        {onlineAttempts.length === 0 ? (
+          <div className="px-5 py-8 text-center">
+            <p className="text-sm font-bold text-gray-400">No online payment attempts yet.</p>
+            <p className="mt-1 text-xs font-semibold text-gray-300">
+              When parents start provider checkout, attempts will appear here before money touches bills.
+            </p>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-50">
+            {onlineAttempts.map((attempt) => {
+              const line = attempt.lines[0];
+              const bill = line?.studentBill;
+              const meta = PAYMENT_INTENT_STATUS_META[attempt.status];
+              const webhook = latestWebhookByReference.get(attempt.reference);
+              const receipt = bill?.payments.find(
+                (payment) => payment.externalReference === attempt.reference && payment.status === "CONFIRMED",
+              );
+              const canVerifyAgain = attempt.status !== "PAID";
+              const studentName = bill
+                ? `${bill.student.surname} ${bill.student.name}`.trim()
+                : "Unknown student";
+
+              return (
+                <div key={attempt.id} className="px-5 py-4">
+                  <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="truncate text-sm font-black text-gray-900">{studentName}</p>
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase ${meta.badge}`}>
+                          {meta.label}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs font-semibold text-gray-500">
+                        {bill?.student.class?.name ?? "No class"}
+                        {bill ? ` · ${bill.feeStructure.title} · ${TERM_LABELS[bill.feeStructure.term]} ${bill.feeStructure.academicYear}` : ""}
+                      </p>
+                      <p className="mt-1 break-all text-[11px] font-bold text-gray-400">
+                        Provider ref: {attempt.reference} · {attempt.provider.replaceAll("_", " ")}
+                      </p>
+                      <p className="mt-1 text-[11px] font-semibold text-gray-400">{meta.helper}</p>
+                      {attempt.lastError && (
+                        <p className="mt-1 rounded-lg bg-rose-50 px-2 py-1 text-[11px] font-bold text-rose-700">
+                          Last provider check: {attempt.lastError}
+                        </p>
+                      )}
+                      <div className="mt-2 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-wider text-gray-400">
+                        <span>Created {new Date(attempt.createdAt).toLocaleString("en-GH")}</span>
+                        <span>Expires {new Date(attempt.expiresAt).toLocaleString("en-GH")}</span>
+                        <span>
+                          Webhook: {webhook ? `${webhook.status.replaceAll("_", " ")} · ${webhook.eventType}` : "No matched webhook yet"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+                      <p className="rounded-xl bg-gray-50 px-3 py-2 text-sm font-black text-gray-800">
+                        {formatGHS(attempt.amount)}
+                      </p>
+                      {receipt && bill && (
+                        <a
+                          href={`/api/finance/receipt?billId=${bill.id}&receiptNumber=${encodeURIComponent(receipt.receiptNumber)}`}
+                          target="_blank"
+                          className="inline-flex items-center gap-1 rounded-xl bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700 hover:bg-emerald-100"
+                        >
+                          <Download size={13} /> Receipt
+                        </a>
+                      )}
+                      {canVerifyAgain ? (
+                        <form action={verifyOnlinePaymentIntent}>
+                          <input type="hidden" name="intentId" value={attempt.id} />
+                          <button className="inline-flex items-center gap-1 rounded-xl bg-blue-600 px-3 py-2 text-xs font-black text-white hover:bg-blue-700">
+                            <RefreshCw size={13} /> Verify again
+                          </button>
+                        </form>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded-xl bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">
+                          <ShieldCheck size={13} /> Applied
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
       {/* Filters */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
         <form className="flex flex-wrap gap-2 items-center">
@@ -526,7 +713,8 @@ const PaymentsPage = async ({
               const statusMeta = PAYMENT_STATUS_META[p.status];
               const correction = p.correctionRequests[0];
               const correctedFrom = p.correctedPaymentCorrections[0]?.originalPayment.receiptNumber;
-              const canRequestCorrection = role === "bursar" && isConfirmed && !correction && !correctedFrom;
+              const isOnlineVerified = Boolean(p.externalProvider && p.externalReference);
+              const canRequestCorrection = role === "bursar" && isConfirmed && !isOnlineVerified && !correction && !correctedFrom;
               return (
                 <div
                   key={p.id}
@@ -568,7 +756,7 @@ const PaymentsPage = async ({
                     </p>
                     <p className="text-[10px] text-gray-400 mt-0.5">
                       Paid by: {p.paidBy}
-                      {p.referenceNo && ` · Ref: ${p.referenceNo}`}
+                      {p.externalReference ? ` · Provider ref: ${p.externalReference}` : p.referenceNo ? ` · Ref: ${p.referenceNo}` : ""}
                     </p>
                     {isReversed && p.reversal && (
                       <p className="text-[10px] text-rose-500 font-semibold mt-0.5">
@@ -584,6 +772,11 @@ const PaymentsPage = async ({
                     {correctedFrom && (
                       <p className="mt-1 inline-flex rounded-lg bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-700">
                         Corrected from {correctedFrom}
+                      </p>
+                    )}
+                    {isOnlineVerified && isConfirmed && (
+                      <p className="mt-1 inline-flex rounded-lg bg-blue-50 px-2 py-1 text-[10px] font-bold text-blue-700">
+                        Online verified by provider. Reversal or correction must come through provider workflow.
                       </p>
                     )}
                     {canRequestCorrection && (
@@ -680,7 +873,7 @@ const PaymentsPage = async ({
                     )}
 
                     {/* Reverse button (admin/bursar, confirmed only, no active correction chain) */}
-                    {isConfirmed && !correction && !correctedFrom && (
+                    {isConfirmed && !isOnlineVerified && !correction && !correctedFrom && (
                       <PaymentReverseButton
                         paymentId={p.id}
                         receiptNumber={p.receiptNumber}
