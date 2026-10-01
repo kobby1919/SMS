@@ -94,8 +94,26 @@ test("student delete is blocked in favor of lifecycle status", () => {
     legacyActions.indexOf("// ═══════════════════════════════════════════════════════════════════════════════", legacyActions.indexOf("export async function deleteStudent")),
   );
   assertContains(deleteStudentBlock, "Student records cannot be deleted", "Student deletion must be blocked.");
+  assertContains(deleteStudentBlock, "transferred, graduated, withdrawn, or incomplete setup", "Delete guidance must direct admins to lifecycle statuses.");
   assertNotContains(deleteStudentBlock, "prisma.student.delete", "Student delete action must not hard-delete records.");
   assertNotContains(studentListPage, "type=\"delete\"", "Student list must not show casual delete controls.");
+});
+
+test("inactive students cannot receive new legacy result records", () => {
+  const createResultBlock = legacyActions.slice(
+    legacyActions.indexOf("export async function createResult"),
+    legacyActions.indexOf("export async function updateResult"),
+  );
+  const updateResultBlock = legacyActions.slice(
+    legacyActions.indexOf("export async function updateResult"),
+    legacyActions.indexOf("export async function deleteResult"),
+  );
+
+  assertContains(legacyActions, "requireActiveStudentForResult", "Legacy result writes must use the active-student guard.");
+  assertContains(legacyActions, "status: \"ACTIVE\"", "Legacy result writes must reject inactive lifecycle statuses.");
+  assertContains(legacyActions, "Results can only be recorded for active students", "Inactive-student result writes must explain the lifecycle rule.");
+  assertContains(createResultBlock, "await requireActiveStudentForResult(parsed.studentId, ctx)", "Creating a legacy result must require an active student.");
+  assertContains(updateResultBlock, "await requireActiveStudentForResult(parsed.studentId, ctx)", "Updating a legacy result must not move it onto an inactive student.");
 });
 
 test("student list is an operational source-of-truth page", () => {

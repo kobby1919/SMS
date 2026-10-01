@@ -1969,15 +1969,26 @@ export type ResultFormData = {
   assignmentId?: number | null;
 };
 
+async function requireActiveStudentForResult(
+  studentId: string,
+  ctx: Awaited<ReturnType<typeof requireAdminOrTeacher>>,
+) {
+  const student = await prisma.student.findFirst({
+    where: { id: studentId, schoolId: ctx.schoolId, status: "ACTIVE" },
+  });
+  return requireResourceAccess(
+    student,
+    ctx,
+    "Results can only be recorded for active students. Update the student's lifecycle status before adding new academic records.",
+  );
+}
+
 export async function createResult(data: ResultFormData): Promise<void> {
   const parsed = parseActionInput(resultFormSchema, data);
   const ctx = await requireAdminOrTeacher();
   await assertTeacherActionWithinSchoolHours(ctx, "Creating a result");
 
-  const student = await prisma.student.findFirst({
-    where: { id: parsed.studentId, schoolId: ctx.schoolId },
-  });
-  requireResourceAccess(student, ctx);
+  await requireActiveStudentForResult(parsed.studentId, ctx);
 
   await prisma.result.create({
     data: {
@@ -1999,6 +2010,7 @@ export async function updateResult(data: ResultFormData): Promise<void> {
   const existing = await prisma.result.findFirst({ where: { id: data.id, schoolId: ctx.schoolId } });
   requireResourceAccess(existing, ctx);
   await assertTeacherActionWithinSchoolHours(ctx, "Updating a result");
+  await requireActiveStudentForResult(parsed.studentId, ctx);
 
   await prisma.result.update({
     where: { id: data.id },
