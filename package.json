@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "node --max-old-space-size=8192 ./node_modules/eslint/bin/eslint.js",
     "typecheck": "node --max-old-space-size=8192 ./node_modules/typescript/bin/tsc --noEmit",
-    "test:onboarding": "node --test tests/*.test.mjs"
+    "test:onboarding": "node --test tests/*.test.mjs",
+    "test:payments": "node --test tests/payment-provider-security.test.mjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.39.2",
