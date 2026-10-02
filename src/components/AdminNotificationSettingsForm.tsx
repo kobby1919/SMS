@@ -88,11 +88,11 @@ export default function AdminNotificationSettingsForm({
           <CalendarClock size={16} className="text-sky-600" />
           <p className="text-sm font-black text-gray-800">Active school days</p>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+        <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 sm:grid-cols-4 lg:grid-cols-7">
           {days.map((day) => (
-            <label key={day} className="flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2 text-xs font-black text-gray-600">
+            <label key={day} className="flex min-w-0 items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2 text-xs font-black text-gray-600">
               <input type="checkbox" name="activeDays" value={day} defaultChecked={settings.activeDays.includes(day)} />
-              {day.slice(0, 3)}
+              <span className="break-words leading-snug">{day.slice(0, 3)}</span>
             </label>
           ))}
         </div>

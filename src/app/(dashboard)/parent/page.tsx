@@ -235,22 +235,22 @@ function ChildrenSnapshot({
 
             <div className="mt-4 rounded-xl border border-slate-100 bg-slate-50 p-3">
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Today</p>
-              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                <div>
+              <div className="mt-2 grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 xl:grid-cols-4">
+                <div className="min-w-0">
                   <p className="text-sm font-black text-emerald-700">{attendanceToday}</p>
-                  <p className="text-[10px] font-bold uppercase text-slate-400">Attendance</p>
+                  <p className="break-words text-[10px] font-bold uppercase leading-snug text-slate-400">Attendance</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-black text-sky-700">{academicLabel}</p>
-                  <p className="text-[10px] font-bold uppercase text-slate-400">Academics</p>
+                  <p className="break-words text-[10px] font-bold uppercase leading-snug text-slate-400">Academics</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-black text-violet-700">{homeworkLabel}</p>
-                  <p className="text-[10px] font-bold uppercase text-slate-400">Homework</p>
+                  <p className="break-words text-[10px] font-bold uppercase leading-snug text-slate-400">Homework</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-black text-amber-700">{outstanding > 0 ? "Due" : "OK"}</p>
-                  <p className="text-[10px] font-bold uppercase text-slate-400">Fees</p>
+                  <p className="break-words text-[10px] font-bold uppercase leading-snug text-slate-400">Fees</p>
                 </div>
               </div>
             </div>

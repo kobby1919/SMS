@@ -393,17 +393,17 @@ export default async function ParentChildCheckupPage({
                     {todayAttendanceRecords.length} {todayLessonLabel}
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-1 sm:grid-cols-4">
-                  <span className="rounded-lg bg-white px-2 py-1 text-center font-black text-emerald-700 ring-1 ring-slate-100">
+                <div className="grid grid-cols-1 gap-1 min-[420px]:grid-cols-2 xl:grid-cols-4">
+                  <span className="break-words rounded-lg bg-white px-2 py-1 text-center font-black leading-snug text-emerald-700 ring-1 ring-slate-100">
                     {todayCounts.present} present
                   </span>
-                  <span className="rounded-lg bg-white px-2 py-1 text-center font-black text-amber-700 ring-1 ring-slate-100">
+                  <span className="break-words rounded-lg bg-white px-2 py-1 text-center font-black leading-snug text-amber-700 ring-1 ring-slate-100">
                     {todayCounts.late} late
                   </span>
-                  <span className="rounded-lg bg-white px-2 py-1 text-center font-black text-rose-700 ring-1 ring-slate-100">
+                  <span className="break-words rounded-lg bg-white px-2 py-1 text-center font-black leading-snug text-rose-700 ring-1 ring-slate-100">
                     {todayCounts.absent} absent
                   </span>
-                  <span className="rounded-lg bg-white px-2 py-1 text-center font-black text-sky-700 ring-1 ring-slate-100">
+                  <span className="break-words rounded-lg bg-white px-2 py-1 text-center font-black leading-snug text-sky-700 ring-1 ring-slate-100">
                     {todayCounts.excused} excused
                   </span>
                 </div>

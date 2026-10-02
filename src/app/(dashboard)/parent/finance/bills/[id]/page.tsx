@@ -96,16 +96,16 @@ export default async function ParentFinanceBillPage({
           </div>
         </div>
 
-        <div className="mt-5 grid gap-2 sm:grid-cols-4">
+        <div className="mt-5 grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 xl:grid-cols-4">
           {[
             { label: "Total bill", value: formatGHS(bill.totalAmount) },
             { label: "Paid", value: formatGHS(bill.amountPaid) },
             { label: "Discounts", value: formatGHS(bill.discountAmount) },
             { label: "Due date", value: formatDate(bill.dueDate) },
           ].map((item) => (
-            <div key={item.label} className="rounded-xl border border-gray-100 bg-gray-50 px-3 py-3">
-              <p className="text-[10px] font-black uppercase tracking-wide text-gray-400">{item.label}</p>
-              <p className="mt-1 text-sm font-black text-gray-900">{item.value}</p>
+            <div key={item.label} className="min-w-0 rounded-xl border border-gray-100 bg-gray-50 px-3 py-3">
+              <p className="break-words text-[10px] font-black uppercase leading-snug tracking-wide text-gray-400">{item.label}</p>
+              <p className="mt-1 break-words text-sm font-black leading-snug text-gray-900">{item.value}</p>
             </div>
           ))}
         </div>

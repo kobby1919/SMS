@@ -261,17 +261,17 @@ const StudentPage = async ({
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+          <div className="mb-4 grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 xl:grid-cols-4">
             {[
               { label: "Present", value: presentA, icon: <CheckCircle2 size={13} />, color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
               { label: "Absent",  value: absentA,  icon: <XCircle      size={13} />, color: "bg-rose-50 text-rose-700 border-rose-200"         },
               { label: "Late",    value: lateA,    icon: <Clock        size={13} />, color: "bg-amber-50 text-amber-700 border-amber-200"       },
               { label: "Excused", value: excusedA, icon: <FileCheck    size={13} />, color: "bg-indigo-50 text-indigo-700 border-indigo-200"    },
             ].map((s) => (
-              <div key={s.label} className={`rounded-xl p-3 border ${s.color}`}>
-                <div className="flex items-center gap-1 mb-1 opacity-60">
+              <div key={s.label} className={`min-w-0 rounded-xl border p-3 ${s.color}`}>
+                <div className="mb-1 flex min-w-0 items-center gap-1 opacity-60">
                   {s.icon}
-                  <span className="text-[9px] font-black uppercase">{s.label}</span>
+                  <span className="break-words text-[9px] font-black uppercase leading-snug">{s.label}</span>
                 </div>
                 <p className="text-xl font-black leading-none">{s.value}</p>
               </div>

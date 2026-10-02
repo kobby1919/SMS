@@ -584,15 +584,15 @@ const AttendanceTaker = ({
                 </div>
 
                 {/* Live stats bar */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4">
+                <div className="mt-4 grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 xl:grid-cols-4">
                   {(["PRESENT", "ABSENT", "LATE", "EXCUSED"] as const).map((status) => {
                     const cfg = STATUS_CONFIG[status];
                     const count = counts[status] ?? 0;
                     const pct   = students.length > 0 ? Math.round((count / students.length) * 100) : 0;
                     return (
-                      <div key={status} className={`rounded-xl p-2.5 border ${cfg.light}`}>
+                      <div key={status} className={`min-w-0 rounded-xl border p-2.5 ${cfg.light}`}>
                         <p className="text-xl font-black leading-none">{count}</p>
-                        <p className="text-[10px] font-bold uppercase tracking-wide opacity-70 mt-0.5">{cfg.label}</p>
+                        <p className="mt-0.5 break-words text-[10px] font-bold uppercase leading-snug tracking-wide opacity-70">{cfg.label}</p>
                         <p className="text-[10px] font-semibold opacity-50">{pct}%</p>
                       </div>
                     );

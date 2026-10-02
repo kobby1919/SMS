@@ -146,16 +146,16 @@ const ClassOverviewPage = async ({
             </div>
             <CalendarCheck2 size={18} className="shrink-0 text-edujay-primary" />
           </div>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 xl:grid-cols-4">
             {[
               ["Present", overview.todayAttendance.present, "text-emerald-700 bg-emerald-50"],
               ["Absent", overview.todayAttendance.absent, "text-rose-700 bg-rose-50"],
               ["Late", overview.todayAttendance.late, "text-amber-700 bg-amber-50"],
               ["Excused", overview.todayAttendance.excused, "text-blue-700 bg-blue-50"],
             ].map(([label, value, tone]) => (
-              <div key={label} className={`rounded-xl p-3 ${tone}`}>
+              <div key={label} className={`min-w-0 rounded-xl p-3 ${tone}`}>
                 <p className="text-xl font-black">{value}</p>
-                <p className="text-[10px] font-black uppercase">{label}</p>
+                <p className="break-words text-[10px] font-black uppercase leading-snug">{label}</p>
               </div>
             ))}
           </div>

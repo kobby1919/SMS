@@ -153,18 +153,18 @@ const ExamListPage = async ({
       </div>
 
       {/* ── Stats ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 xl:grid-cols-4">
         {[
           { label: "Upcoming",     value: upcomingCount, icon: <Clock        size={16} />, color: "bg-amber-50 text-amber-600"     },
           { label: "Past",         value: pastCount,     icon: <CheckCircle2 size={16} />, color: "bg-emerald-50 text-emerald-600" },
           { label: "Total",        value: upcomingCount + pastCount, icon: <Calendar  size={16} />, color: "bg-indigo-50 text-indigo-600"   },
           { label: "Classes",      value: new Set(exams.map((e) => e.lesson.class.name)).size, icon: <BookOpen size={16} />, color: "bg-violet-50 text-violet-600" },
         ].map((s) => (
-          <div key={s.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${s.color}`}>{s.icon}</div>
-            <div>
+          <div key={s.label} className="flex min-w-0 items-center gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm sm:p-4">
+            <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10 ${s.color}`}>{s.icon}</div>
+            <div className="min-w-0">
               <p className="text-xl font-black text-gray-800 leading-none">{s.value}</p>
-              <p className="text-xs text-gray-400 font-medium mt-0.5">{s.label}</p>
+              <p className="mt-0.5 break-words text-xs font-medium leading-snug text-gray-400">{s.label}</p>
             </div>
           </div>
         ))}

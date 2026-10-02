@@ -793,7 +793,7 @@ const ReportCardView = ({
           </div>
 
           {/* Stats row */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 xl:grid-cols-4">
             {[
               {
                 label: "Overall Average",
@@ -831,10 +831,10 @@ const ReportCardView = ({
             ].map((s) => (
               <div
                 key={s.label}
-                className="flex min-w-0 items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4"
+                className="flex min-w-0 items-center gap-3 rounded-2xl border border-gray-100 bg-white p-3 sm:p-4"
               >
                 <div
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${s.color}`}
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${s.color}`}
                 >
                   {s.icon}
                 </div>
@@ -842,10 +842,10 @@ const ReportCardView = ({
                   <p className="break-words text-lg font-black leading-none text-gray-800">
                     {s.value}
                   </p>
-                  <p className="text-[10px] font-bold text-gray-400 mt-0.5">
+                  <p className="mt-0.5 break-words text-[10px] font-bold leading-snug text-gray-400">
                     {s.label}
                   </p>
-                  <p className="text-[9px] text-gray-300 mt-0.5">{s.sub}</p>
+                  <p className="mt-0.5 break-words text-[9px] leading-snug text-gray-300">{s.sub}</p>
                 </div>
               </div>
             ))}

@@ -241,11 +241,11 @@ export default async function PaymentCorrectionsPage({
               Review money mistakes without deleting receipts. Parents are only notified after an approved correction is applied, and every receipt remains traceable.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:w-[520px]">
+          <div className="grid w-full grid-cols-1 gap-2 min-[420px]:grid-cols-2 xl:w-[520px] xl:grid-cols-4">
             {STATUSES.slice(0, 4).map((item) => (
-              <div key={item} className={`rounded-xl border px-3 py-2 ${STATUS_META[item].tone}`}>
+              <div key={item} className={`min-w-0 rounded-xl border px-3 py-2 ${STATUS_META[item].tone}`}>
                 <p className="text-lg font-black">{statusTotal(item)}</p>
-                <p className="text-[10px] font-black uppercase tracking-wide">{STATUS_META[item].label}</p>
+                <p className="break-words text-[10px] font-black uppercase leading-snug tracking-wide">{STATUS_META[item].label}</p>
               </div>
             ))}
           </div>

@@ -80,19 +80,19 @@ export default async function ParentFinancePage({
           </div>
         </div>
 
-        <div className="mt-6 grid gap-2 sm:grid-cols-4">
+        <div className="mt-6 grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 xl:grid-cols-4">
           {[
             { label: "Total billed", value: formatGHS(finance.totals.totalBilled), icon: <WalletCards size={16} /> },
             { label: "Paid", value: formatGHS(finance.totals.totalPaid), icon: <CheckCircle2 size={16} /> },
             { label: "Due soon", value: String(finance.totals.dueSoonBillCount), icon: <CalendarClock size={16} /> },
             { label: "Open queries", value: String(finance.totals.openQueryCount), icon: <HelpCircle size={16} /> },
           ].map((item) => (
-            <div key={item.label} className="rounded-xl bg-white/[0.06] p-3">
+            <div key={item.label} className="min-w-0 rounded-xl bg-white/[0.06] p-3">
               <div className="flex items-center justify-between text-amber-200">
                 {item.icon}
                 <span className="text-lg font-black text-white">{item.value}</span>
               </div>
-              <p className="mt-2 text-[10px] font-black uppercase tracking-wide text-slate-400">{item.label}</p>
+              <p className="mt-2 break-words text-[10px] font-black uppercase leading-snug tracking-wide text-slate-400">{item.label}</p>
             </div>
           ))}
         </div>

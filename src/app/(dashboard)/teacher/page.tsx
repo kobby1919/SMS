@@ -519,11 +519,11 @@ const TeacherPage = async () => {
             </Link>
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="mt-4 grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 xl:grid-cols-4">
             {todaySummaryStats.map((stat) => (
-              <div key={stat.label} className="rounded-2xl bg-gray-50 px-3 py-3">
+              <div key={stat.label} className="min-w-0 rounded-2xl bg-gray-50 px-3 py-3">
                 <p className="text-2xl font-black text-edujay-ink">{stat.value}</p>
-                <p className="mt-1 text-[11px] font-black uppercase text-gray-400">{stat.label}</p>
+                <p className="mt-1 break-words text-[11px] font-black uppercase leading-snug text-gray-400">{stat.label}</p>
               </div>
             ))}
           </div>

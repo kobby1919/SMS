@@ -126,16 +126,16 @@ const AnnouncementListPage = async ({
       </div>
 
       {/* ── Stats row ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-indigo-50 text-indigo-600">
+      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 xl:grid-cols-4">
+        <div className="flex min-w-0 items-center gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm sm:p-4">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 sm:h-10 sm:w-10">
             <Megaphone size={16} />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-xl font-black text-gray-800 leading-none">
               {count}
             </p>
-            <p className="text-xs text-gray-400 font-medium mt-0.5">
+            <p className="mt-0.5 break-words text-xs font-medium leading-snug text-gray-400">
               Total Posts
             </p>
           </div>

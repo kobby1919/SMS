@@ -131,7 +131,7 @@ export function ReportPageSkeleton({
               <SkeletonBlock key={item} className="h-12 w-full" />
             ))}
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 xl:grid-cols-4">
             {[0, 1, 2, 3].map((item) => (
               <SkeletonBlock key={item} className="h-20 w-full" />
             ))}

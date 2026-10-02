@@ -315,23 +315,23 @@ const BillsPage = async ({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-8">
+      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-8">
         {statusCards.map((card) => (
           <Link
             key={card.status}
             href={buildQuery({ ...baseParams, status: card.status })}
-            className={`rounded-2xl border p-4 text-center transition hover:shadow-sm ${card.tone.bg} ${card.tone.border} ${filterStatus === card.status ? "ring-2 ring-emerald-400" : ""}`}
+            className={`min-w-0 rounded-2xl border p-3 text-center transition hover:shadow-sm sm:p-4 ${card.tone.bg} ${card.tone.border} ${filterStatus === card.status ? "ring-2 ring-emerald-400" : ""}`}
           >
             <p className={`text-2xl font-black leading-none ${card.tone.text}`}>{card.count}</p>
-            <p className={`mt-1 text-[10px] font-black uppercase tracking-wider ${card.tone.text} opacity-75`}>{card.label}</p>
+            <p className={`mt-1 break-words text-[10px] font-black uppercase leading-snug tracking-wider ${card.tone.text} opacity-75`}>{card.label}</p>
           </Link>
         ))}
         <Link
           href={buildQuery({ ...baseParams, status: undefined })}
-          className={`rounded-2xl border border-gray-100 bg-white p-4 text-center transition hover:shadow-sm ${!filterStatus ? "ring-2 ring-emerald-400" : ""}`}
+          className={`min-w-0 rounded-2xl border border-gray-100 bg-white p-3 text-center transition hover:shadow-sm sm:p-4 ${!filterStatus ? "ring-2 ring-emerald-400" : ""}`}
         >
           <p className="text-2xl font-black leading-none text-gray-900">{Object.values(statusCountMap).reduce((sum, item) => sum + item, 0)}</p>
-          <p className="mt-1 text-[10px] font-black uppercase tracking-wider text-gray-400">All</p>
+          <p className="mt-1 break-words text-[10px] font-black uppercase leading-snug tracking-wider text-gray-400">All</p>
         </Link>
       </div>
 

@@ -125,7 +125,7 @@ const BursarListPage = async ({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Active bursars" value={activeCount} icon={<UserRoundCheck size={16} />} color="bg-emerald-50 text-emerald-600" />
         <StatCard label="Pending invites" value={pendingInviteCount} icon={<Clock3 size={16} />} color="bg-violet-50 text-violet-600" />
         <StatCard label="Suspended" value={suspendedCount} icon={<ShieldCheck size={16} />} color="bg-amber-50 text-amber-600" />
@@ -176,13 +176,13 @@ function StatCard({
   color: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${color}`}>
+    <div className="flex min-w-0 items-center gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm sm:p-4">
+      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10 ${color}`}>
         {icon}
       </div>
-      <div>
+      <div className="min-w-0">
         <p className="text-xl font-black leading-none text-gray-800">{value}</p>
-        <p className="mt-0.5 text-xs font-medium text-gray-400">{label}</p>
+        <p className="mt-0.5 break-words text-xs font-medium leading-snug text-gray-400">{label}</p>
       </div>
     </div>
   );

@@ -122,7 +122,7 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 xl:grid-cols-4">
         <ProgressCard label="Profile" done={Boolean(school.name)} />
         <ProgressCard label="Grades" done={school._count.grades > 0} />
         <ProgressCard label="Classes" done={school._count.classes > 0} />

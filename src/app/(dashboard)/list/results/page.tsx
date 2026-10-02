@@ -188,7 +188,7 @@ const ResultListPage = async ({
       {/* ── Stats (admin/teacher) ── */}
       {(role === "admin" || role === "teacher") && (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 xl:grid-cols-4">
             {[
               {
                 label: "School Average", value: total > 0 ? `${avgScore}%` : "—",
@@ -212,12 +212,12 @@ const ResultListPage = async ({
                 icon: <ScrollText size={16} />, color: "bg-indigo-50 text-indigo-600",
               },
             ].map((s) => (
-              <div key={s.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${s.color}`}>{s.icon}</div>
+              <div key={s.label} className="flex min-w-0 items-center gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm sm:p-4">
+                <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10 ${s.color}`}>{s.icon}</div>
                 <div className="min-w-0">
                   <p className="text-xl font-black text-gray-800 leading-none">{s.value}</p>
-                  <p className="text-xs text-gray-400 font-medium mt-0.5">{s.label}</p>
-                  <p className="text-[10px] text-gray-300 mt-0.5 truncate">{s.sub}</p>
+                  <p className="mt-0.5 break-words text-xs font-medium leading-snug text-gray-400">{s.label}</p>
+                  <p className="mt-0.5 break-words text-[10px] leading-snug text-gray-300">{s.sub}</p>
                 </div>
               </div>
             ))}
