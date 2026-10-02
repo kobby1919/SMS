@@ -229,7 +229,7 @@ async function notifyConfirmedOnlinePayment(input: {
         status: "ACTIVE",
         canViewFees: true,
         parent: { schoolId: input.schoolId },
-        student: { schoolId: input.schoolId },
+        student: { schoolId: input.schoolId, status: "ACTIVE" },
       },
       select: {
         parent: { select: { id: true, email: true } },
@@ -246,7 +246,7 @@ async function notifyConfirmedOnlinePayment(input: {
 
   if (parentsById.size === 0 && relationshipCount === 0) {
     const legacyStudent = await prisma.student.findFirst({
-      where: { id: input.studentId, schoolId: input.schoolId },
+      where: { id: input.studentId, schoolId: input.schoolId, status: "ACTIVE" },
       select: {
         parent: { select: { id: true, email: true, schoolId: true } },
       },

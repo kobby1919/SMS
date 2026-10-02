@@ -23,9 +23,11 @@ const parentWardLinkManager = read("src/components/ParentWardLinkManager.tsx");
 const parentListPage = read("src/app/(dashboard)/list/parents/page.tsx");
 const bursarArrears = read("src/lib/services/bursar-arrears.ts");
 const classCollectionReport = read("src/lib/services/class-collection-report.ts");
+const financeWebhookProcessor = read("src/lib/services/finance-webhook-processor.ts");
 
 test("parent link management exposes explicit school operations", () => {
   assertContains(parentWardLinkManager, "Add ward link", "Admin must be able to add a ward link.");
+  assertContains(parentWardLinkManager, "Update permissions", "Admin must be able to update active relationship permissions without changing access status.");
   assertContains(parentWardLinkManager, "Restore access", "Admin must be able to restore a valid parent-ward link.");
   assertContains(parentWardLinkManager, "Remove", "Admin must be able to remove a ward link.");
   assertContains(parentWardLinkManager, "Revoke", "Admin must be able to revoke a ward link.");
@@ -61,4 +63,6 @@ test("parent management page does not link inactive students as active wards", (
 test("live finance reports exclude inactive students where appropriate", () => {
   assertContains(bursarArrears, "status: \"ACTIVE\"", "Arrears follow-up must only target active students.");
   assertContains(classCollectionReport, "student: { schoolId, status: \"ACTIVE\" }", "Class collection performance must exclude inactive students.");
+  assertContains(financeWebhookProcessor, "student: { schoolId: input.schoolId, status: \"ACTIVE\" }", "Online payment parent notifications must only use active student relationships.");
+  assertContains(financeWebhookProcessor, "where: { id: input.studentId, schoolId: input.schoolId, status: \"ACTIVE\" }", "Online payment legacy parent notification fallback must not notify inactive wards.");
 });

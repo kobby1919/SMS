@@ -212,6 +212,16 @@ export default function ParentWardLinkManager({
 
                     {relationship.status === "ACTIVE" ? (
                       <div className="grid gap-2 min-[420px]:grid-cols-2 lg:grid-cols-4">
+                        <button
+                          type="submit"
+                          name="status"
+                          value="ACTIVE"
+                          disabled={isPending}
+                          className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700 transition hover:bg-emerald-100 disabled:opacity-60"
+                        >
+                          {pendingKey === relationship.id ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+                          Update permissions
+                        </button>
                         {INACTIVE_ACTIONS.map((action) => {
                           const Icon = action.icon;
                           return (
