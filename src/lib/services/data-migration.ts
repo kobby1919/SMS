@@ -39,6 +39,7 @@ export type MigrationAreaSummary = {
 };
 
 export type DataMigrationDashboard = {
+  isFreshSchool: boolean;
   totals: {
     students: number;
     parents: number;
@@ -178,6 +179,18 @@ export async function getDataMigrationDashboard(
   ]);
 
   const pendingInvites = pendingParentInvites + pendingTeacherInvites + pendingBursarInvites;
+  const isFreshSchool = [
+    totalStudents,
+    totalParents,
+    totalTeachers,
+    totalBursars,
+    totalClasses,
+    totalSubjects,
+    totalBills,
+    feeStructures,
+    pendingInvites,
+    importLogCount,
+  ].every((count) => count === 0);
 
   const areas: MigrationAreaSummary[] = [
     {
@@ -308,6 +321,7 @@ export async function getDataMigrationDashboard(
   ];
 
   return {
+    isFreshSchool,
     totals: {
       students: totalStudents,
       parents: totalParents,

@@ -63,10 +63,50 @@ function formatDateTime(date: Date) {
 export default async function DataMigrationPage() {
   const { schoolId } = await requirePageSession(["admin"]);
   const dashboard = await getDataMigrationDashboard(schoolId);
+  const isFreshSchool = dashboard.isFreshSchool;
 
   const attentionCount = dashboard.areas.filter((area) =>
     area.status === "NEEDS_CLEANUP" || area.status === "NOT_STARTED"
   ).length;
+
+  const starterSteps = [
+    {
+      title: "Set up classes",
+      copy: "Create the class names the school already uses before importing students.",
+      href: "/list/classes",
+      icon: School,
+    },
+    {
+      title: "Set up subjects",
+      copy: "Add the curriculum subjects before teacher capability or CA setup.",
+      href: "/list/subjects",
+      icon: BookOpen,
+    },
+    {
+      title: "Import students",
+      copy: "Bring admission records and class placement in after the foundation exists.",
+      href: "/list/students/import",
+      icon: GraduationCap,
+    },
+    {
+      title: "Link parents",
+      copy: "Create guardian profiles and connect each parent to the right ward.",
+      href: "/list/parents",
+      icon: Users,
+    },
+    {
+      title: "Invite staff",
+      copy: "Import or invite teachers and bursars only after profile data is clean.",
+      href: "/list/teachers",
+      icon: FileSpreadsheet,
+    },
+    {
+      title: "Set up fees",
+      copy: "Prepare fee structures and balances before parents see finance records.",
+      href: "/list/finance/fee-structures",
+      icon: ReceiptText,
+    },
+  ];
 
   return (
     <main className="m-4 mt-0 flex flex-1 flex-col gap-4">
@@ -78,12 +118,12 @@ export default async function DataMigrationPage() {
               School onboarding bridge
             </div>
             <h1 className="mt-4 text-2xl font-black tracking-tight sm:text-3xl">
-              Data Migration
+              {isFreshSchool ? "Start School Data Setup" : "Data Migration"}
             </h1>
             <p className="mt-2 text-sm font-semibold leading-6 text-slate-300">
-              Bring an existing school into Edujay without casually polluting live records.
-              Uploading, mapping, validation, import, and bulk invites will happen in stages.
-              This page is the control center for the whole migration.
+              {isFreshSchool
+                ? "This school has no operating records in Edujay yet. Start with the foundation, then import people, link guardians, set up fees, and send secure invites only after the data is checked."
+                : "Bring an existing school into Edujay without casually polluting live records. Uploading, mapping, validation, import, and bulk invites will happen in stages. This page is the control center for the whole migration."}
             </p>
           </div>
 
@@ -103,7 +143,7 @@ export default async function DataMigrationPage() {
             <div className="rounded-2xl bg-white/10 p-3">
               <p className="text-2xl font-black">{attentionCount}</p>
               <p className="mt-1 break-words text-[10px] font-black uppercase leading-snug text-slate-300">
-                Areas needing attention
+                {isFreshSchool ? "Setup areas to start" : "Areas needing attention"}
               </p>
             </div>
             <div className="rounded-2xl bg-white/10 p-3">
@@ -140,15 +180,71 @@ export default async function DataMigrationPage() {
         })}
       </section>
 
+      {isFreshSchool ? (
+        <section className="rounded-2xl border border-blue-100 bg-blue-50 p-4 shadow-sm sm:p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-black uppercase tracking-wide text-blue-700">
+                <ShieldCheck size={14} />
+                Fresh school
+              </div>
+              <h2 className="mt-3 text-lg font-black text-blue-950">No records imported yet. Start in this order.</h2>
+              <p className="mt-1 text-sm font-semibold leading-6 text-blue-800">
+                For a new school, this page is a starter checklist. Edujay should build the foundation first, then import records, then send login invites.
+              </p>
+            </div>
+            <Link href="/list/classes" className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3 text-xs font-black text-white transition hover:bg-blue-800 sm:w-auto">
+              Start with classes
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {starterSteps.map((step, index) => {
+              const Icon = step.icon;
+              return (
+                <Link
+                  key={step.title}
+                  href={step.href}
+                  className="group rounded-2xl border border-blue-100 bg-white p-4 transition hover:border-blue-200 hover:shadow-sm"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+                      <Icon size={18} />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-xs font-black uppercase tracking-wide text-blue-600">Step {index + 1}</p>
+                      <p className="mt-1 text-sm font-black text-gray-950">{step.title}</p>
+                      <p className="mt-1 text-xs font-semibold leading-5 text-gray-500">{step.copy}</p>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+
       <section className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-900">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
           <AlertTriangle size={18} className="mt-0.5 shrink-0" />
           <p>
-            Migration is deliberately staged. Edujay should preview and validate files before
-            saving records. Imported people should receive login access only after the admin sends
-            secure invites.
+            {isFreshSchool
+              ? "Nothing has been imported yet. Do not send invites until classes, subjects, students, guardian links, and fee setup have been reviewed."
+              : "Migration is deliberately staged. Edujay should preview and validate files before saving records. Imported people should receive login access only after the admin sends secure invites."}
           </p>
         </div>
+      </section>
+
+      <section className="flex flex-col gap-2">
+        <h2 className="text-lg font-black text-gray-900">
+          {isFreshSchool ? "Migration areas waiting for setup" : "Existing Edujay data readiness"}
+        </h2>
+        <p className="max-w-3xl text-sm font-semibold leading-6 text-gray-500">
+          {isFreshSchool
+            ? "These cards show the record groups Edujay will protect during migration. They are empty now because this school is starting fresh."
+            : "These cards check what is already inside Edujay and highlight cleanup work before more records or invites are added."}
+        </p>
       </section>
 
       <section className="grid grid-cols-1 gap-3 lg:grid-cols-2">
@@ -214,8 +310,9 @@ export default async function DataMigrationPage() {
             <div>
               <h2 className="text-lg font-black text-gray-900">Migration workflow</h2>
               <p className="mt-1 text-sm font-medium leading-6 text-gray-500">
-                The next implementation steps will add upload, column mapping, validation preview,
-                safe import, then bulk invites.
+                {isFreshSchool
+                  ? "After the foundation is ready, the next implementation steps will add upload, column mapping, validation preview, safe import, then bulk invites."
+                  : "The next implementation steps will add upload, column mapping, validation preview, safe import, then bulk invites."}
               </p>
             </div>
             <Upload size={20} className="text-blue-700" />

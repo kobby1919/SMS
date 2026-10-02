@@ -104,3 +104,31 @@ test("data migration status catches parent-link and audit metadata risks", () =>
     "Import audit text metadata must be trimmed before display.",
   );
 });
+
+test("data migration screen guides fresh schools before showing detailed readiness", () => {
+  assertContains(
+    migrationService,
+    "isFreshSchool",
+    "Migration dashboard must detect a school with no existing operating records.",
+  );
+  assertContains(
+    migrationPage,
+    "Start School Data Setup",
+    "Fresh schools should see setup language instead of only a technical migration dashboard.",
+  );
+  assertContains(
+    migrationPage,
+    "No records imported yet. Start in this order.",
+    "Fresh schools must get a clear starter checklist.",
+  );
+  assertContains(
+    migrationPage,
+    "Migration areas waiting for setup",
+    "Fresh schools must understand the zero-count cards are waiting areas, not errors.",
+  );
+  assertContains(
+    migrationPage,
+    "Start with classes",
+    "Fresh school onboarding should guide admins to the first foundation step.",
+  );
+});
