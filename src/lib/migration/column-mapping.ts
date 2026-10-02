@@ -133,7 +133,12 @@ export function suggestColumnMapping(
   headers: string[],
   area: MigrationAreaDefinition,
 ): Record<string, string> {
-  const normalizedHeaders = new Map(headers.map((header) => [normalizeHeader(header), header]));
+  const normalizedHeaders = new Map<string, string>();
+  for (const header of headers) {
+    const normalized = normalizeHeader(header);
+    if (!normalized || normalizedHeaders.has(normalized)) continue;
+    normalizedHeaders.set(normalized, header);
+  }
   const mapping: Record<string, string> = {};
 
   for (const field of area.fields) {

@@ -128,6 +128,41 @@ test("data migration point 2 supports upload and mapping without saving", () => 
   );
   assertContains(
     migrationMapper,
+    "csvIssues",
+    "Point 2 mapper must block structurally unsafe CSV files before validation.",
+  );
+  assertContains(
+    migrationMapper,
+    "hasUnclosedQuote",
+    "Point 2 mapper must detect unclosed CSV quotes.",
+  );
+  assertContains(
+    migrationMapper,
+    "Header row contains a blank column name",
+    "Point 2 mapper must reject blank CSV headers.",
+  );
+  assertContains(
+    migrationMapper,
+    "appears more than once",
+    "Point 2 mapper must reject duplicate CSV headers.",
+  );
+  assertContains(
+    migrationMapper,
+    "value(s), expected",
+    "Point 2 mapper must flag preview rows whose cell count does not match the header.",
+  );
+  assertContains(
+    migrationMapper,
+    "csvIssues.length === 0",
+    "Point 2 mapper must prevent ready state while CSV structure issues exist.",
+  );
+  assertContains(
+    migrationMapper,
+    "displayHeader(header, index)",
+    "Point 2 mapper must display unsafe blank headers clearly without unstable duplicate keys.",
+  );
+  assertContains(
+    migrationMapper,
     "Preview sample",
     "Point 2 mapper must show a small row preview before validation.",
   );
@@ -166,6 +201,11 @@ test("data migration mapping config covers all migration areas", () => {
     migrationMappingConfig,
     "buildMigrationTemplateCsv",
     "Mapping config must generate templates for admins.",
+  );
+  assertContains(
+    migrationMappingConfig,
+    "if (!normalized || normalizedHeaders.has(normalized)) continue;",
+    "Mapping suggestions must avoid duplicate or blank uploaded headers.",
   );
 });
 

@@ -23,9 +23,15 @@ const MAX_PREVIEW_ROWS = 5;
 type ParsedCsv = {
   headers: string[];
   rows: string[][];
+  issues: string[];
 };
 
-function parseCsvLine(line: string) {
+type ParsedCsvLine = {
+  values: string[];
+  hasUnclosedQuote: boolean;
+};
+
+function parseCsvLine(line: string): ParsedCsvLine {
   const values: string[] = [];
   let current = "";
   let inQuotes = false;
@@ -55,7 +61,7 @@ function parseCsvLine(line: string) {
   }
 
   values.push(current.trim());
-  return values;
+  return { values, hasUnclosedQuote: inQuotes };
 }
 
 function parseCsvPreview(csv: string): ParsedCsv {
@@ -65,12 +71,50 @@ function parseCsvPreview(csv: string): ParsedCsv {
     .filter((line) => line.trim().length > 0);
 
   if (lines.length === 0) {
-    return { headers: [], rows: [] };
+    return { headers: [], rows: [], issues: [] };
   }
 
-  const headers = parseCsvLine(lines[0]).map((header) => header.trim()).filter(Boolean);
-  const rows = lines.slice(1, MAX_PREVIEW_ROWS + 1).map(parseCsvLine);
-  return { headers, rows };
+  const issues: string[] = [];
+  const headerLine = parseCsvLine(lines[0]);
+  const headers = headerLine.values.map((header) => header.trim());
+
+  if (headerLine.hasUnclosedQuote) {
+    issues.push("Header row has an unclosed quote. Fix the CSV before validation.");
+  }
+
+  if (headers.some((header) => header.length === 0)) {
+    issues.push("Header row contains a blank column name. Rename blank columns before validation.");
+  }
+
+  const normalizedHeaderCounts = new Map<string, number>();
+  for (const header of headers) {
+    const normalized = header.trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
+    if (!normalized) continue;
+    normalizedHeaderCounts.set(normalized, (normalizedHeaderCounts.get(normalized) ?? 0) + 1);
+  }
+
+  for (const header of headers) {
+    const normalized = header.trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
+    if (normalized && (normalizedHeaderCounts.get(normalized) ?? 0) > 1) {
+      issues.push(`Header "${header}" appears more than once. Rename duplicate columns before validation.`);
+      break;
+    }
+  }
+
+  const rows = lines.slice(1, MAX_PREVIEW_ROWS + 1).map((line, rowIndex) => {
+    const parsed = parseCsvLine(line);
+    if (parsed.hasUnclosedQuote) {
+      issues.push(`Preview row ${rowIndex + 1} has an unclosed quote. Fix the CSV before validation.`);
+    }
+    if (parsed.values.length !== headers.length) {
+      issues.push(
+        `Preview row ${rowIndex + 1} has ${parsed.values.length} value(s), expected ${headers.length}.`,
+      );
+    }
+    return parsed.values;
+  });
+
+  return { headers, rows, issues: [...new Set(issues)] };
 }
 
 function duplicateMappedHeaders(mapping: Record<string, string>) {
@@ -81,6 +125,10 @@ function duplicateMappedHeaders(mapping: Record<string, string>) {
   return [...counts.entries()].filter(([, count]) => count > 1).map(([header]) => header);
 }
 
+function displayHeader(header: string, index: number) {
+  return header || `Blank column ${index + 1}`;
+}
+
 export default function DataMigrationMapper() {
   const [areaKey, setAreaKey] = useState<MigrationAreaKey>("students");
   const [fileName, setFileName] = useState("");
@@ -88,6 +136,7 @@ export default function DataMigrationMapper() {
   const [headers, setHeaders] = useState<string[]>([]);
   const [previewRows, setPreviewRows] = useState<string[][]>([]);
   const [mapping, setMapping] = useState<Record<string, string>>({});
+  const [csvIssues, setCsvIssues] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const area = useMemo(() => getMigrationAreaDefinition(areaKey), [areaKey]);
@@ -101,6 +150,7 @@ export default function DataMigrationMapper() {
   const duplicateHeaders = duplicateMappedHeaders(mapping);
   const readyForValidation =
     headers.length > 0 &&
+    csvIssues.length === 0 &&
     missingRequiredFields.length === 0 &&
     duplicateHeaders.length === 0;
 
@@ -111,6 +161,7 @@ export default function DataMigrationMapper() {
     setHeaders([]);
     setPreviewRows([]);
     setMapping({});
+    setCsvIssues([]);
     setError(null);
   }
 
@@ -119,6 +170,7 @@ export default function DataMigrationMapper() {
     setHeaders([]);
     setPreviewRows([]);
     setMapping({});
+    setCsvIssues([]);
     setRowEstimate(0);
     setFileName("");
 
@@ -137,7 +189,7 @@ export default function DataMigrationMapper() {
     const text = await file.text();
     const parsed = parseCsvPreview(text);
 
-    if (parsed.headers.length === 0) {
+    if (parsed.headers.length === 0 || parsed.headers.every((header) => header.length === 0)) {
       setError("The CSV has no header row. Add column names before uploading.");
       return;
     }
@@ -149,6 +201,7 @@ export default function DataMigrationMapper() {
     setRowEstimate(Math.max(0, allRows.length - 1));
     setHeaders(parsed.headers);
     setPreviewRows(parsed.rows);
+    setCsvIssues(parsed.issues);
     setMapping(suggested);
   }
 
@@ -272,8 +325,10 @@ export default function DataMigrationMapper() {
                     disabled={headers.length === 0}
                   >
                     <option value="">Not mapped</option>
-                    {headers.map((header) => (
-                      <option key={header} value={header}>{header}</option>
+                    {headers.map((header, index) => (
+                      <option key={`${index}-${header}`} value={header}>
+                        {displayHeader(header, index)}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -286,9 +341,9 @@ export default function DataMigrationMapper() {
               <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
                 <h3 className="text-sm font-black text-gray-900">Detected columns</h3>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {headers.map((header) => (
-                    <span key={header} className="rounded-lg bg-white px-2.5 py-1 text-[11px] font-black text-gray-600 ring-1 ring-gray-100">
-                      {header}
+                  {headers.map((header, index) => (
+                    <span key={`${index}-${header}`} className="rounded-lg bg-white px-2.5 py-1 text-[11px] font-black text-gray-600 ring-1 ring-gray-100">
+                      {displayHeader(header, index)}
                     </span>
                   ))}
                 </div>
@@ -297,11 +352,16 @@ export default function DataMigrationMapper() {
               <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
                 <h3 className="text-sm font-black text-gray-900">Mapping issues</h3>
                 <div className="mt-3 space-y-2">
-                  {missingRequiredFields.length === 0 && duplicateHeaders.length === 0 ? (
+                  {csvIssues.length === 0 && missingRequiredFields.length === 0 && duplicateHeaders.length === 0 ? (
                     <p className="rounded-xl bg-white px-3 py-2 text-xs font-bold text-emerald-700 ring-1 ring-emerald-100">
                       No mapping issues found yet.
                     </p>
                   ) : null}
+                  {csvIssues.map((issue) => (
+                    <p key={issue} className="rounded-xl bg-white px-3 py-2 text-xs font-bold text-rose-700 ring-1 ring-rose-100">
+                      {issue}
+                    </p>
+                  ))}
                   {missingRequiredFields.map((field) => (
                     <p key={field.key} className="rounded-xl bg-white px-3 py-2 text-xs font-bold text-amber-700 ring-1 ring-amber-100">
                       Missing required field: {field.label}
@@ -327,8 +387,8 @@ export default function DataMigrationMapper() {
                 <table className="min-w-[720px] w-full text-left text-sm">
                   <thead className="bg-gray-50 text-[10px] font-black uppercase tracking-wide text-gray-400">
                     <tr>
-                      {headers.map((header) => (
-                        <th key={header} className="px-3 py-2">{header}</th>
+                      {headers.map((header, index) => (
+                        <th key={`${index}-${header}`} className="px-3 py-2">{displayHeader(header, index)}</th>
                       ))}
                     </tr>
                   </thead>
@@ -336,7 +396,7 @@ export default function DataMigrationMapper() {
                     {previewRows.map((row, index) => (
                       <tr key={`${index}-${row.join("|")}`}>
                         {headers.map((header, headerIndex) => (
-                          <td key={header} className="px-3 py-2 text-xs font-semibold text-gray-600">
+                          <td key={`${headerIndex}-${header}`} className="px-3 py-2 text-xs font-semibold text-gray-600">
                             {row[headerIndex] || "—"}
                           </td>
                         ))}
