@@ -342,12 +342,12 @@ export default function DataMigrationMapper() {
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-black uppercase tracking-wide text-blue-700">
             <UploadCloud size={14} />
-            Point 2
+            Upload and mapping
           </div>
           <h2 className="mt-3 text-lg font-black text-gray-950">Upload and map spreadsheet columns</h2>
           <p className="mt-1 text-sm font-semibold leading-6 text-gray-500">
             Upload a CSV exported from Excel or Google Sheets. Edujay reads the headers,
-            suggests mappings, and shows a small preview. Nothing is saved to live records here.
+            suggests mappings, and shows a small preview before validation.
           </p>
         </div>
         <a
@@ -410,7 +410,7 @@ export default function DataMigrationMapper() {
                 </p>
                 <p className="mt-1 text-xs font-semibold leading-5">
                   {readyForValidation
-                    ? "Next point will validate every row before anything is imported."
+                    ? "Edujay can now check every uploaded row before import."
                     : "Upload a file and map every required field before validation."}
                 </p>
               </div>
@@ -510,9 +510,9 @@ export default function DataMigrationMapper() {
             <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h3 className="text-sm font-black text-blue-950">Point 3 validation preview</h3>
+                  <h3 className="text-sm font-black text-blue-950">Validation preview</h3>
                   <p className="mt-1 text-xs font-semibold leading-5 text-blue-800">
-                    Edujay checks every uploaded row against required fields, duplicates, existing records, class names, parent links, gender, terms, and fee amounts before any save step exists.
+                    Edujay checks every uploaded row against required fields, duplicates, existing records, class names, parent links, gender, terms, and fee amounts before import.
                   </p>
                 </div>
                 <button
@@ -597,7 +597,7 @@ export default function DataMigrationMapper() {
                   <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                        <h4 className="text-sm font-black text-emerald-950">Point 4 safe import</h4>
+                        <h4 className="text-sm font-black text-emerald-950">Safe import</h4>
                         <p className="mt-1 text-xs font-semibold leading-5 text-emerald-800">
                           Edujay will import only the {cleanValidationRows} clean row{cleanValidationRows === 1 ? "" : "s"}. Rows with warnings, corrections, or skip markers stay outside live records.
                         </p>
@@ -683,8 +683,7 @@ export default function DataMigrationMapper() {
         <div className="flex items-start gap-3">
           <ShieldCheck size={18} className="mt-0.5 shrink-0 text-blue-700" />
           <p className="text-sm font-semibold leading-6 text-blue-800">
-            This step stores nothing in the database. The next step will validate the mapped rows
-            before Edujay allows any safe import.
+            Review the validation results carefully. Edujay imports only clean rows and keeps rows with warnings, errors, or skip markers outside the live school records.
           </p>
         </div>
       </div>

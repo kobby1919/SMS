@@ -31,11 +31,11 @@ const statusMeta: Record<MigrationAreaStatus, { label: string; className: string
     className: "border-blue-100 bg-blue-50 text-blue-700",
   },
   NEEDS_CLEANUP: {
-    label: "Needs cleanup",
+    label: "Needs review",
     className: "border-amber-100 bg-amber-50 text-amber-800",
   },
   READY_FOR_INVITES: {
-    label: "Ready for invites",
+    label: "Invite review",
     className: "border-violet-100 bg-violet-50 text-violet-700",
   },
   OPERATIONAL: {
@@ -108,6 +108,14 @@ export default async function DataMigrationPage() {
       icon: ReceiptText,
     },
   ];
+  const migrationWorkflow = [
+    ["Choose record type", "Select students, parents, teachers, bursars, classes, subjects, or fees."],
+    ["Download template", "Use Edujay's template when the school does not already have a clean CSV."],
+    ["Upload and map", "Match the school's spreadsheet columns to the right Edujay fields."],
+    ["Validate rows", "Let Edujay check missing fields, duplicates, invalid class names, and risky links."],
+    ["Import clean rows", "Only rows with no errors and no warnings enter the live school records."],
+    ["Send invites later", "Login access is sent only after profiles and links have been reviewed."],
+  ];
 
   return (
     <main className="m-4 mt-0 flex flex-1 flex-col gap-4">
@@ -116,15 +124,15 @@ export default async function DataMigrationPage() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-wide text-blue-100">
               <Database size={14} />
-              School onboarding bridge
+              School data setup
             </div>
             <h1 className="mt-4 text-2xl font-black tracking-tight sm:text-3xl">
-              {isFreshSchool ? "Start School Data Setup" : "Data Migration"}
+              {isFreshSchool ? "Start School Data Setup" : "School Data Migration"}
             </h1>
             <p className="mt-2 text-sm font-semibold leading-6 text-slate-300">
               {isFreshSchool
-                ? "This school has no operating records in Edujay yet. Start with the foundation, then import people, link guardians, set up fees, and send secure invites only after the data is checked."
-                : "Bring an existing school into Edujay without casually polluting live records. Uploading, mapping, validation, import, and bulk invites will happen in stages. This page is the control center for the whole migration."}
+                ? "Use this page to bring an existing school into Edujay in the right order: classes and subjects first, then students, guardians, staff, fees, and secure login invites."
+                : "Review the school records already in Edujay, upload spreadsheet data, validate it, and import only clean rows into the live system."}
             </p>
           </div>
 
@@ -226,6 +234,28 @@ export default async function DataMigrationPage() {
         </section>
       ) : null}
 
+      <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h2 className="text-lg font-black text-gray-900">Use this page in this order</h2>
+            <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-gray-500">
+              Edujay keeps migration deliberate: admins prepare the spreadsheet, map columns, validate every row, then import only clean records.
+            </p>
+          </div>
+          <Upload size={20} className="shrink-0 text-blue-700" />
+        </div>
+
+        <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {migrationWorkflow.map(([title, copy], index) => (
+            <div key={title} className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+              <p className="text-xs font-black text-blue-700">Step {index + 1}</p>
+              <p className="mt-2 text-sm font-black text-gray-900">{title}</p>
+              <p className="mt-1 text-xs font-semibold leading-5 text-gray-500">{copy}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <DataMigrationMapper />
 
       <section className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-900">
@@ -233,8 +263,8 @@ export default async function DataMigrationPage() {
           <AlertTriangle size={18} className="mt-0.5 shrink-0" />
           <p>
             {isFreshSchool
-              ? "Nothing has been imported yet. Do not send invites until classes, subjects, students, guardian links, and fee setup have been reviewed."
-              : "Migration is deliberately staged. Edujay should preview and validate files before saving records. Imported people should receive login access only after the admin sends secure invites."}
+              ? "Start with classes and subjects before importing students. Login invites should be sent only after student records, guardian links, and staff profiles have been reviewed."
+              : "Rows with errors or warnings are kept outside the live system. Review the readiness cards below before sending login invites."}
           </p>
         </div>
       </section>
@@ -307,43 +337,12 @@ export default async function DataMigrationPage() {
         })}
       </section>
 
-      <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_360px]">
-        <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <h2 className="text-lg font-black text-gray-900">Migration workflow</h2>
-              <p className="mt-1 text-sm font-medium leading-6 text-gray-500">
-                {isFreshSchool
-                  ? "After the foundation is ready, the next implementation steps will add upload, column mapping, validation preview, safe import, then bulk invites."
-                  : "The next implementation steps will add upload, column mapping, validation preview, safe import, then bulk invites."}
-              </p>
-            </div>
-            <Upload size={20} className="text-blue-700" />
-          </div>
-
-          <div className="mt-5 grid gap-3 md:grid-cols-5">
-            {[
-              ["Upload", "Choose the school spreadsheet."],
-              ["Map", "Match school columns to Edujay fields."],
-              ["Validate", "Find duplicates, missing fields, and risky links."],
-              ["Import", "Save only clean records."],
-              ["Invite", "Send secure login links after review."],
-            ].map(([title, copy], index) => (
-              <div key={title} className="rounded-xl border border-gray-100 bg-gray-50 p-3">
-                <p className="text-xs font-black text-blue-700">Step {index + 1}</p>
-                <p className="mt-2 text-sm font-black text-gray-900">{title}</p>
-                <p className="mt-1 text-xs font-semibold leading-5 text-gray-500">{copy}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <aside className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+      <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
           <div className="flex items-center gap-2">
             <FileSpreadsheet size={18} className="text-blue-700" />
             <h2 className="text-base font-black text-gray-900">Recent import records</h2>
           </div>
-          <div className="mt-4 space-y-2">
+          <div className="mt-4 grid gap-2 lg:grid-cols-2">
             {dashboard.recentImportLogs.length === 0 ? (
               <p className="rounded-xl bg-gray-50 px-3 py-3 text-sm font-semibold leading-6 text-gray-500">
                 No import activity has been recorded for this school yet.
@@ -369,25 +368,6 @@ export default async function DataMigrationPage() {
               ))
             )}
           </div>
-        </aside>
-      </section>
-
-      <section className="rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex min-w-0 items-start gap-3">
-            <ShieldCheck size={18} className="mt-0.5 shrink-0 text-blue-700" />
-            <div className="min-w-0">
-              <p className="text-sm font-black text-blue-950">Step 1 is the control center only.</p>
-              <p className="mt-1 text-sm font-semibold leading-6 text-blue-800">
-                Next we add upload and column mapping. Until then, no uploaded spreadsheet data is written into live Edujay records from this page.
-              </p>
-            </div>
-          </div>
-          <Link href="/list/students/import" className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3 text-xs font-black text-white transition hover:bg-blue-800 sm:w-auto">
-            Existing student import
-            <ArrowRight size={14} />
-          </Link>
-        </div>
       </section>
     </main>
   );

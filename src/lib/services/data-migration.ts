@@ -179,6 +179,22 @@ export async function getDataMigrationDashboard(
   ]);
 
   const pendingInvites = pendingParentInvites + pendingTeacherInvites + pendingBursarInvites;
+  const studentRiskCount = missingAdmissionStudents + incompleteStudents;
+  const studentRiskLabel = missingAdmissionStudents > 0 && incompleteStudents > 0
+    ? "admission/setup review"
+    : missingAdmissionStudents > 0
+      ? "missing admission no."
+      : incompleteStudents > 0
+        ? "incomplete setup"
+        : "records to review";
+  const parentRiskCount = parentsWithoutActiveWardLinks + pendingParentInvites;
+  const parentRiskLabel = parentsWithoutActiveWardLinks > 0 && pendingParentInvites > 0
+    ? "links/invites to review"
+    : parentsWithoutActiveWardLinks > 0
+      ? "parents without wards"
+      : pendingParentInvites > 0
+        ? "pending parent invites"
+        : "links to review";
   const isFreshSchool = [
     totalStudents,
     totalParents,
@@ -197,18 +213,18 @@ export async function getDataMigrationDashboard(
       key: "students",
       title: "Students",
       description: "Admission records, class placement, lifecycle status, and parent link readiness.",
-      status: missingAdmissionStudents > 0 || incompleteStudents > 0
+      status: studentRiskCount > 0
         ? "NEEDS_CLEANUP"
         : statusForFoundation(totalStudents),
       primaryCount: totalStudents,
-      primaryLabel: "records",
+      primaryLabel: "students",
       secondaryCount: activeStudents,
-      secondaryLabel: "active",
-      riskCount: missingAdmissionStudents + incompleteStudents,
-      riskLabel: "needs cleanup",
+      secondaryLabel: "active students",
+      riskCount: studentRiskCount,
+      riskLabel: studentRiskLabel,
       nextAction: totalStudents === 0
         ? "Prepare student spreadsheet"
-        : missingAdmissionStudents + incompleteStudents > 0
+        : studentRiskCount > 0
           ? "Clean admission/status gaps"
           : "Ready for parent linking checks",
     },
@@ -225,8 +241,8 @@ export async function getDataMigrationDashboard(
       primaryLabel: "profiles",
       secondaryCount: activeParentLinks,
       secondaryLabel: "active ward links",
-      riskCount: parentsWithoutActiveWardLinks + pendingParentInvites,
-      riskLabel: "needs invite/link review",
+      riskCount: parentRiskCount,
+      riskLabel: parentRiskLabel,
       nextAction: totalParents === 0
         ? "Import parents after students"
         : parentsWithoutActiveWardLinks > 0

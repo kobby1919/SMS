@@ -96,13 +96,13 @@ test("data migration point 1 remains a read-only control center", () => {
 
   assertContains(
     migrationPage,
-    "Step 1 is the control center only.",
-    "Page must clearly explain that step 1 is not the import engine.",
+    "Use this page in this order",
+    "Page must guide admins through the migration order before upload/import.",
   );
   assertContains(
     migrationPage,
-    "no uploaded spreadsheet data is written into live Edujay records",
-    "Page must warn admins that uploads/mapping are not active yet.",
+    "Only rows with no errors and no warnings enter the live school records.",
+    "Page must clearly explain that only clean rows enter live records.",
   );
 });
 
@@ -347,8 +347,8 @@ test("data migration point 2 supports upload and mapping without saving", () => 
   );
   assertContains(
     migrationMapper,
-    "This step stores nothing in the database.",
-    "Point 2 UI must clearly say no records are saved.",
+    "Review the validation results carefully.",
+    "Point 2 UI must tell admins to review validation results before import.",
   );
 });
 
