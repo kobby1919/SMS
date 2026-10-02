@@ -33,6 +33,7 @@ type ParentRow = Prisma.ParentGetPayload<{
             id: true;
             name: true;
             surname: true;
+            status: true;
             class: { select: { name: true } };
           };
         };
@@ -100,6 +101,7 @@ const ParentListPage = async ({
                       id: true,
                       name: true,
                       surname: true,
+                      status: true,
                       class: { select: { name: true } },
                     },
                   },
@@ -124,11 +126,11 @@ const ParentListPage = async ({
       prisma.parentInvite.count({ where: inviteQuery }),
       prisma.parent.count({ where: { schoolId } }),
       prisma.parentStudentRelationship.count({
-        where: { schoolId, status: "ACTIVE" },
+        where: { schoolId, status: "ACTIVE", student: { schoolId, status: "ACTIVE" } },
       }),
       role === "admin"
         ? prisma.student.findMany({
-            where: { schoolId },
+            where: { schoolId, status: "ACTIVE" },
             select: {
               id: true,
               name: true,
@@ -333,7 +335,9 @@ function ParentTable({
     <div className="flex-1 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
       <div className="divide-y divide-gray-100 md:hidden">
         {parents.map((parent) => {
-          const activeRelationships = parent.studentRelationships.filter((relationship) => relationship.status === "ACTIVE");
+          const activeRelationships = parent.studentRelationships.filter(
+            (relationship) => relationship.status === "ACTIVE" && relationship.student.status === "ACTIVE",
+          );
           const wardNames = activeRelationships
             .map((relationship) => relationship.student)
             .filter(Boolean)
@@ -410,7 +414,9 @@ function ParentTable({
           </thead>
           <tbody className="divide-y divide-gray-50">
             {parents.map((parent) => {
-              const activeRelationships = parent.studentRelationships.filter((relationship) => relationship.status === "ACTIVE");
+              const activeRelationships = parent.studentRelationships.filter(
+                (relationship) => relationship.status === "ACTIVE" && relationship.student.status === "ACTIVE",
+              );
               const wardNames = activeRelationships
                 .map((relationship) => relationship.student)
                 .filter(Boolean)

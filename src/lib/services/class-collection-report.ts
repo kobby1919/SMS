@@ -67,7 +67,7 @@ export async function getClassCollectionReport(schoolId: string): Promise<ClassC
   const bills = await prisma.studentBill.findMany({
     where: {
       schoolId,
-      student: { schoolId },
+      student: { schoolId, status: "ACTIVE" },
       feeStructure: { schoolId },
     },
     select: {

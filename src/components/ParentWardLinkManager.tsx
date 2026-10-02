@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { CheckCircle2, Link2, Loader2, XCircle } from "lucide-react";
+import { CheckCircle2, Link2, Loader2, RotateCcw, ShieldOff, UserMinus, XCircle } from "lucide-react";
 import {
   addParentWardLinkAction,
   updateParentWardLinkStatusAction,
@@ -32,14 +32,6 @@ type WardRelationship = {
   };
 };
 
-const STATUS_OPTIONS = [
-  { value: "ACTIVE", label: "Active" },
-  { value: "REMOVED", label: "Removed" },
-  { value: "REVOKED", label: "Revoked" },
-  { value: "TRANSFERRED", label: "Transferred" },
-  { value: "GRADUATED", label: "Graduated" },
-];
-
 const ROLE_OPTIONS = [
   { value: "PRIMARY_GUARDIAN", label: "Primary guardian" },
   { value: "GUARDIAN", label: "Guardian" },
@@ -66,6 +58,33 @@ function statusClass(status: string) {
 function readable(value: string) {
   return value.toLowerCase().replaceAll("_", " ");
 }
+
+const INACTIVE_ACTIONS = [
+  {
+    status: "REMOVED",
+    label: "Remove",
+    icon: UserMinus,
+    style: "bg-slate-100 text-slate-700 hover:bg-slate-200",
+  },
+  {
+    status: "REVOKED",
+    label: "Revoke",
+    icon: ShieldOff,
+    style: "bg-rose-50 text-rose-700 hover:bg-rose-100",
+  },
+  {
+    status: "TRANSFERRED",
+    label: "Transferred",
+    icon: Link2,
+    style: "bg-sky-50 text-sky-700 hover:bg-sky-100",
+  },
+  {
+    status: "GRADUATED",
+    label: "Graduated",
+    icon: CheckCircle2,
+    style: "bg-violet-50 text-violet-700 hover:bg-violet-100",
+  },
+] as const;
 
 function ResultMessage({ result }: { result: ParentRelationshipActionResult | null }) {
   if (!result) return null;
@@ -142,12 +161,11 @@ export default function ParentWardLinkManager({
       </button>
 
       {open && (
-        <div className="mt-3 w-[min(82vw,38rem)] max-w-[38rem] rounded-2xl border border-slate-100 bg-slate-50 p-3 text-left shadow-sm">
+        <div className="mt-3 w-full max-w-[42rem] rounded-2xl border border-slate-100 bg-slate-50 p-3 text-left shadow-sm sm:w-[min(82vw,42rem)]">
           <div className="space-y-3">
             {relationships.length > 0 ? (
               relationships.map((relationship) => (
-                <form key={relationship.id} action={submitStatus} className="rounded-xl bg-white p-3 ring-1 ring-slate-100">
-                  <input type="hidden" name="relationshipId" value={relationship.id} />
+                <div key={relationship.id} className="rounded-xl bg-white p-3 ring-1 ring-slate-100">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-black text-slate-900">
@@ -162,51 +180,69 @@ export default function ParentWardLinkManager({
                     </span>
                   </div>
 
-                  <div className="mt-3 grid gap-2 sm:grid-cols-[150px_1fr] lg:grid-cols-[160px_1fr_auto] lg:items-end">
-                    <label className="text-xs font-bold text-slate-500">
-                      Status
-                      <select
-                        name="status"
-                        defaultValue={relationship.status}
-                        className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-bold text-slate-700 outline-none focus:border-edujay-primary"
-                      >
-                        {STATUS_OPTIONS.map((option) => (
-                          <option key={option.value} value={option.value}>{option.label}</option>
-                        ))}
-                      </select>
-                    </label>
+                  <form action={submitStatus} className="mt-3 grid gap-3">
+                    <input type="hidden" name="relationshipId" value={relationship.id} />
                     <label className="text-xs font-bold text-slate-500">
                       Reason or note
                       <input
                         name="note"
                         defaultValue={relationship.note ?? ""}
-                        placeholder="e.g. transferred to another school"
+                        placeholder={relationship.status === "ACTIVE" ? "Required when removing, revoking, transferring, or graduating" : "Optional restore note"}
                         className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-edujay-primary"
                       />
                     </label>
-                    <button
-                      type="submit"
-                      disabled={isPending}
-                      className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-900 px-3 py-2 text-xs font-black text-white disabled:opacity-60"
-                    >
-                      {pendingKey === relationship.id ? <Loader2 size={14} className="animate-spin" /> : null}
-                      Save
-                    </button>
-                  </div>
 
-                  <div className="mt-2 grid gap-2 sm:grid-cols-3">
-                    {[
-                      ["canViewFees", "Fees", relationship.canViewFees],
-                      ["canViewReports", "Reports", relationship.canViewReports],
-                      ["canMessageSchool", "Messaging", relationship.canMessageSchool],
-                    ].map(([name, label, checked]) => (
-                      <label key={String(name)} className="flex items-center gap-2 rounded-lg bg-slate-50 px-2.5 py-2 text-xs font-bold text-slate-600">
-                        <input type="checkbox" name={String(name)} defaultChecked={Boolean(checked)} className="h-4 w-4 rounded border-slate-300" />
-                        {label}
-                      </label>
-                    ))}
-                  </div>
-                </form>
+                    <div className="grid gap-2 sm:grid-cols-3">
+                      {[
+                        ["canViewFees", "Fees", relationship.canViewFees],
+                        ["canViewReports", "Reports", relationship.canViewReports],
+                        ["canMessageSchool", "Messaging", relationship.canMessageSchool],
+                      ].map(([name, label, checked]) => (
+                        <label key={String(name)} className="flex items-center gap-2 rounded-lg bg-slate-50 px-2.5 py-2 text-xs font-bold text-slate-600">
+                          <input
+                            type="checkbox"
+                            name={String(name)}
+                            defaultChecked={relationship.status === "ACTIVE" ? Boolean(checked) : true}
+                            className="h-4 w-4 rounded border-slate-300"
+                          />
+                          {label}
+                        </label>
+                      ))}
+                    </div>
+
+                    {relationship.status === "ACTIVE" ? (
+                      <div className="grid gap-2 min-[420px]:grid-cols-2 lg:grid-cols-4">
+                        {INACTIVE_ACTIONS.map((action) => {
+                          const Icon = action.icon;
+                          return (
+                            <button
+                              key={action.status}
+                              type="submit"
+                              name="status"
+                              value={action.status}
+                              disabled={isPending}
+                              className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-black transition disabled:opacity-60 ${action.style}`}
+                            >
+                              {pendingKey === relationship.id ? <Loader2 size={14} className="animate-spin" /> : <Icon size={14} />}
+                              {action.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <button
+                        type="submit"
+                        name="status"
+                        value="ACTIVE"
+                        disabled={isPending}
+                        className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-black text-white transition hover:bg-emerald-700 disabled:opacity-60 sm:w-fit"
+                      >
+                        {pendingKey === relationship.id ? <Loader2 size={14} className="animate-spin" /> : <RotateCcw size={14} />}
+                        Restore access
+                      </button>
+                    )}
+                  </form>
+                </div>
               ))
             ) : (
               <p className="rounded-xl bg-white px-3 py-4 text-sm font-semibold text-slate-500 ring-1 ring-slate-100">

@@ -164,6 +164,7 @@ export async function getBursarArrearsFollowUp(
         : ARREARS_STATUSES;
   const studentWhere: Prisma.StudentWhereInput = {
     schoolId,
+    status: "ACTIVE",
     ...(options.classId ? { classId: options.classId } : {}),
   };
   const where: Prisma.StudentBillWhereInput = {

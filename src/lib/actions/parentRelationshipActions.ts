@@ -43,6 +43,10 @@ function auditActionForStatus(status: ParentStudentRelationshipStatus): ParentAc
   }
 }
 
+function requiresRelationshipReason(status: ParentStudentRelationshipStatus) {
+  return status !== "ACTIVE";
+}
+
 async function syncLegacyStudentParentId({
   schoolId,
   studentId,
@@ -217,6 +221,12 @@ export async function updateParentWardLinkStatusAction(input: unknown): Promise<
     });
 
     if (!relationship) return { ok: false, message: "Parent-ward link not found." };
+    if (requiresRelationshipReason(data.status) && !data.note) {
+      return {
+        ok: false,
+        message: "Add a clear reason before removing, revoking, transferring, or graduating a parent-ward link.",
+      };
+    }
     if (data.status === "ACTIVE" && relationship.student.status !== "ACTIVE") {
       return {
         ok: false,
