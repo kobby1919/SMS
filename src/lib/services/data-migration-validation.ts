@@ -39,6 +39,7 @@ type ValidationContext = {
 const VALID_SEX_VALUES = new Set(["MALE", "FEMALE"]);
 const VALID_STUDENT_STATUS_VALUES = new Set(["ACTIVE", "INCOMPLETE_SETUP", "TRANSFERRED", "GRADUATED", "WITHDRAWN"]);
 const VALID_TERM_VALUES = new Set(["TERM_1", "TERM_2", "TERM_3"]);
+const SIMPLE_EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function normalize(value: string | null | undefined) {
   return (value ?? "").trim();
@@ -69,6 +70,10 @@ function parseMoney(value: string) {
   const amount = Number(clean);
   if (!Number.isFinite(amount)) return null;
   return Math.round(amount * 100) / 100;
+}
+
+function isValidEmail(value: string) {
+  return SIMPLE_EMAIL_PATTERN.test(value.trim().toLowerCase());
 }
 
 function compact(values: Array<string | null | undefined>) {
@@ -117,6 +122,17 @@ function addDuplicateIssue({
       message: `${label} appears more than once in this upload.`,
     });
   }
+}
+
+function uploadedFeeRowKey(values: Record<string, string>) {
+  const parts = [
+    values.admissionNumber,
+    values.feeName,
+    values.term ? normalizeTerm(values.term) : "",
+    values.academicYear,
+  ].map(identity);
+
+  return parts.every(Boolean) ? parts.join(":") : "";
 }
 
 async function existingSets(schoolId: string) {
@@ -171,6 +187,9 @@ export async function validateMigrationRows(
   const duplicateSubjectNames = countDuplicates(mappedRows.map((row) => row.values.subjectName));
   const duplicateEmails = countDuplicates(mappedRows.map((row) => row.values.email ?? row.values.parentEmail));
   const duplicatePhones = countDuplicates(mappedRows.map((row) => row.values.phone ?? row.values.parentPhone));
+  const duplicateStudentGuardianEmails = countDuplicates(mappedRows.map((row) => row.values.parentEmail));
+  const duplicateStudentGuardianPhones = countDuplicates(mappedRows.map((row) => row.values.parentPhone));
+  const duplicateFeeRows = countDuplicates(mappedRows.map((row) => uploadedFeeRowKey(row.values)));
 
   const rows = mappedRows.map(({ rowNumber, values }) => {
     const issues: MigrationValidationIssue[] = [];
@@ -197,8 +216,16 @@ export async function validateMigrationRows(
       issues.push({ severity: "ERROR", field: "term", message: "Term must be TERM_1, TERM_2, or TERM_3." });
     }
 
+    for (const [field, value] of Object.entries(values)) {
+      if (field.toLowerCase().includes("email") && value && !isValidEmail(value)) {
+        issues.push({ severity: "ERROR", field, message: "Email address is not valid." });
+      }
+    }
+
     if (context.areaKey === "students") {
       addDuplicateIssue({ issues, counts: duplicateAdmissionNumbers, value: values.admissionNumber, field: "admissionNumber", label: "Admission number" });
+      addDuplicateIssue({ issues, counts: duplicateStudentGuardianEmails, value: values.parentEmail, field: "parentEmail", label: "Guardian email", severity: "WARNING" });
+      addDuplicateIssue({ issues, counts: duplicateStudentGuardianPhones, value: values.parentPhone, field: "parentPhone", label: "Guardian phone", severity: "WARNING" });
       if (values.admissionNumber && existing.admissionNumbers.has(identity(values.admissionNumber))) {
         issues.push({ severity: "SKIP", field: "admissionNumber", message: "Student already exists in Edujay." });
       }
@@ -207,6 +234,12 @@ export async function validateMigrationRows(
       }
       if (!values.parentEmail && !values.parentPhone) {
         issues.push({ severity: "WARNING", field: "parentEmail", message: "No guardian email or phone. Parent invite/contact may not be possible." });
+      }
+      if (values.parentEmail && existing.parentEmails.has(identity(values.parentEmail))) {
+        issues.push({ severity: "WARNING", field: "parentEmail", message: "Guardian email already exists in Edujay. Confirm this student should link to that existing parent." });
+      }
+      if (values.parentPhone && existing.parentPhones.has(identity(values.parentPhone))) {
+        issues.push({ severity: "WARNING", field: "parentPhone", message: "Guardian phone already exists in Edujay. Confirm this student should link to that existing parent." });
       }
     }
 
@@ -265,6 +298,13 @@ export async function validateMigrationRows(
     if (context.areaKey === "fees") {
       const amount = parseMoney(values.amount);
       const amountPaid = values.amountPaid ? parseMoney(values.amountPaid) : 0;
+      addDuplicateIssue({
+        issues,
+        counts: duplicateFeeRows,
+        value: uploadedFeeRowKey(values),
+        field: "feeName",
+        label: "Fee row for this student/term/year",
+      });
       if (values.admissionNumber && !existing.admissionNumbers.has(identity(values.admissionNumber))) {
         issues.push({ severity: "ERROR", field: "admissionNumber", message: "Fee row points to a student that does not exist in Edujay." });
       }

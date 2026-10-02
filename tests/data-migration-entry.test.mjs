@@ -164,7 +164,10 @@ test("data migration point 3 validates rows without importing", () => {
     "Class name does not exist in Edujay yet",
     "Ward admission number does not match an existing Edujay student",
     "Sex must be Male or Female",
+    "Email address is not valid",
     "Fee amount must be a positive number",
+    "Fee row for this student/term/year",
+    "Guardian email already exists in Edujay",
     "appears more than once in this upload",
   ]) {
     assertContains(
@@ -173,6 +176,11 @@ test("data migration point 3 validates rows without importing", () => {
       `Point 3 validation must include guard: ${requiredGuard}.`,
     );
   }
+  assertContains(
+    migrationValidationRoute,
+    "MAX_VALIDATION_PAYLOAD_BYTES",
+    "Point 3 validation route must reject oversized validation payloads.",
+  );
 });
 
 test("data migration point 2 supports upload and mapping without saving", () => {
