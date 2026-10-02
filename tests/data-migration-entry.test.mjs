@@ -234,8 +234,33 @@ test("data migration point 4 imports only clean validated rows", () => {
   );
   assertContains(
     migrationImportService,
+    'row.status !== "READY" || row.issues.length > 0',
+    "Point 4 import must report warning rows as dirty rows instead of silently hiding them.",
+  );
+  assertContains(
+    migrationImportService,
     "dirtyRows",
     "Point 4 import must return dirty rows without importing them.",
+  );
+  assertContains(
+    migrationImportService,
+    "Multiple parent records match this guardian contact",
+    "Point 4 import must stop when guardian contact data matches multiple parent records.",
+  );
+  assertContains(
+    migrationImportService,
+    "Fee item already exists with a different amount",
+    "Point 4 import must stop when an imported fee line conflicts with an existing fee item.",
+  );
+  assertContains(
+    migrationImportService,
+    "affectedBillIds.size",
+    "Point 4 import must report affected fee bills instead of counting fee rows as bills.",
+  );
+  assertContains(
+    migrationImportRoute,
+    'error.code === "P2002"',
+    "Point 4 import route must return a controlled conflict response for database uniqueness races.",
   );
   assertContains(
     migrationImportService,

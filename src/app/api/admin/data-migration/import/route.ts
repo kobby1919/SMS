@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { Prisma } from "@/src/generated/prisma";
 import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
-import { importValidatedMigrationRows } from "@/src/lib/services/data-migration-import";
+import {
+  importValidatedMigrationRows,
+  MigrationImportError,
+} from "@/src/lib/services/data-migration-import";
 import { migrationValidationPayloadSchema } from "@/src/lib/validation/data-migration";
 
 const MAX_IMPORT_PAYLOAD_BYTES = 1_500_000;
@@ -41,6 +45,15 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     if (error instanceof SyntaxError) {
       return NextResponse.json({ error: "Invalid JSON payload." }, { status: 400 });
+    }
+    if (error instanceof MigrationImportError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      return NextResponse.json(
+        { error: "Import conflict detected. Validate again and resolve duplicate records before importing." },
+        { status: 409 },
+      );
     }
     return unauthorizedResponse(error);
   }

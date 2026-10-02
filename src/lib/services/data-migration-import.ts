@@ -44,6 +44,16 @@ export type MigrationImportResult = {
   }>;
 };
 
+export class MigrationImportError extends Error {
+  status: number;
+
+  constructor(message: string, status = 400) {
+    super(message);
+    this.name = "MigrationImportError";
+    this.status = status;
+  }
+}
+
 type ImportContext = MigrationValidationPayload & {
   schoolId: string;
   actorId: string;
@@ -148,18 +158,31 @@ async function resolveParent(
   counters: ImportCounters,
 ) {
   const parentContact = parentIdentity(values);
-  if (!parentContact) throw new Error("Parent contact was not validated.");
+  if (!parentContact) throw new MigrationImportError("Parent contact was not validated.");
 
-  const matches = await tx.parent.findMany({
+  const candidates = await tx.parent.findMany({
     where: {
       schoolId,
       OR: [
         ...(parentContact.email ? [{ email: { equals: parentContact.email, mode: Prisma.QueryMode.insensitive } }] : []),
-        ...(parentContact.phone ? [{ phone: parentContact.phone }] : []),
+        ...(parentContact.phone ? [{ phone: { not: null } }] : []),
       ],
     },
-    select: { id: true },
+    select: { id: true, email: true, phone: true },
   });
+  const matches = candidates.filter((candidate) => {
+    const emailMatches = parentContact.email && normalizeEmail(candidate.email) === parentContact.email;
+    const phoneMatches = parentContact.phone && normalizePhone(candidate.phone) === parentContact.phone;
+    return emailMatches || phoneMatches;
+  });
+  const uniqueMatches = new Set(matches.map((match) => match.id));
+
+  if (uniqueMatches.size > 1) {
+    throw new MigrationImportError(
+      "Multiple parent records match this guardian contact. Clean up duplicate parent contacts before importing.",
+      409,
+    );
+  }
 
   if (matches[0]) return matches[0].id;
 
@@ -308,7 +331,7 @@ async function importTeachers(
 ) {
   for (const row of rows) {
     const email = normalizeEmail(row.values.email);
-    if (!email) throw new Error("Teacher email was not validated.");
+    if (!email) throw new MigrationImportError("Teacher email was not validated.");
     await tx.teacher.create({
       data: {
         id: `tch_${randomUUID()}`,
@@ -335,7 +358,7 @@ async function importBursars(
 ) {
   for (const row of rows) {
     const email = normalizeEmail(row.values.email);
-    if (!email) throw new Error("Bursar email was not validated.");
+    if (!email) throw new MigrationImportError("Bursar email was not validated.");
     await tx.bursar.create({
       data: {
         id: `bur_${randomUUID()}`,
@@ -360,6 +383,8 @@ async function importFees(
   rows: MigrationValidationRow[],
   counters: ImportCounters,
 ) {
+  const affectedBillIds = new Set<number>();
+
   for (const row of rows) {
     const student = await tx.student.findFirstOrThrow({
       where: { schoolId, admissionNumber: row.values.admissionNumber.trim().toUpperCase() },
@@ -388,15 +413,33 @@ async function importFees(
       select: { id: true },
     });
 
-    const feeItem = await tx.feeItem.create({
-      data: {
+    const feeAmount = parseMoney(row.values.amount);
+    const existingFeeItem = await tx.feeItem.findFirst({
+      where: {
         feeStructureId: feeStructure.id,
-        name: row.values.feeName.trim(),
-        amount: parseMoney(row.values.amount),
-        category: FeeCategory.OTHER,
+        name: { equals: row.values.feeName.trim(), mode: Prisma.QueryMode.insensitive },
       },
       select: { id: true, amount: true },
     });
+
+    if (existingFeeItem && existingFeeItem.amount.toString() !== feeAmount.toString()) {
+      throw new MigrationImportError(
+        "Fee item already exists with a different amount. Review the fee rows before importing.",
+        409,
+      );
+    }
+
+    const feeItem =
+      existingFeeItem ??
+      (await tx.feeItem.create({
+        data: {
+          feeStructureId: feeStructure.id,
+          name: row.values.feeName.trim(),
+          amount: feeAmount,
+          category: FeeCategory.OTHER,
+        },
+        select: { id: true, amount: true },
+      }));
 
     const bill = await tx.studentBill.upsert({
       where: {
@@ -422,6 +465,7 @@ async function importFees(
       },
       select: { id: true },
     });
+    affectedBillIds.add(bill.id);
 
     await tx.billLineItem.create({
       data: {
@@ -435,7 +479,7 @@ async function importFees(
     });
     counters.feeLineItems += 1;
   }
-  counters.feeBills = rows.length;
+  counters.feeBills = affectedBillIds.size;
 }
 
 export async function importValidatedMigrationRows(
@@ -444,7 +488,7 @@ export async function importValidatedMigrationRows(
   const validation = await validateMigrationRows(context);
   const cleanRows = validation.rows.filter((row) => row.status === "READY" && row.issues.length === 0);
   const dirtyRows = validation.rows
-    .filter((row) => row.status !== "READY")
+    .filter((row) => row.status !== "READY" || row.issues.length > 0)
     .map((row) => ({ rowNumber: row.rowNumber, status: row.status, issues: row.issues }));
   const counters: ImportCounters = {
     students: 0,
