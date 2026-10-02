@@ -87,7 +87,9 @@ function getStringMetadata(
 ): string | null {
   if (!metadata || typeof metadata !== "object") return null;
   const value = (metadata as Record<string, unknown>)[key];
-  return typeof value === "string" && value.trim().length > 0 ? value : null;
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
 }
 
 function getNumberMetadata(
@@ -96,10 +98,12 @@ function getNumberMetadata(
 ): number | null {
   if (!metadata || typeof metadata !== "object") return null;
   const value = (metadata as Record<string, unknown>)[key];
-  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return Math.max(0, Math.trunc(value));
+  }
   if (typeof value === "string") {
     const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : null;
+    return Number.isFinite(parsed) ? Math.max(0, Math.trunc(parsed)) : null;
   }
   return null;
 }
@@ -113,6 +117,7 @@ export async function getDataMigrationDashboard(
     missingAdmissionStudents,
     activeStudents,
     totalParents,
+    parentsWithoutActiveWardLinks,
     activeParentLinks,
     pendingParentInvites,
     totalTeachers,
@@ -135,6 +140,14 @@ export async function getDataMigrationDashboard(
     prisma.student.count({ where: { schoolId, admissionNumber: null } }),
     prisma.student.count({ where: { schoolId, status: StudentStatus.ACTIVE } }),
     prisma.parent.count({ where: { schoolId } }),
+    prisma.parent.count({
+      where: {
+        schoolId,
+        studentRelationships: {
+          none: { schoolId, status: "ACTIVE" },
+        },
+      },
+    }),
     prisma.parentStudentRelationship.count({ where: { schoolId, status: "ACTIVE" } }),
     prisma.parentInvite.count({ where: { schoolId, status: ParentInviteStatus.PENDING } }),
     prisma.teacher.count({ where: { schoolId } }),
@@ -193,16 +206,18 @@ export async function getDataMigrationDashboard(
       status: statusForPeople({
         total: totalParents,
         pendingInviteCount: pendingParentInvites,
-        cleanupCount: Math.max(totalParents - activeParentLinks, 0),
+        cleanupCount: parentsWithoutActiveWardLinks,
       }),
       primaryCount: totalParents,
       primaryLabel: "profiles",
       secondaryCount: activeParentLinks,
       secondaryLabel: "active ward links",
-      riskCount: pendingParentInvites,
-      riskLabel: "pending invites",
+      riskCount: parentsWithoutActiveWardLinks + pendingParentInvites,
+      riskLabel: "needs invite/link review",
       nextAction: totalParents === 0
         ? "Import parents after students"
+        : parentsWithoutActiveWardLinks > 0
+          ? "Link every parent to the right active ward"
         : pendingParentInvites > 0
           ? "Track pending parent invites"
           : "Ready for bulk invite step",
