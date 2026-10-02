@@ -135,6 +135,7 @@ test("student detail page respects source-of-truth and access rules", () => {
   assertContains(studentDetailPage, "student.status !== StudentStatus.ACTIVE", "Teachers must not open non-active student profiles.");
   assertContains(studentDetailPage, "canViewParentContact", "Parent contact must be gated by role/class-teacher responsibility.");
   assertContains(studentDetailPage, "canViewFinance", "Student finance snapshot must be gated to finance-safe roles.");
+  assertContains(studentDetailPage, "type: { notIn: [\"BILL\", \"PAYMENT\"] }", "Student detail must not leak finance activity to non-finance viewers.");
   assertContains(studentDetailPage, "student:      { status: StudentStatus.ACTIVE }", "Class position must exclude inactive students.");
   assertContains(studentDetailPage, "No published timetable lessons", "Student profile must explain missing published timetable data.");
   assertNotContains(studentDetailPage, "student.results", "Student profile must not fall back to old Result.score data for CA averages.");
@@ -150,6 +151,10 @@ test("student detail page is a complete operational profile", () => {
   assertContains(studentDetailPage, "prisma.studentBill.findMany", "Student detail finance snapshot must use real student bill records.");
   assertContains(studentDetailPage, "prisma.parentActivityEvent.findMany", "Student detail recent activity must use real parent activity events.");
   assertContains(studentDetailPage, "prisma.parentStudentRelationship.findMany", "Student detail guardian links must use relationship records.");
+  assertContains(studentDetailPage, "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4", "Student detail summary grids must stack on mobile before widening.");
+  assertContains(studentDetailPage, "break-words", "Student detail labels must not overflow narrow screens.");
+  assertContains(studentDetailPage, "Math.min(Math.max(r.totalScore, 0), 100)", "Student detail score bars must clamp unsafe score widths.");
+  assertContains(studentDetailPage, "[...g.records].sort", "Student detail academic history must not mutate grouped result records while rendering.");
 });
 
 test("student bulk import keeps intake strict and account-free", () => {

@@ -234,7 +234,11 @@ const SingleStudentPage = async ({
         })
       : Promise.resolve([]),
     prisma.parentActivityEvent.findMany({
-      where: { schoolId, studentId: id },
+      where: {
+        schoolId,
+        studentId: id,
+        ...(canViewFinance ? {} : { type: { notIn: ["BILL", "PAYMENT"] } }),
+      },
       select: {
         id: true,
         type: true,
@@ -281,35 +285,25 @@ const SingleStudentPage = async ({
           : "Needs attention";
 
   return (
-    <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
+    <div className="flex-1 p-3 sm:p-4 flex flex-col gap-4 xl:flex-row">
 
       {/* ── LEFT ── */}
       <div className="w-full xl:w-2/3 flex flex-col gap-4">
 
         {/* ── Hero card ── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="h-24 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 relative">
-            <div className="absolute inset-0 opacity-20"
-              style={{
-                backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px)",
-                backgroundSize: "40px 40px",
-              }}
-            />
-          </div>
-
-          <div className="px-5 pb-5">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 -mt-10 sm:-mt-12 mb-4">
-              <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 sm:p-5">
+            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
                 <div className="relative shrink-0">
                   <Image
                     src={student.img || "/noAvatar.png"}
                     alt={student.name}
                     width={96} height={96}
-                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-4 ring-white shadow-md bg-white"
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover ring-2 ring-gray-100 bg-white"
                   />
                   <span className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${STUDENT_STATUS_DOTS[student.status]}`} />
                 </div>
-                <div className="mb-1 text-center sm:text-left">
+                <div className="text-center sm:text-left">
                   <h1 className="text-xl font-black text-gray-800 tracking-tight">
                     {student.name} {student.surname}
                   </h1>
@@ -328,7 +322,7 @@ const SingleStudentPage = async ({
                 {latestGroup && (
                   <Link
                     href={`/list/report-cards/${student.id}?term=${latestGroup.term}&year=${latestGroup.year}&classId=${student.classId}`}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-600 text-white text-xs font-bold hover:bg-violet-700 transition-all shadow-sm"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-600 text-white text-xs font-bold hover:bg-violet-700 transition-all shadow-sm"
                   >
                     <FileText size={13} /> View Report Card
                   </Link>
@@ -336,7 +330,7 @@ const SingleStudentPage = async ({
                 {student.parent && canViewParentContact && student.parent.phone && (
                   <a
                     href={`tel:${student.parent.phone}`}
-                    className="px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-xs font-bold hover:bg-gray-200 transition-all"
+                    className="px-3 py-2 rounded-lg bg-gray-100 text-gray-600 text-xs font-bold hover:bg-gray-200 transition-all"
                   >
                     Contact Parent
                   </a>
@@ -355,25 +349,24 @@ const SingleStudentPage = async ({
                 ...(student.email ? [{ icon: <Mail  size={13} />, label: student.email }] : []),
                 ...(student.phone ? [{ icon: <Phone size={13} />, label: student.phone }] : []),
               ].map(({ icon, label }) => (
-                <div key={label} className="flex items-center gap-1.5 bg-gray-100 rounded-full px-3 py-1.5 text-xs font-medium text-gray-600">
+                <div key={label} className="flex max-w-full items-center gap-1.5 rounded-lg bg-gray-100 px-2.5 py-1.5 text-xs font-medium text-gray-600">
                   <span className="text-emerald-500">{icon}</span>
-                  {label}
+                  <span className="break-words">{label}</span>
                 </div>
               ))}
             </div>
-          </div>
         </div>
 
         {/* ── Stats row ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {[
             { icon: <Clock    size={16} />, value: `${attendancePct}%`,  label: "Attendance",   color: `${attendancePct >= 80 ? "bg-emerald-50 text-emerald-600" : attendancePct >= 60 ? "bg-amber-50 text-amber-600" : "bg-rose-50 text-rose-600"}` },
             { icon: <BookOpen size={16} />, value: uniqueSubjectsCount,  label: "Subjects",     color: "bg-blue-50 text-blue-600"    },
             { icon: <Users    size={16} />, value: myPosition > 0 ? ordinal(myPosition) : "—", label: "Position", color: "bg-violet-50 text-violet-600" },
             { icon: <Award    size={16} />, value: latestGroup ? `${latestGroup.avgScore}%` : "—",        label: "CA Avg",   color: "bg-amber-50 text-amber-600"  },
           ].map((stat) => (
-            <div key={stat.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
+            <div key={stat.label} className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm flex items-center gap-3">
+              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${stat.color}`}>
                 {stat.icon}
               </div>
               <div>
@@ -386,10 +379,10 @@ const SingleStudentPage = async ({
 
         {/* Finance snapshot */}
         {canViewFinance && (
-          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
                   <WalletCards size={16} />
                 </div>
                 <div>
@@ -407,14 +400,14 @@ const SingleStudentPage = async ({
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
               {[
                 { label: "Billed", value: formatGHS(totalBilled), color: "bg-slate-50 text-slate-700" },
                 { label: "Paid", value: formatGHS(totalPaid), color: "bg-emerald-50 text-emerald-700" },
                 { label: "Discount", value: formatGHS(totalDiscount), color: "bg-sky-50 text-sky-700" },
                 { label: "Balance", value: formatGHS(totalBalance), color: totalBalance > 0 ? "bg-rose-50 text-rose-700" : "bg-emerald-50 text-emerald-700" },
               ].map((item) => (
-                <div key={item.label} className={`rounded-xl px-3 py-3 ${item.color}`}>
+                <div key={item.label} className={`rounded-lg px-3 py-3 ${item.color}`}>
                   <p className="truncate text-sm font-black">{item.value}</p>
                   <p className="mt-1 text-[10px] font-black uppercase opacity-60">{item.label}</p>
                 </div>
@@ -462,13 +455,13 @@ const SingleStudentPage = async ({
 
         {/* ── Academic / report snapshot ── */}
         {latestGroup ? (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="flex flex-col gap-3 px-4 py-4 border-b border-gray-100 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-violet-50 rounded-xl flex items-center justify-center">
+                <div className="w-8 h-8 bg-violet-50 rounded-lg flex items-center justify-center">
                   <TrendingUp size={14} className="text-violet-600" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-black text-gray-800">Academic / Report Snapshot</p>
                   <p className="text-[10px] text-gray-400 font-medium">
                     {TERM_LABELS[latestGroup.term]} · {latestGroup.year} · Aggregate {latestGroup.aggregate} · {myPosition > 0 ? ordinal(myPosition) : "—"} of {classSize}
@@ -477,26 +470,26 @@ const SingleStudentPage = async ({
               </div>
               <Link
                 href={`/list/report-cards/${student.id}?term=${latestGroup.term}&year=${latestGroup.year}&classId=${student.classId}`}
-                className="flex items-center gap-1 text-xs font-bold text-violet-600 hover:text-violet-700"
+                className="inline-flex items-center gap-1 text-xs font-bold text-violet-600 hover:text-violet-700"
               >
                 Full Report <ChevronRight size={13} />
               </Link>
             </div>
 
             {/* Subject bars */}
-            <div className="px-5 py-4 flex flex-col gap-2.5">
+            <div className="px-4 py-4 flex flex-col gap-3">
               {latestGroup.records.map((r) => {
                 const band = getGradeBandByGrade(r.grade);
                 return (
-                  <div key={r.id} className="flex items-center gap-2 sm:gap-3">
-                    <p className="text-xs font-semibold text-gray-600 w-24 sm:w-32 shrink-0 truncate">{r.subject.name}</p>
-                    <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div className={`h-full rounded-full ${band.bar}`} style={{ width: `${r.totalScore}%` }} />
+                  <div key={r.id} className="grid gap-1.5 sm:grid-cols-[8rem_1fr_auto_auto] sm:items-center sm:gap-3">
+                    <p className="min-w-0 break-words text-xs font-semibold text-gray-600">{r.subject.name}</p>
+                    <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${band.bar}`} style={{ width: `${Math.min(Math.max(r.totalScore, 0), 100)}%` }} />
                     </div>
                     <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg border w-10 text-center ${band.bg} ${band.color} ${band.border}`}>
                       {r.grade}
                     </span>
-                    <span className="text-[10px] text-gray-400 w-10 text-right">{r.totalScore.toFixed(1)}%</span>
+                    <span className="text-[10px] text-gray-400 sm:w-10 sm:text-right">{r.totalScore.toFixed(1)}%</span>
                   </div>
                 );
               })}
@@ -504,20 +497,20 @@ const SingleStudentPage = async ({
 
             {/* Best / weakest */}
             {bestSubject && weakSubject && bestSubject.id !== weakSubject.id && (
-              <div className="grid grid-cols-2 gap-3 px-5 pb-5">
-                <div className="flex items-start gap-2 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+              <div className="grid grid-cols-1 gap-2 px-4 pb-4 sm:grid-cols-2">
+                <div className="flex items-start gap-2 p-3 bg-emerald-50 rounded-lg border border-emerald-100">
                   <Star size={12} className="text-emerald-600 shrink-0 mt-0.5" />
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[10px] font-black text-emerald-700">Strongest Subject</p>
-                    <p className="text-xs font-bold text-emerald-800">{bestSubject.subject.name}</p>
+                    <p className="break-words text-xs font-bold text-emerald-800">{bestSubject.subject.name}</p>
                     <p className="text-[10px] text-emerald-600">{bestSubject.grade} · {bestSubject.totalScore.toFixed(1)}%</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-xl border border-amber-100">
+                <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-lg border border-amber-100">
                   <AlertCircle size={12} className="text-amber-500 shrink-0 mt-0.5" />
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[10px] font-black text-amber-700">Needs Attention</p>
-                    <p className="text-xs font-bold text-amber-800">{weakSubject.subject.name}</p>
+                    <p className="break-words text-xs font-bold text-amber-800">{weakSubject.subject.name}</p>
                     <p className="text-[10px] text-amber-600">{weakSubject.grade} · {weakSubject.totalScore.toFixed(1)}%</p>
                   </div>
                 </div>
@@ -525,16 +518,16 @@ const SingleStudentPage = async ({
             )}
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
-            <div className="w-9 h-9 bg-gray-50 rounded-xl flex items-center justify-center shrink-0">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="w-9 h-9 bg-gray-50 rounded-lg flex items-center justify-center shrink-0">
               <BookOpen size={16} className="text-gray-300" />
             </div>
-            <div>
+            <div className="min-w-0 flex-1">
               <p className="text-sm font-black text-gray-400">No CA records yet</p>
               <p className="text-xs text-gray-300 mt-0.5">Class teacher has not entered scores for this term.</p>
             </div>
             {(role === "admin" || role === "teacher") && (
-              <Link href={`/list/ca?classId=${student.classId}`} className="ml-auto text-xs font-bold text-indigo-500 hover:text-indigo-700 shrink-0">
+              <Link href={`/list/ca?classId=${student.classId}`} className="text-xs font-bold text-indigo-500 hover:text-indigo-700 shrink-0">
                 Enter CA →
               </Link>
             )}
@@ -543,17 +536,17 @@ const SingleStudentPage = async ({
 
         {/* ── All terms history ── */}
         {termGroups.length > 1 && (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="px-5 py-3.5 border-b border-gray-100">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="px-4 py-3.5 border-b border-gray-100">
               <p className="text-xs font-black uppercase tracking-wider text-gray-400">Academic History</p>
             </div>
             <div className="divide-y divide-gray-50">
               {termGroups.map((g) => {
-                const topGrade = g.records.sort((a, b) => a.gradePoint - b.gradePoint)[0]?.grade ?? "F9";
+                const topGrade = [...g.records].sort((a, b) => a.gradePoint - b.gradePoint)[0]?.grade ?? "F9";
                 const band     = getGradeBandByGrade(topGrade);
                 return (
-                  <div key={`${g.year}${g.term}`} className="flex items-center gap-4 px-5 py-3.5">
-                    <div className="flex-1">
+                  <div key={`${g.year}${g.term}`} className="flex flex-col gap-2 px-4 py-3.5 sm:flex-row sm:items-center sm:gap-4">
+                    <div className="min-w-0 flex-1">
                       <p className="text-sm font-bold text-gray-800">{TERM_LABELS[g.term]} · {g.year}</p>
                       <p className="text-[10px] text-gray-400 mt-0.5">
                         {g.records.length} subject{g.records.length !== 1 ? "s" : ""} · avg {g.avgScore}% · agg {g.aggregate}
@@ -562,10 +555,7 @@ const SingleStudentPage = async ({
                     <span className={`text-xs font-black px-2.5 py-1 rounded-lg border ${band.bg} ${band.color} ${band.border}`}>
                       {topGrade}
                     </span>
-                    <Link
-                      href={`/list/report-cards/${student.id}?term=${g.term}&year=${g.year}&classId=${student.classId}`}
-                      className="flex items-center gap-1 text-xs font-bold text-violet-500 hover:text-violet-700"
-                    >
+                    <Link href={`/list/report-cards/${student.id}?term=${g.term}&year=${g.year}&classId=${student.classId}`} className="inline-flex items-center gap-1 text-xs font-bold text-violet-500 hover:text-violet-700">
                       Report <ChevronRight size={12} />
                     </Link>
                   </div>
@@ -576,7 +566,7 @@ const SingleStudentPage = async ({
         )}
 
         {/* ── Attendance snapshot ── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
             <div>
               <h2 className="text-sm font-black text-gray-800">Attendance Snapshot</h2>
@@ -586,14 +576,14 @@ const SingleStudentPage = async ({
               Full history →
             </Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-3">
             {[
               { label: "Present", value: presentCount, color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
               { label: "Absent",  value: absentCount,  color: "bg-rose-50 text-rose-700 border-rose-200"         },
               { label: "Late",    value: lateCount,    color: "bg-amber-50 text-amber-700 border-amber-200"       },
               { label: "Excused", value: excusedCount, color: "bg-indigo-50 text-indigo-700 border-indigo-200"    },
             ].map((s) => (
-              <div key={s.label} className={`rounded-xl p-3 border ${s.color} text-center`}>
+              <div key={s.label} className={`rounded-lg p-3 border ${s.color} text-center`}>
                 <p className="text-xl font-black leading-none">{s.value}</p>
                 <p className="text-[9px] font-black uppercase mt-1 opacity-60">{s.label}</p>
               </div>
@@ -612,10 +602,10 @@ const SingleStudentPage = async ({
         </div>
 
         {/* Recent activity */}
-        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-600">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-50 text-slate-600">
                 <History size={16} />
               </div>
               <div>
@@ -632,7 +622,7 @@ const SingleStudentPage = async ({
           ) : (
             <div className="grid gap-2">
               {recentActivity.map((event) => (
-                <div key={event.id} className="rounded-xl border border-gray-100 p-3">
+                <div key={event.id} className="rounded-lg border border-gray-100 p-3">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-black text-gray-800">{event.title}</p>
@@ -652,7 +642,7 @@ const SingleStudentPage = async ({
         </div>
 
         {/* ── Timetable ── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex-1 min-h-[400px]">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex-1 min-h-[320px]">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
             <div>
               <h2 className="text-base font-black text-gray-800">Student Timetable</h2>
@@ -663,7 +653,7 @@ const SingleStudentPage = async ({
             </span>
           </div>
           {calendarLessons.length === 0 ? (
-            <div className="mb-4 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-700">
+            <div className="mb-4 rounded-lg border border-amber-100 bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-700">
               No published timetable lessons are available for this class yet.
             </div>
           ) : null}
