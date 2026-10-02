@@ -10,6 +10,8 @@ const migrationService = readFileSync(
   "src/lib/services/data-migration.ts",
   "utf8",
 );
+const migrationMapper = readFileSync("src/components/DataMigrationMapper.tsx", "utf8");
+const migrationMappingConfig = readFileSync("src/lib/migration/column-mapping.ts", "utf8");
 const menuClient = readFileSync("src/components/MenuClient.tsx", "utf8");
 
 function assertContains(source, needle, message) {
@@ -70,6 +72,17 @@ test("data migration point 1 remains a read-only control center", () => {
     );
   }
 
+  assertNotContains(
+    migrationMapper,
+    "fetch(",
+    "Point 2 mapper must not send uploaded files to the server yet.",
+  );
+  assertNotContains(
+    migrationMapper,
+    "FormData",
+    "Point 2 mapper must not submit spreadsheet data yet.",
+  );
+
   assertContains(
     migrationPage,
     "Step 1 is the control center only.",
@@ -79,6 +92,80 @@ test("data migration point 1 remains a read-only control center", () => {
     migrationPage,
     "no uploaded spreadsheet data is written into live Edujay records",
     "Page must warn admins that uploads/mapping are not active yet.",
+  );
+});
+
+test("data migration point 2 supports upload and mapping without saving", () => {
+  assertContains(
+    migrationPage,
+    "<DataMigrationMapper />",
+    "Data migration page must show the upload and mapping step.",
+  );
+  assertContains(
+    migrationMapper,
+    "accept=\".csv,text/csv\"",
+    "Point 2 upload must be restricted to CSV until Excel parsing is deliberately added.",
+  );
+  assertContains(
+    migrationMapper,
+    "MAX_MAPPING_FILE_BYTES",
+    "Point 2 mapper must limit file size before reading.",
+  );
+  assertContains(
+    migrationMapper,
+    "suggestColumnMapping(parsed.headers, area)",
+    "Point 2 mapper must suggest mappings from detected CSV headers.",
+  );
+  assertContains(
+    migrationMapper,
+    "missingRequiredFields",
+    "Point 2 mapper must show required-field gaps before validation.",
+  );
+  assertContains(
+    migrationMapper,
+    "duplicateMappedHeaders",
+    "Point 2 mapper must catch duplicate mapped columns.",
+  );
+  assertContains(
+    migrationMapper,
+    "Preview sample",
+    "Point 2 mapper must show a small row preview before validation.",
+  );
+  assertContains(
+    migrationMapper,
+    "This step stores nothing in the database.",
+    "Point 2 UI must clearly say no records are saved.",
+  );
+});
+
+test("data migration mapping config covers all migration areas", () => {
+  for (const area of ["students", "parents", "teachers", "bursars", "classes", "subjects", "fees"]) {
+    assertContains(
+      migrationMappingConfig,
+      `key: "${area}"`,
+      `Mapping config must include ${area}.`,
+    );
+  }
+
+  for (const requiredField of [
+    "admissionNumber",
+    "className",
+    "parentPhone",
+    "parentEmail",
+    "teacherType",
+    "amountPaid",
+  ]) {
+    assertContains(
+      migrationMappingConfig,
+      requiredField,
+      `Mapping config must include ${requiredField}.`,
+    );
+  }
+
+  assertContains(
+    migrationMappingConfig,
+    "buildMigrationTemplateCsv",
+    "Mapping config must generate templates for admins.",
   );
 });
 

@@ -15,6 +15,7 @@ import {
   WalletCards,
 } from "lucide-react";
 import { requirePageSession } from "@/src/lib/authz";
+import DataMigrationMapper from "@/src/components/DataMigrationMapper";
 import {
   getDataMigrationDashboard,
   type MigrationAreaStatus,
@@ -224,6 +225,8 @@ export default async function DataMigrationPage() {
           </div>
         </section>
       ) : null}
+
+      <DataMigrationMapper />
 
       <section className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-900">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
