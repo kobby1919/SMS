@@ -17,10 +17,12 @@ import {
   BookOpen, Users, Clock, Award,
   FileText, TrendingUp,
   AlertCircle, ChevronRight, Star,
+  WalletCards, History, Link2,
 } from "lucide-react";
 import { getGradeBandByGrade, computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
 import { StudentStatus, type Term } from "@/src/generated/prisma";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
+import { formatGHS } from "@/src/lib/constants/finance";
 
 const STUDENT_STATUS_LABELS = {
   INCOMPLETE_SETUP: "Incomplete setup",
@@ -37,6 +39,50 @@ const STUDENT_STATUS_DOTS = {
   GRADUATED: "bg-violet-400",
   WITHDRAWN: "bg-rose-400",
 } as const;
+
+const BILL_STATUS_LABELS = {
+  UNPAID: "Unpaid",
+  PARTIAL: "Part paid",
+  PAID: "Paid",
+  OVERPAID: "Overpaid",
+  WAIVED: "Waived",
+} as const;
+
+const ACTIVITY_TYPE_COLORS = {
+  ATTENDANCE: "bg-emerald-50 text-emerald-700 border-emerald-100",
+  ACADEMIC: "bg-violet-50 text-violet-700 border-violet-100",
+  ASSIGNMENT: "bg-amber-50 text-amber-700 border-amber-100",
+  BILL: "bg-sky-50 text-sky-700 border-sky-100",
+  PAYMENT: "bg-emerald-50 text-emerald-700 border-emerald-100",
+  ANNOUNCEMENT: "bg-indigo-50 text-indigo-700 border-indigo-100",
+  NOTICE: "bg-slate-50 text-slate-700 border-slate-100",
+  MESSAGE: "bg-cyan-50 text-cyan-700 border-cyan-100",
+  REPORT: "bg-violet-50 text-violet-700 border-violet-100",
+  HOMEWORK: "bg-amber-50 text-amber-700 border-amber-100",
+  GENERAL: "bg-gray-50 text-gray-600 border-gray-100",
+} as const;
+
+function activityTypeColor(type: string) {
+  return ACTIVITY_TYPE_COLORS[type as keyof typeof ACTIVITY_TYPE_COLORS] ?? ACTIVITY_TYPE_COLORS.GENERAL;
+}
+
+function formatDate(value?: Date | null) {
+  if (!value) return "Not set";
+  return value.toLocaleDateString("en-GH", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function shortDateTime(value: Date) {
+  return value.toLocaleString("en-GH", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 const SingleStudentPage = async ({
   params,
@@ -75,6 +121,7 @@ const SingleStudentPage = async ({
     notFound();
   }
   const canViewParentContact = role === "admin" || isClassTeacherForStudent;
+  const canViewFinance = role === "admin" || role === "bursar";
 
   // ── Calendar lessons ───────────────────────────────────────────────────────
   const calendarLessons: CalendarLesson[] = liveLessons.map((l) => ({
@@ -160,6 +207,78 @@ const SingleStudentPage = async ({
   const sortedByGP  = latestGroup ? [...latestGroup.records].sort((a, b) => a.gradePoint - b.gradePoint) : [];
   const bestSubject = sortedByGP[0] ?? null;
   const weakSubject = sortedByGP[sortedByGP.length - 1] ?? null;
+
+  const [studentBills, recentActivity, parentLinks] = await Promise.all([
+    canViewFinance
+      ? prisma.studentBill.findMany({
+          where: { schoolId, studentId: id },
+          select: {
+            id: true,
+            totalAmount: true,
+            amountPaid: true,
+            discountAmount: true,
+            balance: true,
+            status: true,
+            dueDate: true,
+            createdAt: true,
+            feeStructure: { select: { title: true, term: true, academicYear: true } },
+            payments: {
+              where: { status: "CONFIRMED" },
+              select: { id: true, amount: true, receiptNumber: true, paymentDate: true },
+              orderBy: { paymentDate: "desc" },
+              take: 1,
+            },
+          },
+          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+          take: 5,
+        })
+      : Promise.resolve([]),
+    prisma.parentActivityEvent.findMany({
+      where: { schoolId, studentId: id },
+      select: {
+        id: true,
+        type: true,
+        title: true,
+        body: true,
+        occurredAt: true,
+        sourceModel: true,
+      },
+      orderBy: [{ occurredAt: "desc" }, { id: "desc" }],
+      take: 6,
+    }),
+    canViewParentContact
+      ? prisma.parentStudentRelationship.findMany({
+          where: { schoolId, studentId: id },
+          select: {
+            id: true,
+            status: true,
+            role: true,
+            canViewFees: true,
+            canViewReports: true,
+            canMessageSchool: true,
+            note: true,
+            parent: { select: { name: true, surname: true, email: true, phone: true } },
+          },
+          orderBy: [{ status: "asc" }, { role: "asc" }],
+        })
+      : Promise.resolve([]),
+  ]);
+
+  const totalBilled = studentBills.reduce((sum, bill) => sum + Number(bill.totalAmount), 0);
+  const totalPaid = studentBills.reduce((sum, bill) => sum + Number(bill.amountPaid), 0);
+  const totalDiscount = studentBills.reduce((sum, bill) => sum + Number(bill.discountAmount), 0);
+  const totalBalance = studentBills.reduce((sum, bill) => sum + Number(bill.balance), 0);
+  const openBills = studentBills.filter((bill) => Number(bill.balance) > 0 && bill.status !== "WAIVED").length;
+  const latestBill = studentBills[0] ?? null;
+  const latestPayment = studentBills.flatMap((bill) => bill.payments)[0] ?? null;
+  const attendanceConcern =
+    totalAttendance === 0
+      ? "No attendance yet"
+      : attendancePct >= 80
+        ? "Healthy"
+        : attendancePct >= 60
+          ? "Watch closely"
+          : "Needs attention";
 
   return (
     <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
@@ -265,7 +384,83 @@ const SingleStudentPage = async ({
           ))}
         </div>
 
-        {/* ── Latest CA Performance ── */}
+        {/* Finance snapshot */}
+        {canViewFinance && (
+          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                  <WalletCards size={16} />
+                </div>
+                <div>
+                  <h2 className="text-sm font-black text-gray-800">Finance Snapshot</h2>
+                  <p className="text-xs font-semibold text-gray-400">
+                    Bills, payments, and outstanding balance for this student.
+                  </p>
+                </div>
+              </div>
+              <Link
+                href={`/list/finance/bills?search=${encodeURIComponent(student.admissionNumber ?? student.username)}`}
+                className="inline-flex items-center gap-1 text-xs font-black text-emerald-600 hover:text-emerald-700"
+              >
+                Open bills <ChevronRight size={13} />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {[
+                { label: "Billed", value: formatGHS(totalBilled), color: "bg-slate-50 text-slate-700" },
+                { label: "Paid", value: formatGHS(totalPaid), color: "bg-emerald-50 text-emerald-700" },
+                { label: "Discount", value: formatGHS(totalDiscount), color: "bg-sky-50 text-sky-700" },
+                { label: "Balance", value: formatGHS(totalBalance), color: totalBalance > 0 ? "bg-rose-50 text-rose-700" : "bg-emerald-50 text-emerald-700" },
+              ].map((item) => (
+                <div key={item.label} className={`rounded-xl px-3 py-3 ${item.color}`}>
+                  <p className="truncate text-sm font-black">{item.value}</p>
+                  <p className="mt-1 text-[10px] font-black uppercase opacity-60">{item.label}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 grid gap-2">
+              {studentBills.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-gray-200 p-4 text-center">
+                  <p className="text-sm font-black text-gray-500">No bills recorded yet.</p>
+                  <p className="mt-1 text-xs font-semibold text-gray-400">Finance records will appear here after bills are generated.</p>
+                </div>
+              ) : (
+                <>
+                  <div className="rounded-xl border border-gray-100 bg-gray-50/60 p-3">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-xs font-black text-gray-800">
+                          Latest bill: {latestBill?.feeStructure.title ?? "No title"}
+                        </p>
+                        <p className="mt-0.5 text-[11px] font-semibold text-gray-400">
+                          {latestBill ? `${BILL_STATUS_LABELS[latestBill.status]} · Due ${formatDate(latestBill.dueDate)}` : "No current bill"}
+                        </p>
+                      </div>
+                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-black ${openBills > 0 ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"}`}>
+                        {openBills} open bill{openBills === 1 ? "" : "s"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="rounded-xl border border-gray-100 p-3">
+                    <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-xs font-black text-gray-800">Latest confirmed payment</p>
+                      <p className="text-xs font-bold text-gray-500">
+                        {latestPayment
+                          ? `${formatGHS(Number(latestPayment.amount))} · ${latestPayment.receiptNumber} · ${formatDate(latestPayment.paymentDate)}`
+                          : "No confirmed payment yet"}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── Academic / report snapshot ── */}
         {latestGroup ? (
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
@@ -274,7 +469,7 @@ const SingleStudentPage = async ({
                   <TrendingUp size={14} className="text-violet-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-black text-gray-800">CA Performance</p>
+                  <p className="text-sm font-black text-gray-800">Academic / Report Snapshot</p>
                   <p className="text-[10px] text-gray-400 font-medium">
                     {TERM_LABELS[latestGroup.term]} · {latestGroup.year} · Aggregate {latestGroup.aggregate} · {myPosition > 0 ? ordinal(myPosition) : "—"} of {classSize}
                   </p>
@@ -380,10 +575,13 @@ const SingleStudentPage = async ({
           </div>
         )}
 
-        {/* ── Attendance breakdown ── */}
+        {/* ── Attendance snapshot ── */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
-            <h2 className="text-sm font-black text-gray-800">Attendance Record</h2>
+            <div>
+              <h2 className="text-sm font-black text-gray-800">Attendance Snapshot</h2>
+              <p className="mt-0.5 text-xs font-semibold text-gray-400">{attendanceConcern}</p>
+            </div>
             <Link href={`/list/attendance?studentId=${student.id}`} className="text-xs font-bold text-emerald-600 hover:text-emerald-700">
               Full history →
             </Link>
@@ -413,6 +611,46 @@ const SingleStudentPage = async ({
           </div>
         </div>
 
+        {/* Recent activity */}
+        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-600">
+                <History size={16} />
+              </div>
+              <div>
+                <h2 className="text-sm font-black text-gray-800">Recent Activity / History</h2>
+                <p className="text-xs font-semibold text-gray-400">Latest parent-safe events linked to this student.</p>
+              </div>
+            </div>
+          </div>
+          {recentActivity.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-gray-200 p-4 text-center">
+              <p className="text-sm font-black text-gray-500">No recent activity yet.</p>
+              <p className="mt-1 text-xs font-semibold text-gray-400">Attendance, bills, homework, and academic events will appear here.</p>
+            </div>
+          ) : (
+            <div className="grid gap-2">
+              {recentActivity.map((event) => (
+                <div key={event.id} className="rounded-xl border border-gray-100 p-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-black text-gray-800">{event.title}</p>
+                      <p className="mt-1 line-clamp-2 text-xs font-semibold text-gray-500">{event.body}</p>
+                    </div>
+                    <span className={`shrink-0 rounded-full border px-2 py-1 text-[10px] font-black ${activityTypeColor(event.type)}`}>
+                      {event.type.toLowerCase()}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-[10px] font-bold uppercase tracking-wide text-gray-400">
+                    {shortDateTime(event.occurredAt)} · {event.sourceModel}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* ── Timetable ── */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex-1 min-h-[400px]">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
@@ -436,6 +674,39 @@ const SingleStudentPage = async ({
       {/* ── RIGHT ── */}
       <div className="w-full xl:w-1/3 flex flex-col gap-4">
 
+        {/* Class placement */}
+        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-base font-black text-gray-800">Class Placement</h2>
+              <p className="text-xs font-semibold text-gray-400">Current school placement and timetable source.</p>
+            </div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+              <Link2 size={16} />
+            </div>
+          </div>
+          <div className="grid gap-2 text-xs font-semibold text-gray-500">
+            <div className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2.5">
+              <span>Class</span>
+              <span className="text-right font-black text-gray-800">{student.class.name}</span>
+            </div>
+            <div className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2.5">
+              <span>Grade</span>
+              <span className="text-right font-black text-gray-800">{student.class.grade.level}</span>
+            </div>
+            <div className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2.5">
+              <span>Class teacher</span>
+              <span className="text-right font-black text-gray-800">
+                {student.class.supervisor ? `${student.class.supervisor.name} ${student.class.supervisor.surname}` : "Not assigned"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2.5">
+              <span>Published lessons</span>
+              <span className="text-right font-black text-gray-800">{calendarLessons.length}</span>
+            </div>
+          </div>
+        </div>
+
         {/* Quick access */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
@@ -450,6 +721,7 @@ const SingleStudentPage = async ({
               { label: "Attendance",   href: `/list/attendance?studentId=${student.id}`,       color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100", icon: <Clock size={15} /> },
               { label: "Lessons",      href: `/list/lessons?classId=${student.classId}`,       color: "bg-amber-50 text-amber-600 hover:bg-amber-100",     icon: <BookOpen size={15} /> },
               { label: "Teachers",     href: `/list/teachers?classId=${student.classId}`,      color: "bg-rose-50 text-rose-600 hover:bg-rose-100",        icon: <Users size={15} /> },
+              ...(canViewFinance ? [{ label: "Finance", href: `/list/finance/bills?search=${encodeURIComponent(student.admissionNumber ?? student.username)}`, color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100", icon: <WalletCards size={15} /> }] : []),
             ].map(({ label, href, color, icon }) => (
               <Link key={label} href={href}
                 className={`flex items-center gap-2.5 px-3 py-3 rounded-xl text-xs font-bold transition-all hover:translate-x-1 ${color}`}
@@ -461,25 +733,77 @@ const SingleStudentPage = async ({
           </div>
         </div>
 
-        {/* Parent info */}
-        {student.parent && canViewParentContact && (
+        {/* Parent links */}
+        {canViewParentContact && (
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-            <h2 className="text-base font-black text-gray-800 mb-3">Parent / Guardian</h2>
-            <div className="flex flex-col gap-2">
-              <p className="text-sm font-bold text-gray-700">
-                {student.parent.name} {student.parent.surname}
-              </p>
-              {student.parent.email && (
-                <a href={`mailto:${student.parent.email}`} className="flex items-center gap-2 text-xs text-gray-500 hover:text-indigo-600">
-                  <Mail size={12} className="text-gray-400" /> {student.parent.email}
-                </a>
-              )}
-              {student.parent.phone && (
-                <a href={`tel:${student.parent.phone}`} className="flex items-center gap-2 text-xs text-gray-500 hover:text-emerald-600">
-                  <Phone size={12} className="text-gray-400" /> {student.parent.phone}
-                </a>
-              )}
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-base font-black text-gray-800">Parent / Guardian Links</h2>
+                <p className="text-xs font-semibold text-gray-400">Portal access and contact routes.</p>
+              </div>
+              <Users size={16} className="text-indigo-500" />
             </div>
+            {parentLinks.length === 0 && !student.parent ? (
+              <div className="rounded-xl border border-dashed border-gray-200 p-4 text-center">
+                <p className="text-sm font-black text-gray-500">No guardian linked yet.</p>
+                <p className="mt-1 text-xs font-semibold text-gray-400">Link a parent before parent portal access can work.</p>
+              </div>
+            ) : (
+              <div className="grid gap-2">
+                {(parentLinks.length > 0 ? parentLinks : [{
+                  id: "legacy-parent",
+                  status: "ACTIVE",
+                  role: "PRIMARY_GUARDIAN",
+                  canViewFees: true,
+                  canViewReports: true,
+                  canMessageSchool: true,
+                  note: null,
+                  parent: student.parent!,
+                }]).map((link) => (
+                  <div key={link.id} className="rounded-xl border border-gray-100 p-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-black text-gray-800">
+                          {link.parent.name} {link.parent.surname}
+                        </p>
+                        <p className="mt-0.5 text-[10px] font-black uppercase text-gray-400">
+                          {link.role.replaceAll("_", " ").toLowerCase()} · {link.status.toLowerCase()}
+                        </p>
+                      </div>
+                      <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black ${link.status === "ACTIVE" ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-500"}`}>
+                        {link.status}
+                      </span>
+                    </div>
+                    <div className="mt-3 grid gap-1.5 text-xs font-semibold text-gray-500">
+                      {link.parent.email ? (
+                        <a href={`mailto:${link.parent.email}`} className="flex items-center gap-2 hover:text-indigo-600">
+                          <Mail size={12} className="text-gray-400" /> {link.parent.email}
+                        </a>
+                      ) : null}
+                      {link.parent.phone ? (
+                        <a href={`tel:${link.parent.phone}`} className="flex items-center gap-2 hover:text-emerald-600">
+                          <Phone size={12} className="text-gray-400" /> {link.parent.phone}
+                        </a>
+                      ) : null}
+                      {!link.parent.email && !link.parent.phone ? (
+                        <p>No contact saved</p>
+                      ) : null}
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {[
+                        link.canViewFees ? "Fees" : null,
+                        link.canViewReports ? "Reports" : null,
+                        link.canMessageSchool ? "Messages" : null,
+                      ].filter(Boolean).map((permission) => (
+                        <span key={permission} className="rounded-lg bg-gray-50 px-2 py-1 text-[10px] font-black text-gray-500">
+                          {permission}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
         {student.parent && !canViewParentContact && (

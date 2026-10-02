@@ -134,9 +134,22 @@ test("student list is an operational source-of-truth page", () => {
 test("student detail page respects source-of-truth and access rules", () => {
   assertContains(studentDetailPage, "student.status !== StudentStatus.ACTIVE", "Teachers must not open non-active student profiles.");
   assertContains(studentDetailPage, "canViewParentContact", "Parent contact must be gated by role/class-teacher responsibility.");
+  assertContains(studentDetailPage, "canViewFinance", "Student finance snapshot must be gated to finance-safe roles.");
   assertContains(studentDetailPage, "student:      { status: StudentStatus.ACTIVE }", "Class position must exclude inactive students.");
   assertContains(studentDetailPage, "No published timetable lessons", "Student profile must explain missing published timetable data.");
   assertNotContains(studentDetailPage, "student.results", "Student profile must not fall back to old Result.score data for CA averages.");
+});
+
+test("student detail page is a complete operational profile", () => {
+  assertContains(studentDetailPage, "Class Placement", "Student detail must show class placement.");
+  assertContains(studentDetailPage, "Parent / Guardian Links", "Student detail must show parent and guardian links.");
+  assertContains(studentDetailPage, "Finance Snapshot", "Student detail must show a finance snapshot for allowed roles.");
+  assertContains(studentDetailPage, "Attendance Snapshot", "Student detail must show attendance snapshot.");
+  assertContains(studentDetailPage, "Academic / Report Snapshot", "Student detail must show academic/report snapshot.");
+  assertContains(studentDetailPage, "Recent Activity / History", "Student detail must show recent activity/history.");
+  assertContains(studentDetailPage, "prisma.studentBill.findMany", "Student detail finance snapshot must use real student bill records.");
+  assertContains(studentDetailPage, "prisma.parentActivityEvent.findMany", "Student detail recent activity must use real parent activity events.");
+  assertContains(studentDetailPage, "prisma.parentStudentRelationship.findMany", "Student detail guardian links must use relationship records.");
 });
 
 test("student bulk import keeps intake strict and account-free", () => {
