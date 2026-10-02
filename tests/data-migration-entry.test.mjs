@@ -425,6 +425,11 @@ test("data migration point 6 records audit batches and controlled review actions
     "Point 6 must support exporting an import error report.",
   );
   assertContains(
+    migrationAuditService,
+    "/^[=+\\-@\\t\\r]/.test(raw)",
+    "Point 6 CSV exports must neutralize spreadsheet formula injection.",
+  );
+  assertContains(
     migrationAuditProblematicRoute,
     'requireRole(["admin"])',
     "Point 6 problematic route must be admin-only.",
@@ -552,6 +557,26 @@ test("data migration mapping config covers all migration areas", () => {
     migrationMappingConfig,
     "buildMigrationTemplateCsv",
     "Mapping config must generate templates for admins.",
+  );
+  assertContains(
+    migrationMappingConfig,
+    '{ key: "parentEmail", label: "Guardian email", required: true',
+    "Student migration must require guardian email because parent invites depend on email.",
+  );
+  assertContains(
+    migrationMappingConfig,
+    '{ key: "email", label: "Email", required: true, aliases: ["email", "email address"], help: "Required for parent invite/login access." }',
+    "Parent migration must require email because parent invites depend on email.",
+  );
+  assertContains(
+    migrationValidationService,
+    "Guardian email is required for parent invite/login access.",
+    "Student migration validation must block guardian records without invite email.",
+  );
+  assertContains(
+    migrationValidationService,
+    "Parent email is required for invite/login access.",
+    "Parent migration validation must block parent records without invite email.",
   );
   assertContains(
     migrationMappingConfig,

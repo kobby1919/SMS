@@ -232,8 +232,8 @@ export async function validateMigrationRows(
       if (values.className && !existing.classNames.has(identity(values.className))) {
         issues.push({ severity: "ERROR", field: "className", message: "Class name does not exist in Edujay yet." });
       }
-      if (!values.parentEmail && !values.parentPhone) {
-        issues.push({ severity: "WARNING", field: "parentEmail", message: "No guardian email or phone. Parent invite/contact may not be possible." });
+      if (!values.parentEmail) {
+        issues.push({ severity: "ERROR", field: "parentEmail", message: "Guardian email is required for parent invite/login access." });
       }
       if (values.parentEmail && existing.parentEmails.has(identity(values.parentEmail))) {
         issues.push({ severity: "WARNING", field: "parentEmail", message: "Guardian email already exists in Edujay. Confirm this student should link to that existing parent." });
@@ -246,8 +246,8 @@ export async function validateMigrationRows(
     if (context.areaKey === "parents") {
       addDuplicateIssue({ issues, counts: duplicateEmails, value: values.email, field: "email", label: "Parent email", severity: "WARNING" });
       addDuplicateIssue({ issues, counts: duplicatePhones, value: values.phone, field: "phone", label: "Parent phone", severity: "WARNING" });
-      if (!values.email && !values.phone) {
-        issues.push({ severity: "ERROR", field: "email", message: "Parent needs at least an email or phone." });
+      if (!values.email) {
+        issues.push({ severity: "ERROR", field: "email", message: "Parent email is required for invite/login access." });
       }
       if (values.email && existing.parentEmails.has(identity(values.email))) {
         issues.push({ severity: "WARNING", field: "email", message: "Parent email already exists in Edujay. Confirm this row should link another ward to the existing profile." });

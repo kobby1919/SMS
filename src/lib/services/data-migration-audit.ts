@@ -10,7 +10,8 @@ function asMetadata(value: Prisma.JsonValue): AuditMetadata {
 }
 
 function csvCell(value: unknown) {
-  const text = value == null ? "" : String(value);
+  const raw = value == null ? "" : String(value);
+  const text = /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw;
   return `"${text.replaceAll('"', '""')}"`;
 }
 
