@@ -604,16 +604,22 @@ export async function acceptBursarInviteForUser(input: {
     );
   }
 
-  if (bursarForEmail && bursarForEmail.id !== input.userId) {
+  if (bursarForEmail && bursarForEmail.schoolId !== invite.schoolId) {
     throw new BursarInviteServiceError(
-      bursarForEmail.schoolId === invite.schoolId
-        ? "This bursar email is already connected to another account in this school."
-        : "This bursar email is already connected to another school on Edujay.",
+      "This bursar email is already connected to another school on Edujay.",
+      409,
+    );
+  }
+
+  if (bursarForUser && bursarForEmail && bursarForEmail.id !== bursarForUser.id) {
+    throw new BursarInviteServiceError(
+      "This bursar email is already connected to another account in this school.",
       409,
     );
   }
 
   const acceptedBursar = await prisma.$transaction(async (tx) => {
+    const importedBursar = !bursarForUser && bursarForEmail ? bursarForEmail : null;
     const bursar = bursarForUser
       ? await tx.bursar.update({
           where: { id: input.userId },
@@ -629,6 +635,22 @@ export async function acceptBursarInviteForUser(input: {
           },
           select: { id: true },
         })
+      : importedBursar
+        ? await tx.bursar.update({
+            where: { id: importedBursar.id },
+            data: {
+              id: input.userId,
+              schoolId: invite.schoolId,
+              username: inviteEmail,
+              name: invite.name,
+              surname: invite.surname,
+              sex: invite.sex,
+              email: inviteEmail,
+              phone: invite.phone ?? null,
+              status: "ACTIVE",
+            },
+            select: { id: true },
+          })
       : await tx.bursar.create({
           data: {
             id: input.userId,

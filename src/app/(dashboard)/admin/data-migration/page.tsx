@@ -16,10 +16,12 @@ import {
 } from "lucide-react";
 import { requirePageSession } from "@/src/lib/authz";
 import DataMigrationMapper from "@/src/components/DataMigrationMapper";
+import PostImportInvitePanel from "@/src/components/PostImportInvitePanel";
 import {
   getDataMigrationDashboard,
   type MigrationAreaStatus,
 } from "@/src/lib/services/data-migration";
+import { getPostImportInviteSummary } from "@/src/lib/services/post-import-invites";
 
 const statusMeta: Record<MigrationAreaStatus, { label: string; className: string }> = {
   NOT_STARTED: {
@@ -63,7 +65,10 @@ function formatDateTime(date: Date) {
 
 export default async function DataMigrationPage() {
   const { schoolId } = await requirePageSession(["admin"]);
-  const dashboard = await getDataMigrationDashboard(schoolId);
+  const [dashboard, inviteSummary] = await Promise.all([
+    getDataMigrationDashboard(schoolId),
+    getPostImportInviteSummary(schoolId),
+  ]);
   const isFreshSchool = dashboard.isFreshSchool;
 
   const attentionCount = dashboard.areas.filter((area) =>
@@ -257,6 +262,8 @@ export default async function DataMigrationPage() {
       </section>
 
       <DataMigrationMapper />
+
+      <PostImportInvitePanel summary={inviteSummary} />
 
       <section className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-900">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start">

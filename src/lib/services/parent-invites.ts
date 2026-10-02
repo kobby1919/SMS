@@ -712,7 +712,7 @@ export async function acceptParentInviteForUser(input: {
     );
   }
 
-  if (parentForEmail && parentForEmail.id !== input.userId) {
+  if (parentForUser && parentForEmail && parentForEmail.id !== parentForUser.id) {
     throw new ParentInviteServiceError(
       "This parent email is already connected to another account in this school.",
       409,
@@ -720,6 +720,7 @@ export async function acceptParentInviteForUser(input: {
   }
 
   const acceptedParent = await prisma.$transaction(async (tx) => {
+    const importedParent = !parentForUser && parentForEmail ? parentForEmail : null;
     const parent = parentForUser
       ? await tx.parent.update({
           where: { id: input.userId },
@@ -734,6 +735,21 @@ export async function acceptParentInviteForUser(input: {
           },
           select: { id: true },
         })
+      : importedParent
+        ? await tx.parent.update({
+            where: { id: importedParent.id },
+            data: {
+              id: input.userId,
+              schoolId: invite.schoolId,
+              username: inviteEmail,
+              name: invite.name,
+              surname: invite.surname,
+              sex: invite.sex,
+              email: inviteEmail,
+              phone: invite.phone ?? null,
+            },
+            select: { id: true },
+          })
       : await tx.parent.create({
           data: {
             id: input.userId,

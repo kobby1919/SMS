@@ -28,6 +28,21 @@ const migrationImportService = readFileSync(
   "src/lib/services/data-migration-import.ts",
   "utf8",
 );
+const postImportInviteService = readFileSync(
+  "src/lib/services/post-import-invites.ts",
+  "utf8",
+);
+const postImportInviteRoute = readFileSync(
+  "src/app/api/admin/data-migration/invites/route.ts",
+  "utf8",
+);
+const postImportInvitePanel = readFileSync(
+  "src/components/PostImportInvitePanel.tsx",
+  "utf8",
+);
+const teacherInviteService = readFileSync("src/lib/services/teacher-invites.ts", "utf8");
+const parentInviteService = readFileSync("src/lib/services/parent-invites.ts", "utf8");
+const bursarInviteService = readFileSync("src/lib/services/bursar-invites.ts", "utf8");
 const menuClient = readFileSync("src/components/MenuClient.tsx", "utf8");
 
 function assertContains(source, needle, message) {
@@ -271,6 +286,74 @@ test("data migration point 4 imports only clean validated rows", () => {
     migrationImportService,
     "parentStudentRelationship.upsert",
     "Point 4 import must create or restore parent-student relationships safely.",
+  );
+});
+
+test("data migration point 5 bulk-invites imported profiles safely", () => {
+  assertContains(
+    migrationPage,
+    "<PostImportInvitePanel summary={inviteSummary} />",
+    "Point 5 panel must be shown on the data migration page.",
+  );
+  assertContains(
+    postImportInviteRoute,
+    'requireRole(["admin"])',
+    "Point 5 bulk invite route must be admin-only.",
+  );
+  assertContains(
+    postImportInviteRoute,
+    'z.enum(["teachers", "parents", "bursars"])',
+    "Point 5 bulk invite route must only accept supported role types.",
+  );
+  assertContains(
+    postImportInviteService,
+    "importedNeedsInvite",
+    "Point 5 summary must expose imported-needs-invite counts.",
+  );
+  assertContains(
+    postImportInviteService,
+    "post_import_bulk_invite",
+    "Point 5 invite records must be marked as post-import bulk invites in audit metadata.",
+  );
+  assertContains(
+    postImportInviteService,
+    "activeTeacherInviteEmails",
+    "Point 5 must avoid duplicate active teacher invites.",
+  );
+  assertContains(
+    postImportInviteService,
+    "activeParentInviteEmails",
+    "Point 5 must avoid duplicate active parent invites.",
+  );
+  assertContains(
+    postImportInviteService,
+    "activeBursarInviteEmails",
+    "Point 5 must avoid duplicate active bursar invites.",
+  );
+  assertContains(
+    postImportInvitePanel,
+    "Imported teachers, parents, and bursars do not get login access automatically",
+    "Point 5 UI must explain that import does not create login access.",
+  );
+  assertContains(
+    postImportInvitePanel,
+    "Send {item.label.toLowerCase()} invites",
+    "Point 5 UI must expose a role-specific bulk invite action.",
+  );
+  assertContains(
+    teacherInviteService,
+    "importedTeacher",
+    "Teacher invite acceptance must be able to claim an imported teacher profile.",
+  );
+  assertContains(
+    parentInviteService,
+    "importedParent",
+    "Parent invite acceptance must be able to claim an imported parent profile.",
+  );
+  assertContains(
+    bursarInviteService,
+    "importedBursar",
+    "Bursar invite acceptance must be able to claim an imported bursar profile.",
   );
 });
 

@@ -577,7 +577,7 @@ export async function acceptTeacherInviteForUser(input: {
     );
   }
 
-  if (teacherForEmail && teacherForEmail.id !== input.userId) {
+  if (teacherForUser && teacherForEmail && teacherForEmail.id !== teacherForUser.id) {
     throw new TeacherInviteServiceError(
       "This teacher email is already connected to another account in this school.",
       409,
@@ -597,6 +597,7 @@ export async function acceptTeacherInviteForUser(input: {
     } as const;
     const status = nextTeacherProfileStatus(teacherProfile);
 
+    const importedTeacher = !teacherForUser && teacherForEmail ? teacherForEmail : null;
     const teacher = teacherForUser
       ? await tx.teacher.update({
           where: { id: input.userId },
@@ -613,6 +614,23 @@ export async function acceptTeacherInviteForUser(input: {
           },
           select: { id: true },
         })
+      : importedTeacher
+        ? await tx.teacher.update({
+            where: { id: importedTeacher.id },
+            data: {
+              id: input.userId,
+              schoolId: invite.schoolId,
+              username: inviteEmail,
+              name: invite.name,
+              surname: invite.surname,
+              sex: invite.sex,
+              email: inviteEmail,
+              phone: invite.phone ?? importedTeacher.phone ?? null,
+              img: user.imageUrl ?? importedTeacher.img ?? null,
+              status,
+            },
+            select: { id: true },
+          })
       : await tx.teacher.create({
           data: {
             id: input.userId,
