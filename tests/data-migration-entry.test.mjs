@@ -12,6 +12,14 @@ const migrationService = readFileSync(
 );
 const migrationMapper = readFileSync("src/components/DataMigrationMapper.tsx", "utf8");
 const migrationMappingConfig = readFileSync("src/lib/migration/column-mapping.ts", "utf8");
+const migrationValidationRoute = readFileSync(
+  "src/app/api/admin/data-migration/validate/route.ts",
+  "utf8",
+);
+const migrationValidationService = readFileSync(
+  "src/lib/services/data-migration-validation.ts",
+  "utf8",
+);
 const menuClient = readFileSync("src/components/MenuClient.tsx", "utf8");
 
 function assertContains(source, needle, message) {
@@ -74,13 +82,8 @@ test("data migration point 1 remains a read-only control center", () => {
 
   assertNotContains(
     migrationMapper,
-    "fetch(",
-    "Point 2 mapper must not send uploaded files to the server yet.",
-  );
-  assertNotContains(
-    migrationMapper,
     "FormData",
-    "Point 2 mapper must not submit spreadsheet data yet.",
+    "Migration mapper must not submit raw spreadsheet files as form data.",
   );
 
   assertContains(
@@ -93,6 +96,83 @@ test("data migration point 1 remains a read-only control center", () => {
     "no uploaded spreadsheet data is written into live Edujay records",
     "Page must warn admins that uploads/mapping are not active yet.",
   );
+});
+
+test("data migration point 3 validates rows without importing", () => {
+  assertContains(
+    migrationMapper,
+    "/api/admin/data-migration/validate",
+    "Point 3 mapper must call the read-only validation endpoint.",
+  );
+  assertContains(
+    migrationMapper,
+    "Validate rows",
+    "Point 3 UI must expose validation before import.",
+  );
+  assertContains(
+    migrationMapper,
+    "readyRows",
+    "Point 3 UI must show rows ready for future import.",
+  );
+  assertContains(
+    migrationMapper,
+    "skippedRows",
+    "Point 3 UI must show skipped rows.",
+  );
+  assertContains(
+    migrationMapper,
+    "correctionRows",
+    "Point 3 UI must show rows needing correction.",
+  );
+  assertContains(
+    migrationMapper,
+    "warningRows",
+    "Point 3 UI must show validation warnings.",
+  );
+  assertContains(
+    migrationValidationRoute,
+    'requireRole(["admin"])',
+    "Point 3 validation route must be admin-only.",
+  );
+  assertContains(
+    migrationValidationRoute,
+    "migrationValidationPayloadSchema.safeParse",
+    "Point 3 validation route must validate untrusted request payloads.",
+  );
+  for (const forbiddenWrite of [
+    ".create(",
+    ".createMany(",
+    ".update(",
+    ".updateMany(",
+    ".upsert(",
+    ".delete(",
+    ".deleteMany(",
+  ]) {
+    assertNotContains(
+      migrationValidationService,
+      forbiddenWrite,
+      `Point 3 validation service must not write live data through ${forbiddenWrite}.`,
+    );
+    assertNotContains(
+      migrationValidationRoute,
+      forbiddenWrite,
+      `Point 3 validation route must not write live data through ${forbiddenWrite}.`,
+    );
+  }
+  for (const requiredGuard of [
+    "Student already exists in Edujay",
+    "Class name does not exist in Edujay yet",
+    "Ward admission number does not match an existing Edujay student",
+    "Sex must be Male or Female",
+    "Fee amount must be a positive number",
+    "appears more than once in this upload",
+  ]) {
+    assertContains(
+      migrationValidationService,
+      requiredGuard,
+      `Point 3 validation must include guard: ${requiredGuard}.`,
+    );
+  }
 });
 
 test("data migration point 2 supports upload and mapping without saving", () => {

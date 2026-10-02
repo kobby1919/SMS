@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Download,
   FileSpreadsheet,
+  Loader2,
   ShieldCheck,
   UploadCloud,
 } from "lucide-react";
@@ -19,6 +20,29 @@ import {
 
 const MAX_MAPPING_FILE_BYTES = 1_000_000;
 const MAX_PREVIEW_ROWS = 5;
+
+type ValidationIssue = {
+  severity: "ERROR" | "WARNING" | "SKIP";
+  field?: string;
+  message: string;
+};
+
+type ValidationRow = {
+  rowNumber: number;
+  status: "READY" | "NEEDS_CORRECTION" | "SKIPPED";
+  values: Record<string, string>;
+  issues: ValidationIssue[];
+};
+
+type ValidationResult = {
+  totalRows: number;
+  readyRows: number;
+  skippedRows: number;
+  correctionRows: number;
+  warningRows: number;
+  rows: ValidationRow[];
+  summaryIssues: ValidationIssue[];
+};
 
 type ParsedCsv = {
   headers: string[];
@@ -101,7 +125,7 @@ function parseCsvPreview(csv: string): ParsedCsv {
     }
   }
 
-  const rows = lines.slice(1, MAX_PREVIEW_ROWS + 1).map((line, rowIndex) => {
+  const rows = lines.slice(1).map((line, rowIndex) => {
     const parsed = parseCsvLine(line);
     if (parsed.hasUnclosedQuote) {
       issues.push(`Preview row ${rowIndex + 1} has an unclosed quote. Fix the CSV before validation.`);
@@ -134,9 +158,12 @@ export default function DataMigrationMapper() {
   const [fileName, setFileName] = useState("");
   const [rowEstimate, setRowEstimate] = useState(0);
   const [headers, setHeaders] = useState<string[]>([]);
+  const [allRows, setAllRows] = useState<string[][]>([]);
   const [previewRows, setPreviewRows] = useState<string[][]>([]);
   const [mapping, setMapping] = useState<Record<string, string>>({});
   const [csvIssues, setCsvIssues] = useState<string[]>([]);
+  const [validation, setValidation] = useState<ValidationResult | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const area = useMemo(() => getMigrationAreaDefinition(areaKey), [areaKey]);
@@ -159,18 +186,22 @@ export default function DataMigrationMapper() {
     setFileName("");
     setRowEstimate(0);
     setHeaders([]);
+    setAllRows([]);
     setPreviewRows([]);
     setMapping({});
     setCsvIssues([]);
+    setValidation(null);
     setError(null);
   }
 
   async function handleFile(file: File | undefined) {
     setError(null);
     setHeaders([]);
+    setAllRows([]);
     setPreviewRows([]);
     setMapping({});
     setCsvIssues([]);
+    setValidation(null);
     setRowEstimate(0);
     setFileName("");
 
@@ -194,15 +225,51 @@ export default function DataMigrationMapper() {
       return;
     }
 
-    const allRows = text.replace(/^\uFEFF/, "").split(/\r?\n/).filter((line) => line.trim().length > 0);
     const suggested = suggestColumnMapping(parsed.headers, area);
 
     setFileName(file.name);
-    setRowEstimate(Math.max(0, allRows.length - 1));
+    setRowEstimate(parsed.rows.length);
     setHeaders(parsed.headers);
-    setPreviewRows(parsed.rows);
+    setAllRows(parsed.rows);
+    setPreviewRows(parsed.rows.slice(0, MAX_PREVIEW_ROWS));
     setCsvIssues(parsed.issues);
     setMapping(suggested);
+  }
+
+  function updateMapping(fieldKey: string, header: string) {
+    setValidation(null);
+    setMapping((current) => ({ ...current, [fieldKey]: header }));
+  }
+
+  async function validateRows() {
+    if (!readyForValidation || isValidating) return;
+
+    setError(null);
+    setValidation(null);
+    setIsValidating(true);
+
+    try {
+      const response = await fetch("/api/admin/data-migration/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          areaKey,
+          headers,
+          mapping,
+          rows: allRows,
+        }),
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        setError(payload?.error ?? "Validation failed. Please try again.");
+        return;
+      }
+      setValidation(payload as ValidationResult);
+    } catch {
+      setError("Validation could not be completed. Check your connection and try again.");
+    } finally {
+      setIsValidating(false);
+    }
   }
 
   return (
@@ -318,9 +385,7 @@ export default function DataMigrationMapper() {
                   </div>
                   <select
                     value={mapping[field.key] ?? ""}
-                    onChange={(event) =>
-                      setMapping((current) => ({ ...current, [field.key]: event.target.value }))
-                    }
+                    onChange={(event) => updateMapping(field.key, event.target.value)}
                     className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-bold text-gray-700 outline-none transition focus:border-blue-400"
                     disabled={headers.length === 0}
                   >
@@ -374,6 +439,98 @@ export default function DataMigrationMapper() {
                   ))}
                 </div>
               </div>
+            </div>
+          ) : null}
+
+          {headers.length > 0 ? (
+            <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h3 className="text-sm font-black text-blue-950">Point 3 validation preview</h3>
+                  <p className="mt-1 text-xs font-semibold leading-5 text-blue-800">
+                    Edujay checks every uploaded row against required fields, duplicates, existing records, class names, parent links, gender, terms, and fee amounts before any save step exists.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => void validateRows()}
+                  disabled={!readyForValidation || isValidating || allRows.length === 0}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3 text-xs font-black text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-gray-300 sm:w-auto"
+                >
+                  {isValidating ? <Loader2 size={15} className="animate-spin" /> : <ShieldCheck size={15} />}
+                  Validate rows
+                </button>
+              </div>
+
+              {validation ? (
+                <div className="mt-4 space-y-4">
+                  <div className="grid grid-cols-2 gap-2 lg:grid-cols-5">
+                    {[
+                      ["Rows checked", validation.totalRows, "text-gray-950"],
+                      ["Ready", validation.readyRows, "text-emerald-700"],
+                      ["Skipped", validation.skippedRows, "text-slate-700"],
+                      ["Need correction", validation.correctionRows, "text-rose-700"],
+                      ["Warnings", validation.warningRows, "text-amber-700"],
+                    ].map(([label, value, color]) => (
+                      <div key={label} className="rounded-xl bg-white p-3 ring-1 ring-blue-100">
+                        <p className={`text-xl font-black ${color}`}>{value}</p>
+                        <p className="mt-0.5 break-words text-[10px] font-black uppercase leading-snug text-gray-400">
+                          {label}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="rounded-2xl border border-blue-100 bg-white">
+                    <div className="border-b border-blue-100 px-4 py-3">
+                      <h4 className="text-sm font-black text-gray-900">Rows needing admin attention</h4>
+                      <p className="mt-0.5 text-xs font-semibold text-gray-500">
+                        Showing the first 12 rows with skips, errors, or warnings.
+                      </p>
+                    </div>
+                    <div className="divide-y divide-gray-100">
+                      {validation.rows.filter((row) => row.issues.length > 0).slice(0, 12).length === 0 ? (
+                        <p className="px-4 py-3 text-sm font-bold text-emerald-700">
+                          No validation issues found. These rows are ready for the future safe import step.
+                        </p>
+                      ) : (
+                        validation.rows
+                          .filter((row) => row.issues.length > 0)
+                          .slice(0, 12)
+                          .map((row) => (
+                            <div key={row.rowNumber} className="px-4 py-3">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <p className="text-sm font-black text-gray-900">CSV row {row.rowNumber}</p>
+                                <span className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase ${
+                                  row.status === "READY"
+                                    ? "bg-emerald-50 text-emerald-700"
+                                    : row.status === "SKIPPED"
+                                      ? "bg-slate-100 text-slate-700"
+                                      : "bg-rose-50 text-rose-700"
+                                }`}>
+                                  {row.status.replaceAll("_", " ").toLowerCase()}
+                                </span>
+                              </div>
+                              <div className="mt-2 space-y-1">
+                                {row.issues.map((issue) => (
+                                  <p key={`${issue.severity}-${issue.field ?? "row"}-${issue.message}`} className={`text-xs font-bold leading-5 ${
+                                    issue.severity === "WARNING"
+                                      ? "text-amber-700"
+                                      : issue.severity === "SKIP"
+                                        ? "text-slate-600"
+                                        : "text-rose-700"
+                                  }`}>
+                                    {issue.field ? `${issue.field}: ` : ""}{issue.message}
+                                  </p>
+                                ))}
+                              </div>
+                            </div>
+                          ))
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
             </div>
           ) : null}
 
