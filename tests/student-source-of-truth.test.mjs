@@ -138,6 +138,10 @@ test("student detail page respects source-of-truth and access rules", () => {
   assertContains(studentDetailPage, "type: { notIn: [\"BILL\", \"PAYMENT\"] }", "Student detail must not leak finance activity to non-finance viewers.");
   assertContains(studentDetailPage, "student:      { status: StudentStatus.ACTIVE }", "Class position must exclude inactive students.");
   assertContains(studentDetailPage, "No published timetable lessons", "Student profile must explain missing published timetable data.");
+  assertContains(studentDetailPage, "Awaiting teacher entry", "Student detail must keep CA gaps informational instead of sending admins into teacher entry.");
+  assertNotContains(studentDetailPage, "CA Entry", "Student detail quick access must not expose CA-entry actions.");
+  assertNotContains(studentDetailPage, "/list/ca?classId=${student.classId}", "Student detail must not link admins or inspectors into CA entry from quick answers.");
+  assertNotContains(studentDetailPage, "/list/results?studentId=${student.id}", "Student detail must not link to legacy results as the academic source of truth.");
   assertNotContains(studentDetailPage, "student.results", "Student profile must not fall back to old Result.score data for CA averages.");
 });
 
@@ -155,6 +159,9 @@ test("student detail page is a complete operational profile", () => {
   assertContains(studentDetailPage, "break-words", "Student detail labels must not overflow narrow screens.");
   assertContains(studentDetailPage, "Math.min(Math.max(r.totalScore, 0), 100)", "Student detail score bars must clamp unsafe score widths.");
   assertContains(studentDetailPage, "[...g.records].sort", "Student detail academic history must not mutate grouped result records while rendering.");
+  assertContains(studentDetailPage, "timetableDays.map", "Student detail timetable must use a compact day-by-day summary.");
+  assertContains(studentDetailPage, "sm:grid-cols-[7rem_1fr_auto]", "Student detail timetable rows must stack cleanly on mobile.");
+  assertNotContains(studentDetailPage, "BigCalendar", "Student detail should not use the heavy calendar grid for quick-answer timetable inspection.");
 });
 
 test("student bulk import keeps intake strict and account-free", () => {

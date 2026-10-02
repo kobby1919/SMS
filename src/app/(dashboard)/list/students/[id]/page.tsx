@@ -8,10 +8,8 @@ import prisma from "@/src/lib/prisma";
 import { notFound } from "next/navigation";
 import { requirePageSession } from "@/src/lib/authz";
 import Announcements from "@/src/components/Announcements";
-import BigCalendar from "@/src/components/BigCalendar";
 import Image from "next/image";
 import Link from "next/link";
-import type { CalendarLesson } from "@/src/components/BigCalendar";
 import {
   Mail, Phone, Droplets, Calendar,
   BookOpen, Users, Clock, Award,
@@ -62,6 +60,16 @@ const ACTIVITY_TYPE_COLORS = {
   GENERAL: "bg-gray-50 text-gray-600 border-gray-100",
 } as const;
 
+const SCHOOL_DAY_ORDER = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"] as const;
+
+const SCHOOL_DAY_LABELS: Record<string, string> = {
+  MONDAY: "Monday",
+  TUESDAY: "Tuesday",
+  WEDNESDAY: "Wednesday",
+  THURSDAY: "Thursday",
+  FRIDAY: "Friday",
+};
+
 function activityTypeColor(type: string) {
   return ACTIVITY_TYPE_COLORS[type as keyof typeof ACTIVITY_TYPE_COLORS] ?? ACTIVITY_TYPE_COLORS.GENERAL;
 }
@@ -79,6 +87,13 @@ function shortDateTime(value: Date) {
   return value.toLocaleString("en-GH", {
     day: "numeric",
     month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function formatTimeOnly(value: Date) {
+  return new Date(value).toLocaleTimeString("en-GH", {
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -123,14 +138,15 @@ const SingleStudentPage = async ({
   const canViewParentContact = role === "admin" || isClassTeacherForStudent;
   const canViewFinance = role === "admin" || role === "bursar";
 
-  // ── Calendar lessons ───────────────────────────────────────────────────────
-  const calendarLessons: CalendarLesson[] = liveLessons.map((l) => ({
-    title:     l.subject.name,
-    day:       l.day,
-    startTime: l.startTime,
-    endTime:   l.endTime,
-    teacher:   `${l.teacher.name} ${l.teacher.surname}`,
-  }));
+  const timetableDays = SCHOOL_DAY_ORDER
+    .map((day) => ({
+      day,
+      label: SCHOOL_DAY_LABELS[day],
+      lessons: liveLessons
+        .filter((lesson) => lesson.day === day)
+        .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()),
+    }))
+    .filter((group) => group.lessons.length > 0);
 
   // ── Attendance stats ───────────────────────────────────────────────────────
   const totalAttendance = student.attendances.length;
@@ -527,9 +543,9 @@ const SingleStudentPage = async ({
               <p className="text-xs text-gray-300 mt-0.5">Class teacher has not entered scores for this term.</p>
             </div>
             {(role === "admin" || role === "teacher") && (
-              <Link href={`/list/ca?classId=${student.classId}`} className="text-xs font-bold text-indigo-500 hover:text-indigo-700 shrink-0">
-                Enter CA →
-              </Link>
+              <p className="text-xs font-bold text-gray-400 shrink-0">
+                Awaiting teacher entry
+              </p>
             )}
           </div>
         )}
@@ -652,12 +668,42 @@ const SingleStudentPage = async ({
               {latestGroup ? `${TERM_LABELS[latestGroup.term]} · ${latestGroup.year}` : "Current Term"}
             </span>
           </div>
-          {calendarLessons.length === 0 ? (
+          {liveLessons.length === 0 ? (
             <div className="mb-4 rounded-lg border border-amber-100 bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-700">
               No published timetable lessons are available for this class yet.
             </div>
-          ) : null}
-          <BigCalendar lessons={calendarLessons} viewAs="student" />
+          ) : (
+            <div className="grid gap-3">
+              {timetableDays.map((group) => (
+                <div key={group.day} className="rounded-lg border border-gray-100 bg-gray-50/60 p-3">
+                  <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-sm font-black text-gray-800">{group.label}</p>
+                    <span className="text-[10px] font-black uppercase tracking-wide text-gray-400">
+                      {group.lessons.length} lesson{group.lessons.length === 1 ? "" : "s"}
+                    </span>
+                  </div>
+                  <div className="grid gap-2">
+                    {group.lessons.map((lesson) => (
+                      <div key={lesson.id} className="grid gap-2 rounded-lg border border-gray-100 bg-white p-3 sm:grid-cols-[7rem_1fr_auto] sm:items-center">
+                        <p className="text-xs font-black text-gray-500">
+                          {formatTimeOnly(lesson.startTime)} - {formatTimeOnly(lesson.endTime)}
+                        </p>
+                        <div className="min-w-0">
+                          <p className="break-words text-sm font-black text-gray-800">{lesson.subject.name}</p>
+                          <p className="mt-0.5 text-[11px] font-semibold text-gray-400">
+                            {lesson.teacher.name} {lesson.teacher.surname}
+                          </p>
+                        </div>
+                        <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-[10px] font-black text-indigo-600">
+                          Published
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -692,7 +738,7 @@ const SingleStudentPage = async ({
             </div>
             <div className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2.5">
               <span>Published lessons</span>
-              <span className="text-right font-black text-gray-800">{calendarLessons.length}</span>
+              <span className="text-right font-black text-gray-800">{liveLessons.length}</span>
             </div>
           </div>
         </div>
@@ -705,13 +751,10 @@ const SingleStudentPage = async ({
           </div>
           <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {[
-              { label: "Report Card",  href: latestGroup ? `/list/report-cards/${student.id}?term=${latestGroup.term}&year=${latestGroup.year}&classId=${student.classId}` : "/list/report-cards", color: "bg-violet-50 text-violet-600 hover:bg-violet-100", icon: <FileText size={15} /> },
-              { label: "CA Entry",     href: `/list/ca?classId=${student.classId}`,            color: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100",   icon: <Award size={15} /> },
-              { label: "Results",      href: `/list/results?studentId=${student.id}`,          color: "bg-sky-50 text-sky-600 hover:bg-sky-100",           icon: <TrendingUp size={15} /> },
-              { label: "Attendance",   href: `/list/attendance?studentId=${student.id}`,       color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100", icon: <Clock size={15} /> },
-              { label: "Lessons",      href: `/list/lessons?classId=${student.classId}`,       color: "bg-amber-50 text-amber-600 hover:bg-amber-100",     icon: <BookOpen size={15} /> },
-              { label: "Teachers",     href: `/list/teachers?classId=${student.classId}`,      color: "bg-rose-50 text-rose-600 hover:bg-rose-100",        icon: <Users size={15} /> },
+              ...(latestGroup ? [{ label: "Report Card", href: `/list/report-cards/${student.id}?term=${latestGroup.term}&year=${latestGroup.year}&classId=${student.classId}`, color: "bg-violet-50 text-violet-600 hover:bg-violet-100", icon: <FileText size={15} /> }] : []),
+              { label: "Attendance", href: `/list/attendance?studentId=${student.id}`, color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100", icon: <Clock size={15} /> },
               ...(canViewFinance ? [{ label: "Finance", href: `/list/finance/bills?search=${encodeURIComponent(student.admissionNumber ?? student.username)}`, color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100", icon: <WalletCards size={15} /> }] : []),
+              ...(canViewParentContact && student.parent?.email ? [{ label: "Parent", href: `/list/parents?search=${encodeURIComponent(student.parent.email)}`, color: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100", icon: <Users size={15} /> }] : []),
             ].map(({ label, href, color, icon }) => (
               <Link key={label} href={href}
                 className={`flex items-center gap-2.5 px-3 py-3 rounded-xl text-xs font-bold transition-all hover:translate-x-1 ${color}`}
@@ -812,7 +855,7 @@ const SingleStudentPage = async ({
             <div className="flex items-end gap-2 h-16">
               {termGroups.slice().reverse().map((g, i) => {
                 const isLatest = i === termGroups.length - 1;
-                const topGrade = g.records.sort((a, b) => a.gradePoint - b.gradePoint)[0]?.grade ?? "F9";
+                const topGrade = [...g.records].sort((a, b) => a.gradePoint - b.gradePoint)[0]?.grade ?? "F9";
                 const band     = getGradeBandByGrade(topGrade);
                 const barH     = Math.max((g.avgScore / 100) * 100, 8);
                 return (
