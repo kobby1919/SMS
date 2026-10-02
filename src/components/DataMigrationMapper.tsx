@@ -345,7 +345,7 @@ export default function DataMigrationMapper() {
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-black uppercase tracking-wide text-blue-700">
             <UploadCloud size={14} />
-            Upload and mapping
+            Step 1 and 2
           </div>
           <h2 className="mt-3 text-lg font-black text-gray-950">Upload and map spreadsheet columns</h2>
           <p className="mt-1 text-sm font-semibold leading-6 text-gray-500">
@@ -513,7 +513,7 @@ export default function DataMigrationMapper() {
             <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h3 className="text-sm font-black text-blue-950">Validation preview</h3>
+                  <h3 className="text-sm font-black text-blue-950">Step 3: Review issues</h3>
                   <p className="mt-1 text-xs font-semibold leading-5 text-blue-800">
                     Edujay checks every uploaded row against required fields, duplicates, existing records, class names, parent links, gender, terms, and fee amounts before import.
                   </p>
@@ -600,7 +600,7 @@ export default function DataMigrationMapper() {
                   <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                        <h4 className="text-sm font-black text-emerald-950">Safe import</h4>
+                        <h4 className="text-sm font-black text-emerald-950">Step 4: Import clean records</h4>
                         <p className="mt-1 text-xs font-semibold leading-5 text-emerald-800">
                           Edujay will import only the {cleanValidationRows} clean row{cleanValidationRows === 1 ? "" : "s"}. Rows with warnings, corrections, or skip markers stay outside live records.
                         </p>

@@ -127,12 +127,12 @@ test("data migration point 1 remains a read-only control center", () => {
 
   assertContains(
     migrationPage,
-    "Use this page in this order",
+    "Migration checklist",
     "Page must guide admins through the migration order before upload/import.",
   );
   assertContains(
     migrationPage,
-    "Only rows with no errors and no warnings enter the live school records.",
+    "Only clean rows enter the live school records; problem rows stay out.",
     "Page must clearly explain that only clean rows enter live records.",
   );
 });
@@ -605,6 +605,47 @@ test("data migration status catches parent-link and audit metadata risks", () =>
     migrationService,
     "const trimmed = value.trim();",
     "Import audit text metadata must be trimmed before display.",
+  );
+});
+
+test("data migration point 7 keeps admin experience as a simple checklist", () => {
+  for (const checklistItem of [
+    "Upload",
+    "Map columns",
+    "Review issues",
+    "Import clean records",
+    "Send invites",
+  ]) {
+    assertContains(
+      migrationPage,
+      checklistItem,
+      `Point 7 checklist must include ${checklistItem}.`,
+    );
+  }
+  assertContains(
+    migrationPage,
+    "upload, map, review, import, then invite",
+    "Point 7 page must explain the simple migration order.",
+  );
+  assertContains(
+    migrationMapper,
+    "Step 1 and 2",
+    "Point 7 mapper must label upload and mapping as the first two steps.",
+  );
+  assertContains(
+    migrationMapper,
+    "Step 3: Review issues",
+    "Point 7 mapper must label validation as issue review.",
+  );
+  assertContains(
+    migrationMapper,
+    "Step 4: Import clean records",
+    "Point 7 mapper must label safe import as the clean-record import step.",
+  );
+  assertContains(
+    postImportInvitePanel,
+    "Step 5",
+    "Point 7 invite panel must appear as the final checklist step.",
   );
 });
 

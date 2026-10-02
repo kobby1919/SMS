@@ -115,12 +115,11 @@ export default async function DataMigrationPage() {
     },
   ];
   const migrationWorkflow = [
-    ["Choose record type", "Select students, parents, teachers, bursars, classes, subjects, or fees."],
-    ["Download template", "Use Edujay's template when the school does not already have a clean CSV."],
-    ["Upload and map", "Match the school's spreadsheet columns to the right Edujay fields."],
-    ["Validate rows", "Let Edujay check missing fields, duplicates, invalid class names, and risky links."],
-    ["Import clean rows", "Only rows with no errors and no warnings enter the live school records."],
-    ["Send invites later", "Login access is sent only after profiles and links have been reviewed."],
+    ["Upload", "Choose the record type, download the template if needed, and upload the school's CSV."],
+    ["Map columns", "Match the spreadsheet headers to Edujay's required fields before validation."],
+    ["Review issues", "Check missing fields, duplicates, invalid classes, risky links, and skipped rows."],
+    ["Import clean records", "Only clean rows enter the live school records; problem rows stay out."],
+    ["Send invites", "After profiles and links are reviewed, send secure invites to teachers, parents, and bursars."],
   ];
 
   return (
@@ -243,9 +242,9 @@ export default async function DataMigrationPage() {
       <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h2 className="text-lg font-black text-gray-900">Use this page in this order</h2>
+            <h2 className="text-lg font-black text-gray-900">Migration checklist</h2>
             <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-gray-500">
-              Edujay keeps migration deliberate: admins prepare the spreadsheet, map columns, validate every row, then import only clean records.
+              Edujay keeps migration simple: upload, map, review, import, then invite. Do not skip the order.
             </p>
           </div>
           <Upload size={20} className="shrink-0 text-blue-700" />

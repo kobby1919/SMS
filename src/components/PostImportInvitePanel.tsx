@@ -57,9 +57,9 @@ export default function PostImportInvitePanel({ summary }: Props) {
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-black uppercase tracking-wide text-blue-700">
             <Mail size={14} />
-            Post-import invite workflow
+            Step 5
           </div>
-          <h2 className="mt-3 text-lg font-black text-gray-950">Turn imported profiles into real Edujay accounts</h2>
+          <h2 className="mt-3 text-lg font-black text-gray-950">Send invites after clean import</h2>
           <p className="mt-1 text-sm font-semibold leading-6 text-gray-500">
             Imported teachers, parents, and bursars do not get login access automatically. Edujay sends secure invites first, then activates access only after each person accepts with the invited email.
           </p>
