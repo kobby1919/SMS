@@ -8,6 +8,7 @@ import {
 } from "@/src/lib/auth/constants";
 import { dashboardPathForRole, isAppRole, type AppRole } from "@/src/lib/roles";
 import { getTeacherAccessBlock, resolveSessionIdentity } from "@/src/lib/roles.server";
+import prisma from "@/src/lib/prisma";
 
 import { DEFAULT_SCHOOL_ID } from "@/src/lib/constants/tenant";
 
@@ -89,6 +90,30 @@ export async function requirePageSession(
   }
 
   return session;
+}
+
+/**
+ * Full admin dashboards must wait until the school setup is complete.
+ * This keeps reset/new-school admins inside the setup path instead of
+ * letting partially configured school records power live admin screens.
+ */
+export async function requireCompletedAdminSchoolSetup(
+  context: AuthzContext,
+): Promise<void> {
+  if (context.role !== "admin") return;
+
+  const school = await prisma.school.findUnique({
+    where: { id: context.schoolId },
+    select: { onboardingStatus: true },
+  });
+
+  if (!school) {
+    redirect(`${SIGN_IN_PATH}?error=missing_school`);
+  }
+
+  if (school.onboardingStatus !== "COMPLETED") {
+    redirect("/onboarding/setup");
+  }
 }
 
 export async function requireRole(allowedRoles: AppRole[]): Promise<AuthzContext> {

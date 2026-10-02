@@ -1,4 +1,7 @@
-import { requirePageSession } from "@/src/lib/authz";
+import {
+  requireCompletedAdminSchoolSetup,
+  requirePageSession,
+} from "@/src/lib/authz";
 import { getCachedAdminDashboardData } from "@/src/lib/queries/admin-dashboard";
 import { getAdminOwnerDashboardData } from "@/src/lib/queries/admin-owner-dashboard";
 import AdminDashboard from "@/src/components/AdminDashboard";
@@ -12,7 +15,10 @@ const AdminPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { schoolId } = await requirePageSession(["admin"]);
+  const session = await requirePageSession(["admin"]);
+  await requireCompletedAdminSchoolSetup(session);
+  const { schoolId } = session;
+
   const [data, ownerDashboard, params] = await Promise.all([
     getCachedAdminDashboardData(schoolId),
     getAdminOwnerDashboardData(schoolId),
