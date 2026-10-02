@@ -333,7 +333,7 @@ export async function validateMigrationRows(
   return {
     areaKey: context.areaKey,
     totalRows: rows.length,
-    readyRows: rows.filter((row) => row.status === "READY").length,
+    readyRows: rows.filter((row) => row.status === "READY" && row.issues.length === 0).length,
     skippedRows: rows.filter((row) => row.status === "SKIPPED").length,
     correctionRows: rows.filter((row) => row.status === "NEEDS_CORRECTION").length,
     warningRows: rows.filter((row) => row.issues.some((issue) => issue.severity === "WARNING")).length,

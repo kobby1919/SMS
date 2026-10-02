@@ -44,6 +44,29 @@ type ValidationResult = {
   summaryIssues: ValidationIssue[];
 };
 
+type ImportResult = {
+  importedRows: number;
+  skippedRows: number;
+  correctionRows: number;
+  warningRows: number;
+  created: {
+    students: number;
+    parents: number;
+    parentLinks: number;
+    teachers: number;
+    bursars: number;
+    classes: number;
+    subjects: number;
+    feeBills: number;
+    feeLineItems: number;
+  };
+  dirtyRows: Array<{
+    rowNumber: number;
+    status: ValidationRow["status"];
+    issues: ValidationIssue[];
+  }>;
+};
+
 type ParsedCsv = {
   headers: string[];
   rows: string[][];
@@ -163,7 +186,9 @@ export default function DataMigrationMapper() {
   const [mapping, setMapping] = useState<Record<string, string>>({});
   const [csvIssues, setCsvIssues] = useState<string[]>([]);
   const [validation, setValidation] = useState<ValidationResult | null>(null);
+  const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [isValidating, setIsValidating] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const area = useMemo(() => getMigrationAreaDefinition(areaKey), [areaKey]);
@@ -180,6 +205,9 @@ export default function DataMigrationMapper() {
     csvIssues.length === 0 &&
     missingRequiredFields.length === 0 &&
     duplicateHeaders.length === 0;
+  const cleanValidationRows = validation
+    ? validation.rows.filter((row) => row.status === "READY" && row.issues.length === 0).length
+    : 0;
 
   function resetForArea(nextAreaKey: MigrationAreaKey) {
     setAreaKey(nextAreaKey);
@@ -191,6 +219,7 @@ export default function DataMigrationMapper() {
     setMapping({});
     setCsvIssues([]);
     setValidation(null);
+    setImportResult(null);
     setError(null);
   }
 
@@ -202,6 +231,7 @@ export default function DataMigrationMapper() {
     setMapping({});
     setCsvIssues([]);
     setValidation(null);
+    setImportResult(null);
     setRowEstimate(0);
     setFileName("");
 
@@ -238,6 +268,7 @@ export default function DataMigrationMapper() {
 
   function updateMapping(fieldKey: string, header: string) {
     setValidation(null);
+    setImportResult(null);
     setMapping((current) => ({ ...current, [fieldKey]: header }));
   }
 
@@ -246,6 +277,7 @@ export default function DataMigrationMapper() {
 
     setError(null);
     setValidation(null);
+    setImportResult(null);
     setIsValidating(true);
 
     try {
@@ -269,6 +301,38 @@ export default function DataMigrationMapper() {
       setError("Validation could not be completed. Check your connection and try again.");
     } finally {
       setIsValidating(false);
+    }
+  }
+
+  async function importCleanRows() {
+    if (!validation || cleanValidationRows === 0 || isImporting) return;
+
+    setError(null);
+    setImportResult(null);
+    setIsImporting(true);
+
+    try {
+      const response = await fetch("/api/admin/data-migration/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          areaKey,
+          headers,
+          mapping,
+          rows: allRows,
+        }),
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        setError(payload?.error ?? "Import failed. Please validate again and retry.");
+        return;
+      }
+      setImportResult(payload as ImportResult);
+      setValidation(null);
+    } catch {
+      setError("Import could not be completed. Check your connection and try again.");
+    } finally {
+      setIsImporting(false);
     }
   }
 
@@ -529,6 +593,54 @@ export default function DataMigrationMapper() {
                       )}
                     </div>
                   </div>
+
+                  <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <h4 className="text-sm font-black text-emerald-950">Point 4 safe import</h4>
+                        <p className="mt-1 text-xs font-semibold leading-5 text-emerald-800">
+                          Edujay will import only the {cleanValidationRows} clean row{cleanValidationRows === 1 ? "" : "s"}. Rows with warnings, corrections, or skip markers stay outside live records.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => void importCleanRows()}
+                        disabled={cleanValidationRows === 0 || isImporting}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 text-xs font-black text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-300 sm:w-auto"
+                      >
+                        {isImporting ? <Loader2 size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}
+                        Import clean rows
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
+              {importResult ? (
+                <div className="mt-4 rounded-2xl border border-emerald-100 bg-white p-4">
+                  <h4 className="text-sm font-black text-gray-900">Safe import completed</h4>
+                  <div className="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-4">
+                    {[
+                      ["Imported rows", importResult.importedRows],
+                      ["Skipped rows", importResult.skippedRows],
+                      ["Need correction", importResult.correctionRows],
+                      ["Warnings", importResult.warningRows],
+                      ["Students", importResult.created.students],
+                      ["Parents", importResult.created.parents],
+                      ["Parent links", importResult.created.parentLinks],
+                      ["Fee lines", importResult.created.feeLineItems],
+                    ].map(([label, value]) => (
+                      <div key={label} className="rounded-xl bg-gray-50 p-3">
+                        <p className="text-lg font-black text-gray-950">{value}</p>
+                        <p className="mt-0.5 break-words text-[10px] font-black uppercase leading-snug text-gray-400">
+                          {label}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 text-xs font-semibold leading-5 text-gray-500">
+                    Dirty rows were not imported. Fix them in the spreadsheet, upload again, validate again, then import the corrected rows.
+                  </p>
                 </div>
               ) : null}
             </div>

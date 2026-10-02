@@ -16,8 +16,16 @@ const migrationValidationRoute = readFileSync(
   "src/app/api/admin/data-migration/validate/route.ts",
   "utf8",
 );
+const migrationImportRoute = readFileSync(
+  "src/app/api/admin/data-migration/import/route.ts",
+  "utf8",
+);
 const migrationValidationService = readFileSync(
   "src/lib/services/data-migration-validation.ts",
+  "utf8",
+);
+const migrationImportService = readFileSync(
+  "src/lib/services/data-migration-import.ts",
   "utf8",
 );
 const menuClient = readFileSync("src/components/MenuClient.tsx", "utf8");
@@ -180,6 +188,64 @@ test("data migration point 3 validates rows without importing", () => {
     migrationValidationRoute,
     "MAX_VALIDATION_PAYLOAD_BYTES",
     "Point 3 validation route must reject oversized validation payloads.",
+  );
+});
+
+test("data migration point 4 imports only clean validated rows", () => {
+  assertContains(
+    migrationMapper,
+    "/api/admin/data-migration/import",
+    "Point 4 mapper must call the safe import endpoint.",
+  );
+  assertContains(
+    migrationMapper,
+    "Import clean rows",
+    "Point 4 UI must make clear only clean rows are imported.",
+  );
+  assertContains(
+    migrationMapper,
+    "Rows with warnings, corrections, or skip markers stay outside live records",
+    "Point 4 UI must explain warning and dirty rows stay outside live records.",
+  );
+  assertContains(
+    migrationImportRoute,
+    'requireRole(["admin"])',
+    "Point 4 import route must be admin-only.",
+  );
+  assertContains(
+    migrationImportRoute,
+    "migrationValidationPayloadSchema.safeParse",
+    "Point 4 import route must validate untrusted import payloads.",
+  );
+  assertContains(
+    migrationImportRoute,
+    "MAX_IMPORT_PAYLOAD_BYTES",
+    "Point 4 import route must reject oversized import payloads.",
+  );
+  assertContains(
+    migrationImportService,
+    "validateMigrationRows(context)",
+    "Point 4 import must re-run server validation before writing live records.",
+  );
+  assertContains(
+    migrationImportService,
+    'row.status === "READY" && row.issues.length === 0',
+    "Point 4 import must select only clean issue-free rows for live import.",
+  );
+  assertContains(
+    migrationImportService,
+    "dirtyRows",
+    "Point 4 import must return dirty rows without importing them.",
+  );
+  assertContains(
+    migrationImportService,
+    "IMPORT_RECORDED",
+    "Point 4 import must record an audit log.",
+  );
+  assertContains(
+    migrationImportService,
+    "parentStudentRelationship.upsert",
+    "Point 4 import must create or restore parent-student relationships safely.",
   );
 });
 
