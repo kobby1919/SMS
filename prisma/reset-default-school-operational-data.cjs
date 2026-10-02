@@ -72,7 +72,7 @@ async function chooseAdminToPreserve() {
 }
 
 async function buildOperations(adminToPreserve) {
-  const [students, teachers, parents, classes, grades, subjects, lessons, assignments, syllabi, feeStructures, studentBills, paymentIntents] =
+  const [students, teachers, parents, classes, grades, subjects, lessons, assignments, syllabi, feeStructures, studentBills, paymentIntents, payments] =
     await Promise.all([
       prisma.student.findMany({ where: { schoolId }, select: { id: true } }),
       prisma.teacher.findMany({ where: { schoolId }, select: { id: true } }),
@@ -86,6 +86,7 @@ async function buildOperations(adminToPreserve) {
       prisma.feeStructure.findMany({ where: { schoolId }, select: { id: true } }),
       prisma.studentBill.findMany({ where: { schoolId }, select: { id: true } }),
       prisma.paymentIntent.findMany({ where: { schoolId }, select: { id: true } }),
+      prisma.payment.findMany({ where: { schoolId }, select: { id: true } }),
     ]);
 
   const studentIds = students.map((item) => item.id);
@@ -100,6 +101,7 @@ async function buildOperations(adminToPreserve) {
   const feeStructureIds = feeStructures.map((item) => item.id);
   const studentBillIds = studentBills.map((item) => item.id);
   const paymentIntentIds = paymentIntents.map((item) => item.id);
+  const paymentIds = payments.map((item) => item.id);
 
   return [
     tenantOperation("App notification audit logs", "appNotificationAuditLog"),
@@ -125,7 +127,16 @@ async function buildOperations(adminToPreserve) {
     tenantOperation("Teacher obligations", "teacherObligation"),
     tenantOperation("Teacher accountability settings", "teacherAccountabilitySetting"),
 
-    tenantOperation("Payment webhook events", "paymentWebhookEvent"),
+    {
+      label: "Payment webhook events",
+      model: "paymentWebhookEvent",
+      where: {
+        OR: [
+          { schoolId },
+          ...(paymentIds.length ? [{ paymentId: { in: paymentIds } }] : []),
+        ],
+      },
+    },
     tenantOperation("Finance jobs", "financeJob"),
     tenantOperation("Payment correction requests", "paymentCorrectionRequest"),
     tenantOperation("Payment reversals", "paymentReversal"),
@@ -195,6 +206,7 @@ async function buildOperations(adminToPreserve) {
     tenantOperation("Bursar invite audit logs", "bursarInviteAuditLog"),
     tenantOperation("Bursar invites", "bursarInvite"),
     tenantOperation("School admin invites", "schoolInvite"),
+    tenantOperation("Waitlist entries", "waitlistEntry"),
     tenantOperation("Onboarding audit logs", "onboardingAuditLog"),
 
     tenantOperation("Parent-student relationships", "parentStudentRelationship"),

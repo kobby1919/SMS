@@ -66,6 +66,7 @@ test("default-school reset preserves school and one admin while clearing operati
     "appNotification",
     "parentNotification",
     "schoolInvite",
+    "waitlistEntry",
     "schoolNotificationSetting",
     "onboardingAuditLog",
   ]) {
@@ -75,4 +76,14 @@ test("default-school reset preserves school and one admin while clearing operati
       `Reset script must clear ${modelName} records for default-school.`,
     );
   }
+  assertContains(
+    resetScript,
+    "paymentId: { in: paymentIds }",
+    "Reset script must clear payment webhooks linked to default-school payments even if schoolId is missing.",
+  );
+  assertContains(
+    resetScript,
+    '"Waitlist entries"',
+    "Reset script must clear waitlist rows that are already linked to default-school.",
+  );
 });
