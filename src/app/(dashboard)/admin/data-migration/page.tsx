@@ -1,0 +1,294 @@
+import Link from "next/link";
+import {
+  AlertTriangle,
+  ArrowRight,
+  BookOpen,
+  CheckCircle2,
+  Database,
+  FileSpreadsheet,
+  GraduationCap,
+  ReceiptText,
+  School,
+  ShieldCheck,
+  Upload,
+  Users,
+  WalletCards,
+} from "lucide-react";
+import { requirePageSession } from "@/src/lib/authz";
+import {
+  getDataMigrationDashboard,
+  type MigrationAreaStatus,
+} from "@/src/lib/services/data-migration";
+
+const statusMeta: Record<MigrationAreaStatus, { label: string; className: string }> = {
+  NOT_STARTED: {
+    label: "Not started",
+    className: "border-slate-200 bg-slate-50 text-slate-600",
+  },
+  HAS_RECORDS: {
+    label: "Has records",
+    className: "border-blue-100 bg-blue-50 text-blue-700",
+  },
+  NEEDS_CLEANUP: {
+    label: "Needs cleanup",
+    className: "border-amber-100 bg-amber-50 text-amber-800",
+  },
+  READY_FOR_INVITES: {
+    label: "Ready for invites",
+    className: "border-violet-100 bg-violet-50 text-violet-700",
+  },
+  OPERATIONAL: {
+    label: "Operational",
+    className: "border-emerald-100 bg-emerald-50 text-emerald-700",
+  },
+};
+
+const areaIcons = {
+  students: GraduationCap,
+  parents: Users,
+  teachers: BookOpen,
+  bursars: WalletCards,
+  classes: School,
+  subjects: BookOpen,
+  fees: ReceiptText,
+};
+
+function formatDateTime(date: Date) {
+  return new Intl.DateTimeFormat("en-GH", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
+export default async function DataMigrationPage() {
+  const { schoolId } = await requirePageSession(["admin"]);
+  const dashboard = await getDataMigrationDashboard(schoolId);
+
+  const attentionCount = dashboard.areas.filter((area) =>
+    area.status === "NEEDS_CLEANUP" || area.status === "NOT_STARTED"
+  ).length;
+
+  return (
+    <main className="m-4 mt-0 flex flex-1 flex-col gap-4">
+      <section className="rounded-2xl border border-slate-200 bg-slate-950 p-4 text-white shadow-sm sm:p-5">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-wide text-blue-100">
+              <Database size={14} />
+              School onboarding bridge
+            </div>
+            <h1 className="mt-4 text-2xl font-black tracking-tight sm:text-3xl">
+              Data Migration
+            </h1>
+            <p className="mt-2 text-sm font-semibold leading-6 text-slate-300">
+              Bring an existing school into Edujay without casually polluting live records.
+              Uploading, mapping, validation, import, and bulk invites will happen in stages.
+              This page is the control center for the whole migration.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 lg:w-[420px]">
+            <div className="rounded-2xl bg-white/10 p-3">
+              <p className="text-2xl font-black">{dashboard.totals.students}</p>
+              <p className="mt-1 break-words text-[10px] font-black uppercase leading-snug text-slate-300">
+                Students on record
+              </p>
+            </div>
+            <div className="rounded-2xl bg-white/10 p-3">
+              <p className="text-2xl font-black">{dashboard.totals.pendingInvites}</p>
+              <p className="mt-1 break-words text-[10px] font-black uppercase leading-snug text-slate-300">
+                Pending invites
+              </p>
+            </div>
+            <div className="rounded-2xl bg-white/10 p-3">
+              <p className="text-2xl font-black">{attentionCount}</p>
+              <p className="mt-1 break-words text-[10px] font-black uppercase leading-snug text-slate-300">
+                Areas needing attention
+              </p>
+            </div>
+            <div className="rounded-2xl bg-white/10 p-3">
+              <p className="text-2xl font-black">{dashboard.totals.importLogs}</p>
+              <p className="mt-1 break-words text-[10px] font-black uppercase leading-snug text-slate-300">
+                Import audit logs
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 xl:grid-cols-4">
+        {[
+          { label: "Classes", value: dashboard.totals.classes, icon: School },
+          { label: "Subjects", value: dashboard.totals.subjects, icon: BookOpen },
+          { label: "Parents", value: dashboard.totals.parents, icon: Users },
+          { label: "Bills", value: dashboard.totals.bills, icon: ReceiptText },
+        ].map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <div key={stat.label} className="flex min-w-0 items-center gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm sm:p-4">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 sm:h-10 sm:w-10">
+                <Icon size={17} />
+              </span>
+              <div className="min-w-0">
+                <p className="text-xl font-black leading-none text-gray-900">{stat.value}</p>
+                <p className="mt-0.5 break-words text-xs font-bold uppercase leading-snug text-gray-400">
+                  {stat.label}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </section>
+
+      <section className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-900">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+          <AlertTriangle size={18} className="mt-0.5 shrink-0" />
+          <p>
+            Migration is deliberately staged. Edujay should preview and validate files before
+            saving records. Imported people should receive login access only after the admin sends
+            secure invites.
+          </p>
+        </div>
+      </section>
+
+      <section className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+        {dashboard.areas.map((area) => {
+          const Icon = areaIcons[area.key];
+          const meta = statusMeta[area.status];
+          return (
+            <article key={area.key} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex min-w-0 gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700">
+                    <Icon size={18} />
+                  </span>
+                  <div className="min-w-0">
+                    <h2 className="text-base font-black text-gray-900">{area.title}</h2>
+                    <p className="mt-1 text-sm font-medium leading-6 text-gray-500">
+                      {area.description}
+                    </p>
+                  </div>
+                </div>
+                <span className={`w-fit shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase ${meta.className}`}>
+                  {meta.label}
+                </span>
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 gap-2 min-[420px]:grid-cols-3">
+                <div className="min-w-0 rounded-xl bg-gray-50 p-3">
+                  <p className="text-lg font-black text-gray-900">{area.primaryCount}</p>
+                  <p className="mt-0.5 break-words text-[10px] font-black uppercase leading-snug text-gray-400">
+                    {area.primaryLabel}
+                  </p>
+                </div>
+                <div className="min-w-0 rounded-xl bg-gray-50 p-3">
+                  <p className="text-lg font-black text-gray-900">{area.secondaryCount}</p>
+                  <p className="mt-0.5 break-words text-[10px] font-black uppercase leading-snug text-gray-400">
+                    {area.secondaryLabel}
+                  </p>
+                </div>
+                <div className="min-w-0 rounded-xl bg-gray-50 p-3">
+                  <p className={area.riskCount > 0 ? "text-lg font-black text-amber-700" : "text-lg font-black text-gray-900"}>
+                    {area.riskCount}
+                  </p>
+                  <p className="mt-0.5 break-words text-[10px] font-black uppercase leading-snug text-gray-400">
+                    {area.riskLabel}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50 px-3 py-3">
+                <p className="text-[10px] font-black uppercase tracking-wide text-gray-400">
+                  Next action
+                </p>
+                <p className="mt-1 text-sm font-black leading-6 text-gray-800">{area.nextAction}</p>
+              </div>
+            </article>
+          );
+        })}
+      </section>
+
+      <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_360px]">
+        <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h2 className="text-lg font-black text-gray-900">Migration workflow</h2>
+              <p className="mt-1 text-sm font-medium leading-6 text-gray-500">
+                The next implementation steps will add upload, column mapping, validation preview,
+                safe import, then bulk invites.
+              </p>
+            </div>
+            <Upload size={20} className="text-blue-700" />
+          </div>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-5">
+            {[
+              ["Upload", "Choose the school spreadsheet."],
+              ["Map", "Match school columns to Edujay fields."],
+              ["Validate", "Find duplicates, missing fields, and risky links."],
+              ["Import", "Save only clean records."],
+              ["Invite", "Send secure login links after review."],
+            ].map(([title, copy], index) => (
+              <div key={title} className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+                <p className="text-xs font-black text-blue-700">Step {index + 1}</p>
+                <p className="mt-2 text-sm font-black text-gray-900">{title}</p>
+                <p className="mt-1 text-xs font-semibold leading-5 text-gray-500">{copy}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <aside className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+          <div className="flex items-center gap-2">
+            <FileSpreadsheet size={18} className="text-blue-700" />
+            <h2 className="text-base font-black text-gray-900">Recent import records</h2>
+          </div>
+          <div className="mt-4 space-y-2">
+            {dashboard.recentImportLogs.length === 0 ? (
+              <p className="rounded-xl bg-gray-50 px-3 py-3 text-sm font-semibold leading-6 text-gray-500">
+                No import activity has been recorded for this school yet.
+              </p>
+            ) : (
+              dashboard.recentImportLogs.map((log) => (
+                <div key={log.id} className="rounded-xl bg-gray-50 px-3 py-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="break-words text-sm font-black text-gray-900">
+                        {log.fileName ?? "Recorded import"}
+                      </p>
+                      <p className="mt-0.5 text-xs font-semibold text-gray-500">
+                        {log.importType ?? "Import"} · {log.rowCount ?? 0} rows
+                      </p>
+                    </div>
+                    <CheckCircle2 size={15} className="shrink-0 text-emerald-600" />
+                  </div>
+                  <p className="mt-2 text-[10px] font-bold uppercase tracking-wide text-gray-400">
+                    {formatDateTime(log.createdAt)}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+        </aside>
+      </section>
+
+      <section className="rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
+            <ShieldCheck size={18} className="mt-0.5 shrink-0 text-blue-700" />
+            <div className="min-w-0">
+              <p className="text-sm font-black text-blue-950">Step 1 is the control center only.</p>
+              <p className="mt-1 text-sm font-semibold leading-6 text-blue-800">
+                Next we add upload and column mapping. Until then, no uploaded spreadsheet data is written into live Edujay records from this page.
+              </p>
+            </div>
+          </div>
+          <Link href="/list/students/import" className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3 text-xs font-black text-white transition hover:bg-blue-800 sm:w-auto">
+            Existing student import
+            <ArrowRight size={14} />
+          </Link>
+        </div>
+      </section>
+    </main>
+  );
+}
