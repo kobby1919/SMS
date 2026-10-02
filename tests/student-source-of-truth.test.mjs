@@ -126,6 +126,8 @@ test("student list is an operational source-of-truth page", () => {
   assertContains(studentListPage, "name=\"classId\"", "Student list must support class filtering.");
   assertContains(studentListPage, "name=\"status\"", "Student list must support status filtering.");
   assertContains(studentListPage, "Missing Admission", "Student list must expose admission-number gaps.");
+  assertContains(studentListPage, "min-[420px]:grid-cols-2 xl:grid-cols-4", "Student summary cards must not force four columns on narrow screens.");
+  assertContains(studentListPage, "break-words text-xs text-gray-400", "Student summary card labels must wrap instead of overlapping.");
   assertContains(studentListPage, "No contact saved", "Student list must safely handle missing parent contact.");
   assertContains(studentListPage, "status: StudentStatus.ACTIVE", "Teacher student scope must exclude non-active student records.");
   assertContains(studentListPage, "View profile", "Mobile student cards must keep a clear profile action.");

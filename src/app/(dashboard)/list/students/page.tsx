@@ -217,20 +217,20 @@ const StudentListPage = async ({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 xl:grid-cols-4">
           {[
             { label: "My Students", value: students.length, icon: <Users size={16} />, color: "bg-indigo-50 text-indigo-600" },
             { label: "Classes", value: classGroups.length, icon: <BookOpen size={16} />, color: "bg-amber-50 text-amber-600" },
             { label: "Boys", value: boys, icon: <Users size={16} />, color: "bg-emerald-50 text-emerald-600" },
             { label: "Girls", value: girls, icon: <Plus size={16} />, color: "bg-violet-50 text-violet-600" },
           ].map((stat) => (
-            <div key={stat.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
+            <div key={stat.label} className="bg-white rounded-2xl p-3 sm:p-4 border border-gray-100 shadow-sm flex min-w-0 items-center gap-3">
+              <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
                 {stat.icon}
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="text-xl font-black text-gray-800 leading-none">{stat.value}</p>
-                <p className="text-xs text-gray-400 font-medium mt-0.5">{stat.label}</p>
+                <p className="break-words text-xs text-gray-400 font-medium mt-0.5 leading-snug">{stat.label}</p>
               </div>
             </div>
           ))}
@@ -437,20 +437,20 @@ const StudentListPage = async ({
       </div>
 
       {/* ── Stats — real DB values ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 xl:grid-cols-4">
         {[
           { label: "Active Students", value: activeStudents, icon: <Users size={16} />, color: "bg-emerald-50 text-emerald-600" },
           { label: "Needs Setup", value: incompleteStudents, icon: <AlertCircle size={16} />, color: "bg-amber-50 text-amber-600" },
           { label: "Left / Completed", value: archivedStudents, icon: <BookOpen size={16} />, color: "bg-violet-50 text-violet-600" },
           { label: "Missing Admission", value: missingAdmissionStudents, icon: <Plus size={16} />, color: "bg-rose-50 text-rose-600" },
         ].map((stat) => (
-          <div key={stat.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
+          <div key={stat.label} className="bg-white rounded-2xl p-3 sm:p-4 border border-gray-100 shadow-sm flex min-w-0 items-center gap-3">
+            <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
               {stat.icon}
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-xl font-black text-gray-800 leading-none">{stat.value}</p>
-              <p className="text-xs text-gray-400 font-medium mt-0.5">{stat.label}</p>
+              <p className="break-words text-xs text-gray-400 font-medium mt-0.5 leading-snug">{stat.label}</p>
             </div>
           </div>
         ))}
