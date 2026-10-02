@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { requirePageSession } from "@/src/lib/authz";
 import DataMigrationMapper from "@/src/components/DataMigrationMapper";
+import MigrationAuditActions from "@/src/components/MigrationAuditActions";
 import PostImportInvitePanel from "@/src/components/PostImportInvitePanel";
 import {
   getDataMigrationDashboard,
@@ -356,7 +357,14 @@ export default async function DataMigrationPage() {
               </p>
             ) : (
               dashboard.recentImportLogs.map((log) => (
-                <div key={log.id} className="rounded-xl bg-gray-50 px-3 py-3">
+                <div
+                  key={log.id}
+                  className={`rounded-xl px-3 py-3 ${
+                    log.isProblematic
+                      ? "border border-amber-100 bg-amber-50"
+                      : "bg-gray-50"
+                  }`}
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="break-words text-sm font-black text-gray-900">
@@ -365,11 +373,39 @@ export default async function DataMigrationPage() {
                       <p className="mt-0.5 text-xs font-semibold text-gray-500">
                         {log.importType ?? "Import"} · {log.rowCount ?? 0} rows
                       </p>
+                      {log.batchId ? (
+                        <p className="mt-1 break-all text-[10px] font-bold uppercase tracking-wide text-gray-400">
+                          Batch {log.batchId}
+                        </p>
+                      ) : null}
                     </div>
-                    <CheckCircle2 size={15} className="shrink-0 text-emerald-600" />
+                    {log.isProblematic ? (
+                      <AlertTriangle size={15} className="shrink-0 text-amber-600" />
+                    ) : (
+                      <CheckCircle2 size={15} className="shrink-0 text-emerald-600" />
+                    )}
                   </div>
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    {[
+                      ["Imported", log.importedRows ?? 0],
+                      ["Skipped", log.skippedRows ?? 0],
+                      ["Issues", log.errorCount ?? 0],
+                    ].map(([label, value]) => (
+                      <div key={label} className="rounded-lg bg-white px-2 py-2 ring-1 ring-gray-100">
+                        <p className="text-sm font-black text-gray-950">{value}</p>
+                        <p className="mt-0.5 text-[9px] font-black uppercase tracking-wide text-gray-400">
+                          {label}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                  <MigrationAuditActions
+                    auditLogId={log.id}
+                    hasErrors={(log.errorCount ?? 0) > 0}
+                    isProblematic={log.isProblematic}
+                  />
                   <p className="mt-2 text-[10px] font-bold uppercase tracking-wide text-gray-400">
-                    {formatDateTime(log.createdAt)}
+                    {log.status ?? "Recorded"} · {formatDateTime(log.createdAt)}
                   </p>
                 </div>
               ))

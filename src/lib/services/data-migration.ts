@@ -57,9 +57,15 @@ export type DataMigrationDashboard = {
     action: string;
     performedBy: string;
     createdAt: Date;
+    batchId: string | null;
     fileName: string | null;
     importType: string | null;
     rowCount: number | null;
+    importedRows: number | null;
+    skippedRows: number | null;
+    errorCount: number | null;
+    status: string | null;
+    isProblematic: boolean;
   }>;
 };
 
@@ -107,6 +113,14 @@ function getNumberMetadata(
     return Number.isFinite(parsed) ? Math.max(0, Math.trunc(parsed)) : null;
   }
   return null;
+}
+
+function getBooleanMetadata(
+  metadata: unknown,
+  key: string,
+): boolean {
+  if (!metadata || typeof metadata !== "object") return false;
+  return (metadata as Record<string, unknown>)[key] === true;
 }
 
 export async function getDataMigrationDashboard(
@@ -355,9 +369,15 @@ export async function getDataMigrationDashboard(
       action: log.action,
       performedBy: log.performedBy,
       createdAt: log.createdAt,
+      batchId: getStringMetadata(log.metadata, "batchId"),
       fileName: getStringMetadata(log.metadata, "fileName"),
       importType: getStringMetadata(log.metadata, "importType"),
       rowCount: getNumberMetadata(log.metadata, "rowCount"),
+      importedRows: getNumberMetadata(log.metadata, "importedRows"),
+      skippedRows: getNumberMetadata(log.metadata, "skippedRows"),
+      errorCount: getNumberMetadata(log.metadata, "errorCount"),
+      status: getStringMetadata(log.metadata, "status"),
+      isProblematic: getBooleanMetadata(log.metadata, "problematic"),
     })),
   };
 }

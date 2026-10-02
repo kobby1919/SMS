@@ -28,6 +28,22 @@ const migrationImportService = readFileSync(
   "src/lib/services/data-migration-import.ts",
   "utf8",
 );
+const migrationAuditService = readFileSync(
+  "src/lib/services/data-migration-audit.ts",
+  "utf8",
+);
+const migrationAuditActions = readFileSync(
+  "src/components/MigrationAuditActions.tsx",
+  "utf8",
+);
+const migrationAuditProblematicRoute = readFileSync(
+  "src/app/api/admin/data-migration/audit/[id]/problematic/route.ts",
+  "utf8",
+);
+const migrationAuditErrorReportRoute = readFileSync(
+  "src/app/api/admin/data-migration/audit/[id]/error-report/route.ts",
+  "utf8",
+);
 const postImportInviteService = readFileSync(
   "src/lib/services/post-import-invites.ts",
   "utf8",
@@ -374,6 +390,59 @@ test("data migration point 5 bulk-invites imported profiles safely", () => {
     bursarInviteService,
     "importedBursar",
     "Bursar invite acceptance must be able to claim an imported bursar profile.",
+  );
+});
+
+test("data migration point 6 records audit batches and controlled review actions", () => {
+  assertContains(
+    migrationImportRoute,
+    "fileName: parsed.data.fileName",
+    "Point 6 import route must pass uploaded file names into audit metadata.",
+  );
+  assertContains(
+    migrationImportService,
+    "batchId",
+    "Point 6 imports must create a stable audit batch id.",
+  );
+  assertContains(
+    migrationImportService,
+    "buildDirtyRowReport(dirtyRows)",
+    "Point 6 imports must store skipped/correction row evidence for error reports.",
+  );
+  assertContains(
+    migrationImportService,
+    'status: "COMPLETED"',
+    "Point 6 completed imports must store a clear audit status.",
+  );
+  assertContains(
+    migrationAuditService,
+    "markMigrationBatchProblematic",
+    "Point 6 must support marking an import batch as problematic instead of deleting data.",
+  );
+  assertContains(
+    migrationAuditService,
+    "buildMigrationErrorReportCsv",
+    "Point 6 must support exporting an import error report.",
+  );
+  assertContains(
+    migrationAuditProblematicRoute,
+    'requireRole(["admin"])',
+    "Point 6 problematic route must be admin-only.",
+  );
+  assertContains(
+    migrationAuditErrorReportRoute,
+    'requireRole(["admin"])',
+    "Point 6 error report route must be admin-only.",
+  );
+  assertContains(
+    migrationAuditActions,
+    "Mark problematic",
+    "Point 6 UI must expose a deliberate mark-problematic action.",
+  );
+  assertContains(
+    migrationPage,
+    "<MigrationAuditActions",
+    "Point 6 page must expose audit safety actions beside recent import records.",
   );
 });
 

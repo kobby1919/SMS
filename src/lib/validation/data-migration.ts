@@ -9,6 +9,7 @@ const migrationAreaKeys = MIGRATION_AREAS.map((area) => area.key) as [
 
 export const migrationValidationPayloadSchema = z.object({
   areaKey: z.enum(migrationAreaKeys),
+  fileName: z.string().trim().max(255).optional(),
   headers: z.array(z.string().max(200)).min(1).max(120),
   mapping: z.record(z.string().max(80), z.string().max(200)).default({}),
   rows: z

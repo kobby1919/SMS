@@ -20,6 +20,7 @@ import {
 import type { MigrationValidationPayload } from "@/src/lib/validation/data-migration";
 
 export type MigrationImportResult = {
+  batchId: string | null;
   areaKey: MigrationValidationPayload["areaKey"];
   totalRows: number;
   importedRows: number;
@@ -60,6 +61,34 @@ type ImportContext = MigrationValidationPayload & {
 };
 
 type ImportCounters = MigrationImportResult["created"];
+
+type DirtyRowReportEntry = {
+  rowNumber: number;
+  status: MigrationValidationRow["status"];
+  severity: MigrationValidationRow["issues"][number]["severity"];
+  field: string | null;
+  message: string;
+};
+
+function buildDirtyRowReport(dirtyRows: MigrationImportResult["dirtyRows"]): DirtyRowReportEntry[] {
+  return dirtyRows.slice(0, 500).flatMap((row) =>
+    row.issues.length === 0
+      ? [{
+          rowNumber: row.rowNumber,
+          status: row.status,
+          severity: "ERROR" as const,
+          field: null,
+          message: "Row was not imported.",
+        }]
+      : row.issues.map((issue) => ({
+          rowNumber: row.rowNumber,
+          status: row.status,
+          severity: issue.severity,
+          field: issue.field ?? null,
+          message: issue.message,
+        })),
+  );
+}
 
 function normalize(value: string | null | undefined) {
   return (value ?? "").trim();
@@ -486,6 +515,7 @@ export async function importValidatedMigrationRows(
   context: ImportContext,
 ): Promise<MigrationImportResult> {
   const validation = await validateMigrationRows(context);
+  const batchId = `mig_${randomUUID()}`;
   const cleanRows = validation.rows.filter((row) => row.status === "READY" && row.issues.length === 0);
   const dirtyRows = validation.rows
     .filter((row) => row.status !== "READY" || row.issues.length > 0)
@@ -522,6 +552,16 @@ export async function importValidatedMigrationRows(
             rowCount: context.rows.length,
             importedRows: cleanRows.length,
             skippedRows: dirtyRows.length,
+            correctionRows: validation.correctionRows,
+            warningRows: validation.warningRows,
+            batchId,
+            fileName: context.fileName ?? null,
+            status: "COMPLETED",
+            problematic: false,
+            markedProblematicAt: null,
+            markedProblematicBy: null,
+            errorCount: dirtyRows.reduce((count, row) => count + row.issues.length, 0),
+            errors: buildDirtyRowReport(dirtyRows),
             created: counters,
           },
         },
@@ -537,6 +577,7 @@ export async function importValidatedMigrationRows(
   revalidateReferenceData(context.schoolId, "subjects");
 
   return {
+    batchId: cleanRows.length > 0 ? batchId : null,
     areaKey: context.areaKey,
     totalRows: validation.totalRows,
     importedRows: cleanRows.length,

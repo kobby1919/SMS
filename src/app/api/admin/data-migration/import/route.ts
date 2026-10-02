@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
       schoolId,
       actorId: userId,
       areaKey: parsed.data.areaKey,
+      fileName: parsed.data.fileName,
       headers: parsed.data.headers,
       mapping: parsed.data.mapping,
       rows: parsed.data.rows,

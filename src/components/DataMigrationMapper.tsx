@@ -45,6 +45,7 @@ type ValidationResult = {
 };
 
 type ImportResult = {
+  batchId: string | null;
   importedRows: number;
   skippedRows: number;
   correctionRows: number;
@@ -289,6 +290,7 @@ export default function DataMigrationMapper() {
           headers,
           mapping,
           rows: allRows,
+          fileName,
         }),
       });
       const payload = await response.json();
@@ -320,6 +322,7 @@ export default function DataMigrationMapper() {
           headers,
           mapping,
           rows: allRows,
+          fileName,
         }),
       });
       const payload = await response.json();
@@ -619,6 +622,11 @@ export default function DataMigrationMapper() {
               {importResult ? (
                 <div className="mt-4 rounded-2xl border border-emerald-100 bg-white p-4">
                   <h4 className="text-sm font-black text-gray-900">Safe import completed</h4>
+                  {importResult.batchId ? (
+                    <p className="mt-1 break-all text-xs font-bold text-gray-500">
+                      Audit batch: {importResult.batchId}
+                    </p>
+                  ) : null}
                   <div className="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-4">
                     {[
                       ["Imported rows", importResult.importedRows],
