@@ -331,6 +331,26 @@ test("data migration point 5 bulk-invites imported profiles safely", () => {
     "Point 5 must avoid duplicate active bursar invites.",
   );
   assertContains(
+    postImportInviteService,
+    "pushUniqueEmail",
+    "Point 5 must skip duplicate imported profiles sharing one email inside the same bulk run.",
+  );
+  assertContains(
+    postImportInviteService,
+    "hasTeacherInviteConflict",
+    "Point 5 must re-check teacher invite conflicts inside the write transaction.",
+  );
+  assertContains(
+    postImportInviteService,
+    "hasParentInviteConflict",
+    "Point 5 must re-check parent invite conflicts inside the write transaction.",
+  );
+  assertContains(
+    postImportInviteService,
+    "hasBursarInviteConflict",
+    "Point 5 must re-check bursar invite conflicts inside the write transaction.",
+  );
+  assertContains(
     postImportInvitePanel,
     "Imported teachers, parents, and bursars do not get login access automatically",
     "Point 5 UI must explain that import does not create login access.",

@@ -179,6 +179,89 @@ async function activeBursarInviteEmails(schoolId: string, now = new Date()) {
   return new Set(invites.map((invite) => invite.email.toLowerCase()));
 }
 
+function pushUniqueEmail<T extends { email: string | null }>(
+  rows: T[],
+  blockedEmails: Set<string>,
+  warnings: string[],
+  roleLabel: string,
+) {
+  const selected: T[] = [];
+  const seen = new Set(blockedEmails);
+
+  for (const row of rows) {
+    const email = normalizeEmail(row.email);
+    if (!email) continue;
+    if (seen.has(email)) {
+      warnings.push(`${email}: duplicate ${roleLabel} profile or existing invite skipped.`);
+      continue;
+    }
+    seen.add(email);
+    selected.push(row);
+  }
+
+  return selected;
+}
+
+async function hasTeacherInviteConflict(
+  tx: Prisma.TransactionClient,
+  schoolId: string,
+  email: string,
+  now: Date,
+) {
+  const conflict = await tx.teacherInvite.findFirst({
+    where: {
+      schoolId,
+      email,
+      OR: [
+        { status: "ACCEPTED", acceptedAt: { not: null } },
+        { status: "PENDING", acceptedAt: null, revokedAt: null, expiresAt: { gt: now } },
+      ],
+    },
+    select: { id: true },
+  });
+  return Boolean(conflict);
+}
+
+async function hasParentInviteConflict(
+  tx: Prisma.TransactionClient,
+  schoolId: string,
+  email: string,
+  now: Date,
+) {
+  const conflict = await tx.parentInvite.findFirst({
+    where: {
+      schoolId,
+      email,
+      OR: [
+        { status: "ACCEPTED", acceptedAt: { not: null } },
+        { status: "PENDING", acceptedAt: null, revokedAt: null, expiresAt: { gt: now } },
+      ],
+    },
+    select: { id: true },
+  });
+  return Boolean(conflict);
+}
+
+async function hasBursarInviteConflict(
+  tx: Prisma.TransactionClient,
+  schoolId: string,
+  email: string,
+  now: Date,
+) {
+  const conflict = await tx.bursarInvite.findFirst({
+    where: {
+      schoolId,
+      email,
+      OR: [
+        { status: "ACCEPTED", acceptedAt: { not: null } },
+        { status: "PENDING", acceptedAt: null, revokedAt: null, expiresAt: { gt: now } },
+      ],
+    },
+    select: { id: true },
+  });
+  return Boolean(conflict);
+}
+
 export async function getPostImportInviteSummary(
   schoolId: string,
 ): Promise<PostImportInviteSummary> {
@@ -327,11 +410,13 @@ async function bulkInviteTeachers(context: InviteContext): Promise<PostImportInv
   if (!school) throw new PostImportInviteError("School not found.", 404);
 
   const acceptedEmails = new Set(acceptedInvites.map((invite) => invite.email.toLowerCase()));
-  const candidates = teachers.filter((teacher) => {
-    const email = normalizeEmail(teacher.email);
-    return email && !pendingEmails.has(email) && !acceptedEmails.has(email);
-  });
   const warnings: string[] = [];
+  const candidates = pushUniqueEmail(
+    teachers,
+    new Set([...pendingEmails, ...acceptedEmails]),
+    warnings,
+    "teacher",
+  );
   let created = 0;
   let failed = 0;
 
@@ -343,6 +428,10 @@ async function bulkInviteTeachers(context: InviteContext): Promise<PostImportInv
     try {
       const tokenBundle = createTeacherInviteTokenBundle(now);
       const invite = await prisma.$transaction(async (tx) => {
+        if (await hasTeacherInviteConflict(tx, context.schoolId, email, now)) {
+          throw new PostImportInviteError("An active or accepted teacher invite already exists for this email.", 409);
+        }
+
         const createdInvite = await tx.teacherInvite.create({
           data: {
             schoolId: context.schoolId,
@@ -461,11 +550,13 @@ async function bulkInviteParents(context: InviteContext): Promise<PostImportInvi
   if (!school) throw new PostImportInviteError("School not found.", 404);
 
   const acceptedEmails = new Set(acceptedInvites.map((invite) => invite.email.toLowerCase()));
-  const candidates = parents.filter((parent) => {
-    const email = normalizeEmail(parent.email);
-    return email && !pendingEmails.has(email) && !acceptedEmails.has(email);
-  });
   const warnings: string[] = [];
+  const candidates = pushUniqueEmail(
+    parents,
+    new Set([...pendingEmails, ...acceptedEmails]),
+    warnings,
+    "parent",
+  );
   let created = 0;
   let failed = 0;
 
@@ -483,6 +574,10 @@ async function bulkInviteParents(context: InviteContext): Promise<PostImportInvi
     try {
       const tokenBundle = createParentInviteTokenBundle(now);
       const invite = await prisma.$transaction(async (tx) => {
+        if (await hasParentInviteConflict(tx, context.schoolId, email, now)) {
+          throw new PostImportInviteError("An active or accepted parent invite already exists for this email.", 409);
+        }
+
         const createdInvite = await tx.parentInvite.create({
           data: {
             schoolId: context.schoolId,
@@ -592,11 +687,13 @@ async function bulkInviteBursars(context: InviteContext): Promise<PostImportInvi
   if (!school) throw new PostImportInviteError("School not found.", 404);
 
   const acceptedEmails = new Set(acceptedInvites.map((invite) => invite.email.toLowerCase()));
-  const candidates = bursars.filter((bursar) => {
-    const email = normalizeEmail(bursar.email);
-    return email && !pendingEmails.has(email) && !acceptedEmails.has(email);
-  });
   const warnings: string[] = [];
+  const candidates = pushUniqueEmail(
+    bursars,
+    new Set([...pendingEmails, ...acceptedEmails]),
+    warnings,
+    "bursar",
+  );
   let created = 0;
   let failed = 0;
 
@@ -607,6 +704,10 @@ async function bulkInviteBursars(context: InviteContext): Promise<PostImportInvi
     try {
       const tokenBundle = createBursarInviteTokenBundle(now);
       const invite = await prisma.$transaction(async (tx) => {
+        if (await hasBursarInviteConflict(tx, context.schoolId, email, now)) {
+          throw new PostImportInviteError("An active or accepted bursar invite already exists for this email.", 409);
+        }
+
         const createdInvite = await tx.bursarInvite.create({
           data: {
             schoolId: context.schoolId,
