@@ -17,6 +17,7 @@ import {
   TrendingUp,
   ScrollText,
   ChevronRight,
+  Database,
 } from "lucide-react";
 
 type CountEntry = {
@@ -97,6 +98,37 @@ const AdminDashboard = ({
           </motion.div>
         ))}
       </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+      >
+        <button
+          type="button"
+          onClick={() => router.push("/admin/data-migration")}
+          className="flex w-full flex-col gap-3 rounded-2xl border border-blue-100 bg-white p-4 text-left shadow-sm transition hover:border-blue-200 hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
+        >
+          <span className="flex min-w-0 items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+              <Database size={18} />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-sm font-black text-gray-900">
+                Data setup and bulk invites
+              </span>
+              <span className="mt-1 block text-xs font-medium leading-5 text-gray-500">
+                Return here to import school records, review migration issues,
+                and send bulk invites after onboarding.
+              </span>
+            </span>
+          </span>
+          <span className="inline-flex items-center gap-1 self-start rounded-xl bg-blue-700 px-3 py-2 text-xs font-bold text-white sm:self-auto">
+            Open setup workspace
+            <ChevronRight size={14} />
+          </span>
+        </button>
+      </motion.div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2 flex flex-col gap-6">

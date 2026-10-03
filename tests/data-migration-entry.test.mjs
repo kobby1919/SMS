@@ -61,6 +61,7 @@ const postImportInvitePanel = readFileSync(
   "src/components/PostImportInvitePanel.tsx",
   "utf8",
 );
+const adminDashboard = readFileSync("src/components/AdminDashboard.tsx", "utf8");
 const teacherInviteService = readFileSync("src/lib/services/teacher-invites.ts", "utf8");
 const parentInviteService = readFileSync("src/lib/services/parent-invites.ts", "utf8");
 const bursarInviteService = readFileSync("src/lib/services/bursar-invites.ts", "utf8");
@@ -89,6 +90,16 @@ test("data migration entry point is admin-only and school-scoped", () => {
     menuClient,
     "/admin/data-migration",
     "Admin menu must not expose data migration under Management.",
+  );
+  assertContains(
+    adminDashboard,
+    "/admin/data-migration",
+    "Completed admins need a controlled dashboard route back to migration and bulk invites.",
+  );
+  assertContains(
+    adminDashboard,
+    "Data setup and bulk invites",
+    "Dashboard migration entry must explain that this is setup/bulk invite work, not daily management.",
   );
   assertContains(
     migrationPage,
