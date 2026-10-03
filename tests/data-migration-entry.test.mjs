@@ -208,6 +208,8 @@ test("data migration point 3 validates rows without importing", () => {
     );
   }
   for (const requiredGuard of [
+    "Save the school code before importing students.",
+    "validateAdmissionNumberForSchool",
     "Student already exists in Edujay",
     "Class name does not exist in Edujay yet",
     "Ward admission number does not match an existing Edujay student",

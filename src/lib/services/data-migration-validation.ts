@@ -1,4 +1,5 @@
 import prisma from "@/src/lib/prisma";
+import { validateAdmissionNumberForSchool } from "@/src/lib/admission-number";
 import { getMigrationAreaDefinition, type MigrationAreaKey } from "@/src/lib/migration/column-mapping";
 
 export type MigrationValidationIssueSeverity = "ERROR" | "WARNING" | "SKIP";
@@ -137,6 +138,7 @@ function uploadedFeeRowKey(values: Record<string, string>) {
 
 async function existingSets(schoolId: string) {
   const [
+    school,
     classes,
     subjects,
     students,
@@ -145,6 +147,7 @@ async function existingSets(schoolId: string) {
     bursars,
     feeStructures,
   ] = await Promise.all([
+    prisma.school.findUnique({ where: { id: schoolId }, select: { code: true } }),
     prisma.class.findMany({ where: { schoolId }, select: { name: true } }),
     prisma.subject.findMany({ where: { schoolId }, select: { name: true } }),
     prisma.student.findMany({ where: { schoolId }, select: { admissionNumber: true, email: true, phone: true } }),
@@ -155,6 +158,7 @@ async function existingSets(schoolId: string) {
   ]);
 
   return {
+    schoolCode: school?.code ?? null,
     classNames: new Set(classes.map((item) => identity(item.name))),
     subjectNames: new Set(subjects.map((item) => identity(item.name))),
     admissionNumbers: new Set(compact(students.map((item) => item.admissionNumber))),
@@ -224,6 +228,14 @@ export async function validateMigrationRows(
 
     if (context.areaKey === "students") {
       addDuplicateIssue({ issues, counts: duplicateAdmissionNumbers, value: values.admissionNumber, field: "admissionNumber", label: "Admission number" });
+      if (!existing.schoolCode) {
+        issues.push({ severity: "ERROR", field: "admissionNumber", message: "Save the school code before importing students." });
+      } else if (values.admissionNumber) {
+        const admissionCheck = validateAdmissionNumberForSchool(values.admissionNumber, existing.schoolCode);
+        if (!admissionCheck.ok) {
+          issues.push({ severity: "ERROR", field: "admissionNumber", message: admissionCheck.message ?? "Admission number format is not valid." });
+        }
+      }
       addDuplicateIssue({ issues, counts: duplicateStudentGuardianEmails, value: values.parentEmail, field: "parentEmail", label: "Guardian email", severity: "WARNING" });
       addDuplicateIssue({ issues, counts: duplicateStudentGuardianPhones, value: values.parentPhone, field: "parentPhone", label: "Guardian phone", severity: "WARNING" });
       if (values.admissionNumber && existing.admissionNumbers.has(identity(values.admissionNumber))) {
@@ -298,6 +310,14 @@ export async function validateMigrationRows(
     if (context.areaKey === "fees") {
       const amount = parseMoney(values.amount);
       const amountPaid = values.amountPaid ? parseMoney(values.amountPaid) : 0;
+      if (!existing.schoolCode) {
+        issues.push({ severity: "ERROR", field: "admissionNumber", message: "Save the school code before importing fee bills." });
+      } else if (values.admissionNumber) {
+        const admissionCheck = validateAdmissionNumberForSchool(values.admissionNumber, existing.schoolCode);
+        if (!admissionCheck.ok) {
+          issues.push({ severity: "ERROR", field: "admissionNumber", message: admissionCheck.message ?? "Admission number format is not valid." });
+        }
+      }
       addDuplicateIssue({
         issues,
         counts: duplicateFeeRows,

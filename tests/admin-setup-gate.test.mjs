@@ -101,6 +101,26 @@ test("school identity page stays focused on school identity only", () => {
   );
   assertContains(
     setupClient,
+    "School code",
+    "School identity must require the admin to set the school code.",
+  );
+  assertContains(
+    onboardingValidation,
+    "/^[A-Z0-9]{3,6}$/",
+    "School code validation must enforce 3-6 uppercase letters or numbers.",
+  );
+  assertContains(
+    onboardingService,
+    "This school code is already in use",
+    "School code must be unique across Edujay schools.",
+  );
+  assertContains(
+    onboardingService,
+    "School code cannot be changed after students have been created or imported.",
+    "School code must not be freely changed after student records exist.",
+  );
+  assertContains(
+    setupClient,
     'router.push("/onboarding/setup/path")',
     "Saving school identity must move the admin to setup path selection.",
   );
@@ -186,6 +206,11 @@ test("guided admin onboarding routes are structured and protected", () => {
       "setupPathForStep",
       "Each setup route must redirect admins back to the current setup step.",
     );
+    assertContains(
+      page,
+      "if (!school.code)",
+      "Each setup route after identity must send missing-code schools back to school identity.",
+    );
   }
 });
 
@@ -204,6 +229,11 @@ test("setup path selection is saved before routing to the next stage", () => {
     setupPathChooser,
     "selectSchoolSetupPathAction",
     "Path selection must call a server action before navigation.",
+  );
+  assertContains(
+    onboardingService,
+    "Save a school code before choosing a setup path.",
+    "Path selection must be blocked until the school code is saved.",
   );
   assertContains(
     setupPathChooser,

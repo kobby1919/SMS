@@ -17,6 +17,10 @@ export default async function SetupMigrationPage() {
     redirect("/admin");
   }
 
+  if (!school.code) {
+    redirect("/onboarding/setup");
+  }
+
   if (school.setupStep !== "migration") {
     redirect(setupPathForStep(school.setupStep));
   }

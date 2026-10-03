@@ -17,7 +17,7 @@ export default async function SchoolSetupPage() {
     redirect("/admin");
   }
 
-  if (school.setupStep && school.setupStep !== "profile") {
+  if (school.setupStep && school.setupStep !== "profile" && school.code) {
     redirect(setupPathForStep(school.setupStep));
   }
 

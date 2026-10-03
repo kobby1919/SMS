@@ -17,6 +17,10 @@ export default async function SetupCompletePage() {
     redirect("/admin");
   }
 
+  if (!school.code) {
+    redirect("/onboarding/setup");
+  }
+
   if (school.setupStep !== "complete") {
     redirect(setupPathForStep(school.setupStep));
   }

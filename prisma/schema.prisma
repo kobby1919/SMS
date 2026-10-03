@@ -640,6 +640,7 @@ model School {
   id               String                 @id
   name             String
   slug             String                 @unique
+  code             String?                @unique
   legalName        String?
   displayName      String?
   shortName        String?

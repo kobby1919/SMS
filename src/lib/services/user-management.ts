@@ -22,6 +22,7 @@ import { writeParentAccessAudit } from "@/src/lib/services/parent-access-audit";
 import { nextTeacherProfileStatus } from "@/src/lib/services/teacher-profile-completion";
 import { assertTeacherSubjectRemovalAllowed } from "@/src/lib/services/teacher-assignment-safety";
 import { writeTeacherAdminAuditLog } from "@/src/lib/services/teacher-admin-audit";
+import { validateAdmissionNumberForSchool } from "@/src/lib/admission-number";
 
 type ParentCreateInput = z.infer<typeof parentCreateSchema>;
 type ParentUpdateInput = z.infer<typeof parentUpdateSchema>;
@@ -298,7 +299,11 @@ export async function createStudent(
   actor: { userId: string } = { userId: "system" },
 ) {
   const admissionNumber = input.admissionNumber.trim().toUpperCase();
-  const [studentClass, existingAdmission] = await Promise.all([
+  const [school, studentClass, existingAdmission] = await Promise.all([
+    prisma.school.findUnique({
+      where: { id: schoolId },
+      select: { code: true },
+    }),
     prisma.class.findFirst({
       where: { id: input.classId, schoolId },
       select: { gradeId: true },
@@ -309,6 +314,11 @@ export async function createStudent(
     }),
   ]);
 
+  if (!school?.code) throw new UserManagementError("Save the school code before creating students.", 400);
+  const admissionCheck = validateAdmissionNumberForSchool(admissionNumber, school.code);
+  if (!admissionCheck.ok) {
+    throw new UserManagementError(admissionCheck.message ?? "Admission number format is not valid.", 400);
+  }
   if (!studentClass) throw new UserManagementError("Class not found.", 404);
   if (existingAdmission) throw new UserManagementError("Admission number already exists for this school.", 409);
 
@@ -508,7 +518,11 @@ export async function updateStudent(
   const parentId = input.parentId?.trim();
   if (!parentId) throw new UserManagementError("Parent is required.", 400);
 
-  const [student, studentClass, parent, existingAdmission] = await Promise.all([
+  const [school, student, studentClass, parent, existingAdmission] = await Promise.all([
+    prisma.school.findUnique({
+      where: { id: schoolId },
+      select: { code: true },
+    }),
     prisma.student.findFirst({
       where: { id: studentId, schoolId },
       select: { id: true, name: true, surname: true },
@@ -526,6 +540,11 @@ export async function updateStudent(
       select: { id: true },
     }),
   ]);
+  if (!school?.code) throw new UserManagementError("Save the school code before updating student admission numbers.", 400);
+  const admissionCheck = validateAdmissionNumberForSchool(admissionNumber, school.code);
+  if (!admissionCheck.ok) {
+    throw new UserManagementError(admissionCheck.message ?? "Admission number format is not valid.", 400);
+  }
   if (!student) throw new UserManagementError("Student not found.", 404);
   if (!studentClass) throw new UserManagementError("Class not found.", 404);
   if (!parent) throw new UserManagementError("Parent not found.", 404);

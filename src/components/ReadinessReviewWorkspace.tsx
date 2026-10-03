@@ -4,6 +4,7 @@ import SetupAdvanceButton from "@/src/components/SetupAdvanceButton";
 
 type ReadinessSchool = {
   name: string;
+  code: string | null;
   contactEmail: string | null;
   phone: string | null;
   _count: {
@@ -35,9 +36,9 @@ export default function ReadinessReviewWorkspace({ school }: { school: Readiness
   const checks: ReadinessCheck[] = [
     {
       label: "School identity",
-      description: "School name and basic contact identity are available for records and documents.",
-      count: school.contactEmail || school.phone ? "Contact saved" : "Contact can be added later",
-      ready: Boolean(school.name),
+      description: "School name and strict school code are ready for records, documents, and admission numbers.",
+      count: school.code ? `Code ${school.code}` : "School code missing",
+      ready: Boolean(school.name && school.code),
       required: true,
       href: "/onboarding/setup",
       action: "Edit identity",

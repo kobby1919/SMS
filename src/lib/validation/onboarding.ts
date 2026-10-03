@@ -11,6 +11,10 @@ export const rejectWaitlistEntrySchema = z.object({
 
 export const schoolProfileSetupSchema = z.object({
   name: z.string().trim().min(2).max(120),
+  code: z.string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[A-Z0-9]{3,6}$/, "School code must be 3-6 uppercase letters or numbers, with no spaces."),
   legalName: z.string().trim().max(160).optional().or(z.literal("")),
   displayName: z.string().trim().min(2).max(120).optional().or(z.literal("")),
   shortName: z.string().trim().max(40).optional().or(z.literal("")),

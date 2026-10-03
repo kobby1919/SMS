@@ -8,6 +8,7 @@ type SchoolSetupState = {
   id: string;
   name: string;
   slug: string;
+  code: string | null;
   legalName: string | null;
   displayName: string | null;
   shortName: string | null;
@@ -23,6 +24,7 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
   const router = useRouter();
   const [values, setValues] = useState({
     name: school.name,
+    code: school.code ?? "",
     legalName: school.legalName ?? school.name,
     displayName: school.displayName ?? school.name,
     shortName: school.shortName ?? school.name,
@@ -67,6 +69,19 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
               onChange={(event) => update("name", event.target.value)}
               className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
             />
+          </label>
+          <label className="block">
+            <span className="text-xs font-bold uppercase text-gray-500">School code</span>
+            <input
+              value={values.code}
+              onChange={(event) => update("code", event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6))}
+              placeholder="e.g. SMS"
+              maxLength={6}
+              className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-black uppercase tracking-wide outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+            />
+            <span className="mt-1 block text-xs text-gray-400">
+              Required for Edujay admission numbers. Use 3-6 uppercase letters or numbers, no spaces.
+            </span>
           </label>
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block">

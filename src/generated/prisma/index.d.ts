@@ -11611,6 +11611,7 @@ export namespace Prisma {
     id: string | null
     name: string | null
     slug: string | null
+    code: string | null
     legalName: string | null
     displayName: string | null
     shortName: string | null
@@ -11631,6 +11632,7 @@ export namespace Prisma {
     id: string | null
     name: string | null
     slug: string | null
+    code: string | null
     legalName: string | null
     displayName: string | null
     shortName: string | null
@@ -11651,6 +11653,7 @@ export namespace Prisma {
     id: number
     name: number
     slug: number
+    code: number
     legalName: number
     displayName: number
     shortName: number
@@ -11673,6 +11676,7 @@ export namespace Prisma {
     id?: true
     name?: true
     slug?: true
+    code?: true
     legalName?: true
     displayName?: true
     shortName?: true
@@ -11693,6 +11697,7 @@ export namespace Prisma {
     id?: true
     name?: true
     slug?: true
+    code?: true
     legalName?: true
     displayName?: true
     shortName?: true
@@ -11713,6 +11718,7 @@ export namespace Prisma {
     id?: true
     name?: true
     slug?: true
+    code?: true
     legalName?: true
     displayName?: true
     shortName?: true
@@ -11806,6 +11812,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code: string | null
     legalName: string | null
     displayName: string | null
     shortName: string | null
@@ -11843,6 +11850,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
+    code?: boolean
     legalName?: boolean
     displayName?: boolean
     shortName?: boolean
@@ -11938,6 +11946,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
+    code?: boolean
     legalName?: boolean
     displayName?: boolean
     shortName?: boolean
@@ -11958,6 +11967,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
+    code?: boolean
     legalName?: boolean
     displayName?: boolean
     shortName?: boolean
@@ -11978,6 +11988,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
+    code?: boolean
     legalName?: boolean
     displayName?: boolean
     shortName?: boolean
@@ -11994,7 +12005,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type SchoolOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "legalName" | "displayName" | "shortName" | "emailFromName" | "primaryColor" | "contactEmail" | "phone" | "address" | "logoUrl" | "onboardingStatus" | "setupStep" | "setupCompletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["school"]>
+  export type SchoolOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "code" | "legalName" | "displayName" | "shortName" | "emailFromName" | "primaryColor" | "contactEmail" | "phone" | "address" | "logoUrl" | "onboardingStatus" | "setupStep" | "setupCompletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["school"]>
   export type SchoolInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     admins?: boolean | School$adminsArgs<ExtArgs>
     students?: boolean | School$studentsArgs<ExtArgs>
@@ -12157,6 +12168,7 @@ export namespace Prisma {
       id: string
       name: string
       slug: string
+      code: string | null
       legalName: string | null
       displayName: string | null
       shortName: string | null
@@ -12671,6 +12683,7 @@ export namespace Prisma {
     readonly id: FieldRef<"School", 'String'>
     readonly name: FieldRef<"School", 'String'>
     readonly slug: FieldRef<"School", 'String'>
+    readonly code: FieldRef<"School", 'String'>
     readonly legalName: FieldRef<"School", 'String'>
     readonly displayName: FieldRef<"School", 'String'>
     readonly shortName: FieldRef<"School", 'String'>
@@ -113986,6 +113999,7 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     slug: 'slug',
+    code: 'code',
     legalName: 'legalName',
     displayName: 'displayName',
     shortName: 'shortName',
@@ -116676,6 +116690,7 @@ export namespace Prisma {
     id?: StringFilter<"School"> | string
     name?: StringFilter<"School"> | string
     slug?: StringFilter<"School"> | string
+    code?: StringNullableFilter<"School"> | string | null
     legalName?: StringNullableFilter<"School"> | string | null
     displayName?: StringNullableFilter<"School"> | string | null
     shortName?: StringNullableFilter<"School"> | string | null
@@ -116770,6 +116785,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    code?: SortOrderInput | SortOrder
     legalName?: SortOrderInput | SortOrder
     displayName?: SortOrderInput | SortOrder
     shortName?: SortOrderInput | SortOrder
@@ -116863,6 +116879,7 @@ export namespace Prisma {
   export type SchoolWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     slug?: string
+    code?: string
     AND?: SchoolWhereInput | SchoolWhereInput[]
     OR?: SchoolWhereInput[]
     NOT?: SchoolWhereInput | SchoolWhereInput[]
@@ -116955,12 +116972,13 @@ export namespace Prisma {
     parentTeacherContactRequests?: ParentTeacherContactRequestListRelationFilter
     parentTeacherContactMessages?: ParentTeacherContactMessageListRelationFilter
     parentStudentRelationships?: ParentStudentRelationshipListRelationFilter
-  }, "id" | "slug">
+  }, "id" | "slug" | "code">
 
   export type SchoolOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    code?: SortOrderInput | SortOrder
     legalName?: SortOrderInput | SortOrder
     displayName?: SortOrderInput | SortOrder
     shortName?: SortOrderInput | SortOrder
@@ -116987,6 +117005,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"School"> | string
     name?: StringWithAggregatesFilter<"School"> | string
     slug?: StringWithAggregatesFilter<"School"> | string
+    code?: StringNullableWithAggregatesFilter<"School"> | string | null
     legalName?: StringNullableWithAggregatesFilter<"School"> | string | null
     displayName?: StringNullableWithAggregatesFilter<"School"> | string | null
     shortName?: StringNullableWithAggregatesFilter<"School"> | string | null
@@ -125119,6 +125138,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -125213,6 +125233,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -125307,6 +125328,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -125401,6 +125423,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -125495,6 +125518,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -125515,6 +125539,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -125535,6 +125560,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -135079,6 +135105,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    code?: SortOrder
     legalName?: SortOrder
     displayName?: SortOrder
     shortName?: SortOrder
@@ -135099,6 +135126,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    code?: SortOrder
     legalName?: SortOrder
     displayName?: SortOrder
     shortName?: SortOrder
@@ -135119,6 +135147,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    code?: SortOrder
     legalName?: SortOrder
     displayName?: SortOrder
     shortName?: SortOrder
@@ -159696,6 +159725,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -159789,6 +159819,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -159898,6 +159929,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -159991,6 +160023,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -160084,6 +160117,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -160177,6 +160211,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -160342,6 +160377,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -160435,6 +160471,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -160544,6 +160581,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -160637,6 +160675,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -161544,6 +161583,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -161637,6 +161677,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -162134,6 +162175,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -162227,6 +162269,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -163126,6 +163169,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -163219,6 +163263,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -163616,6 +163661,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -163709,6 +163755,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -164398,6 +164445,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -164491,6 +164539,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -164801,6 +164850,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -164894,6 +164944,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -165167,6 +165218,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -165260,6 +165312,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -165511,6 +165564,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -165604,6 +165658,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -165713,6 +165768,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -165806,6 +165862,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -165899,6 +165956,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -165992,6 +166050,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -166101,6 +166160,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -166194,6 +166254,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -166287,6 +166348,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -166380,6 +166442,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -166489,6 +166552,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -166582,6 +166646,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -166675,6 +166740,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -166768,6 +166834,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -166877,6 +166944,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -166970,6 +167038,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -167063,6 +167132,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -167156,6 +167226,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -167265,6 +167336,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -167358,6 +167430,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -167451,6 +167524,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -167544,6 +167618,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -167730,6 +167805,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -167823,6 +167899,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -167999,6 +168076,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -168092,6 +168170,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -168242,6 +168321,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -168335,6 +168415,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -168444,6 +168525,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -168537,6 +168619,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -168702,6 +168785,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -168795,6 +168879,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -168904,6 +168989,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -168997,6 +169083,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -169137,6 +169224,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -169230,6 +169318,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -169360,6 +169449,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -169453,6 +169543,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -169562,6 +169653,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -169655,6 +169747,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -169748,6 +169841,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -169841,6 +169935,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -170105,6 +170200,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -170198,6 +170294,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -170406,6 +170503,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -170499,6 +170597,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -170730,6 +170829,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -170823,6 +170923,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -171050,6 +171151,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -171143,6 +171245,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -171374,6 +171477,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -171467,6 +171571,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -171694,6 +171799,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -171787,6 +171893,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -171973,6 +172080,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -172066,6 +172174,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -172242,6 +172351,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -172335,6 +172445,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -172521,6 +172632,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -172614,6 +172726,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -172790,6 +172903,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -172883,6 +172997,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -173045,6 +173160,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -173138,6 +173254,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -173290,6 +173407,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -173383,6 +173501,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -173582,6 +173701,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -173675,6 +173795,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -173800,6 +173921,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -173893,6 +174015,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -174095,6 +174218,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -174188,6 +174312,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -174352,6 +174477,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -174445,6 +174571,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -174646,6 +174773,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -174739,6 +174867,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -174936,6 +175065,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -175029,6 +175159,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -175308,6 +175439,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -175401,6 +175533,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -175652,6 +175785,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -175745,6 +175879,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -175952,6 +176087,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -176045,6 +176181,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -176248,6 +176385,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -176341,6 +176479,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -176693,6 +176832,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -176786,6 +176926,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -177120,6 +177261,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -177213,6 +177355,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -177582,6 +177725,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -177675,6 +177819,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -178052,6 +178197,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -178145,6 +178291,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -178461,6 +178608,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -178554,6 +178702,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -178872,6 +179021,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -178965,6 +179115,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -179281,6 +179432,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -179374,6 +179526,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -179531,6 +179684,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -179624,6 +179778,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -180267,6 +180422,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -180360,6 +180516,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -180726,6 +180883,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -180819,6 +180977,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -181218,6 +181377,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -181311,6 +181471,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -181500,6 +181661,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -181593,6 +181755,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -182029,6 +182192,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -182122,6 +182286,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -182479,6 +182644,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -182572,6 +182738,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -182746,6 +182913,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -182839,6 +183007,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -182990,6 +183159,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -183083,6 +183253,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -183292,6 +183463,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -183385,6 +183557,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -183552,6 +183725,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -183645,6 +183819,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -183934,6 +184109,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -184027,6 +184203,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -184318,6 +184495,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -184411,6 +184589,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -184645,6 +184824,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -184738,6 +184918,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -184974,6 +185155,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -185067,6 +185249,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -185337,6 +185520,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -185430,6 +185614,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -185664,6 +185849,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -185757,6 +185943,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -186019,6 +186206,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -186112,6 +186300,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -186376,6 +186565,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -186469,6 +186659,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -186620,6 +186811,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -186713,6 +186905,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -186854,6 +187047,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -186947,6 +187141,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -187098,6 +187293,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -187191,6 +187387,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -187332,6 +187529,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -187425,6 +187623,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -187534,6 +187733,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -187627,6 +187827,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -187720,6 +187921,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -187813,6 +188015,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -188112,6 +188315,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -188205,6 +188409,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -188477,6 +188682,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -188570,6 +188776,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -188897,6 +189104,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -188990,6 +189198,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -189308,6 +189517,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -189401,6 +189611,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -189704,6 +189915,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -189797,6 +190009,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -190102,6 +190315,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -190195,6 +190409,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -190304,6 +190519,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -190397,6 +190613,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -190490,6 +190707,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -190583,6 +190801,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -190914,6 +191133,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -191007,6 +191227,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -191346,6 +191567,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -191439,6 +191661,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -191590,6 +191813,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -191683,6 +191907,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -191824,6 +192049,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -191917,6 +192143,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -192068,6 +192295,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -192161,6 +192389,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -192302,6 +192531,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -192395,6 +192625,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -192593,6 +192824,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -192686,6 +192918,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -192986,6 +193219,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -193079,6 +193313,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -193341,6 +193576,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -193434,6 +193670,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -193698,6 +193935,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -193791,6 +194029,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -194008,6 +194247,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -194101,6 +194341,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -194414,6 +194655,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -194507,6 +194749,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -194974,6 +195217,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -195067,6 +195311,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -195554,6 +195799,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -195647,6 +195893,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -195910,6 +196157,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -196003,6 +196251,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -196460,6 +196709,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -196553,6 +196803,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -196915,6 +197166,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -197008,6 +197260,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -197245,6 +197498,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -197338,6 +197592,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -197595,6 +197850,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -197688,6 +197944,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -197947,6 +198204,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -198040,6 +198298,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -198199,6 +198458,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -198292,6 +198552,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -198441,6 +198702,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -198534,6 +198796,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -198691,6 +198954,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -198784,6 +199048,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -198931,6 +199196,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -199024,6 +199290,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -199133,6 +199400,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -199226,6 +199494,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -199319,6 +199588,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -199412,6 +199682,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -199521,6 +199792,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -199614,6 +199886,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -199707,6 +199980,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -199800,6 +200074,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -200137,6 +200412,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -200230,6 +200506,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -200575,6 +200852,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -200668,6 +200946,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -200777,6 +201056,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -200870,6 +201150,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -200963,6 +201244,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -201056,6 +201338,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -201215,6 +201498,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -201308,6 +201592,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -201457,6 +201742,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -201550,6 +201836,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -201659,6 +201946,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -201752,6 +202040,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -201845,6 +202134,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -201938,6 +202228,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -202047,6 +202338,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -202140,6 +202432,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -202233,6 +202526,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -202326,6 +202620,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -202540,6 +202835,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -202633,6 +202929,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -202825,6 +203122,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -202918,6 +203216,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -203166,6 +203465,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -203259,6 +203559,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -203731,6 +204032,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -203824,6 +204126,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -203986,6 +204289,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -204079,6 +204383,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -204231,6 +204536,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -204324,6 +204630,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -204496,6 +204803,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -204589,6 +204897,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -204739,6 +205048,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -204832,6 +205142,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -204992,6 +205303,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -205085,6 +205397,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -205235,6 +205548,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -205328,6 +205642,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -205663,6 +205978,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -205756,6 +206072,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -206099,6 +206416,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -206192,6 +206510,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -206356,6 +206675,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -206449,6 +206769,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -206603,6 +206924,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -206696,6 +207018,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    code?: string | null
     legalName?: string | null
     displayName?: string | null
     shortName?: string | null
@@ -206805,6 +207128,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -206898,6 +207222,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     legalName?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     shortName?: NullableStringFieldUpdateOperationsInput | string | null

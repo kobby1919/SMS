@@ -124,6 +124,7 @@ exports.Prisma.SchoolScalarFieldEnum = {
   id: 'id',
   name: 'name',
   slug: 'slug',
+  code: 'code',
   legalName: 'legalName',
   displayName: 'displayName',
   shortName: 'shortName',

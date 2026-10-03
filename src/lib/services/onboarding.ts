@@ -144,6 +144,7 @@ export async function getSchoolOnboardingState(schoolId: string) {
         id: true,
         name: true,
         slug: true,
+        code: true,
         legalName: true,
         displayName: true,
         shortName: true,
@@ -225,6 +226,7 @@ export async function getSchoolOnboardingState(schoolId: string) {
 export async function updateSchoolProfileSetup(
   input: {
     name: string;
+    code: string;
     legalName?: string;
     displayName?: string;
     shortName?: string;
@@ -237,10 +239,43 @@ export async function updateSchoolProfileSetup(
   },
   context: AuthzContext,
 ) {
+  const code = input.code.trim().toUpperCase();
+  const existing = await prisma.school.findUnique({
+    where: { id: context.schoolId },
+    select: {
+      id: true,
+      code: true,
+      _count: {
+        select: { students: true },
+      },
+    },
+  });
+
+  if (!existing) {
+    throw new Error("School not found.");
+  }
+
+  if (existing.code && existing.code !== code && existing._count.students > 0) {
+    throw new Error("School code cannot be changed after students have been created or imported.");
+  }
+
+  const duplicate = await prisma.school.findFirst({
+    where: {
+      code,
+      NOT: { id: context.schoolId },
+    },
+    select: { id: true },
+  });
+
+  if (duplicate) {
+    throw new Error("This school code is already in use. Choose a different code.");
+  }
+
   const school = await prisma.school.update({
     where: { id: context.schoolId },
     data: {
       name: input.name,
+      code,
       legalName: input.legalName || input.name,
       displayName: input.displayName || input.name,
       shortName: input.shortName || input.displayName || input.name,
@@ -261,6 +296,7 @@ export async function updateSchoolProfileSetup(
     schoolId: context.schoolId,
     metadata: {
       name: input.name,
+      code,
       displayName: input.displayName || input.name,
       emailFromName: input.emailFromName || input.displayName || input.name,
     },
@@ -283,11 +319,16 @@ export async function selectSchoolSetupPath(
       id: true,
       onboardingStatus: true,
       setupStep: true,
+      code: true,
     },
   });
 
   if (!school) {
     throw new Error("School not found.");
+  }
+
+  if (!school.code) {
+    throw new Error("Save a school code before choosing a setup path.");
   }
 
   if (school.onboardingStatus === "COMPLETED") {
@@ -327,6 +368,10 @@ export async function advanceSchoolSetupToReview(context: AuthzContext) {
     throw new Error("This school has already completed onboarding.");
   }
 
+  if (!school.code) {
+    throw new Error("Save the school code before readiness review.");
+  }
+
   if (!hasRequiredAcademicFoundation(school)) {
     throw new Error("Create at least one grade, class, and subject before readiness review.");
   }
@@ -355,6 +400,10 @@ export async function advanceSchoolSetupToCompletion(context: AuthzContext) {
     throw new Error("This school has already completed onboarding.");
   }
 
+  if (!school.code) {
+    throw new Error("Save the school code before finishing setup.");
+  }
+
   if (!hasRequiredAcademicFoundation(school)) {
     throw new Error("Complete the required academic foundation before finishing setup.");
   }
@@ -373,6 +422,10 @@ export async function completeSchoolOnboarding(context: AuthzContext) {
 
   if (!school) {
     throw new Error("School not found.");
+  }
+
+  if (!school.code) {
+    throw new Error("Save the school code before entering the live dashboard.");
   }
 
   if (school._count.grades === 0 || school._count.classes === 0 || school._count.subjects === 0) {

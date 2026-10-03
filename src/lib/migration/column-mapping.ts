@@ -58,7 +58,7 @@ export const MIGRATION_AREAS: MigrationAreaDefinition[] = [
     label: "Students",
     description: "Bring admission records and class placement after classes exist.",
     fields: [
-      { key: "admissionNumber", label: "Admission number", required: true, aliases: ["adm no", "admission no", "admission number", "student id"], help: "Unique student admission number." },
+      { key: "admissionNumber", label: "Admission number", required: true, aliases: ["adm no", "admission no", "admission number", "student id"], help: "Use SCHOOLCODE-YYYY-0001 format, for example EDJ-2026-0001." },
       { key: "firstName", label: "First name", required: true, aliases: ["first name", "firstname", "given name"], help: "Student first name." },
       { key: "lastName", label: "Last name", required: true, aliases: ["last name", "surname", "family name"], help: "Student surname." },
       { key: "className", label: "Class name", required: true, aliases: ["class", "class name", "current class"], help: "Must match a class in Edujay." },
@@ -67,7 +67,7 @@ export const MIGRATION_AREAS: MigrationAreaDefinition[] = [
       { key: "parentEmail", label: "Guardian email", required: true, aliases: ["parent email", "guardian email", "email"], help: "Required for parent invite/login access." },
       { key: "parentPhone", label: "Guardian phone", required: false, aliases: ["parent phone", "guardian phone", "phone", "contact"], help: "Optional contact phone." },
     ],
-    sampleRows: [["ADM001", "Ama", "Mensah", "Nursery A", "Female", "Akosua Mensah", "parent@example.com", "0240000000"]],
+    sampleRows: [["EDJ-2026-0001", "Ama", "Mensah", "Nursery A", "Female", "Akosua Mensah", "parent@example.com", "0240000000"]],
   },
   {
     key: "parents",
@@ -77,10 +77,10 @@ export const MIGRATION_AREAS: MigrationAreaDefinition[] = [
       { key: "parentName", label: "Parent name", required: true, aliases: ["parent", "parent name", "guardian", "guardian name"], help: "Full guardian name." },
       { key: "email", label: "Email", required: true, aliases: ["email", "email address"], help: "Required for parent invite/login access." },
       { key: "phone", label: "Phone", required: false, aliases: ["phone", "phone number", "mobile", "contact"], help: "Optional contact phone." },
-      { key: "wardAdmissionNumber", label: "Ward admission number", required: true, aliases: ["ward adm no", "student admission", "admission number", "student id"], help: "Links parent to the right student." },
+      { key: "wardAdmissionNumber", label: "Ward admission number", required: true, aliases: ["ward adm no", "student admission", "admission number", "student id"], help: "Links parent to the right student. Use the official Edujay admission number." },
       { key: "relationship", label: "Relationship", required: false, aliases: ["relationship", "guardian type"], help: "Example: Mother, Father, Guardian." },
     ],
-    sampleRows: [["Akosua Mensah", "parent@example.com", "0240000000", "ADM001", "Mother"]],
+    sampleRows: [["Akosua Mensah", "parent@example.com", "0240000000", "EDJ-2026-0001", "Mother"]],
   },
   {
     key: "teachers",
@@ -114,14 +114,14 @@ export const MIGRATION_AREAS: MigrationAreaDefinition[] = [
     label: "Fees and bills",
     description: "Prepare fee balances carefully before parents see finance records.",
     fields: [
-      { key: "admissionNumber", label: "Admission number", required: true, aliases: ["adm no", "admission no", "student id", "admission number"], help: "Student the fee belongs to." },
+      { key: "admissionNumber", label: "Admission number", required: true, aliases: ["adm no", "admission no", "student id", "admission number"], help: "Student the fee belongs to. Use SCHOOLCODE-YYYY-0001 format." },
       { key: "feeName", label: "Fee item", required: true, aliases: ["fee", "fee item", "bill item", "description"], help: "Example: Tuition, Feeding, Bus." },
       { key: "amount", label: "Amount", required: true, aliases: ["amount", "bill amount", "total"], help: "Amount billed." },
       { key: "amountPaid", label: "Amount paid", required: false, aliases: ["paid", "amount paid", "collected"], help: "Existing amount paid, if any." },
       { key: "term", label: "Term", required: true, aliases: ["term", "semester"], help: "School term." },
       { key: "academicYear", label: "Academic year", required: true, aliases: ["academic year", "year", "session"], help: "Example: 2026/27." },
     ],
-    sampleRows: [["ADM001", "Tuition", "1200", "500", "TERM_1", "2026/27"]],
+    sampleRows: [["EDJ-2026-0001", "Tuition", "1200", "500", "TERM_1", "2026/27"]],
   },
 ];
 

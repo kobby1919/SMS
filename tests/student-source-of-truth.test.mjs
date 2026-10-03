@@ -31,6 +31,7 @@ const studentImportService = read("src/lib/services/student-import.ts");
 const studentImportAction = read("src/lib/actions/studentImportActions.ts");
 const studentImportPage = read("src/app/(dashboard)/list/students/import/page.tsx");
 const studentImportForm = read("src/components/StudentImportForm.tsx");
+const admissionNumberHelper = read("src/lib/admission-number.ts");
 const parentStudentRelationships = read("src/lib/services/parent-student-relationships.ts");
 const parentRelationshipActions = read("src/lib/actions/parentRelationshipActions.ts");
 const parentInvites = read("src/lib/services/parent-invites.ts");
@@ -54,6 +55,8 @@ test("new student onboarding creates records, not Clerk student accounts", () =>
     userManagement.indexOf("export async function createParent"),
   );
   assertContains(createStudentBlock, "admissionNumber", "Student creation must use admission number.");
+  assertContains(userManagement, "validateAdmissionNumberForSchool", "Student creation and update must enforce the school admission number format.");
+  assertContains(userManagement, "Save the school code before creating students.", "Student creation must be blocked until the school code exists.");
   assertContains(createStudentBlock, "randomUUID", "Student creation must create an internal record id.");
   assertContains(createStudentBlock, "studentRecordUsername", "Legacy username must be derived internally.");
   assertContains(createStudentBlock, "prisma.$transaction", "Student creation must create the student and parent link atomically.");
@@ -183,6 +186,9 @@ test("student bulk import keeps intake strict and account-free", () => {
   assertContains(studentImportService, "phone: { not: null }", "Student import must not rely on exact stored phone formatting.");
   assertContains(studentImportService, "prisma.$transaction", "Student import must write in a database transaction.");
   assertContains(studentImportService, "admissionNumber: { in: admissionNumbers }", "Student import must block duplicate admission numbers.");
+  assertContains(studentImportService, "validateAdmissionNumberForSchool", "Student import must enforce the official school admission number format.");
+  assertContains(studentImportService, "Save the school code before importing students.", "Student import must be blocked until the school code exists.");
+  assertContains(admissionNumberHelper, "SCHOOLCODE-YYYY-0001", "Admission helper must explain the official Edujay format.");
   assertContains(studentImportService, "parentStudentRelationship.upsert", "Student import must link guardians to imported students.");
   assertContains(studentImportService, "createdStudents", "Student import result must report created students.");
   assertContains(studentImportService, "linkedParents", "Student import result must report parent links.");

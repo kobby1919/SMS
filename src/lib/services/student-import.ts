@@ -3,6 +3,7 @@ import { Prisma, StudentStatus, UserSex } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
 import { studentRecordUsername } from "@/src/lib/services/user-management";
+import { validateAdmissionNumberForSchool } from "@/src/lib/admission-number";
 
 const REQUIRED_HEADERS = [
   "admissionNumber",
@@ -24,8 +25,8 @@ const OPTIONAL_HEADERS = [
 
 export const STUDENT_IMPORT_HEADERS = [...REQUIRED_HEADERS, ...OPTIONAL_HEADERS] as const;
 export const STUDENT_IMPORT_TEMPLATE = `${STUDENT_IMPORT_HEADERS.join(",")}
-EDJ-0001,Akosua,Mensah,FEMALE,Class 1A,Ama Mensah,0200000001,ama@example.com,,,Accra,B+
-EDJ-0002,Kofi,Mensah,MALE,Class 1A,Ama Mensah,0200000001,ama@example.com,,,Accra,O+`;
+EDJ-2026-0001,Akosua,Mensah,FEMALE,Class 1A,Ama Mensah,0200000001,ama@example.com,,,Accra,B+
+EDJ-2026-0002,Kofi,Mensah,MALE,Class 1A,Ama Mensah,0200000001,ama@example.com,,,Accra,O+`;
 
 type StudentImportHeader = (typeof STUDENT_IMPORT_HEADERS)[number];
 
@@ -208,7 +209,7 @@ function generatedParentUsername(schoolId: string, identityKey: string) {
   return `parent:${schoolId}:${hash}`;
 }
 
-function validateRows(rows: ParsedStudentRow[]) {
+function validateRows(rows: ParsedStudentRow[], schoolCode: string) {
   const errors: string[] = [];
   const seenAdmissionNumbers = new Set<string>();
   const parentContactByEmail = new Map<string, string | null>();
@@ -219,6 +220,12 @@ function validateRows(rows: ParsedStudentRow[]) {
     const admissionNumber = normalizeAdmissionNumber(row.admissionNumber);
 
     if (!admissionNumber) errors.push(`${rowLabel}: admissionNumber is required.`);
+    if (admissionNumber) {
+      const admissionCheck = validateAdmissionNumberForSchool(admissionNumber, schoolCode);
+      if (!admissionCheck.ok) {
+        errors.push(`${rowLabel}: ${admissionCheck.message}`);
+      }
+    }
     if (admissionNumber && seenAdmissionNumbers.has(admissionNumber)) {
       errors.push(`${rowLabel}: duplicate admissionNumber ${admissionNumber} appears in this file.`);
     }
@@ -328,7 +335,16 @@ export async function importStudentsFromCsv(schoolId: string, csv: string): Prom
     throw new StudentImportError("Import at most 500 students at a time so the school can review mistakes properly.");
   }
 
-  const rowErrors = validateRows(rows);
+  const school = await prisma.school.findUnique({
+    where: { id: schoolId },
+    select: { code: true },
+  });
+
+  if (!school?.code) {
+    throw new StudentImportError("Save the school code before importing students.");
+  }
+
+  const rowErrors = validateRows(rows, school.code);
   if (rowErrors.length > 0) {
     throw new StudentImportError("Fix the CSV errors and upload again.", 400, rowErrors, rows.length);
   }

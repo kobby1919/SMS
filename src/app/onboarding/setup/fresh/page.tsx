@@ -17,6 +17,10 @@ export default async function FreshSetupPage() {
     redirect("/admin");
   }
 
+  if (!school.code) {
+    redirect("/onboarding/setup");
+  }
+
   if (school.setupStep !== "fresh") {
     redirect(setupPathForStep(school.setupStep));
   }
