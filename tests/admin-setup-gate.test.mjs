@@ -14,6 +14,7 @@ const setupPathPage = readFileSync("src/app/onboarding/setup/path/page.tsx", "ut
 const setupPathChooser = readFileSync("src/components/SetupPathChooser.tsx", "utf8");
 const freshSetupWorkspace = readFileSync("src/components/FreshSetupWorkspace.tsx", "utf8");
 const readinessReviewWorkspace = readFileSync("src/components/ReadinessReviewWorkspace.tsx", "utf8");
+const completionWorkspace = readFileSync("src/components/OnboardingCompletionWorkspace.tsx", "utf8");
 const onboardingActions = readFileSync("src/lib/actions/onboardingActions.ts", "utf8");
 const onboardingValidation = readFileSync("src/lib/validation/onboarding.ts", "utf8");
 const freshSetupPage = readFileSync("src/app/onboarding/setup/fresh/page.tsx", "utf8");
@@ -269,5 +270,43 @@ test("readiness review is a real checkpoint before completion", () => {
     readinessReviewWorkspace,
     "/onboarding/setup/fresh",
     "The review page must send incomplete setup back to the fresh setup workspace.",
+  );
+});
+
+test("completion stage completes onboarding before entering dashboard", () => {
+  assertContains(
+    completePage,
+    "OnboardingCompletionWorkspace",
+    "Completion page must use the guarded completion workspace.",
+  );
+  assertContains(
+    completePage,
+    'school.onboardingStatus === "COMPLETED"',
+    "Already completed schools should leave the setup flow.",
+  );
+  assertNotContains(
+    completePage,
+    'href="/admin"',
+    "Completion page must not be a raw link to the admin dashboard.",
+  );
+  assertContains(
+    completionWorkspace,
+    "completeSchoolOnboardingAction",
+    "Completion must call the server action that marks onboarding complete.",
+  );
+  assertContains(
+    completionWorkspace,
+    'router.push("/admin")',
+    "The dashboard should open only after completion succeeds.",
+  );
+  assertContains(
+    onboardingService,
+    'onboardingStatus: "COMPLETED"',
+    "Completion service must mark the school onboarding status as completed.",
+  );
+  assertContains(
+    onboardingService,
+    "setupCompletedAt: new Date()",
+    "Completion service must timestamp setup completion.",
   );
 });
