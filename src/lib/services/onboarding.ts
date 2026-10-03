@@ -31,6 +31,20 @@ const DEFAULT_SUBJECTS = [
   "Religious and Moral Education",
 ];
 
+type SchoolOnboardingStatus =
+  | "PENDING_SETUP"
+  | "PROFILE_DONE"
+  | "ACADEMIC_DONE"
+  | "USERS_DONE"
+  | "COMPLETED";
+
+export function defaultSetupStepForStatus(status: SchoolOnboardingStatus): string | null {
+  if (status === "PENDING_SETUP") return "profile";
+  if (status === "PROFILE_DONE") return "academic";
+  if (status === "ACADEMIC_DONE" || status === "USERS_DONE") return "users";
+  return null;
+}
+
 export type CreatedSchoolInvite = {
   schoolId: string;
   schoolName: string;
@@ -122,7 +136,7 @@ export async function listWaitlistEntriesForReview() {
 }
 
 export async function getSchoolOnboardingState(schoolId: string) {
-  return prisma.school.findUnique({
+  const school = await prisma.school.findUnique({
     where: { id: schoolId },
     select: {
       id: true,
@@ -162,6 +176,13 @@ export async function getSchoolOnboardingState(schoolId: string) {
       },
     },
   });
+
+  if (!school) return null;
+
+  return {
+    ...school,
+    setupStep: school.setupStep ?? defaultSetupStepForStatus(school.onboardingStatus),
+  };
 }
 
 export async function updateSchoolProfileSetup(

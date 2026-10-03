@@ -24,6 +24,7 @@ type SchoolSetupState = {
   address: string | null;
   logoUrl: string | null;
   onboardingStatus: string;
+  setupStep: string | null;
   onboardingAuditLogs: {
     id: number;
     action: string;
@@ -63,6 +64,7 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
   const [isPending, startTransition] = useTransition();
   const hasAcademicBase =
     school._count.grades > 0 && school._count.classes > 0 && school._count.subjects > 0;
+  const activeStep = school.setupStep ?? "profile";
 
   function update(field: keyof typeof values, value: string) {
     setValues((current) => ({ ...current, [field]: value }));
@@ -127,6 +129,17 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
         <ProgressCard label="Grades" done={school._count.grades > 0} />
         <ProgressCard label="Classes" done={school._count.classes > 0} />
         <ProgressCard label="Subjects" done={school._count.subjects > 0} />
+      </div>
+
+      <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-950">
+        <span className="font-black">Current setup stage:</span>{" "}
+        {activeStep === "profile"
+          ? "Confirm the school profile first."
+          : activeStep === "academic"
+            ? "Set up grades, classes, and subjects."
+            : activeStep === "users"
+              ? "Bring in school users and finish setup."
+              : "Ready to finish setup."}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">

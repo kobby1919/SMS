@@ -279,7 +279,7 @@ async function main() {
         where: { id: schoolId },
         data: {
           onboardingStatus: "PENDING_SETUP",
-          setupStep: null,
+          setupStep: "profile",
           setupCompletedAt: null,
         },
       });
@@ -289,7 +289,7 @@ async function main() {
 
   console.log("");
   console.log("default-school operating data reset complete.");
-  console.log("School setup status reset to PENDING_SETUP.");
+  console.log("School setup status reset to PENDING_SETUP at setup step: profile.");
 }
 
 main()

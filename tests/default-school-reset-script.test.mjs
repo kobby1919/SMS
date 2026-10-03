@@ -53,6 +53,11 @@ test("default-school reset preserves school and one admin while clearing operati
     'onboardingStatus: "PENDING_SETUP"',
     "Reset script must reset the school setup status.",
   );
+  assertContains(
+    resetScript,
+    'setupStep: "profile"',
+    "Reset script must restart setup at the profile step, not a null/ambiguous step.",
+  );
   for (const modelName of [
     "student",
     "parent",
