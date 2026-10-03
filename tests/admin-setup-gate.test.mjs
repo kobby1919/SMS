@@ -18,9 +18,11 @@ const completionWorkspace = readFileSync("src/components/OnboardingCompletionWor
 const onboardingActions = readFileSync("src/lib/actions/onboardingActions.ts", "utf8");
 const onboardingValidation = readFileSync("src/lib/validation/onboarding.ts", "utf8");
 const freshSetupPage = readFileSync("src/app/onboarding/setup/fresh/page.tsx", "utf8");
+const migrationSetupPage = readFileSync("src/app/onboarding/setup/migration/page.tsx", "utf8");
 const reviewPage = readFileSync("src/app/onboarding/setup/review/page.tsx", "utf8");
 const completePage = readFileSync("src/app/onboarding/setup/complete/page.tsx", "utf8");
 const dataMigrationPage = readFileSync("src/app/(dashboard)/admin/data-migration/page.tsx", "utf8");
+const menuClient = readFileSync("src/components/MenuClient.tsx", "utf8");
 
 function assertContains(source, needle, message) {
   assert.ok(source.includes(needle), message);
@@ -134,7 +136,7 @@ test("guided admin onboarding routes are structured and protected", () => {
     "/onboarding/setup",
     "/onboarding/setup/path",
     "/onboarding/setup/fresh",
-    "/admin/data-migration",
+    "/onboarding/setup/migration",
     "/onboarding/setup/review",
     "/onboarding/setup/complete",
   ]) {
@@ -145,7 +147,7 @@ test("guided admin onboarding routes are structured and protected", () => {
     );
   }
 
-  for (const page of [setupPathPage, freshSetupPage, reviewPage, completePage]) {
+  for (const page of [setupPathPage, freshSetupPage, migrationSetupPage, reviewPage, completePage]) {
     assertContains(
       page,
       'requirePageSession(["admin"])',
@@ -178,7 +180,7 @@ test("guided admin onboarding routes are structured and protected", () => {
     "setupPathForStep",
     "The profile route must redirect admins back to the current setup step.",
   );
-  for (const page of [setupPathPage, freshSetupPage, reviewPage, completePage]) {
+  for (const page of [setupPathPage, freshSetupPage, migrationSetupPage, reviewPage, completePage]) {
     assertContains(
       page,
       "setupPathForStep",
@@ -212,6 +214,16 @@ test("setup path selection is saved before routing to the next stage", () => {
     setupPathChooser,
     "Migrate existing records",
     "Path selection must show the Migrate Existing Records choice.",
+  );
+  assertContains(
+    setupPathChooser,
+    "/onboarding/setup/migration",
+    "The migration choice must route into the focused onboarding migration workspace.",
+  );
+  assertNotContains(
+    setupPathChooser,
+    "/admin/data-migration",
+    "The path chooser must not send incomplete admins into the full dashboard shell.",
   );
   assertContains(
     setupPathChooser,
@@ -313,14 +325,34 @@ test("fresh setup page is a guided workspace with a safe academic foundation act
     "Migration workspace must let admins return to readiness review after import/invites.",
   );
   assertContains(
-    dataMigrationPage,
+    migrationSetupPage,
     'school.setupStep !== "migration"',
-    "Migration workspace must only open during the migration setup path.",
+    "The onboarding migration route must only open during the migration setup path.",
+  );
+  assertContains(
+    migrationSetupPage,
+    'setupStageNav("migration", ["profile", "path"], "migration")',
+    "The migration route must stay inside the locked onboarding progress shell.",
+  );
+  assertContains(
+    dataMigrationPage,
+    'redirect("/onboarding/setup/migration")',
+    "The dashboard migration URL must redirect incomplete migration admins into the focused setup route.",
+  );
+  assertContains(
+    dataMigrationPage,
+    'setupContext === "dashboard"',
+    "Dashboard-only starter links must stay out of the onboarding migration workspace.",
   );
   assertContains(
     dataMigrationPage,
     "SetupAdvanceButton",
     "Migration workspace must advance to readiness review through a guarded action.",
+  );
+  assertNotContains(
+    menuClient,
+    "/admin/data-migration",
+    "Data migration must not be exposed from the Management menu.",
   );
   assertContains(
     onboardingService,

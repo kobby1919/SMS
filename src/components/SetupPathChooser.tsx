@@ -28,7 +28,7 @@ const OPTIONS: Array<{
     eyebrow: "Migrate existing records",
     title: "Bring records into Edujay",
     description: "For schools bringing existing students, parents, teachers, classes, subjects, or fee records into Edujay.",
-    href: "/admin/data-migration",
+    href: "/onboarding/setup/migration",
     icon: Database,
   },
 ];

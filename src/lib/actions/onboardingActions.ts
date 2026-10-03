@@ -215,6 +215,7 @@ export async function selectSchoolSetupPathAction(
     const data = parseActionInput(schoolSetupPathSchema, input);
     await selectSchoolSetupPath(data, context);
     revalidatePath("/onboarding/setup/path");
+    revalidatePath("/onboarding/setup/migration");
     revalidatePath("/admin/data-migration");
     return { ok: true };
   } catch (error) {
@@ -245,6 +246,7 @@ export async function advanceSchoolSetupToReviewAction(): Promise<OnboardingActi
     const context = await requireRole(["admin"]);
     await advanceSchoolSetupToReview(context);
     revalidatePath("/onboarding/setup/fresh");
+    revalidatePath("/onboarding/setup/migration");
     revalidatePath("/admin/data-migration");
     revalidatePath("/onboarding/setup/review");
     return { ok: true };

@@ -68,23 +68,20 @@ function formatDateTime(date: Date) {
   }).format(date);
 }
 
-export default async function DataMigrationPage() {
-  const { schoolId } = await requirePageSession(["admin"]);
-  const [school, dashboard, inviteSummary] = await Promise.all([
-    getSchoolOnboardingState(schoolId),
+export async function DataMigrationWorkspace({
+  schoolId,
+  setupContext = "dashboard",
+}: {
+  schoolId: string;
+  setupContext?: "dashboard" | "onboarding";
+}) {
+  const [dashboard, inviteSummary] = await Promise.all([
     getDataMigrationDashboard(schoolId),
     getPostImportInviteSummary(schoolId),
   ]);
 
-  if (!school) {
-    redirect("/sign-in?error=missing_school");
-  }
-
-  if (school.onboardingStatus !== "COMPLETED" && school.setupStep !== "migration") {
-    redirect(setupPathForStep(school.setupStep));
-  }
-
   const isFreshSchool = dashboard.isFreshSchool;
+  const showStarterGuide = isFreshSchool && setupContext === "dashboard";
 
   const attentionCount = dashboard.areas.filter((area) =>
     area.status === "NEEDS_CLEANUP" || area.status === "NOT_STARTED"
@@ -208,7 +205,7 @@ export default async function DataMigrationPage() {
         })}
       </section>
 
-      {isFreshSchool ? (
+      {showStarterGuide ? (
         <section className="rounded-2xl border border-blue-100 bg-blue-50 p-4 shadow-sm sm:p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="max-w-3xl">
@@ -443,4 +440,23 @@ export default async function DataMigrationPage() {
       </section>
     </main>
   );
+}
+
+export default async function DataMigrationPage() {
+  const { schoolId } = await requirePageSession(["admin"]);
+  const school = await getSchoolOnboardingState(schoolId);
+
+  if (!school) {
+    redirect("/sign-in?error=missing_school");
+  }
+
+  if (school.onboardingStatus !== "COMPLETED") {
+    if (school.setupStep === "migration") {
+      redirect("/onboarding/setup/migration");
+    }
+
+    redirect(setupPathForStep(school.setupStep));
+  }
+
+  return <DataMigrationWorkspace schoolId={schoolId} />;
 }

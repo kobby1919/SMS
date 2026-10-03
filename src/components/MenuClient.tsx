@@ -19,7 +19,6 @@ import {
   FileCheck,
   UserCheck,
   FileText,
-  FileSpreadsheet,
   Megaphone,
   MessageCircle,
   Wallet,
@@ -204,12 +203,6 @@ const menuItems = [
         label: "Students",
         href: "/list/students",
         visible: ["admin", "teacher"],
-      },
-      {
-        icon: FileSpreadsheet,
-        label: "Data Migration",
-        href: "/admin/data-migration",
-        visible: ["admin"],
       },
       {
         icon: UserCircle,

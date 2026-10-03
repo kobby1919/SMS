@@ -6,6 +6,10 @@ const migrationPage = readFileSync(
   "src/app/(dashboard)/admin/data-migration/page.tsx",
   "utf8",
 );
+const migrationSetupPage = readFileSync(
+  "src/app/onboarding/setup/migration/page.tsx",
+  "utf8",
+);
 const migrationService = readFileSync(
   "src/lib/services/data-migration.ts",
   "utf8",
@@ -73,17 +77,22 @@ test("data migration entry point is admin-only and school-scoped", () => {
   assertContains(
     migrationPage,
     'requirePageSession(["admin"])',
-    "Data migration page must be restricted to admins.",
+    "Dashboard data migration page must be restricted to admins.",
   );
   assertContains(
+    migrationSetupPage,
+    'requirePageSession(["admin"])',
+    "Onboarding data migration page must be restricted to admins.",
+  );
+  assertNotContains(
     menuClient,
-    'href: "/admin/data-migration"',
-    "Admin menu must expose the data migration control center.",
+    "/admin/data-migration",
+    "Admin menu must not expose data migration under Management.",
   );
   assertContains(
-    menuClient,
-    'visible: ["admin"]',
-    "Data migration menu entry must be admin-only.",
+    migrationPage,
+    'redirect("/onboarding/setup/migration")',
+    "Incomplete migration admins must be moved out of the dashboard shell.",
   );
   assertContains(
     migrationService,
