@@ -20,11 +20,21 @@ export function referenceDataTag(
   return `school:${schoolId}:reference:${resource}`;
 }
 
+function safeRevalidateTag(tag: string) {
+  try {
+    revalidateTag(tag, "max");
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`Cache revalidation skipped for ${tag}:`, error);
+    }
+  }
+}
+
 export function revalidateReferenceData(
   schoolId: string,
   resource: ReferenceDataResource,
 ) {
-  revalidateTag(referenceDataTag(schoolId, resource), "max");
+  safeRevalidateTag(referenceDataTag(schoolId, resource));
 }
 
 export function dashboardTag(schoolId: string, resource: DashboardResource) {
@@ -35,7 +45,7 @@ export function revalidateDashboard(
   schoolId: string,
   resource: DashboardResource = "admin",
 ) {
-  revalidateTag(dashboardTag(schoolId, resource), "max");
+  safeRevalidateTag(dashboardTag(schoolId, resource));
 }
 
 export function documentTag(
@@ -51,5 +61,5 @@ export function revalidateDocument(
   resource: DocumentResource,
   id?: string | number,
 ) {
-  revalidateTag(documentTag(schoolId, resource, id), "max");
+  safeRevalidateTag(documentTag(schoolId, resource, id));
 }

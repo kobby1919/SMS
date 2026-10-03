@@ -68,6 +68,12 @@ export async function POST(req: NextRequest) {
         { status: 409 },
       );
     }
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2028") {
+      return NextResponse.json(
+        { error: "Import took too long to complete safely. Split the file into smaller batches and try again." },
+        { status: 408 },
+      );
+    }
     return unauthorizedResponse(error);
   }
 }

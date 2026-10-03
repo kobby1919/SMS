@@ -32,6 +32,7 @@ const migrationImportService = readFileSync(
   "src/lib/services/data-migration-import.ts",
   "utf8",
 );
+const cacheTags = readFileSync("src/lib/cacheTags.ts", "utf8");
 const migrationAuditService = readFileSync(
   "src/lib/services/data-migration-audit.ts",
   "utf8",
@@ -334,6 +335,26 @@ test("data migration point 4 imports only clean validated rows", () => {
     migrationImportRoute,
     'error.code === "P2025"',
     "Point 4 import route must return a controlled response when records change after validation.",
+  );
+  assertContains(
+    migrationImportRoute,
+    'error.code === "P2028"',
+    "Point 4 import route must return a controlled response when a migration transaction times out.",
+  );
+  assertContains(
+    migrationImportService,
+    'timeout: context.areaKey === "fees" ? 90_000 : 45_000',
+    "Point 4 fee imports must use a production-safe transaction timeout for multi-row finance imports.",
+  );
+  assertContains(
+    cacheTags,
+    "function safeRevalidateTag",
+    "Point 4 import cache refresh must be best-effort so successful imports do not become server errors.",
+  );
+  assertContains(
+    cacheTags,
+    "Cache revalidation skipped",
+    "Point 4 skipped cache revalidation should be visible during development diagnostics.",
   );
   assertContains(
     migrationImportService,
@@ -688,6 +709,16 @@ test("data migration point 7 keeps admin experience as a simple checklist", () =
     migrationPage,
     "upload, map, review, import, then invite",
     "Point 7 page must explain the simple migration order.",
+  );
+  assertContains(
+    migrationPage,
+    "records already inside Edujay, not rows in the file",
+    "Point 7 UI must clearly separate existing Edujay counts from uploaded file row counts.",
+  );
+  assertContains(
+    migrationService,
+    "existing profiles",
+    "Point 7 readiness cards must label parent/staff counts as existing database profiles.",
   );
   assertContains(
     migrationMapper,

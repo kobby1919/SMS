@@ -156,7 +156,7 @@ export async function DataMigrationWorkspace({
             <div className="rounded-2xl bg-white/10 p-3">
               <p className="text-2xl font-black">{dashboard.totals.students}</p>
               <p className="mt-1 break-words text-[10px] font-black uppercase leading-snug text-slate-300">
-                Students on record
+                Existing students
               </p>
             </div>
             <div className="rounded-2xl bg-white/10 p-3">
@@ -185,8 +185,8 @@ export async function DataMigrationWorkspace({
         {[
           { label: "Classes", value: dashboard.totals.classes, icon: School },
           { label: "Subjects", value: dashboard.totals.subjects, icon: BookOpen },
-          { label: "Parents", value: dashboard.totals.parents, icon: Users },
-          { label: "Bills", value: dashboard.totals.bills, icon: ReceiptText },
+          { label: "Existing parents", value: dashboard.totals.parents, icon: Users },
+          { label: "Existing bills", value: dashboard.totals.bills, icon: ReceiptText },
         ].map((stat) => {
           const Icon = stat.icon;
           return (
@@ -255,7 +255,7 @@ export async function DataMigrationWorkspace({
           <div>
             <h2 className="text-lg font-black text-gray-900">Migration checklist</h2>
             <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-gray-500">
-              Edujay keeps migration simple: upload, map, review, import, then invite. Do not skip the order.
+              Edujay keeps migration simple: upload, map, review, import, then invite. The counts above are records already inside Edujay, not rows in the file you are previewing.
             </p>
           </div>
           <Upload size={20} className="shrink-0 text-blue-700" />

@@ -609,6 +609,9 @@ export async function importValidatedMigrationRows(
           },
         },
       });
+    }, {
+      maxWait: 15_000,
+      timeout: context.areaKey === "fees" ? 90_000 : 45_000,
     });
   }
 
