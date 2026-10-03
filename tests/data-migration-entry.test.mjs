@@ -302,6 +302,21 @@ test("data migration point 4 imports only clean validated rows", () => {
   );
   assertContains(
     migrationImportService,
+    "billStatusForAmounts",
+    "Point 4 fee imports must calculate PAID, PARTIAL, UNPAID, or OVERPAID status from imported balances.",
+  );
+  assertContains(
+    migrationImportService,
+    "existingBill?.lineItems.length",
+    "Point 4 fee imports must reject duplicate fee items on the same student's bill instead of double-counting money.",
+  );
+  assertContains(
+    migrationImportService,
+    "This fee item is already on this student's bill",
+    "Point 4 duplicate bill-line imports must return a controlled correction message.",
+  );
+  assertContains(
+    migrationImportService,
     "affectedBillIds.size",
     "Point 4 import must report affected fee bills instead of counting fee rows as bills.",
   );
@@ -309,6 +324,16 @@ test("data migration point 4 imports only clean validated rows", () => {
     migrationImportRoute,
     'error.code === "P2002"',
     "Point 4 import route must return a controlled conflict response for database uniqueness races.",
+  );
+  assertContains(
+    migrationImportRoute,
+    'error.code === "P2003"',
+    "Point 4 import route must return a controlled response for missing relation conflicts.",
+  );
+  assertContains(
+    migrationImportRoute,
+    'error.code === "P2025"',
+    "Point 4 import route must return a controlled response when records change after validation.",
   );
   assertContains(
     migrationImportService,

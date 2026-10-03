@@ -56,6 +56,18 @@ export async function POST(req: NextRequest) {
         { status: 409 },
       );
     }
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2003") {
+      return NextResponse.json(
+        { error: "Import references missing or mismatched records. Validate again before importing." },
+        { status: 409 },
+      );
+    }
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+      return NextResponse.json(
+        { error: "Import data changed after validation. Validate again before importing." },
+        { status: 409 },
+      );
+    }
     return unauthorizedResponse(error);
   }
 }

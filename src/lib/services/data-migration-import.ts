@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from "crypto";
 
 import {
+  BillStatus,
   BursarStatus,
   FeeCategory,
   FeeStructureStatus,
@@ -125,6 +126,13 @@ function normalizeTerm(value: string): Term {
 
 function parseMoney(value: string) {
   return new Prisma.Decimal(value.replace(/[,\s]/g, ""));
+}
+
+function billStatusForAmounts(totalAmount: Prisma.Decimal, amountPaid: Prisma.Decimal, balance: Prisma.Decimal) {
+  if (balance.lt(0) || amountPaid.gt(totalAmount)) return BillStatus.OVERPAID;
+  if (balance.lte(0)) return BillStatus.PAID;
+  if (amountPaid.gt(0)) return BillStatus.PARTIAL;
+  return BillStatus.UNPAID;
 }
 
 function splitName(fullName: string) {
@@ -471,7 +479,9 @@ async function importFees(
         select: { id: true, amount: true },
       }));
 
-    const bill = await tx.studentBill.upsert({
+    const amountPaid = parseMoney(row.values.amountPaid || "0");
+    const lineBalance = feeItem.amount.minus(amountPaid);
+    const existingBill = await tx.studentBill.findUnique({
       where: {
         schoolId_studentId_feeStructureId: {
           schoolId,
@@ -479,18 +489,50 @@ async function importFees(
           feeStructureId: feeStructure.id,
         },
       },
-      update: {
-        totalAmount: { increment: feeItem.amount },
-        amountPaid: { increment: parseMoney(row.values.amountPaid || "0") },
-        balance: { increment: feeItem.amount.minus(parseMoney(row.values.amountPaid || "0")) },
+      select: {
+        id: true,
+        totalAmount: true,
+        amountPaid: true,
+        balance: true,
+        lineItems: {
+          where: { feeItemId: feeItem.id },
+          select: { id: true },
+          take: 1,
+        },
       },
-      create: {
+    });
+
+    if (existingBill?.lineItems.length) {
+      throw new MigrationImportError(
+        "This fee item is already on this student's bill. Validate again and remove duplicate fee rows before importing.",
+        409,
+      );
+    }
+
+    const bill = existingBill
+      ? await tx.studentBill.update({
+          where: { id: existingBill.id },
+          data: {
+            totalAmount: existingBill.totalAmount.plus(feeItem.amount),
+            amountPaid: existingBill.amountPaid.plus(amountPaid),
+            balance: existingBill.balance.plus(lineBalance),
+            status: billStatusForAmounts(
+              existingBill.totalAmount.plus(feeItem.amount),
+              existingBill.amountPaid.plus(amountPaid),
+              existingBill.balance.plus(lineBalance),
+            ),
+          },
+          select: { id: true },
+        })
+      : await tx.studentBill.create({
+        data: {
         schoolId,
         studentId: student.id,
         feeStructureId: feeStructure.id,
         totalAmount: feeItem.amount,
-        amountPaid: parseMoney(row.values.amountPaid || "0"),
-        balance: feeItem.amount.minus(parseMoney(row.values.amountPaid || "0")),
+        amountPaid,
+        balance: lineBalance,
+        status: billStatusForAmounts(feeItem.amount, amountPaid, lineBalance),
         generatedBy: actorId,
       },
       select: { id: true },
@@ -502,9 +544,9 @@ async function importFees(
         studentBillId: bill.id,
         feeItemId: feeItem.id,
         amount: feeItem.amount,
-        amountPaid: parseMoney(row.values.amountPaid || "0"),
-        balance: feeItem.amount.minus(parseMoney(row.values.amountPaid || "0")),
-        isPaid: feeItem.amount.minus(parseMoney(row.values.amountPaid || "0")).lte(0),
+        amountPaid,
+        balance: lineBalance,
+        isPaid: lineBalance.lte(0),
       },
     });
     counters.feeLineItems += 1;
