@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useState, useTransition } from "react";
 import { createDefaultAcademicSetupAction } from "@/src/lib/actions/onboardingActions";
+import SetupAdvanceButton from "@/src/components/SetupAdvanceButton";
 
 type FreshSetupSchool = {
   _count: {
@@ -51,6 +52,7 @@ export default function FreshSetupWorkspace({ school }: { school: FreshSetupScho
   const parentsReady = school._count.parents > 0 || school.readiness.activeParentLinks > 0;
   const feesReady = school.readiness.feeSetupStarted || school.readiness.feeStructuresStarted;
   const timetableReady = school.readiness.activeTimetablePublished;
+  const canReview = academicStructureReady && classesReady && subjectsReady;
 
   function createFoundation() {
     setMessage(null);
@@ -258,12 +260,12 @@ export default function FreshSetupWorkspace({ school }: { school: FreshSetupScho
             Use readiness review after the core records are in place.
           </p>
         </div>
-        <Link
-          href="/onboarding/setup/review"
-          className="rounded-xl bg-white px-4 py-3 text-center text-sm font-black text-gray-900 shadow-sm"
-        >
-          Review readiness
-        </Link>
+        <SetupAdvanceButton
+          target="review"
+          label="Review readiness"
+          disabled={!canReview}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-center text-sm font-black text-gray-900 shadow-sm disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+        />
       </div>
     </div>
   );

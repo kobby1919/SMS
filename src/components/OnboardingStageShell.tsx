@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 
 type OnboardingStage = {
@@ -6,6 +5,7 @@ type OnboardingStage = {
   href: string;
   active?: boolean;
   done?: boolean;
+  locked?: boolean;
 };
 
 export default function OnboardingStageShell({
@@ -31,21 +31,21 @@ export default function OnboardingStageShell({
           </h1>
           <p className="mt-2 text-sm leading-6 text-gray-500">{description}</p>
 
-          <div className="mt-6 space-y-2">
+          <div className="mt-6 space-y-0">
             {stages.map((stage, index) => (
-              <Link
-                key={stage.href}
-                href={stage.href}
-                className={`flex items-center gap-3 rounded-xl border px-3 py-3 text-sm transition ${
-                  stage.active
-                    ? "border-blue-200 bg-blue-50 text-blue-950"
-                    : "border-gray-100 bg-white text-gray-600 hover:border-gray-200"
-                }`}
-              >
+              <div key={stage.href} className="relative flex gap-3">
+                {index < stages.length - 1 ? (
+                  <span
+                    className={`absolute left-[13px] top-9 h-[calc(100%-1.5rem)] w-0.5 rounded-full ${
+                      stage.done ? "bg-blue-500" : "bg-gray-200"
+                    }`}
+                    aria-hidden="true"
+                  />
+                ) : null}
                 <span
-                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black ${
+                  className={`z-10 mt-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black ring-4 ring-white ${
                     stage.done
-                      ? "bg-emerald-100 text-emerald-700"
+                      ? "bg-blue-600 text-white"
                       : stage.active
                         ? "bg-blue-700 text-white"
                         : "bg-gray-100 text-gray-500"
@@ -53,8 +53,23 @@ export default function OnboardingStageShell({
                 >
                   {stage.done ? "✓" : index + 1}
                 </span>
-                <span className="min-w-0 font-bold">{stage.label}</span>
-              </Link>
+                <div
+                  className={`mb-2 flex min-h-[48px] flex-1 items-center rounded-xl border px-3 py-2 text-sm ${
+                    stage.active
+                      ? "border-blue-200 bg-blue-50 text-blue-950"
+                      : stage.done
+                        ? "border-blue-100 bg-white text-gray-800"
+                        : "border-gray-100 bg-gray-50 text-gray-400"
+                  }`}
+                >
+                  <div className="min-w-0">
+                    <p className="font-black">{stage.label}</p>
+                    <p className="mt-0.5 text-[10px] font-black uppercase tracking-wide">
+                      {stage.active ? "Current step" : stage.done ? "Completed" : "Locked"}
+                    </p>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </aside>

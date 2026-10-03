@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import OnboardingStageShell from "@/src/components/OnboardingStageShell";
 import SchoolSetupClient from "@/src/components/SchoolSetupClient";
 import { requirePageSession } from "@/src/lib/authz";
-import { setupStageNav } from "@/src/lib/onboarding/setup-stages";
+import { setupPathForStep, setupStageNav } from "@/src/lib/onboarding/setup-stages";
 import { getSchoolOnboardingState } from "@/src/lib/services/onboarding";
 
 export default async function SchoolSetupPage() {
@@ -15,6 +15,10 @@ export default async function SchoolSetupPage() {
 
   if (school.onboardingStatus === "COMPLETED") {
     redirect("/admin");
+  }
+
+  if (school.setupStep && school.setupStep !== "profile") {
+    redirect(setupPathForStep(school.setupStep));
   }
 
   return (

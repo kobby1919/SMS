@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/src/lib/authz";
 import {
+  advanceSchoolSetupToCompletion,
+  advanceSchoolSetupToReview,
   approveWaitlistEntry,
   createSchoolAdminInviteForCurrentSchool,
   completeSchoolOnboarding,
@@ -234,6 +236,37 @@ export async function completeSchoolOnboardingAction(): Promise<OnboardingAction
     return {
       ok: false,
       message: error instanceof Error ? error.message : "Could not complete setup.",
+    };
+  }
+}
+
+export async function advanceSchoolSetupToReviewAction(): Promise<OnboardingActionResult> {
+  try {
+    const context = await requireRole(["admin"]);
+    await advanceSchoolSetupToReview(context);
+    revalidatePath("/onboarding/setup/fresh");
+    revalidatePath("/admin/data-migration");
+    revalidatePath("/onboarding/setup/review");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Could not open readiness review.",
+    };
+  }
+}
+
+export async function advanceSchoolSetupToCompletionAction(): Promise<OnboardingActionResult> {
+  try {
+    const context = await requireRole(["admin"]);
+    await advanceSchoolSetupToCompletion(context);
+    revalidatePath("/onboarding/setup/review");
+    revalidatePath("/onboarding/setup/complete");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Could not open completion step.",
     };
   }
 }

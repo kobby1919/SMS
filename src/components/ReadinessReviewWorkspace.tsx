@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, CircleAlert, CircleDashed } from "lucide-react";
+import SetupAdvanceButton from "@/src/components/SetupAdvanceButton";
 
 type ReadinessSchool = {
   name: string;
@@ -207,12 +208,7 @@ export default function ReadinessReviewWorkspace({ school }: { school: Readiness
           </p>
         </div>
         {canComplete ? (
-          <Link
-            href="/onboarding/setup/complete"
-            className="rounded-xl bg-gray-900 px-4 py-3 text-center text-sm font-black text-white"
-          >
-            Continue to completion
-          </Link>
+          <SetupAdvanceButton target="complete" label="Continue to completion" />
         ) : (
           <Link
             href="/onboarding/setup/fresh"

@@ -306,6 +306,68 @@ export async function selectSchoolSetupPath(
   });
 }
 
+function hasRequiredAcademicFoundation(school: {
+  _count: { grades: number; classes: number; subjects: number };
+}) {
+  return school._count.grades > 0 && school._count.classes > 0 && school._count.subjects > 0;
+}
+
+export async function advanceSchoolSetupToReview(context: AuthzContext) {
+  if (context.role !== "admin") {
+    throw new Error("Only a school admin can advance setup.");
+  }
+
+  const school = await getSchoolOnboardingState(context.schoolId);
+
+  if (!school) {
+    throw new Error("School not found.");
+  }
+
+  if (school.onboardingStatus === "COMPLETED") {
+    throw new Error("This school has already completed onboarding.");
+  }
+
+  if (!hasRequiredAcademicFoundation(school)) {
+    throw new Error("Create at least one grade, class, and subject before readiness review.");
+  }
+
+  return prisma.school.update({
+    where: { id: context.schoolId },
+    data: {
+      onboardingStatus: school.onboardingStatus === "PROFILE_DONE" ? "ACADEMIC_DONE" : school.onboardingStatus,
+      setupStep: "review",
+    },
+  });
+}
+
+export async function advanceSchoolSetupToCompletion(context: AuthzContext) {
+  if (context.role !== "admin") {
+    throw new Error("Only a school admin can advance setup.");
+  }
+
+  const school = await getSchoolOnboardingState(context.schoolId);
+
+  if (!school) {
+    throw new Error("School not found.");
+  }
+
+  if (school.onboardingStatus === "COMPLETED") {
+    throw new Error("This school has already completed onboarding.");
+  }
+
+  if (!hasRequiredAcademicFoundation(school)) {
+    throw new Error("Complete the required academic foundation before finishing setup.");
+  }
+
+  return prisma.school.update({
+    where: { id: context.schoolId },
+    data: {
+      onboardingStatus: "USERS_DONE",
+      setupStep: "complete",
+    },
+  });
+}
+
 export async function completeSchoolOnboarding(context: AuthzContext) {
   const school = await getSchoolOnboardingState(context.schoolId);
 

@@ -22,11 +22,20 @@ export function setupPathForStep(step?: string | null): string {
   return "/onboarding/setup";
 }
 
-export function setupStageNav(active: SetupStageKey, done: SetupStageKey[] = []) {
-  return SETUP_STAGES.map((stage) => ({
+export function setupStageNav(
+  active: SetupStageKey,
+  done: SetupStageKey[] = [],
+  mode?: "fresh" | "migration",
+) {
+  return SETUP_STAGES.filter((stage) => {
+    if (mode === "fresh") return stage.key !== "migration";
+    if (mode === "migration") return stage.key !== "fresh";
+    return true;
+  }).map((stage) => ({
     ...stage,
     active: stage.key === active,
     done: done.includes(stage.key),
+    locked: !done.includes(stage.key) && stage.key !== active,
   }));
 }
 

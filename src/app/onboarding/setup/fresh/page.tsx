@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import FreshSetupWorkspace from "@/src/components/FreshSetupWorkspace";
 import OnboardingStageShell from "@/src/components/OnboardingStageShell";
 import { requirePageSession } from "@/src/lib/authz";
-import { setupStageNav } from "@/src/lib/onboarding/setup-stages";
+import { setupPathForStep, setupStageNav } from "@/src/lib/onboarding/setup-stages";
 import { getSchoolOnboardingState } from "@/src/lib/services/onboarding";
 
 export default async function FreshSetupPage() {
@@ -15,6 +15,10 @@ export default async function FreshSetupPage() {
 
   if (school.onboardingStatus === "COMPLETED") {
     redirect("/admin");
+  }
+
+  if (school.setupStep !== "fresh") {
+    redirect(setupPathForStep(school.setupStep));
   }
 
   return (

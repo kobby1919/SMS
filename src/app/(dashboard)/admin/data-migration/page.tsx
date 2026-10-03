@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   AlertTriangle,
   ArrowRight,
@@ -18,11 +19,14 @@ import { requirePageSession } from "@/src/lib/authz";
 import DataMigrationMapper from "@/src/components/DataMigrationMapper";
 import MigrationAuditActions from "@/src/components/MigrationAuditActions";
 import PostImportInvitePanel from "@/src/components/PostImportInvitePanel";
+import SetupAdvanceButton from "@/src/components/SetupAdvanceButton";
 import {
   getDataMigrationDashboard,
   type MigrationAreaStatus,
 } from "@/src/lib/services/data-migration";
 import { getPostImportInviteSummary } from "@/src/lib/services/post-import-invites";
+import { setupPathForStep } from "@/src/lib/onboarding/setup-stages";
+import { getSchoolOnboardingState } from "@/src/lib/services/onboarding";
 
 const statusMeta: Record<MigrationAreaStatus, { label: string; className: string }> = {
   NOT_STARTED: {
@@ -66,10 +70,20 @@ function formatDateTime(date: Date) {
 
 export default async function DataMigrationPage() {
   const { schoolId } = await requirePageSession(["admin"]);
-  const [dashboard, inviteSummary] = await Promise.all([
+  const [school, dashboard, inviteSummary] = await Promise.all([
+    getSchoolOnboardingState(schoolId),
     getDataMigrationDashboard(schoolId),
     getPostImportInviteSummary(schoolId),
   ]);
+
+  if (!school) {
+    redirect("/sign-in?error=missing_school");
+  }
+
+  if (school.onboardingStatus !== "COMPLETED" && school.setupStep !== "migration") {
+    redirect(setupPathForStep(school.setupStep));
+  }
+
   const isFreshSchool = dashboard.isFreshSchool;
 
   const attentionCount = dashboard.areas.filter((area) =>
@@ -273,13 +287,11 @@ export default async function DataMigrationPage() {
               After imports and secure invites are reviewed, return to the readiness review before opening the live dashboard.
             </p>
           </div>
-          <Link
-            href="/onboarding/setup/review"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 text-xs font-black text-white transition hover:bg-emerald-800"
-          >
-            Go to readiness review
-            <ArrowRight size={14} />
-          </Link>
+          <SetupAdvanceButton
+            target="review"
+            label="Go to readiness review"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 text-xs font-black text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          />
         </div>
       </section>
 

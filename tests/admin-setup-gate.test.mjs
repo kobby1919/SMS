@@ -163,6 +163,28 @@ test("guided admin onboarding routes are structured and protected", () => {
     "stages.map",
     "The shell must render a consistent step list.",
   );
+  assertNotContains(
+    stageShell,
+    "<Link",
+    "The setup stage list must be a locked progress tracker, not free navigation.",
+  );
+  assertContains(
+    stageShell,
+    "Locked",
+    "The setup stage list must show locked future steps.",
+  );
+  assertContains(
+    setupPage,
+    "setupPathForStep",
+    "The profile route must redirect admins back to the current setup step.",
+  );
+  for (const page of [setupPathPage, freshSetupPage, reviewPage, completePage]) {
+    assertContains(
+      page,
+      "setupPathForStep",
+      "Each setup route must redirect admins back to the current setup step.",
+    );
+  }
 });
 
 test("setup path selection is saved before routing to the next stage", () => {
@@ -262,6 +284,11 @@ test("fresh setup page is a guided workspace with a safe academic foundation act
   );
   assertContains(
     freshSetupWorkspace,
+    "SetupAdvanceButton",
+    "Fresh setup must advance to readiness review through a guarded action.",
+  );
+  assertContains(
+    freshSetupWorkspace,
     "/list/classes",
     "Fresh setup must link admins to class setup.",
   );
@@ -282,8 +309,18 @@ test("fresh setup page is a guided workspace with a safe academic foundation act
   );
   assertContains(
     dataMigrationPage,
-    "/onboarding/setup/review",
+    "Go to readiness review",
     "Migration workspace must let admins return to readiness review after import/invites.",
+  );
+  assertContains(
+    dataMigrationPage,
+    'school.setupStep !== "migration"',
+    "Migration workspace must only open during the migration setup path.",
+  );
+  assertContains(
+    dataMigrationPage,
+    "SetupAdvanceButton",
+    "Migration workspace must advance to readiness review through a guarded action.",
   );
   assertContains(
     onboardingService,
@@ -345,8 +382,13 @@ test("readiness review is a real checkpoint before completion", () => {
   );
   assertContains(
     readinessReviewWorkspace,
-    "/onboarding/setup/complete",
-    "The review page must provide a completion route only when ready.",
+    "Continue to completion",
+    "The review page must provide a completion action only when ready.",
+  );
+  assertContains(
+    readinessReviewWorkspace,
+    "SetupAdvanceButton",
+    "Readiness review must advance to completion through a guarded action.",
   );
   assertContains(
     readinessReviewWorkspace,
