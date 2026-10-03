@@ -137,52 +137,85 @@ export async function listWaitlistEntriesForReview() {
 }
 
 export async function getSchoolOnboardingState(schoolId: string) {
-  const school = await prisma.school.findUnique({
-    where: { id: schoolId },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      legalName: true,
-      displayName: true,
-      shortName: true,
-      emailFromName: true,
-      primaryColor: true,
-      contactEmail: true,
-      phone: true,
-      address: true,
-      logoUrl: true,
-      onboardingStatus: true,
-      setupStep: true,
-      setupCompletedAt: true,
-      onboardingAuditLogs: {
-        orderBy: { createdAt: "desc" },
-        take: 8,
-        select: {
-          id: true,
-          action: true,
-          performedBy: true,
-          metadata: true,
-          createdAt: true,
+  const [school, activeParentLinks, activeTimetablePublication] = await Promise.all([
+    prisma.school.findUnique({
+      where: { id: schoolId },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        legalName: true,
+        displayName: true,
+        shortName: true,
+        emailFromName: true,
+        primaryColor: true,
+        contactEmail: true,
+        phone: true,
+        address: true,
+        logoUrl: true,
+        onboardingStatus: true,
+        setupStep: true,
+        setupCompletedAt: true,
+        paymentSettings: {
+          select: {
+            id: true,
+            onlinePaymentsEnabled: true,
+            acceptedPaymentMethods: true,
+            settlementAccountReference: true,
+          },
+        },
+        onboardingAuditLogs: {
+          orderBy: { createdAt: "desc" },
+          take: 8,
+          select: {
+            id: true,
+            action: true,
+            performedBy: true,
+            metadata: true,
+            createdAt: true,
+          },
+        },
+        _count: {
+          select: {
+            grades: true,
+            classes: true,
+            subjects: true,
+            teachers: true,
+            students: true,
+          },
         },
       },
-      _count: {
-        select: {
-          grades: true,
-          classes: true,
-          subjects: true,
-          teachers: true,
-          students: true,
-        },
+    }),
+    prisma.parentStudentRelationship.count({
+      where: {
+        schoolId,
+        status: "ACTIVE",
       },
-    },
-  });
+    }),
+    prisma.timetablePublication.findFirst({
+      where: {
+        schoolId,
+        status: "ACTIVE",
+      },
+      select: {
+        id: true,
+        publishedAt: true,
+      },
+      orderBy: { publishedAt: "desc" },
+    }),
+  ]);
 
   if (!school) return null;
 
   return {
     ...school,
     setupStep: school.setupStep ?? defaultSetupStepForStatus(school.onboardingStatus),
+    readiness: {
+      activeParentLinks,
+      feeSetupStarted: Boolean(school.paymentSettings),
+      onlinePaymentsEnabled: Boolean(school.paymentSettings?.onlinePaymentsEnabled),
+      activeTimetablePublished: Boolean(activeTimetablePublication),
+    },
   };
 }
 

@@ -263,6 +263,36 @@ test("readiness review is a real checkpoint before completion", () => {
   );
   assertContains(
     readinessReviewWorkspace,
+    "Parent links",
+    "The review page must show parent link readiness.",
+  );
+  assertContains(
+    readinessReviewWorkspace,
+    "Fee setup",
+    "The review page must show fee setup readiness.",
+  );
+  assertContains(
+    readinessReviewWorkspace,
+    "Can be done later",
+    "The review page must make timetable setup clearly optional at onboarding completion.",
+  );
+  assertContains(
+    onboardingService,
+    "activeParentLinks",
+    "Onboarding state must include real parent link readiness data.",
+  );
+  assertContains(
+    onboardingService,
+    "feeSetupStarted",
+    "Onboarding state must include real fee setup readiness data.",
+  );
+  assertContains(
+    onboardingService,
+    "activeTimetablePublished",
+    "Onboarding state must include real timetable publication readiness data.",
+  );
+  assertContains(
+    readinessReviewWorkspace,
     "/onboarding/setup/complete",
     "The review page must provide a completion route only when ready.",
   );
@@ -293,6 +323,26 @@ test("completion stage completes onboarding before entering dashboard", () => {
     completionWorkspace,
     "completeSchoolOnboardingAction",
     "Completion must call the server action that marks onboarding complete.",
+  );
+  assertContains(
+    completionWorkspace,
+    "edujay-setup-ring",
+    "Completion screen must include a progress ring animation.",
+  );
+  assertContains(
+    completionWorkspace,
+    "edujay-setup-fade",
+    "Completion screen must fade in the final message.",
+  );
+  assertContains(
+    completionWorkspace,
+    "All set. Welcome to Edujay.",
+    "Completion screen must use the promised final message.",
+  );
+  assertContains(
+    completionWorkspace,
+    "Enter Admin Dashboard",
+    "Completion screen must use the promised dashboard button label.",
   );
   assertContains(
     completionWorkspace,

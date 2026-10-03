@@ -12,6 +12,12 @@ type ReadinessSchool = {
     teachers: number;
     students: number;
   };
+  readiness: {
+    activeParentLinks: number;
+    feeSetupStarted: boolean;
+    onlinePaymentsEnabled: boolean;
+    activeTimetablePublished: boolean;
+  };
 };
 
 type ReadinessCheck = {
@@ -79,6 +85,37 @@ export default function ReadinessReviewWorkspace({ school }: { school: Readiness
       required: false,
       href: "/list/students",
       action: "Open students",
+    },
+    {
+      label: "Parent links",
+      description: "Parent access is ready when active guardian links exist for students.",
+      count: `${school.readiness.activeParentLinks} active links`,
+      ready: school.readiness.activeParentLinks > 0,
+      required: false,
+      href: "/list/parents",
+      action: "Open parents",
+    },
+    {
+      label: "Fee setup",
+      description: "Finance can begin once payment settings or fee setup work has started.",
+      count: school.readiness.onlinePaymentsEnabled
+        ? "Online payments enabled"
+        : school.readiness.feeSetupStarted
+          ? "Payment settings started"
+          : "Not started yet",
+      ready: school.readiness.feeSetupStarted,
+      required: false,
+      href: "/admin/payment-settings",
+      action: "Open finance setup",
+    },
+    {
+      label: "Timetable",
+      description: "The timetable can be built and published later after classes, subjects, and teachers are stable.",
+      count: school.readiness.activeTimetablePublished ? "Published timetable found" : "Can be done later",
+      ready: school.readiness.activeTimetablePublished,
+      required: false,
+      href: "/admin/timetable",
+      action: "Open timetable",
     },
   ];
 
