@@ -11,6 +11,9 @@ const setupClient = readFileSync("src/components/SchoolSetupClient.tsx", "utf8")
 const setupStages = readFileSync("src/lib/onboarding/setup-stages.ts", "utf8");
 const stageShell = readFileSync("src/components/OnboardingStageShell.tsx", "utf8");
 const setupPathPage = readFileSync("src/app/onboarding/setup/path/page.tsx", "utf8");
+const setupPathChooser = readFileSync("src/components/SetupPathChooser.tsx", "utf8");
+const onboardingActions = readFileSync("src/lib/actions/onboardingActions.ts", "utf8");
+const onboardingValidation = readFileSync("src/lib/validation/onboarding.ts", "utf8");
 const freshSetupPage = readFileSync("src/app/onboarding/setup/fresh/page.tsx", "utf8");
 const reviewPage = readFileSync("src/app/onboarding/setup/review/page.tsx", "utf8");
 const completePage = readFileSync("src/app/onboarding/setup/complete/page.tsx", "utf8");
@@ -140,5 +143,48 @@ test("guided admin onboarding routes are structured and protected", () => {
     stageShell,
     "stages.map",
     "The shell must render a consistent step list.",
+  );
+});
+
+test("setup path selection is saved before routing to the next stage", () => {
+  assertContains(
+    setupPathPage,
+    "SetupPathChooser",
+    "The setup path page must use the guarded chooser instead of raw links.",
+  );
+  assertContains(
+    setupPathChooser,
+    "selectSchoolSetupPathAction",
+    "Path selection must call a server action before navigation.",
+  );
+  assertContains(
+    setupPathChooser,
+    'router.push(option?.href ?? "/onboarding/setup/path")',
+    "Path selection must route only after the server action succeeds.",
+  );
+  assertContains(
+    onboardingValidation,
+    'z.enum(["fresh", "migration"])',
+    "Only known setup paths should be accepted.",
+  );
+  assertContains(
+    onboardingActions,
+    "selectSchoolSetupPathAction",
+    "A dedicated setup path action must exist.",
+  );
+  assertContains(
+    onboardingService,
+    "selectSchoolSetupPath",
+    "The service layer must own setup path persistence.",
+  );
+  assertContains(
+    onboardingService,
+    'input.setupPath === "fresh" ? "fresh" : "migration"',
+    "The service must persist the selected setup step.",
+  );
+  assertContains(
+    onboardingService,
+    "Save the school identity before choosing a setup path.",
+    "Admins must not skip school identity before choosing the setup route.",
   );
 });

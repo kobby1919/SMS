@@ -232,6 +232,43 @@ export async function updateSchoolProfileSetup(
   return school;
 }
 
+export async function selectSchoolSetupPath(
+  input: { setupPath: "fresh" | "migration" },
+  context: AuthzContext,
+) {
+  if (context.role !== "admin") {
+    throw new Error("Only a school admin can choose the school setup path.");
+  }
+
+  const school = await prisma.school.findUnique({
+    where: { id: context.schoolId },
+    select: {
+      id: true,
+      onboardingStatus: true,
+      setupStep: true,
+    },
+  });
+
+  if (!school) {
+    throw new Error("School not found.");
+  }
+
+  if (school.onboardingStatus === "COMPLETED") {
+    throw new Error("This school has already completed onboarding.");
+  }
+
+  if (school.onboardingStatus === "PENDING_SETUP") {
+    throw new Error("Save the school identity before choosing a setup path.");
+  }
+
+  const setupStep = input.setupPath === "fresh" ? "fresh" : "migration";
+
+  return prisma.school.update({
+    where: { id: context.schoolId },
+    data: { setupStep },
+  });
+}
+
 export async function completeSchoolOnboarding(context: AuthzContext) {
   const school = await getSchoolOnboardingState(context.schoolId);
 

@@ -13,6 +13,7 @@ import {
   resendCurrentSchoolAdminInvite,
   revokeSchoolInvite,
   revokeCurrentSchoolAdminInvite,
+  selectSchoolSetupPath,
   updateSchoolProfileSetup,
   type CreatedSchoolInvite,
 } from "@/src/lib/services/onboarding";
@@ -22,6 +23,7 @@ import {
   schoolAdminInviteCreateSchema,
   rejectWaitlistEntrySchema,
   schoolProfileSetupSchema,
+  schoolSetupPathSchema,
 } from "@/src/lib/validation/onboarding";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
@@ -199,6 +201,24 @@ export async function updateSchoolProfileSetupAction(
     return {
       ok: false,
       message: error instanceof Error ? error.message : "Could not save school profile.",
+    };
+  }
+}
+
+export async function selectSchoolSetupPathAction(
+  input: unknown,
+): Promise<OnboardingActionResult> {
+  try {
+    const context = await requireRole(["admin"]);
+    const data = parseActionInput(schoolSetupPathSchema, input);
+    await selectSchoolSetupPath(data, context);
+    revalidatePath("/onboarding/setup/path");
+    revalidatePath("/admin/data-migration");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Could not choose setup path.",
     };
   }
 }

@@ -22,6 +22,10 @@ export const schoolProfileSetupSchema = z.object({
   logoUrl: z.string().trim().url().optional().or(z.literal("")),
 });
 
+export const schoolSetupPathSchema = z.object({
+  setupPath: z.enum(["fresh", "migration"]),
+});
+
 export const inviteIdSchema = z.object({
   inviteId: z.string().trim().min(1),
 });
@@ -34,5 +38,6 @@ export const schoolAdminInviteCreateSchema = z.object({
 export type ApproveWaitlistEntryInput = z.infer<typeof approveWaitlistEntrySchema>;
 export type RejectWaitlistEntryInput = z.infer<typeof rejectWaitlistEntrySchema>;
 export type SchoolProfileSetupInput = z.infer<typeof schoolProfileSetupSchema>;
+export type SchoolSetupPathInput = z.infer<typeof schoolSetupPathSchema>;
 export type SchoolAdminInviteCreateInput = z.infer<typeof schoolAdminInviteCreateSchema>;
 
