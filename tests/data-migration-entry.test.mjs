@@ -350,6 +350,21 @@ test("data migration point 5 bulk-invites imported profiles safely", () => {
   );
   assertContains(
     postImportInviteService,
+    "sex: teacherSex",
+    "Point 5 teacher bulk invites must preserve imported teacher sex for titles.",
+  );
+  assertContains(
+    postImportInviteService,
+    "sex: parent.sex",
+    "Point 5 parent bulk invites must preserve imported parent sex for titles.",
+  );
+  assertContains(
+    postImportInviteService,
+    "sex: bursar.sex",
+    "Point 5 bursar bulk invites must preserve imported bursar sex for titles.",
+  );
+  assertContains(
+    postImportInviteService,
     "activeTeacherInviteEmails",
     "Point 5 must avoid duplicate active teacher invites.",
   );
@@ -402,6 +417,11 @@ test("data migration point 5 bulk-invites imported profiles safely", () => {
     parentInviteService,
     "importedParent",
     "Parent invite acceptance must be able to claim an imported parent profile.",
+  );
+  assertContains(
+    parentInviteService,
+    "sex: invite.sex",
+    "Parent invite acceptance must keep the invited sex on the active parent profile.",
   );
   assertContains(
     bursarInviteService,
