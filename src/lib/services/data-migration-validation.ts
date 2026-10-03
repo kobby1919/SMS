@@ -136,6 +136,10 @@ function uploadedFeeRowKey(values: Record<string, string>) {
   return parts.every(Boolean) ? parts.join(":") : "";
 }
 
+function uploadedParentWardKey(values: Record<string, string>) {
+  return identity(values.wardAdmissionNumber);
+}
+
 async function existingSets(schoolId: string) {
   const [
     school,
@@ -150,7 +154,19 @@ async function existingSets(schoolId: string) {
     prisma.school.findUnique({ where: { id: schoolId }, select: { code: true } }),
     prisma.class.findMany({ where: { schoolId }, select: { name: true } }),
     prisma.subject.findMany({ where: { schoolId }, select: { name: true } }),
-    prisma.student.findMany({ where: { schoolId }, select: { admissionNumber: true, email: true, phone: true } }),
+    prisma.student.findMany({
+      where: { schoolId },
+      select: {
+        admissionNumber: true,
+        email: true,
+        phone: true,
+        parentRelationships: {
+          where: { schoolId, status: "ACTIVE" },
+          select: { id: true },
+          take: 1,
+        },
+      },
+    }),
     prisma.parent.findMany({ where: { schoolId }, select: { email: true, phone: true } }),
     prisma.teacher.findMany({ where: { schoolId }, select: { email: true, phone: true } }),
     prisma.bursar.findMany({ where: { schoolId }, select: { email: true, phone: true } }),
@@ -162,6 +178,11 @@ async function existingSets(schoolId: string) {
     classNames: new Set(classes.map((item) => identity(item.name))),
     subjectNames: new Set(subjects.map((item) => identity(item.name))),
     admissionNumbers: new Set(compact(students.map((item) => item.admissionNumber))),
+    admissionNumbersWithActiveParentLinks: new Set(
+      compact(students
+        .filter((item) => item.parentRelationships.length > 0)
+        .map((item) => item.admissionNumber)),
+    ),
     studentEmails: new Set(compact(students.map((item) => item.email))),
     studentPhones: new Set(compact(students.map((item) => item.phone))),
     parentEmails: new Set(compact(parents.map((item) => item.email))),
@@ -194,6 +215,7 @@ export async function validateMigrationRows(
   const duplicateStudentGuardianEmails = countDuplicates(mappedRows.map((row) => row.values.parentEmail));
   const duplicateStudentGuardianPhones = countDuplicates(mappedRows.map((row) => row.values.parentPhone));
   const duplicateFeeRows = countDuplicates(mappedRows.map((row) => uploadedFeeRowKey(row.values)));
+  const duplicateParentWardRows = countDuplicates(mappedRows.map((row) => uploadedParentWardKey(row.values)));
 
   const rows = mappedRows.map(({ rowNumber, values }) => {
     const issues: MigrationValidationIssue[] = [];
@@ -262,6 +284,14 @@ export async function validateMigrationRows(
     if (context.areaKey === "parents") {
       addDuplicateIssue({ issues, counts: duplicateEmails, value: values.email, field: "email", label: "Parent email", severity: "WARNING" });
       addDuplicateIssue({ issues, counts: duplicatePhones, value: values.phone, field: "phone", label: "Parent phone", severity: "WARNING" });
+      addDuplicateIssue({
+        issues,
+        counts: duplicateParentWardRows,
+        value: values.wardAdmissionNumber,
+        field: "wardAdmissionNumber",
+        label: "Ward admission number",
+        severity: "WARNING",
+      });
       if (!values.email) {
         issues.push({ severity: "ERROR", field: "email", message: "Parent email is required for invite/login access." });
       }
@@ -270,6 +300,13 @@ export async function validateMigrationRows(
       }
       if (values.wardAdmissionNumber && !existing.admissionNumbers.has(identity(values.wardAdmissionNumber))) {
         issues.push({ severity: "ERROR", field: "wardAdmissionNumber", message: "Ward admission number does not match an existing Edujay student." });
+      }
+      if (values.wardAdmissionNumber && existing.admissionNumbersWithActiveParentLinks.has(identity(values.wardAdmissionNumber))) {
+        issues.push({
+          severity: "WARNING",
+          field: "wardAdmissionNumber",
+          message: "This ward already has an active guardian link. Importing this row will add another guardian, not replace the primary guardian.",
+        });
       }
     }
 

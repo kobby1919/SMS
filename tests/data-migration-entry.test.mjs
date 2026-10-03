@@ -219,6 +219,7 @@ test("data migration point 3 validates rows without importing", () => {
     "Email address is not valid",
     "Fee amount must be a positive number",
     "Fee row for this student/term/year",
+    "This ward already has an active guardian link",
     "Guardian email already exists in Edujay",
     "appears more than once in this upload",
   ]) {
@@ -365,6 +366,16 @@ test("data migration point 4 imports only clean validated rows", () => {
     migrationImportService,
     "parentStudentRelationship.upsert",
     "Point 4 import must create or restore parent-student relationships safely.",
+  );
+  assertContains(
+    migrationImportService,
+    "ParentStudentRelationshipRole.GUARDIAN",
+    "Point 4 parent imports must add extra ward links as guardians, not silently create multiple primary guardians.",
+  );
+  assertContains(
+    migrationImportService,
+    "no active guardian existed",
+    "Point 4 parent imports may only create a primary guardian when the ward has no active guardian link.",
   );
 });
 

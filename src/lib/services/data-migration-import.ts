@@ -5,6 +5,7 @@ import {
   BursarStatus,
   FeeCategory,
   FeeStructureStatus,
+  ParentStudentRelationshipRole,
   Prisma,
   StudentStatus,
   TeacherStatus,
@@ -350,12 +351,31 @@ async function importParents(
       where: { schoolId, admissionNumber: row.values.wardAdmissionNumber.trim().toUpperCase() },
       select: { id: true },
     });
+    const activeRelationshipCount = await tx.parentStudentRelationship.count({
+      where: { schoolId, studentId: student.id, status: "ACTIVE" },
+    });
+    const role = activeRelationshipCount > 0
+      ? ParentStudentRelationshipRole.GUARDIAN
+      : ParentStudentRelationshipRole.PRIMARY_GUARDIAN;
     await tx.parentStudentRelationship.upsert({
       where: {
         schoolId_parentId_studentId: { schoolId, parentId, studentId: student.id },
       },
-      update: { status: "ACTIVE", endedAt: null },
-      create: { schoolId, parentId, studentId: student.id, status: "ACTIVE" },
+      update: {
+        status: "ACTIVE",
+        endedAt: null,
+        note: `Guardian link refreshed during parent migration import.`,
+      },
+      create: {
+        schoolId,
+        parentId,
+        studentId: student.id,
+        status: "ACTIVE",
+        role,
+        note: role === ParentStudentRelationshipRole.PRIMARY_GUARDIAN
+          ? "Primary guardian link created during parent migration import because no active guardian existed."
+          : "Additional guardian link created during parent migration import.",
+      },
     });
     counters.parentLinks += 1;
   }
