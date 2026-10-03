@@ -13,7 +13,7 @@ export default async function SchoolSetupPage() {
     redirect("/sign-in?error=missing_school");
   }
 
-  if (school.onboardingStatus === "COMPLETED") {
+  if (school.onboardingStatus === "COMPLETED" && school.code) {
     redirect("/admin");
   }
 

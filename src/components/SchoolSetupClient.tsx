@@ -48,7 +48,7 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
         setMessage(result.message);
         return;
       }
-      router.push("/onboarding/setup/path");
+      router.push(school.onboardingStatus === "COMPLETED" ? "/admin" : "/onboarding/setup/path");
     });
   }
 

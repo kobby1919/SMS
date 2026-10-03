@@ -45,6 +45,11 @@ test("incomplete school setup keeps admins out of the live dashboard", () => {
   );
   assertContains(
     authz,
+    "|| !school.code",
+    "The guard must also block completed schools that are missing a school code.",
+  );
+  assertContains(
+    authz,
     'redirect("/onboarding/setup")',
     "Incomplete schools must be sent to the setup flow.",
   );
@@ -55,8 +60,8 @@ test("incomplete school setup keeps admins out of the live dashboard", () => {
   );
   assertContains(
     postSignIn,
-    'role === "admin" && school.onboardingStatus !== "COMPLETED"',
-    "Post sign-in must also route incomplete admin setup to onboarding.",
+    'role === "admin" && (school.onboardingStatus !== "COMPLETED" || !school.code)',
+    "Post sign-in must route incomplete or code-missing admin setup to onboarding.",
   );
 });
 
@@ -78,8 +83,8 @@ test("fresh setup state resolves to a clear profile step", () => {
   );
   assertContains(
     onboardingService,
-    'setupStep: "path"',
-    "Saving the identity stage must move the school to setup path selection.",
+    'setupStep: existing.onboardingStatus === "COMPLETED" ? null : "path"',
+    "Saving the identity stage must move new schools to path selection without downgrading completed schools.",
   );
   assertContains(
     onboardingService,
@@ -120,9 +125,19 @@ test("school identity page stays focused on school identity only", () => {
     "School code must not be freely changed after student records exist.",
   );
   assertContains(
+    onboardingService,
+    'existing.onboardingStatus === "COMPLETED" ? "COMPLETED" : "PROFILE_DONE"',
+    "Saving a missing code for a completed school must not downgrade onboarding status.",
+  );
+  assertContains(
     setupClient,
-    'router.push("/onboarding/setup/path")',
-    "Saving school identity must move the admin to setup path selection.",
+    'router.push(school.onboardingStatus === "COMPLETED" ? "/admin" : "/onboarding/setup/path")',
+    "Saving school identity must move new admins forward and return completed-code repairs to the dashboard.",
+  );
+  assertContains(
+    setupClient,
+    'school.onboardingStatus === "COMPLETED" ? "/admin" : "/onboarding/setup/path"',
+    "Repairing a completed school code must return the admin to the dashboard without downgrading setup.",
   );
   assertNotContains(
     setupClient,

@@ -245,6 +245,7 @@ export async function updateSchoolProfileSetup(
     select: {
       id: true,
       code: true,
+      onboardingStatus: true,
       _count: {
         select: { students: true },
       },
@@ -285,8 +286,8 @@ export async function updateSchoolProfileSetup(
       phone: input.phone || null,
       address: input.address || null,
       logoUrl: input.logoUrl || null,
-      onboardingStatus: "PROFILE_DONE",
-      setupStep: "path",
+      onboardingStatus: existing.onboardingStatus === "COMPLETED" ? "COMPLETED" : "PROFILE_DONE",
+      setupStep: existing.onboardingStatus === "COMPLETED" ? null : "path",
     },
   });
 

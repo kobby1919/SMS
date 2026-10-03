@@ -25,6 +25,7 @@ async function schoolAwareDashboardPath(role: AppRole, schoolId: string): Promis
     select: {
       id: true,
       onboardingStatus: true,
+      code: true,
     },
   });
 
@@ -32,7 +33,7 @@ async function schoolAwareDashboardPath(role: AppRole, schoolId: string): Promis
     return `${SIGN_IN_PATH}?error=missing_school`;
   }
 
-  if (role === "admin" && school.onboardingStatus !== "COMPLETED") {
+  if (role === "admin" && (school.onboardingStatus !== "COMPLETED" || !school.code)) {
     return "/onboarding/setup";
   }
 

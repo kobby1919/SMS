@@ -104,14 +104,14 @@ export async function requireCompletedAdminSchoolSetup(
 
   const school = await prisma.school.findUnique({
     where: { id: context.schoolId },
-    select: { onboardingStatus: true },
+    select: { onboardingStatus: true, code: true },
   });
 
   if (!school) {
     redirect(`${SIGN_IN_PATH}?error=missing_school`);
   }
 
-  if (school.onboardingStatus !== "COMPLETED") {
+  if (school.onboardingStatus !== "COMPLETED" || !school.code) {
     redirect("/onboarding/setup");
   }
 }

@@ -450,6 +450,10 @@ export default async function DataMigrationPage() {
     redirect("/sign-in?error=missing_school");
   }
 
+  if (!school.code) {
+    redirect("/onboarding/setup");
+  }
+
   if (school.onboardingStatus !== "COMPLETED") {
     if (school.setupStep === "migration") {
       redirect("/onboarding/setup/migration");
