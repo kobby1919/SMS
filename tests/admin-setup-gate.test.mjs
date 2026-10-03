@@ -7,6 +7,12 @@ const adminPage = readFileSync("src/app/(dashboard)/admin/page.tsx", "utf8");
 const postSignIn = readFileSync("src/lib/auth/post-sign-in.ts", "utf8");
 const onboardingService = readFileSync("src/lib/services/onboarding.ts", "utf8");
 const setupClient = readFileSync("src/components/SchoolSetupClient.tsx", "utf8");
+const setupStages = readFileSync("src/lib/onboarding/setup-stages.ts", "utf8");
+const stageShell = readFileSync("src/components/OnboardingStageShell.tsx", "utf8");
+const setupPathPage = readFileSync("src/app/onboarding/setup/path/page.tsx", "utf8");
+const freshSetupPage = readFileSync("src/app/onboarding/setup/fresh/page.tsx", "utf8");
+const reviewPage = readFileSync("src/app/onboarding/setup/review/page.tsx", "utf8");
+const completePage = readFileSync("src/app/onboarding/setup/complete/page.tsx", "utf8");
 
 function assertContains(source, needle, message) {
   assert.ok(source.includes(needle), message);
@@ -87,5 +93,41 @@ test("setup page sends real imports to the data migration workspace", () => {
     setupClient,
     "recordOnboardingImportAction",
     "Setup page must not record pretend imports from the onboarding page.",
+  );
+});
+
+test("guided admin onboarding routes are structured and protected", () => {
+  for (const route of [
+    "/onboarding/setup",
+    "/onboarding/setup/path",
+    "/onboarding/setup/fresh",
+    "/admin/data-migration",
+    "/onboarding/setup/review",
+    "/onboarding/setup/complete",
+  ]) {
+    assertContains(
+      setupStages,
+      route,
+      `Setup stage registry must include ${route}.`,
+    );
+  }
+
+  for (const page of [setupPathPage, freshSetupPage, reviewPage, completePage]) {
+    assertContains(
+      page,
+      'requirePageSession(["admin"])',
+      "Each guided onboarding stage must be admin protected.",
+    );
+    assertContains(
+      page,
+      "OnboardingStageShell",
+      "Each guided onboarding stage must use the shared stage shell.",
+    );
+  }
+
+  assertContains(
+    stageShell,
+    "stages.map",
+    "The shell must render a consistent step list.",
   );
 });
