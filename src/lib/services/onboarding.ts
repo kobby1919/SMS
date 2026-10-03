@@ -40,7 +40,7 @@ type SchoolOnboardingStatus =
 
 export function defaultSetupStepForStatus(status: SchoolOnboardingStatus): string | null {
   if (status === "PENDING_SETUP") return "profile";
-  if (status === "PROFILE_DONE") return "academic";
+  if (status === "PROFILE_DONE") return "path";
   if (status === "ACADEMIC_DONE" || status === "USERS_DONE") return "users";
   return null;
 }
@@ -214,7 +214,7 @@ export async function updateSchoolProfileSetup(
       address: input.address || null,
       logoUrl: input.logoUrl || null,
       onboardingStatus: "PROFILE_DONE",
-      setupStep: "academic",
+      setupStep: "path",
     },
   });
 

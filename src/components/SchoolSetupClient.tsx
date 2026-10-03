@@ -1,13 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  completeSchoolOnboardingAction,
-  createDefaultAcademicSetupAction,
-  updateSchoolProfileSetupAction,
-} from "@/src/lib/actions/onboardingActions";
+import { updateSchoolProfileSetupAction } from "@/src/lib/actions/onboardingActions";
 
 type SchoolSetupState = {
   id: string;
@@ -24,20 +19,6 @@ type SchoolSetupState = {
   logoUrl: string | null;
   onboardingStatus: string;
   setupStep: string | null;
-  onboardingAuditLogs: {
-    id: number;
-    action: string;
-    performedBy: string;
-    metadata: unknown;
-    createdAt: Date;
-  }[];
-  _count: {
-    grades: number;
-    classes: number;
-    subjects: number;
-    teachers: number;
-    students: number;
-  };
 };
 
 export default function SchoolSetupClient({ school }: { school: SchoolSetupState }) {
@@ -56,9 +37,6 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
   });
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const hasAcademicBase =
-    school._count.grades > 0 && school._count.classes > 0 && school._count.subjects > 0;
-  const activeStep = school.setupStep ?? "profile";
 
   function update(field: keyof typeof values, value: string) {
     setValues((current) => ({ ...current, [field]: value }));
@@ -72,59 +50,17 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
         setMessage(result.message);
         return;
       }
-      setMessage("School profile saved. Continue with academic setup.");
-      router.refresh();
-    });
-  }
-
-  function finishSetup() {
-    startTransition(async () => {
-      const result = await completeSchoolOnboardingAction();
-      if (!result.ok) {
-        setMessage(result.message);
-        return;
-      }
-      router.push("/admin");
-    });
-  }
-
-  function createDefaults() {
-    startTransition(async () => {
-      const result = await createDefaultAcademicSetupAction();
-      if (!result.ok) {
-        setMessage(result.message);
-        return;
-      }
-      setMessage("Default grades, classes, and subjects created.");
-      router.refresh();
+      router.push("/onboarding/setup/path");
     });
   }
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 xl:grid-cols-4">
-        <ProgressCard label="Profile" done={Boolean(school.name)} />
-        <ProgressCard label="Grades" done={school._count.grades > 0} />
-        <ProgressCard label="Classes" done={school._count.classes > 0} />
-        <ProgressCard label="Subjects" done={school._count.subjects > 0} />
-      </div>
-
-      <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-950">
-        <span className="font-black">Current setup stage:</span>{" "}
-        {activeStep === "profile"
-          ? "Confirm the school profile first."
-          : activeStep === "academic"
-            ? "Set up grades, classes, and subjects."
-            : activeStep === "users"
-              ? "Bring in school users and finish setup."
-              : "Ready to finish setup."}
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
       <section className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-        <h2 className="text-lg font-black text-gray-900">School profile</h2>
+        <h2 className="text-lg font-black text-gray-900">School identity</h2>
         <p className="mt-1 text-sm text-gray-500">
-          Confirm the basics and parent-facing identity. Edujay stays the platform name, but parents should recognize the school first.
+          Confirm the official school details first. Edujay will use this identity on
+          dashboards, receipts, parent updates, and school-facing documents.
         </p>
 
         <div className="mt-5 space-y-4">
@@ -238,134 +174,15 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
           disabled={isPending}
           className="mt-5 rounded-lg bg-gray-900 px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
         >
-          {isPending ? "Saving..." : "Save profile"}
+          {isPending ? "Saving..." : "Save and continue"}
         </button>
       </section>
 
-      <aside className="space-y-4">
-        {message && (
-          <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm font-medium text-blue-950">
-            {message}
-          </div>
-        )}
-
-        <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-black text-gray-900">Setup checklist</h2>
-          <div className="mt-4 space-y-3 text-sm">
-            <ChecklistItem done={Boolean(school.name)} label="School profile created" />
-            <ChecklistItem done={school._count.grades > 0} label="At least one grade" />
-            <ChecklistItem done={school._count.classes > 0} label="At least one class" />
-            <ChecklistItem done={school._count.subjects > 0} label="At least one subject" />
-          </div>
-
-          <div className="mt-5 grid gap-2 sm:grid-cols-3 lg:grid-cols-1">
-            <button
-              type="button"
-              onClick={createDefaults}
-              disabled={isPending}
-              className="rounded-lg bg-gray-900 px-3 py-2 text-center text-xs font-bold text-white disabled:opacity-50"
-            >
-              Create default academics
-            </button>
-            <Link
-              href="/list/classes"
-              className="rounded-lg border border-gray-200 px-3 py-2 text-center text-xs font-bold text-gray-700"
-            >
-              Add classes
-            </Link>
-            <Link
-              href="/list/subjects"
-              className="rounded-lg border border-gray-200 px-3 py-2 text-center text-xs font-bold text-gray-700"
-            >
-              Add subjects
-            </Link>
-            <Link
-              href="/list/teachers"
-              className="rounded-lg border border-gray-200 px-3 py-2 text-center text-xs font-bold text-gray-700"
-            >
-              Add teachers
-            </Link>
-          </div>
-
-          <button
-            type="button"
-            onClick={finishSetup}
-            disabled={isPending || !hasAcademicBase}
-            className="mt-5 w-full rounded-lg bg-blue-700 px-4 py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Finish setup
-          </button>
-          {!hasAcademicBase && (
-            <p className="mt-2 text-xs leading-5 text-gray-400">
-              Add at least one grade, class, and subject before unlocking the admin dashboard.
-            </p>
-          )}
+      {message && (
+        <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm font-medium text-blue-950">
+          {message}
         </div>
-
-        <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-black text-gray-900">School data setup</h2>
-          <p className="mt-1 text-sm text-gray-500">
-            Use the migration workspace when you need to bring existing students, parents,
-            teachers, bursars, classes, subjects, or fee records into Edujay.
-          </p>
-          <Link
-            href="/admin/data-migration"
-            className="mt-4 block rounded-lg border border-gray-200 px-3 py-2 text-center text-xs font-bold text-gray-700"
-          >
-            Open data migration
-          </Link>
-        </div>
-      </aside>
-      </div>
-
-      <section className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-        <h2 className="text-lg font-black text-gray-900">Recent onboarding activity</h2>
-        <div className="mt-4 grid gap-2">
-          {school.onboardingAuditLogs.length === 0 ? (
-            <p className="text-sm text-gray-500">No activity recorded yet.</p>
-          ) : (
-            school.onboardingAuditLogs.map((log) => (
-              <div
-                key={log.id}
-                className="flex flex-col justify-between gap-1 rounded-lg bg-gray-50 px-3 py-2 text-sm sm:flex-row"
-              >
-                <span className="font-semibold text-gray-700">
-                  {log.action.replaceAll("_", " ").toLowerCase()}
-                </span>
-                <span className="text-xs text-gray-400">
-                  {new Date(log.createdAt).toLocaleString()}
-                </span>
-              </div>
-            ))
-          )}
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function ProgressCard({ label, done }: { label: string; done: boolean }) {
-  return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-      <p className="text-xs font-bold uppercase text-gray-400">{label}</p>
-      <p className={`mt-2 text-sm font-black ${done ? "text-emerald-700" : "text-gray-500"}`}>
-        {done ? "Complete" : "Pending"}
-      </p>
-    </div>
-  );
-}
-
-function ChecklistItem({ done, label }: { done: boolean; label: string }) {
-  return (
-    <div className="flex items-center justify-between gap-3 rounded-lg bg-gray-50 px-3 py-2">
-      <span className="text-gray-600">{label}</span>
-      <span
-        className={`rounded-full px-2 py-0.5 text-xs font-bold ${
-          done ? "bg-emerald-100 text-emerald-700" : "bg-gray-200 text-gray-500"
-        }`}
-      >
-        {done ? "Done" : "Needed"}
-      </span>
+      )}
     </div>
   );
 }

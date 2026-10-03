@@ -6,6 +6,7 @@ const authz = readFileSync("src/lib/authz.ts", "utf8");
 const adminPage = readFileSync("src/app/(dashboard)/admin/page.tsx", "utf8");
 const postSignIn = readFileSync("src/lib/auth/post-sign-in.ts", "utf8");
 const onboardingService = readFileSync("src/lib/services/onboarding.ts", "utf8");
+const setupPage = readFileSync("src/app/onboarding/setup/page.tsx", "utf8");
 const setupClient = readFileSync("src/components/SchoolSetupClient.tsx", "utf8");
 const setupStages = readFileSync("src/lib/onboarding/setup-stages.ts", "utf8");
 const stageShell = readFileSync("src/components/OnboardingStageShell.tsx", "utf8");
@@ -67,32 +68,42 @@ test("fresh setup state resolves to a clear profile step", () => {
     "Setup UI must receive the current setup step.",
   );
   assertContains(
-    setupClient,
-    "Current setup stage:",
-    "Setup UI must tell admins where they are in the setup flow.",
+    onboardingService,
+    'setupStep: "path"',
+    "Saving the identity stage must move the school to setup path selection.",
   );
 });
 
-test("setup page sends real imports to the data migration workspace", () => {
+test("school identity page stays focused on school identity only", () => {
   assertContains(
-    setupClient,
-    'href="/admin/data-migration"',
-    "Setup page must send admins to the real data migration workspace.",
+    setupPage,
+    'setupStageNav("profile")',
+    "The first onboarding page must be the profile/identity stage.",
   );
   assertContains(
     setupClient,
-    "students, parents",
-    "Setup page must explain that migration covers more than teachers and students.",
+    "School identity",
+    "Setup client must present school identity as the first task.",
+  );
+  assertContains(
+    setupClient,
+    'router.push("/onboarding/setup/path")',
+    "Saving school identity must move the admin to setup path selection.",
   );
   assertNotContains(
     setupClient,
-    "Import checkpoint",
-    "Setup page must not show a fake/manual import checkpoint.",
+    "/admin/data-migration",
+    "School identity page must not link to migration before path selection.",
   );
   assertNotContains(
     setupClient,
-    "recordOnboardingImportAction",
-    "Setup page must not record pretend imports from the onboarding page.",
+    "Finish setup",
+    "School identity page must not unlock the dashboard or finish onboarding.",
+  );
+  assertNotContains(
+    setupClient,
+    "Create default academics",
+    "School identity page must not mix academic setup into the first stage.",
   );
 });
 
