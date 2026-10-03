@@ -12,6 +12,7 @@ const setupStages = readFileSync("src/lib/onboarding/setup-stages.ts", "utf8");
 const stageShell = readFileSync("src/components/OnboardingStageShell.tsx", "utf8");
 const setupPathPage = readFileSync("src/app/onboarding/setup/path/page.tsx", "utf8");
 const setupPathChooser = readFileSync("src/components/SetupPathChooser.tsx", "utf8");
+const freshSetupWorkspace = readFileSync("src/components/FreshSetupWorkspace.tsx", "utf8");
 const onboardingActions = readFileSync("src/lib/actions/onboardingActions.ts", "utf8");
 const onboardingValidation = readFileSync("src/lib/validation/onboarding.ts", "utf8");
 const freshSetupPage = readFileSync("src/app/onboarding/setup/fresh/page.tsx", "utf8");
@@ -74,6 +75,11 @@ test("fresh setup state resolves to a clear profile step", () => {
     onboardingService,
     'setupStep: "path"',
     "Saving the identity stage must move the school to setup path selection.",
+  );
+  assertContains(
+    onboardingService,
+    'if (status === "ACADEMIC_DONE") return "fresh";',
+    "Academic setup completion must keep admins inside the fresh setup stage.",
   );
 });
 
@@ -186,5 +192,48 @@ test("setup path selection is saved before routing to the next stage", () => {
     onboardingService,
     "Save the school identity before choosing a setup path.",
     "Admins must not skip school identity before choosing the setup route.",
+  );
+});
+
+test("fresh setup page is a guided workspace with a safe academic foundation action", () => {
+  assertContains(
+    freshSetupPage,
+    "FreshSetupWorkspace",
+    "The fresh setup page must use the guided workspace component.",
+  );
+  assertNotContains(
+    freshSetupPage,
+    "Pending",
+    "The fresh setup page should not be a raw pending checklist.",
+  );
+  assertContains(
+    freshSetupWorkspace,
+    "createDefaultAcademicSetupAction",
+    "Fresh setup must use the existing guarded server action for default academics.",
+  );
+  assertContains(
+    freshSetupWorkspace,
+    "/list/classes",
+    "Fresh setup must link admins to class setup.",
+  );
+  assertContains(
+    freshSetupWorkspace,
+    "/list/teachers",
+    "Fresh setup must link admins to teacher setup.",
+  );
+  assertContains(
+    freshSetupWorkspace,
+    "/admin/payment-settings",
+    "Fresh setup must link admins to finance setup.",
+  );
+  assertContains(
+    freshSetupWorkspace,
+    "/admin/timetable",
+    "Fresh setup must link admins to timetable setup.",
+  );
+  assertContains(
+    onboardingService,
+    'setupStep: "fresh"',
+    "Creating default academics must keep the school in the fresh setup stage.",
   );
 });

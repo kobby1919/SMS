@@ -41,7 +41,8 @@ type SchoolOnboardingStatus =
 export function defaultSetupStepForStatus(status: SchoolOnboardingStatus): string | null {
   if (status === "PENDING_SETUP") return "profile";
   if (status === "PROFILE_DONE") return "path";
-  if (status === "ACADEMIC_DONE" || status === "USERS_DONE") return "users";
+  if (status === "ACADEMIC_DONE") return "fresh";
+  if (status === "USERS_DONE") return "review";
   return null;
 }
 
@@ -370,7 +371,7 @@ export async function createDefaultAcademicSetup(context: AuthzContext) {
       where: { id: context.schoolId },
       data: {
         onboardingStatus: "ACADEMIC_DONE",
-        setupStep: "users",
+        setupStep: "fresh",
       },
     });
   });
