@@ -13,6 +13,7 @@ const stageShell = readFileSync("src/components/OnboardingStageShell.tsx", "utf8
 const setupPathPage = readFileSync("src/app/onboarding/setup/path/page.tsx", "utf8");
 const setupPathChooser = readFileSync("src/components/SetupPathChooser.tsx", "utf8");
 const freshSetupWorkspace = readFileSync("src/components/FreshSetupWorkspace.tsx", "utf8");
+const readinessReviewWorkspace = readFileSync("src/components/ReadinessReviewWorkspace.tsx", "utf8");
 const onboardingActions = readFileSync("src/lib/actions/onboardingActions.ts", "utf8");
 const onboardingValidation = readFileSync("src/lib/validation/onboarding.ts", "utf8");
 const freshSetupPage = readFileSync("src/app/onboarding/setup/fresh/page.tsx", "utf8");
@@ -235,5 +236,38 @@ test("fresh setup page is a guided workspace with a safe academic foundation act
     onboardingService,
     'setupStep: "fresh"',
     "Creating default academics must keep the school in the fresh setup stage.",
+  );
+});
+
+test("readiness review is a real checkpoint before completion", () => {
+  assertContains(
+    reviewPage,
+    "ReadinessReviewWorkspace",
+    "The review page must use the dedicated readiness workspace.",
+  );
+  assertNotContains(
+    reviewPage,
+    "will become",
+    "The review page must not use placeholder production language.",
+  );
+  assertContains(
+    readinessReviewWorkspace,
+    "readyRequired === requiredChecks.length",
+    "Completion should depend on all required checks passing.",
+  );
+  assertContains(
+    readinessReviewWorkspace,
+    "Grades, classes, and subjects must exist",
+    "The review page must explain the required academic foundation.",
+  );
+  assertContains(
+    readinessReviewWorkspace,
+    "/onboarding/setup/complete",
+    "The review page must provide a completion route only when ready.",
+  );
+  assertContains(
+    readinessReviewWorkspace,
+    "/onboarding/setup/fresh",
+    "The review page must send incomplete setup back to the fresh setup workspace.",
   );
 });
