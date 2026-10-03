@@ -20,6 +20,7 @@ const onboardingValidation = readFileSync("src/lib/validation/onboarding.ts", "u
 const freshSetupPage = readFileSync("src/app/onboarding/setup/fresh/page.tsx", "utf8");
 const reviewPage = readFileSync("src/app/onboarding/setup/review/page.tsx", "utf8");
 const completePage = readFileSync("src/app/onboarding/setup/complete/page.tsx", "utf8");
+const dataMigrationPage = readFileSync("src/app/(dashboard)/admin/data-migration/page.tsx", "utf8");
 
 function assertContains(source, needle, message) {
   assert.ok(source.includes(needle), message);
@@ -116,6 +117,16 @@ test("school identity page stays focused on school identity only", () => {
     "Create default academics",
     "School identity page must not mix academic setup into the first stage.",
   );
+  assertNotContains(
+    setupClient,
+    "Email sender name",
+    "School identity page must only collect the agreed identity fields.",
+  );
+  assertNotContains(
+    setupClient,
+    "Logo URL",
+    "School identity page must not ask for logo storage during identity setup.",
+  );
 });
 
 test("guided admin onboarding routes are structured and protected", () => {
@@ -161,9 +172,24 @@ test("setup path selection is saved before routing to the next stage", () => {
     "The setup path page must use the guarded chooser instead of raw links.",
   );
   assertContains(
+    setupPathPage,
+    "Welcome to Edujay",
+    "The setup path page must open with the agreed welcome message.",
+  );
+  assertContains(
     setupPathChooser,
     "selectSchoolSetupPathAction",
     "Path selection must call a server action before navigation.",
+  );
+  assertContains(
+    setupPathChooser,
+    "Start fresh",
+    "Path selection must show the Start Fresh choice.",
+  );
+  assertContains(
+    setupPathChooser,
+    "Migrate existing records",
+    "Path selection must show the Migrate Existing Records choice.",
   );
   assertContains(
     setupPathChooser,
@@ -213,6 +239,27 @@ test("fresh setup page is a guided workspace with a safe academic foundation act
     "createDefaultAcademicSetupAction",
     "Fresh setup must use the existing guarded server action for default academics.",
   );
+  for (const label of [
+    "Academic structure",
+    "Classes",
+    "Subjects",
+    "Teachers",
+    "Students",
+    "Parents",
+    "Fees",
+    "Timetable",
+  ]) {
+    assertContains(
+      freshSetupWorkspace,
+      label,
+      `Fresh setup checklist must include ${label}.`,
+    );
+  }
+  assertContains(
+    freshSetupWorkspace,
+    "Complete earlier steps first",
+    "Fresh setup checklist must show disabled/waiting state for blocked steps.",
+  );
   assertContains(
     freshSetupWorkspace,
     "/list/classes",
@@ -232,6 +279,11 @@ test("fresh setup page is a guided workspace with a safe academic foundation act
     freshSetupWorkspace,
     "/admin/timetable",
     "Fresh setup must link admins to timetable setup.",
+  );
+  assertContains(
+    dataMigrationPage,
+    "/onboarding/setup/review",
+    "Migration workspace must let admins return to readiness review after import/invites.",
   );
   assertContains(
     onboardingService,

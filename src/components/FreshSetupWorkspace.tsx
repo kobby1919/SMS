@@ -1,7 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BookOpen, CalendarDays, CheckCircle2, Loader2, Receipt, Users } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  CalendarDays,
+  CheckCircle2,
+  GraduationCap,
+  Layers3,
+  Loader2,
+  Receipt,
+  School,
+  Users,
+} from "lucide-react";
 import { useState, useTransition } from "react";
 import { createDefaultAcademicSetupAction } from "@/src/lib/actions/onboardingActions";
 
@@ -12,18 +23,34 @@ type FreshSetupSchool = {
     subjects: number;
     teachers: number;
     students: number;
+    parents: number;
+    feeStructures: number;
+  };
+  readiness: {
+    activeParentLinks: number;
+    feeSetupStarted: boolean;
+    feeStructuresStarted: boolean;
+    activeTimetablePublished: boolean;
   };
 };
 
-function statusLabel(done: boolean) {
-  return done ? "Started" : "Needs setup";
+function statusLabel(done: boolean, disabled = false) {
+  if (done) return "Completed";
+  if (disabled) return "Waiting";
+  return "Needs setup";
 }
 
 export default function FreshSetupWorkspace({ school }: { school: FreshSetupSchool }) {
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const academicsReady = school._count.grades > 0 && school._count.classes > 0 && school._count.subjects > 0;
-  const peopleStarted = school._count.teachers > 0 || school._count.students > 0;
+  const academicStructureReady = school._count.grades > 0;
+  const classesReady = school._count.classes > 0;
+  const subjectsReady = school._count.subjects > 0;
+  const teachersReady = school._count.teachers > 0;
+  const studentsReady = school._count.students > 0;
+  const parentsReady = school._count.parents > 0 || school.readiness.activeParentLinks > 0;
+  const feesReady = school.readiness.feeSetupStarted || school.readiness.feeStructuresStarted;
+  const timetableReady = school.readiness.activeTimetablePublished;
 
   function createFoundation() {
     setMessage(null);
@@ -41,44 +68,92 @@ export default function FreshSetupWorkspace({ school }: { school: FreshSetupScho
 
   const areas = [
     {
-      title: "Academic foundation",
-      description: "Set grades, classes, and subjects before users and timetable work begin.",
-      status: statusLabel(academicsReady),
-      done: academicsReady,
-      count: `${school._count.classes} classes · ${school._count.subjects} subjects`,
+      title: "Academic structure",
+      description: "Create the school levels or grades that classes belong to.",
+      status: statusLabel(academicStructureReady),
+      done: academicStructureReady,
+      disabled: false,
+      count: `${school._count.grades} grades`,
       href: "/list/classes",
-      icon: BookOpen,
-      action: "Review classes",
+      icon: Layers3,
+      action: academicStructureReady ? "Review structure" : "Create structure",
     },
     {
-      title: "People setup",
-      description: "Add or invite teachers first, then students and parents.",
-      status: statusLabel(peopleStarted),
-      done: peopleStarted,
-      count: `${school._count.teachers} teachers · ${school._count.students} students`,
+      title: "Classes",
+      description: "Set up classrooms so students, attendance, timetable, and reports have a home.",
+      status: statusLabel(classesReady),
+      done: classesReady,
+      disabled: false,
+      count: `${school._count.classes} classes`,
+      href: "/list/classes",
+      icon: School,
+      action: classesReady ? "Review classes" : "Create classes",
+    },
+    {
+      title: "Subjects",
+      description: "Add the subjects the school teaches before assigning teacher capability.",
+      status: statusLabel(subjectsReady),
+      done: subjectsReady,
+      disabled: false,
+      count: `${school._count.subjects} subjects`,
+      href: "/list/subjects",
+      icon: BookOpen,
+      action: subjectsReady ? "Review subjects" : "Create subjects",
+    },
+    {
+      title: "Teachers",
+      description: "Invite or add teachers after classes and subjects have started.",
+      status: statusLabel(teachersReady, !classesReady || !subjectsReady),
+      done: teachersReady,
+      disabled: !classesReady || !subjectsReady,
+      count: `${school._count.teachers} teachers`,
       href: "/list/teachers",
       icon: Users,
-      action: "Open teachers",
+      action: teachersReady ? "Review teachers" : "Add teachers",
     },
     {
-      title: "Finance setup",
-      description: "Configure payment settings and fee rules before real collections begin.",
-      status: "Pending",
-      done: false,
-      count: "Fees and payment rules",
+      title: "Students",
+      description: "Add students manually or import them after classes are ready.",
+      status: statusLabel(studentsReady, !classesReady),
+      done: studentsReady,
+      disabled: !classesReady,
+      count: `${school._count.students} students`,
+      href: "/list/students",
+      icon: GraduationCap,
+      action: studentsReady ? "Review students" : "Add students",
+    },
+    {
+      title: "Parents",
+      description: "Create parent profiles and link them to the right wards.",
+      status: statusLabel(parentsReady, !studentsReady),
+      done: parentsReady,
+      disabled: !studentsReady,
+      count: `${school._count.parents} parents · ${school.readiness.activeParentLinks} links`,
+      href: "/list/parents",
+      icon: Users,
+      action: parentsReady ? "Review parents" : "Link parents",
+    },
+    {
+      title: "Fees",
+      description: "Prepare fee structures or payment settings before collections begin.",
+      status: statusLabel(feesReady),
+      done: feesReady,
+      disabled: false,
+      count: school.readiness.feeStructuresStarted ? `${school._count.feeStructures} fee structures` : "Fee setup not started",
       href: "/admin/payment-settings",
       icon: Receipt,
-      action: "Open finance setup",
+      action: feesReady ? "Review fees" : "Set up fees",
     },
     {
-      title: "Timetable setup",
-      description: "Build and publish the master timetable after classes, subjects, and teachers are ready.",
-      status: "Pending",
-      done: false,
-      count: "Published timetable required",
+      title: "Timetable",
+      description: "Build and publish the master timetable after classes, subjects, and teachers are stable.",
+      status: timetableReady ? "Completed" : "Can be done later",
+      done: timetableReady,
+      disabled: !classesReady || !subjectsReady || !teachersReady,
+      count: timetableReady ? "Published timetable found" : "Not published yet",
       href: "/admin/timetable",
       icon: CalendarDays,
-      action: "Open timetable",
+      action: timetableReady ? "Review timetable" : "Set timetable",
     },
   ];
 
@@ -106,7 +181,7 @@ export default function FreshSetupWorkspace({ school }: { school: FreshSetupScho
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-3 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-            {academicsReady ? "Refresh foundation" : "Create foundation"}
+            {academicStructureReady && classesReady && subjectsReady ? "Refresh foundation" : "Create foundation"}
           </button>
         </div>
 
@@ -120,20 +195,27 @@ export default function FreshSetupWorkspace({ school }: { school: FreshSetupScho
       <div className="grid gap-4 md:grid-cols-2">
         {areas.map((area) => {
           const Icon = area.icon;
-
-          return (
-            <Link
-              key={area.title}
-              href={area.href}
-              className="group flex min-h-[210px] flex-col rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:bg-blue-50"
-            >
+          const disabled = area.disabled && !area.done;
+          const cardClassName = `group flex min-h-[210px] flex-col rounded-2xl border p-5 shadow-sm transition ${
+            disabled
+              ? "border-gray-100 bg-gray-50 opacity-75"
+              : "border-gray-100 bg-white hover:border-blue-200 hover:bg-blue-50"
+          }`;
+          const content = (
+            <>
               <div className="flex items-start justify-between gap-4">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">
+                <span className={`flex h-11 w-11 items-center justify-center rounded-2xl ${
+                  disabled ? "bg-gray-100 text-gray-500" : "bg-blue-100 text-blue-700"
+                }`}>
                   <Icon className="h-5 w-5" />
                 </span>
                 <span
                   className={`rounded-full px-3 py-1 text-xs font-black ${
-                    area.done ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                    area.done
+                      ? "bg-emerald-100 text-emerald-700"
+                      : disabled
+                        ? "bg-gray-200 text-gray-500"
+                        : "bg-amber-100 text-amber-700"
                   }`}
                 >
                   {area.status}
@@ -142,10 +224,28 @@ export default function FreshSetupWorkspace({ school }: { school: FreshSetupScho
               <h3 className="mt-5 text-lg font-black text-gray-950">{area.title}</h3>
               <p className="mt-2 text-sm leading-6 text-gray-500">{area.description}</p>
               <p className="mt-4 text-sm font-bold text-gray-700">{area.count}</p>
-              <span className="mt-auto flex items-center gap-2 pt-5 text-sm font-black text-blue-700">
-                {area.action}
-                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+              <span
+                className={`mt-auto flex items-center gap-2 pt-5 text-sm font-black ${
+                  disabled ? "text-gray-400" : "text-blue-700"
+                }`}
+              >
+                {disabled ? "Complete earlier steps first" : area.action}
+                {!disabled ? <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" /> : null}
               </span>
+            </>
+          );
+
+          return disabled ? (
+            <div key={area.title} className={cardClassName}>
+              {content}
+            </div>
+          ) : (
+            <Link
+              key={area.title}
+              href={area.href}
+              className={cardClassName}
+            >
+              {content}
             </Link>
           );
         })}

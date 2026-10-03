@@ -20,8 +20,8 @@ export default async function SetupPathPage() {
   return (
     <OnboardingStageShell
       eyebrow="Setup path"
-      title="Choose how this school will start"
-      description="Edujay should guide the school with the right setup route, whether records are new or already exist elsewhere."
+      title="Welcome to Edujay"
+      description="Choose the setup route that matches how this school wants to begin."
       stages={setupStageNav("path", ["profile"])}
     >
       <SetupPathChooser />

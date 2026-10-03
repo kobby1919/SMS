@@ -182,6 +182,8 @@ export async function getSchoolOnboardingState(schoolId: string) {
             subjects: true,
             teachers: true,
             students: true,
+            parents: true,
+            feeStructures: true,
           },
         },
       },
@@ -213,6 +215,7 @@ export async function getSchoolOnboardingState(schoolId: string) {
     readiness: {
       activeParentLinks,
       feeSetupStarted: Boolean(school.paymentSettings),
+      feeStructuresStarted: school._count.feeStructures > 0,
       onlinePaymentsEnabled: Boolean(school.paymentSettings?.onlinePaymentsEnabled),
       activeTimetablePublished: Boolean(activeTimetablePublication),
     },

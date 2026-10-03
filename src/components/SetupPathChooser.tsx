@@ -12,27 +12,22 @@ const OPTIONS: Array<{
   title: string;
   eyebrow: string;
   description: string;
-  bullets: string[];
   href: string;
   icon: typeof PenLine;
 }> = [
   {
     key: "fresh",
     eyebrow: "Start fresh",
-    title: "Build the school step by step",
-    description:
-      "Use this when the school wants to enter classes, subjects, people, and finance setup directly inside Edujay.",
-    bullets: ["Best for new schools", "Guided academic setup", "Clean manual control"],
+    title: "Enter data manually",
+    description: "For schools entering classes, people, fees, and timetable records directly in Edujay.",
     href: "/onboarding/setup/fresh",
     icon: PenLine,
   },
   {
     key: "migration",
-    eyebrow: "Migrate records",
-    title: "Bring existing records into Edujay",
-    description:
-      "Use this when the school already has students, parents, teachers, classes, subjects, or finance records in spreadsheets.",
-    bullets: ["Import with preview", "Validate before saving", "Invite users after import"],
+    eyebrow: "Migrate existing records",
+    title: "Bring records into Edujay",
+    description: "For schools bringing existing students, parents, teachers, classes, subjects, or fee records into Edujay.",
     href: "/admin/data-migration",
     icon: Database,
   },
@@ -64,11 +59,6 @@ export default function SetupPathChooser() {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm leading-6 text-blue-950">
-        Choose the route that matches the school today. Edujay will keep the setup focused, and the
-        admin can still return here before finishing onboarding.
-      </div>
-
       {error ? (
         <div className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
           {error}
@@ -86,7 +76,7 @@ export default function SetupPathChooser() {
               type="button"
               onClick={() => choosePath(option.key)}
               disabled={isPending}
-              className="group flex h-full min-h-[280px] flex-col rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition hover:border-blue-200 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-70"
+              className="group flex h-full min-h-[230px] flex-col rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition hover:border-blue-200 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-70"
             >
               <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">
                 {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <Icon className="h-5 w-5" />}
@@ -99,14 +89,6 @@ export default function SetupPathChooser() {
               </span>
               <span className="mt-3 block text-sm leading-6 text-gray-500">
                 {option.description}
-              </span>
-              <span className="mt-5 grid gap-2 text-sm font-semibold text-gray-700">
-                {option.bullets.map((bullet) => (
-                  <span key={bullet} className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-blue-600" />
-                    {bullet}
-                  </span>
-                ))}
               </span>
               <span className="mt-auto flex items-center gap-2 pt-6 text-sm font-black text-blue-700">
                 Continue

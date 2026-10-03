@@ -265,6 +265,24 @@ export default async function DataMigrationPage() {
 
       <PostImportInvitePanel summary={inviteSummary} />
 
+      <section className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-base font-black text-emerald-950">Ready to review onboarding?</h2>
+            <p className="mt-1 text-sm font-semibold leading-6 text-emerald-800">
+              After imports and secure invites are reviewed, return to the readiness review before opening the live dashboard.
+            </p>
+          </div>
+          <Link
+            href="/onboarding/setup/review"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 text-xs font-black text-white transition hover:bg-emerald-800"
+          >
+            Go to readiness review
+            <ArrowRight size={14} />
+          </Link>
+        </div>
+      </section>
+
       <section className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-900">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
           <AlertTriangle size={18} className="mt-0.5 shrink-0" />

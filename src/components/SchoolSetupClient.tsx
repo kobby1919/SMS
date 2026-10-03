@@ -11,12 +11,10 @@ type SchoolSetupState = {
   legalName: string | null;
   displayName: string | null;
   shortName: string | null;
-  emailFromName: string | null;
   primaryColor: string;
   contactEmail: string | null;
   phone: string | null;
   address: string | null;
-  logoUrl: string | null;
   onboardingStatus: string;
   setupStep: string | null;
 };
@@ -28,12 +26,10 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
     legalName: school.legalName ?? school.name,
     displayName: school.displayName ?? school.name,
     shortName: school.shortName ?? school.name,
-    emailFromName: school.emailFromName ?? school.displayName ?? school.name,
     primaryColor: school.primaryColor ?? "#2563eb",
     contactEmail: school.contactEmail ?? "",
     phone: school.phone ?? "",
     address: school.address ?? "",
-    logoUrl: school.logoUrl ?? "",
   });
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -100,15 +96,6 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
                 className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
               />
             </label>
-            <label className="block">
-              <span className="text-xs font-bold uppercase text-gray-500">Email sender name</span>
-              <input
-                value={values.emailFromName}
-                onChange={(event) => update("emailFromName", event.target.value)}
-                placeholder={values.displayName || values.name}
-                className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-              />
-            </label>
           </div>
           <label className="block">
             <span className="text-xs font-bold uppercase text-gray-500">Primary brand color</span>
@@ -153,18 +140,6 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
               rows={3}
               className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
             />
-          </label>
-          <label className="block">
-            <span className="text-xs font-bold uppercase text-gray-500">Logo URL</span>
-            <input
-              value={values.logoUrl}
-              onChange={(event) => update("logoUrl", event.target.value)}
-              placeholder="https://..."
-              className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-            />
-            <span className="mt-1 block text-xs text-gray-400">
-              Use a secure hosted image URL for now. File storage can be connected later.
-            </span>
           </label>
         </div>
 
