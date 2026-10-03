@@ -31,15 +31,8 @@ export const schoolAdminInviteCreateSchema = z.object({
   expiresInDays: z.coerce.number().int().min(1).max(30).default(7),
 });
 
-export const onboardingImportSchema = z.object({
-  importType: z.enum(["teachers", "students"]),
-  fileName: z.string().trim().min(1).max(200),
-  rowCount: z.coerce.number().int().min(0).max(20000),
-});
-
 export type ApproveWaitlistEntryInput = z.infer<typeof approveWaitlistEntrySchema>;
 export type RejectWaitlistEntryInput = z.infer<typeof rejectWaitlistEntrySchema>;
 export type SchoolProfileSetupInput = z.infer<typeof schoolProfileSetupSchema>;
 export type SchoolAdminInviteCreateInput = z.infer<typeof schoolAdminInviteCreateSchema>;
-export type OnboardingImportInput = z.infer<typeof onboardingImportSchema>;
 

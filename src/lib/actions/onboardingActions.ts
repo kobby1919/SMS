@@ -8,7 +8,6 @@ import {
   completeSchoolOnboarding,
   createDefaultAcademicSetup,
   recordInviteSent,
-  recordOnboardingImport,
   rejectWaitlistEntry,
   resendSchoolInvite,
   resendCurrentSchoolAdminInvite,
@@ -21,7 +20,6 @@ import {
   approveWaitlistEntrySchema,
   inviteIdSchema,
   schoolAdminInviteCreateSchema,
-  onboardingImportSchema,
   rejectWaitlistEntrySchema,
   schoolProfileSetupSchema,
 } from "@/src/lib/validation/onboarding";
@@ -233,22 +231,4 @@ export async function createDefaultAcademicSetupAction(): Promise<OnboardingActi
     };
   }
 }
-
-export async function recordOnboardingImportAction(
-  input: unknown,
-): Promise<OnboardingActionResult> {
-  try {
-    const context = await requireRole(["admin"]);
-    const data = parseActionInput(onboardingImportSchema, input);
-    await recordOnboardingImport(data, context);
-    revalidatePath("/onboarding/setup");
-    return { ok: true };
-  } catch (error) {
-    return {
-      ok: false,
-      message: error instanceof Error ? error.message : "Could not record import.",
-    };
-  }
-}
-
 

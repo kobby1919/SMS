@@ -12,6 +12,10 @@ function assertContains(source, needle, message) {
   assert.ok(source.includes(needle), message);
 }
 
+function assertNotContains(source, needle, message) {
+  assert.ok(!source.includes(needle), message);
+}
+
 test("incomplete school setup keeps admins out of the live dashboard", () => {
   assertContains(
     authz,
@@ -60,5 +64,28 @@ test("fresh setup state resolves to a clear profile step", () => {
     setupClient,
     "Current setup stage:",
     "Setup UI must tell admins where they are in the setup flow.",
+  );
+});
+
+test("setup page sends real imports to the data migration workspace", () => {
+  assertContains(
+    setupClient,
+    'href="/admin/data-migration"',
+    "Setup page must send admins to the real data migration workspace.",
+  );
+  assertContains(
+    setupClient,
+    "students, parents",
+    "Setup page must explain that migration covers more than teachers and students.",
+  );
+  assertNotContains(
+    setupClient,
+    "Import checkpoint",
+    "Setup page must not show a fake/manual import checkpoint.",
+  );
+  assertNotContains(
+    setupClient,
+    "recordOnboardingImportAction",
+    "Setup page must not record pretend imports from the onboarding page.",
   );
 });

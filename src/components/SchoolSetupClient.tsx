@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import {
   completeSchoolOnboardingAction,
   createDefaultAcademicSetupAction,
-  recordOnboardingImportAction,
   updateSchoolProfileSetupAction,
 } from "@/src/lib/actions/onboardingActions";
 
@@ -55,11 +54,6 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
     address: school.address ?? "",
     logoUrl: school.logoUrl ?? "",
   });
-  const [importValues, setImportValues] = useState({
-    importType: "teachers" as "teachers" | "students",
-    fileName: "",
-    rowCount: "0",
-  });
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const hasAcademicBase =
@@ -102,22 +96,6 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
         return;
       }
       setMessage("Default grades, classes, and subjects created.");
-      router.refresh();
-    });
-  }
-
-  function recordImport() {
-    startTransition(async () => {
-      const result = await recordOnboardingImportAction({
-        ...importValues,
-        rowCount: Number(importValues.rowCount),
-      });
-      if (!result.ok) {
-        setMessage(result.message);
-        return;
-      }
-      setImportValues({ importType: "teachers", fileName: "", rowCount: "0" });
-      setMessage("Import has been recorded in the onboarding audit log.");
       router.refresh();
     });
   }
@@ -325,50 +303,17 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
         </div>
 
         <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-black text-gray-900">Import checkpoint</h2>
+          <h2 className="text-lg font-black text-gray-900">School data setup</h2>
           <p className="mt-1 text-sm text-gray-500">
-            Record staff or student imports during onboarding so setup history is visible.
+            Use the migration workspace when you need to bring existing students, parents,
+            teachers, bursars, classes, subjects, or fee records into Edujay.
           </p>
-          <div className="mt-4 grid gap-3">
-            <select
-              value={importValues.importType}
-              onChange={(event) =>
-                setImportValues((current) => ({
-                  ...current,
-                  importType: event.target.value as "teachers" | "students",
-                }))
-              }
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-            >
-              <option value="teachers">Teachers</option>
-              <option value="students">Students</option>
-            </select>
-            <input
-              value={importValues.fileName}
-              onChange={(event) =>
-                setImportValues((current) => ({ ...current, fileName: event.target.value }))
-              }
-              placeholder="spreadsheet-name.csv"
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-            />
-            <input
-              value={importValues.rowCount}
-              type="number"
-              min="0"
-              onChange={(event) =>
-                setImportValues((current) => ({ ...current, rowCount: event.target.value }))
-              }
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-            />
-            <button
-              type="button"
-              onClick={recordImport}
-              disabled={isPending || !importValues.fileName}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-xs font-bold text-gray-700 disabled:opacity-50"
-            >
-              Record import
-            </button>
-          </div>
+          <Link
+            href="/admin/data-migration"
+            className="mt-4 block rounded-lg border border-gray-200 px-3 py-2 text-center text-xs font-bold text-gray-700"
+          >
+            Open data migration
+          </Link>
         </div>
       </aside>
       </div>

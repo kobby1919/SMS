@@ -349,18 +349,6 @@ export async function createDefaultAcademicSetup(context: AuthzContext) {
   });
 }
 
-export async function recordOnboardingImport(
-  input: { importType: "teachers" | "students"; fileName: string; rowCount: number },
-  context: AuthzContext,
-) {
-  await writeOnboardingAudit({
-    action: "IMPORT_RECORDED",
-    performedBy: context.userId,
-    schoolId: context.schoolId,
-    metadata: input,
-  });
-}
-
 export async function getInvitePreview(token: string) {
   const invite = await prisma.schoolInvite.findUnique({
     where: { tokenHash: hashInviteToken(token) },
