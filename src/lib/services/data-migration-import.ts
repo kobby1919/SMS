@@ -223,6 +223,7 @@ async function resolveParent(
       username: generatedParentUsername(schoolId, parentContact.key),
       name: parentName.name,
       surname: parentName.surname,
+      sex: normalizeSex(values.guardianSex || values.sex),
       email: parentContact.email,
       phone: parentContact.phone,
       address: values.address || "Not provided",

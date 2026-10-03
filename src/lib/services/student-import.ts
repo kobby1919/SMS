@@ -12,6 +12,7 @@ const REQUIRED_HEADERS = [
   "sex",
   "className",
   "parentName",
+  "parentSex",
 ] as const;
 
 const OPTIONAL_HEADERS = [
@@ -25,8 +26,8 @@ const OPTIONAL_HEADERS = [
 
 export const STUDENT_IMPORT_HEADERS = [...REQUIRED_HEADERS, ...OPTIONAL_HEADERS] as const;
 export const STUDENT_IMPORT_TEMPLATE = `${STUDENT_IMPORT_HEADERS.join(",")}
-EDJ-2026-0001,Akosua,Mensah,FEMALE,Class 1A,Ama Mensah,0200000001,ama@example.com,,,Accra,B+
-EDJ-2026-0002,Kofi,Mensah,MALE,Class 1A,Ama Mensah,0200000001,ama@example.com,,,Accra,O+`;
+EDJ-2026-0001,Akosua,Mensah,FEMALE,Class 1A,Ama Mensah,FEMALE,0200000001,ama@example.com,,,Accra,B+
+EDJ-2026-0002,Kofi,Mensah,MALE,Class 1A,Ama Mensah,FEMALE,0200000001,ama@example.com,,,Accra,O+`;
 
 type StudentImportHeader = (typeof STUDENT_IMPORT_HEADERS)[number];
 
@@ -238,6 +239,9 @@ function validateRows(rows: ParsedStudentRow[], schoolCode: string) {
     }
     if (!row.className.trim()) errors.push(`${rowLabel}: className is required.`);
     if (!row.parentName.trim()) errors.push(`${rowLabel}: parentName is required.`);
+    if (!Object.values(UserSex).includes(row.parentSex.trim().toUpperCase() as UserSex)) {
+      errors.push(`${rowLabel}: parentSex must be MALE or FEMALE.`);
+    }
     if (!parentIdentityKey(row)) errors.push(`${rowLabel}: provide parentPhone or parentEmail so Edujay can link the guardian.`);
     if (row.parentEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.parentEmail.trim())) {
       errors.push(`${rowLabel}: parentEmail is not valid.`);
@@ -436,6 +440,7 @@ export async function importStudentsFromCsv(schoolId: string, csv: string): Prom
                 username: generatedParentUsername(schoolId, identityKey),
                 name: parentName.name,
                 surname: parentName.surname,
+                sex: row.parentSex.trim().toUpperCase() as UserSex,
                 email: parentEmail,
                 phone: parentPhone,
                 address: row.address || "Not provided",

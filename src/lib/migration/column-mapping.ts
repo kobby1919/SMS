@@ -64,10 +64,11 @@ export const MIGRATION_AREAS: MigrationAreaDefinition[] = [
       { key: "className", label: "Class name", required: true, aliases: ["class", "class name", "current class"], help: "Must match a class in Edujay." },
       { key: "sex", label: "Sex", required: true, aliases: ["sex", "gender"], help: "Male or Female." },
       { key: "parentName", label: "Guardian name", required: true, aliases: ["parent", "parent name", "guardian", "guardian name"], help: "Primary parent/guardian name." },
+      { key: "guardianSex", label: "Guardian sex", required: true, aliases: ["guardian sex", "parent sex", "guardian gender", "parent gender"], help: "Male or Female. Used for parent titles." },
       { key: "parentEmail", label: "Guardian email", required: true, aliases: ["parent email", "guardian email", "email"], help: "Required for parent invite/login access." },
       { key: "parentPhone", label: "Guardian phone", required: false, aliases: ["parent phone", "guardian phone", "phone", "contact"], help: "Optional contact phone." },
     ],
-    sampleRows: [["EDJ-2026-0001", "Ama", "Mensah", "Nursery A", "Female", "Akosua Mensah", "parent@example.com", "0240000000"]],
+    sampleRows: [["EDJ-2026-0001", "Ama", "Mensah", "Nursery A", "Female", "Akosua Mensah", "Female", "parent@example.com", "0240000000"]],
   },
   {
     key: "parents",
@@ -75,12 +76,13 @@ export const MIGRATION_AREAS: MigrationAreaDefinition[] = [
     description: "Create guardian profiles and link them to active wards.",
     fields: [
       { key: "parentName", label: "Parent name", required: true, aliases: ["parent", "parent name", "guardian", "guardian name"], help: "Full guardian name." },
+      { key: "sex", label: "Sex", required: true, aliases: ["sex", "gender", "parent sex", "guardian sex"], help: "Male or Female. Used for parent titles." },
       { key: "email", label: "Email", required: true, aliases: ["email", "email address"], help: "Required for parent invite/login access." },
       { key: "phone", label: "Phone", required: false, aliases: ["phone", "phone number", "mobile", "contact"], help: "Optional contact phone." },
       { key: "wardAdmissionNumber", label: "Ward admission number", required: true, aliases: ["ward adm no", "student admission", "admission number", "student id"], help: "Links parent to the right student. Use the official Edujay admission number." },
       { key: "relationship", label: "Relationship", required: false, aliases: ["relationship", "guardian type"], help: "Example: Mother, Father, Guardian." },
     ],
-    sampleRows: [["Akosua Mensah", "parent@example.com", "0240000000", "EDJ-2026-0001", "Mother"]],
+    sampleRows: [["Akosua Mensah", "Female", "parent@example.com", "0240000000", "EDJ-2026-0001", "Mother"]],
   },
   {
     key: "teachers",

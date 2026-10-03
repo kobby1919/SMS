@@ -176,6 +176,7 @@ test("student bulk import keeps intake strict and account-free", () => {
   assertContains(studentImportAction, "requireRole([\"admin\"])", "Student import must be admin-only.");
   assertContains(studentImportAction, "MAX_IMPORT_FILE_BYTES", "Student import must limit upload size.");
   assertContains(studentImportService, "REQUIRED_HEADERS", "Student import must define required columns.");
+  assertContains(studentImportService, "\"parentSex\"", "Student import must require guardian sex for correct parent titles.");
   assertContains(studentImportService, "if (rowErrors.length > 0)", "Student import must reject invalid files before writing.");
   assertContains(studentImportService, "values.length > headers.length", "Student import must reject malformed CSV rows with extra values.");
   assertContains(studentImportService, "parentContactByEmail", "Student import must detect inconsistent guardian contacts inside the CSV.");
@@ -188,6 +189,8 @@ test("student bulk import keeps intake strict and account-free", () => {
   assertContains(studentImportService, "admissionNumber: { in: admissionNumbers }", "Student import must block duplicate admission numbers.");
   assertContains(studentImportService, "validateAdmissionNumberForSchool", "Student import must enforce the official school admission number format.");
   assertContains(studentImportService, "Save the school code before importing students.", "Student import must be blocked until the school code exists.");
+  assertContains(studentImportService, "parentSex must be MALE or FEMALE", "Student import must validate guardian sex before creating parent profiles.");
+  assertContains(studentImportService, "sex: row.parentSex.trim().toUpperCase() as UserSex", "Student import must persist guardian sex on created parent profiles.");
   assertContains(admissionNumberHelper, "SCHOOLCODE-YYYY-0001", "Admission helper must explain the official Edujay format.");
   assertContains(studentImportService, "parentStudentRelationship.upsert", "Student import must link guardians to imported students.");
   assertContains(studentImportService, "createdStudents", "Student import result must report created students.");

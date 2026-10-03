@@ -212,6 +212,10 @@ export async function validateMigrationRows(
       issues.push({ severity: "ERROR", field: "sex", message: "Sex must be Male or Female." });
     }
 
+    if (values.guardianSex && !VALID_SEX_VALUES.has(normalizeSex(values.guardianSex))) {
+      issues.push({ severity: "ERROR", field: "guardianSex", message: "Guardian sex must be Male or Female." });
+    }
+
     if (values.status && !VALID_STUDENT_STATUS_VALUES.has(values.status.trim().toUpperCase())) {
       issues.push({ severity: "ERROR", field: "status", message: "Student status is not valid." });
     }

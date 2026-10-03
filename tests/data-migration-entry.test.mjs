@@ -214,6 +214,7 @@ test("data migration point 3 validates rows without importing", () => {
     "Class name does not exist in Edujay yet",
     "Ward admission number does not match an existing Edujay student",
     "Sex must be Male or Female",
+    "Guardian sex must be Male or Female",
     "Email address is not valid",
     "Fee amount must be a positive number",
     "Fee row for this student/term/year",
@@ -288,6 +289,11 @@ test("data migration point 4 imports only clean validated rows", () => {
     migrationImportService,
     "Multiple parent records match this guardian contact",
     "Point 4 import must stop when guardian contact data matches multiple parent records.",
+  );
+  assertContains(
+    migrationImportService,
+    "sex: normalizeSex(values.guardianSex || values.sex)",
+    "Point 4 import must persist guardian sex so parent titles are correct.",
   );
   assertContains(
     migrationImportService,
