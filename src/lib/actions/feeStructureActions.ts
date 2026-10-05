@@ -128,6 +128,8 @@ export async function publishFeeStructure(id: number) {
   const billableMandatoryItems = structure.feeItems.filter(
     (item) => !item.isOptional && item.billingFrequency !== "DAILY",
   );
+  const billableItems = structure.feeItems.filter((item) => item.billingFrequency !== "DAILY");
+  const dailyCollectionItems = structure.feeItems.filter((item) => item.billingFrequency === "DAILY");
   assertCanPublishFeeStructure({
     status: structure.status,
     feeItemCount: structure.feeItems.length,
@@ -146,10 +148,12 @@ export async function publishFeeStructure(id: number) {
     entityType:  "FeeStructure",
     entityId:    id,
     metadata: {
-      title:        structure.title,
-      feeItemCount: structure.feeItems.length,
-      totalAmount:  structure.feeItems
-        .reduce((sum, item) => sum + Number(item.amount), 0),
+      title:                    structure.title,
+      feeItemCount:             structure.feeItems.length,
+      billableFeeItemCount:     billableItems.length,
+      dailyCollectionItemCount: dailyCollectionItems.length,
+      billableTotalAmount:      billableItems.reduce((sum, item) => sum + Number(item.amount), 0),
+      dailyCollectionSetupAmount: dailyCollectionItems.reduce((sum, item) => sum + Number(item.amount), 0),
     },
   });
 

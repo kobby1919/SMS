@@ -285,7 +285,9 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
     </div>
   );
 
-  const mandatoryTotal = items.filter((i) => !i.isOptional).reduce((s, i) => s + i.amount, 0);
+  const dailySetupTotal = items
+    .filter((i) => i.billingFrequency === "DAILY")
+    .reduce((s, i) => s + i.amount, 0);
   const billableMandatoryTotal = items
     .filter((i) => !i.isOptional && i.billingFrequency !== "DAILY")
     .reduce((s, i) => s + i.amount, 0);
@@ -301,9 +303,9 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
             <p className="text-xs text-gray-400 mt-0.5">
               {items.length} item{items.length !== 1 ? "s" : ""} · billable mandatory total:{" "}
               <span className="font-black text-violet-700">{formatGHS(billableMandatoryTotal)}</span>
-              {mandatoryTotal !== billableMandatoryTotal && (
+              {dailySetupTotal > 0 && (
                 <span className="ml-1 text-gray-400">
-                  · {formatGHS(mandatoryTotal - billableMandatoryTotal)} daily collection setup
+                  · {formatGHS(dailySetupTotal)} daily collection setup
                 </span>
               )}
             </p>

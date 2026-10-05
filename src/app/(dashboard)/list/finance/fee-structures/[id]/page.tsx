@@ -212,14 +212,17 @@ const FeeStructureDetailPage = async ({
           </div>
 
           {/* Category breakdown */}
-          {structure.feeItems.length > 0 && (
+          {billableItems.length > 0 && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
-                <p className="text-xs font-black uppercase tracking-wider text-gray-400">By Category</p>
+                <p className="text-xs font-black uppercase tracking-wider text-gray-400">Billable By Category</p>
+                <p className="mt-1 text-[11px] font-semibold text-gray-400">
+                  Daily collection setup is shown separately.
+                </p>
               </div>
               <div className="divide-y divide-gray-50">
                 {Object.entries(
-                  structure.feeItems.reduce((acc, item) => {
+                  billableItems.reduce((acc, item) => {
                     const cat = item.category;
                     if (!acc[cat]) acc[cat] = 0;
                     acc[cat] += Number(item.amount);

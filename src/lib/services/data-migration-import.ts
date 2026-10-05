@@ -122,7 +122,7 @@ function normalizeTerm(value: string): Term {
   return Term.TERM_3;
 }
 
-function normalizeFeeFrequency(value: string | null | undefined): FeeBillingFrequency {
+function normalizeFeeFrequency(value: string | null | undefined): FeeBillingFrequency | null {
   const clean = (value ?? "TERM").trim().toLowerCase().replace(/[\s-]+/g, "_");
   if (!clean) return FeeBillingFrequency.TERM;
   if (["term", "termly", "per_term"].includes(clean)) return FeeBillingFrequency.TERM;
@@ -130,7 +130,7 @@ function normalizeFeeFrequency(value: string | null | undefined): FeeBillingFreq
   if (["week", "weekly", "per_week"].includes(clean)) return FeeBillingFrequency.WEEKLY;
   if (["day", "daily", "per_day", "every_day"].includes(clean)) return FeeBillingFrequency.DAILY;
   if (["one_time", "onetime", "once", "single"].includes(clean)) return FeeBillingFrequency.ONE_TIME;
-  return FeeBillingFrequency.TERM;
+  return null;
 }
 
 function parseMoney(value: string) {
@@ -481,6 +481,12 @@ async function importFees(
 
     const feeAmount = parseMoney(row.values.amount);
     const billingFrequency = normalizeFeeFrequency(row.values.feeFrequency);
+    if (!billingFrequency) {
+      throw new MigrationImportError(
+        "Billing frequency must be TERM, MONTHLY, WEEKLY, DAILY, or ONE_TIME.",
+        400,
+      );
+    }
     if (billingFrequency === FeeBillingFrequency.DAILY) {
       throw new MigrationImportError(
         "Daily collection items cannot be imported as student term bills. Use daily collection setup instead.",
