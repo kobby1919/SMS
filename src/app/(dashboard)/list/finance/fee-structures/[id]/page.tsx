@@ -8,7 +8,11 @@ import Link from "next/link";
 import {
   ArrowLeft, Lock, Clock, Users,
 } from "lucide-react";
-import { formatGHS, FEE_CATEGORY_LABELS } from "@/src/lib/constants/finance";
+import {
+  FEE_BILLING_FREQUENCY_LABELS,
+  FEE_CATEGORY_LABELS,
+  formatGHS,
+} from "@/src/lib/constants/finance";
 import PublishFeeStructureButton from "@/src/components/PublishFeeStructureButton";
 import FeeItemManager from "@/src/components/FeeItemManager";
 
@@ -40,8 +44,11 @@ const FeeStructureDetailPage = async ({
   if (!structure) notFound();
 
   const isPublished    = structure.status === "PUBLISHED";
-  const mandatoryItems = structure.feeItems.filter((i) => !i.isOptional);
-  const optionalItems  = structure.feeItems.filter((i) => i.isOptional);
+  const dailyItems = structure.feeItems.filter((i) => i.billingFrequency === "DAILY");
+  const billableItems = structure.feeItems.filter((i) => i.billingFrequency !== "DAILY");
+  const mandatoryItems = billableItems.filter((i) => !i.isOptional);
+  const optionalItems  = billableItems.filter((i) => i.isOptional);
+  const dailyTotal = dailyItems.reduce((sum, i) => sum + Number(i.amount), 0);
   const mandatoryTotal = mandatoryItems.reduce((sum, i) => sum + Number(i.amount), 0);
   const optionalTotal  = optionalItems.reduce((sum,  i) => sum + Number(i.amount), 0);
 
@@ -66,8 +73,9 @@ const FeeStructureDetailPage = async ({
             >
               <ArrowLeft size={16} />
             </Link>
-            <div className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0
-              ${isPublished ? 'bg-emerald-50' : 'bg-amber-50'}">
+            <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${
+              isPublished ? "bg-emerald-50" : "bg-amber-50"
+            }`}>
               {isPublished
                 ? <Lock size={20} className="text-emerald-600" />
                 : <Clock size={20} className="text-amber-600" />}
@@ -146,6 +154,7 @@ const FeeStructureDetailPage = async ({
               name:        item.name,
               amount:      Number(item.amount),
               category:    item.category,
+              billingFrequency: item.billingFrequency,
               isOptional:  item.isOptional,
               description: item.description ?? "",
             }))}
@@ -177,6 +186,17 @@ const FeeStructureDetailPage = async ({
                     <p className="text-[10px] text-gray-400">{optionalItems.length} item{optionalItems.length !== 1 ? "s" : ""}</p>
                   </div>
                   <p className="text-sm font-semibold text-gray-500">{formatGHS(optionalTotal)}</p>
+                </div>
+              )}
+              {dailyItems.length > 0 && (
+                <div className="flex items-center justify-between rounded-xl border border-blue-100 bg-blue-50 px-3 py-2">
+                  <div>
+                    <p className="text-sm font-bold text-blue-700">Daily Collections</p>
+                    <p className="text-[10px] text-blue-500">
+                      {dailyItems.length} item{dailyItems.length !== 1 ? "s" : ""} kept out of generated bills
+                    </p>
+                  </div>
+                  <p className="text-sm font-semibold text-blue-700">{formatGHS(dailyTotal)}</p>
                 </div>
               )}
               <div className="border-t border-gray-100 pt-3">
@@ -215,6 +235,31 @@ const FeeStructureDetailPage = async ({
                       <p className="text-xs font-black text-gray-800">{formatGHS(total)}</p>
                     </div>
                   ))}
+              </div>
+            </div>
+          )}
+
+          {dailyItems.length > 0 && (
+            <div className="bg-white rounded-2xl border border-blue-100 shadow-sm overflow-hidden">
+              <div className="px-5 py-4 border-b border-blue-100 bg-blue-50">
+                <p className="text-xs font-black uppercase tracking-wider text-blue-500">Daily Collection Setup</p>
+                <p className="mt-1 text-[11px] font-semibold leading-5 text-blue-700">
+                  These items are not included when bills are generated. They will move into daily collection sessions.
+                </p>
+              </div>
+              <div className="divide-y divide-blue-50">
+                {dailyItems.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between px-5 py-2.5">
+                    <div>
+                      <p className="text-xs font-black text-blue-900">{item.name}</p>
+                      <p className="text-[10px] font-semibold text-blue-500">
+                        {FEE_CATEGORY_LABELS[item.category] ?? item.category} ·{" "}
+                        {FEE_BILLING_FREQUENCY_LABELS[item.billingFrequency] ?? item.billingFrequency}
+                      </p>
+                    </div>
+                    <p className="text-xs font-black text-blue-800">{formatGHS(item.amount)}</p>
+                  </div>
+                ))}
               </div>
             </div>
           )}

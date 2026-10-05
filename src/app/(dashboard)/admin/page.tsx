@@ -4,6 +4,7 @@ import {
 } from "@/src/lib/authz";
 import { getCachedAdminDashboardData } from "@/src/lib/queries/admin-dashboard";
 import { getAdminOwnerDashboardData } from "@/src/lib/queries/admin-owner-dashboard";
+import { getAdminFinanceSnapshot } from "@/src/lib/services/admin-finance-snapshot";
 import AdminDashboard from "@/src/components/AdminDashboard";
 import EventList from "@/src/components/EventList";
 import Announcements from "@/src/components/Announcements";
@@ -19,9 +20,10 @@ const AdminPage = async ({
   await requireCompletedAdminSchoolSetup(session);
   const { schoolId } = session;
 
-  const [data, ownerDashboard, params] = await Promise.all([
+  const [data, ownerDashboard, financeSnapshot, params] = await Promise.all([
     getCachedAdminDashboardData(schoolId),
     getAdminOwnerDashboardData(schoolId),
+    getAdminFinanceSnapshot(schoolId),
     searchParams,
   ]);
 
@@ -32,7 +34,7 @@ const AdminPage = async ({
       boys={data.boys}
       girls={data.girls}
       attendanceData={data.attendanceData}
-      financeData={data.financeData}
+      financeSnapshot={financeSnapshot}
       eventList={<EventList dateParam={params.date} />}
       announcements={<Announcements />}
       timetableSnapshot={data.timetableSnapshot}

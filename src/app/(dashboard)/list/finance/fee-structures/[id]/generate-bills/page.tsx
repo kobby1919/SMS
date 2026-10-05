@@ -65,8 +65,10 @@ const GenerateBillsPage = async ({
     };
   });
 
-  const mandatoryItems = structure.feeItems.filter((i) => !i.isOptional);
-  const optionalItems  = structure.feeItems.filter((i) => i.isOptional);
+  const dailyItems = structure.feeItems.filter((i) => i.billingFrequency === "DAILY");
+  const billableItems = structure.feeItems.filter((i) => i.billingFrequency !== "DAILY");
+  const mandatoryItems = billableItems.filter((i) => !i.isOptional);
+  const optionalItems  = billableItems.filter((i) => i.isOptional);
   const mandatoryTotal = mandatoryItems.reduce((s, i) => s + Number(i.amount), 0);
   const optionalTotal  = optionalItems.reduce((s,  i) => s + Number(i.amount), 0);
 
@@ -120,6 +122,19 @@ const GenerateBillsPage = async ({
               </p>
               {optionalItems.map((item) => (
                 <div key={item.id} className="flex items-center justify-between text-xs text-amber-700 py-0.5">
+                  <span>{item.name}</span>
+                  <span className="font-bold">{formatGHS(item.amount)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          {dailyItems.length > 0 && (
+            <div className="p-3 bg-blue-50 rounded-xl border border-blue-100">
+              <p className="text-xs font-black text-blue-700 mb-1">
+                Daily collection items ({dailyItems.length}) — not included in generated bills
+              </p>
+              {dailyItems.map((item) => (
+                <div key={item.id} className="flex items-center justify-between text-xs text-blue-700 py-0.5">
                   <span>{item.name}</span>
                   <span className="font-bold">{formatGHS(item.amount)}</span>
                 </div>

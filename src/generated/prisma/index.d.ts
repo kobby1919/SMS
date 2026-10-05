@@ -514,6 +514,17 @@ export const FeeCategory: {
 export type FeeCategory = (typeof FeeCategory)[keyof typeof FeeCategory]
 
 
+export const FeeBillingFrequency: {
+  TERM: 'TERM',
+  MONTHLY: 'MONTHLY',
+  WEEKLY: 'WEEKLY',
+  DAILY: 'DAILY',
+  ONE_TIME: 'ONE_TIME'
+};
+
+export type FeeBillingFrequency = (typeof FeeBillingFrequency)[keyof typeof FeeBillingFrequency]
+
+
 export const FeeStructureStatus: {
   DRAFT: 'DRAFT',
   PUBLISHED: 'PUBLISHED'
@@ -1309,6 +1320,10 @@ export const SyllabusStatus: typeof $Enums.SyllabusStatus
 export type FeeCategory = $Enums.FeeCategory
 
 export const FeeCategory: typeof $Enums.FeeCategory
+
+export type FeeBillingFrequency = $Enums.FeeBillingFrequency
+
+export const FeeBillingFrequency: typeof $Enums.FeeBillingFrequency
 
 export type FeeStructureStatus = $Enums.FeeStructureStatus
 
@@ -82660,6 +82675,7 @@ export namespace Prisma {
     name: string | null
     amount: Decimal | null
     category: $Enums.FeeCategory | null
+    billingFrequency: $Enums.FeeBillingFrequency | null
     isOptional: boolean | null
     description: string | null
     feeStructureId: number | null
@@ -82671,6 +82687,7 @@ export namespace Prisma {
     name: string | null
     amount: Decimal | null
     category: $Enums.FeeCategory | null
+    billingFrequency: $Enums.FeeBillingFrequency | null
     isOptional: boolean | null
     description: string | null
     feeStructureId: number | null
@@ -82682,6 +82699,7 @@ export namespace Prisma {
     name: number
     amount: number
     category: number
+    billingFrequency: number
     isOptional: number
     description: number
     feeStructureId: number
@@ -82707,6 +82725,7 @@ export namespace Prisma {
     name?: true
     amount?: true
     category?: true
+    billingFrequency?: true
     isOptional?: true
     description?: true
     feeStructureId?: true
@@ -82718,6 +82737,7 @@ export namespace Prisma {
     name?: true
     amount?: true
     category?: true
+    billingFrequency?: true
     isOptional?: true
     description?: true
     feeStructureId?: true
@@ -82729,6 +82749,7 @@ export namespace Prisma {
     name?: true
     amount?: true
     category?: true
+    billingFrequency?: true
     isOptional?: true
     description?: true
     feeStructureId?: true
@@ -82827,6 +82848,7 @@ export namespace Prisma {
     name: string
     amount: Decimal
     category: $Enums.FeeCategory
+    billingFrequency: $Enums.FeeBillingFrequency
     isOptional: boolean
     description: string | null
     feeStructureId: number
@@ -82857,6 +82879,7 @@ export namespace Prisma {
     name?: boolean
     amount?: boolean
     category?: boolean
+    billingFrequency?: boolean
     isOptional?: boolean
     description?: boolean
     feeStructureId?: boolean
@@ -82871,6 +82894,7 @@ export namespace Prisma {
     name?: boolean
     amount?: boolean
     category?: boolean
+    billingFrequency?: boolean
     isOptional?: boolean
     description?: boolean
     feeStructureId?: boolean
@@ -82883,6 +82907,7 @@ export namespace Prisma {
     name?: boolean
     amount?: boolean
     category?: boolean
+    billingFrequency?: boolean
     isOptional?: boolean
     description?: boolean
     feeStructureId?: boolean
@@ -82895,13 +82920,14 @@ export namespace Prisma {
     name?: boolean
     amount?: boolean
     category?: boolean
+    billingFrequency?: boolean
     isOptional?: boolean
     description?: boolean
     feeStructureId?: boolean
     createdAt?: boolean
   }
 
-  export type FeeItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "amount" | "category" | "isOptional" | "description" | "feeStructureId" | "createdAt", ExtArgs["result"]["feeItem"]>
+  export type FeeItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "amount" | "category" | "billingFrequency" | "isOptional" | "description" | "feeStructureId" | "createdAt", ExtArgs["result"]["feeItem"]>
   export type FeeItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     feeStructure?: boolean | FeeStructureDefaultArgs<ExtArgs>
     billLineItems?: boolean | FeeItem$billLineItemsArgs<ExtArgs>
@@ -82925,6 +82951,7 @@ export namespace Prisma {
       name: string
       amount: Prisma.Decimal
       category: $Enums.FeeCategory
+      billingFrequency: $Enums.FeeBillingFrequency
       isOptional: boolean
       description: string | null
       feeStructureId: number
@@ -83358,6 +83385,7 @@ export namespace Prisma {
     readonly name: FieldRef<"FeeItem", 'String'>
     readonly amount: FieldRef<"FeeItem", 'Decimal'>
     readonly category: FieldRef<"FeeItem", 'FeeCategory'>
+    readonly billingFrequency: FieldRef<"FeeItem", 'FeeBillingFrequency'>
     readonly isOptional: FieldRef<"FeeItem", 'Boolean'>
     readonly description: FieldRef<"FeeItem", 'String'>
     readonly feeStructureId: FieldRef<"FeeItem", 'Int'>
@@ -115038,6 +115066,7 @@ export namespace Prisma {
     name: 'name',
     amount: 'amount',
     category: 'category',
+    billingFrequency: 'billingFrequency',
     isOptional: 'isOptional',
     description: 'description',
     feeStructureId: 'feeStructureId',
@@ -116313,6 +116342,20 @@ export namespace Prisma {
    * Reference to a field of type 'FeeCategory[]'
    */
   export type ListEnumFeeCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeeCategory[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'FeeBillingFrequency'
+   */
+  export type EnumFeeBillingFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeeBillingFrequency'>
+    
+
+
+  /**
+   * Reference to a field of type 'FeeBillingFrequency[]'
+   */
+  export type ListEnumFeeBillingFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeeBillingFrequency[]'>
     
 
 
@@ -122700,6 +122743,7 @@ export namespace Prisma {
     name?: StringFilter<"FeeItem"> | string
     amount?: DecimalFilter<"FeeItem"> | Decimal | DecimalJsLike | number | string
     category?: EnumFeeCategoryFilter<"FeeItem"> | $Enums.FeeCategory
+    billingFrequency?: EnumFeeBillingFrequencyFilter<"FeeItem"> | $Enums.FeeBillingFrequency
     isOptional?: BoolFilter<"FeeItem"> | boolean
     description?: StringNullableFilter<"FeeItem"> | string | null
     feeStructureId?: IntFilter<"FeeItem"> | number
@@ -122713,6 +122757,7 @@ export namespace Prisma {
     name?: SortOrder
     amount?: SortOrder
     category?: SortOrder
+    billingFrequency?: SortOrder
     isOptional?: SortOrder
     description?: SortOrderInput | SortOrder
     feeStructureId?: SortOrder
@@ -122729,6 +122774,7 @@ export namespace Prisma {
     name?: StringFilter<"FeeItem"> | string
     amount?: DecimalFilter<"FeeItem"> | Decimal | DecimalJsLike | number | string
     category?: EnumFeeCategoryFilter<"FeeItem"> | $Enums.FeeCategory
+    billingFrequency?: EnumFeeBillingFrequencyFilter<"FeeItem"> | $Enums.FeeBillingFrequency
     isOptional?: BoolFilter<"FeeItem"> | boolean
     description?: StringNullableFilter<"FeeItem"> | string | null
     feeStructureId?: IntFilter<"FeeItem"> | number
@@ -122742,6 +122788,7 @@ export namespace Prisma {
     name?: SortOrder
     amount?: SortOrder
     category?: SortOrder
+    billingFrequency?: SortOrder
     isOptional?: SortOrder
     description?: SortOrderInput | SortOrder
     feeStructureId?: SortOrder
@@ -122761,6 +122808,7 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"FeeItem"> | string
     amount?: DecimalWithAggregatesFilter<"FeeItem"> | Decimal | DecimalJsLike | number | string
     category?: EnumFeeCategoryWithAggregatesFilter<"FeeItem"> | $Enums.FeeCategory
+    billingFrequency?: EnumFeeBillingFrequencyWithAggregatesFilter<"FeeItem"> | $Enums.FeeBillingFrequency
     isOptional?: BoolWithAggregatesFilter<"FeeItem"> | boolean
     description?: StringNullableWithAggregatesFilter<"FeeItem"> | string | null
     feeStructureId?: IntWithAggregatesFilter<"FeeItem"> | number
@@ -131715,6 +131763,7 @@ export namespace Prisma {
     name: string
     amount: Decimal | DecimalJsLike | number | string
     category: $Enums.FeeCategory
+    billingFrequency?: $Enums.FeeBillingFrequency
     isOptional?: boolean
     description?: string | null
     createdAt?: Date | string
@@ -131727,6 +131776,7 @@ export namespace Prisma {
     name: string
     amount: Decimal | DecimalJsLike | number | string
     category: $Enums.FeeCategory
+    billingFrequency?: $Enums.FeeBillingFrequency
     isOptional?: boolean
     description?: string | null
     feeStructureId: number
@@ -131738,6 +131788,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
+    billingFrequency?: EnumFeeBillingFrequencyFieldUpdateOperationsInput | $Enums.FeeBillingFrequency
     isOptional?: BoolFieldUpdateOperationsInput | boolean
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -131750,6 +131801,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
+    billingFrequency?: EnumFeeBillingFrequencyFieldUpdateOperationsInput | $Enums.FeeBillingFrequency
     isOptional?: BoolFieldUpdateOperationsInput | boolean
     description?: NullableStringFieldUpdateOperationsInput | string | null
     feeStructureId?: IntFieldUpdateOperationsInput | number
@@ -131762,6 +131814,7 @@ export namespace Prisma {
     name: string
     amount: Decimal | DecimalJsLike | number | string
     category: $Enums.FeeCategory
+    billingFrequency?: $Enums.FeeBillingFrequency
     isOptional?: boolean
     description?: string | null
     feeStructureId: number
@@ -131772,6 +131825,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
+    billingFrequency?: EnumFeeBillingFrequencyFieldUpdateOperationsInput | $Enums.FeeBillingFrequency
     isOptional?: BoolFieldUpdateOperationsInput | boolean
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -131782,6 +131836,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
+    billingFrequency?: EnumFeeBillingFrequencyFieldUpdateOperationsInput | $Enums.FeeBillingFrequency
     isOptional?: BoolFieldUpdateOperationsInput | boolean
     description?: NullableStringFieldUpdateOperationsInput | string | null
     feeStructureId?: IntFieldUpdateOperationsInput | number
@@ -139627,6 +139682,13 @@ export namespace Prisma {
     not?: NestedEnumFeeCategoryFilter<$PrismaModel> | $Enums.FeeCategory
   }
 
+  export type EnumFeeBillingFrequencyFilter<$PrismaModel = never> = {
+    equals?: $Enums.FeeBillingFrequency | EnumFeeBillingFrequencyFieldRefInput<$PrismaModel>
+    in?: $Enums.FeeBillingFrequency[] | ListEnumFeeBillingFrequencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FeeBillingFrequency[] | ListEnumFeeBillingFrequencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumFeeBillingFrequencyFilter<$PrismaModel> | $Enums.FeeBillingFrequency
+  }
+
   export type FeeStructureScalarRelationFilter = {
     is?: FeeStructureWhereInput
     isNot?: FeeStructureWhereInput
@@ -139647,6 +139709,7 @@ export namespace Prisma {
     name?: SortOrder
     amount?: SortOrder
     category?: SortOrder
+    billingFrequency?: SortOrder
     isOptional?: SortOrder
     description?: SortOrder
     feeStructureId?: SortOrder
@@ -139664,6 +139727,7 @@ export namespace Prisma {
     name?: SortOrder
     amount?: SortOrder
     category?: SortOrder
+    billingFrequency?: SortOrder
     isOptional?: SortOrder
     description?: SortOrder
     feeStructureId?: SortOrder
@@ -139675,6 +139739,7 @@ export namespace Prisma {
     name?: SortOrder
     amount?: SortOrder
     category?: SortOrder
+    billingFrequency?: SortOrder
     isOptional?: SortOrder
     description?: SortOrder
     feeStructureId?: SortOrder
@@ -139695,6 +139760,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumFeeCategoryFilter<$PrismaModel>
     _max?: NestedEnumFeeCategoryFilter<$PrismaModel>
+  }
+
+  export type EnumFeeBillingFrequencyWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FeeBillingFrequency | EnumFeeBillingFrequencyFieldRefInput<$PrismaModel>
+    in?: $Enums.FeeBillingFrequency[] | ListEnumFeeBillingFrequencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FeeBillingFrequency[] | ListEnumFeeBillingFrequencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumFeeBillingFrequencyWithAggregatesFilter<$PrismaModel> | $Enums.FeeBillingFrequency
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFeeBillingFrequencyFilter<$PrismaModel>
+    _max?: NestedEnumFeeBillingFrequencyFilter<$PrismaModel>
   }
 
   export type EnumBillStatusFilter<$PrismaModel = never> = {
@@ -150690,6 +150765,10 @@ export namespace Prisma {
     set?: $Enums.FeeCategory
   }
 
+  export type EnumFeeBillingFrequencyFieldUpdateOperationsInput = {
+    set?: $Enums.FeeBillingFrequency
+  }
+
   export type FeeStructureUpdateOneRequiredWithoutFeeItemsNestedInput = {
     create?: XOR<FeeStructureCreateWithoutFeeItemsInput, FeeStructureUncheckedCreateWithoutFeeItemsInput>
     connectOrCreate?: FeeStructureCreateOrConnectWithoutFeeItemsInput
@@ -153498,6 +153577,13 @@ export namespace Prisma {
     not?: NestedEnumFeeCategoryFilter<$PrismaModel> | $Enums.FeeCategory
   }
 
+  export type NestedEnumFeeBillingFrequencyFilter<$PrismaModel = never> = {
+    equals?: $Enums.FeeBillingFrequency | EnumFeeBillingFrequencyFieldRefInput<$PrismaModel>
+    in?: $Enums.FeeBillingFrequency[] | ListEnumFeeBillingFrequencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FeeBillingFrequency[] | ListEnumFeeBillingFrequencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumFeeBillingFrequencyFilter<$PrismaModel> | $Enums.FeeBillingFrequency
+  }
+
   export type NestedEnumFeeCategoryWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.FeeCategory | EnumFeeCategoryFieldRefInput<$PrismaModel>
     in?: $Enums.FeeCategory[] | ListEnumFeeCategoryFieldRefInput<$PrismaModel>
@@ -153506,6 +153592,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumFeeCategoryFilter<$PrismaModel>
     _max?: NestedEnumFeeCategoryFilter<$PrismaModel>
+  }
+
+  export type NestedEnumFeeBillingFrequencyWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FeeBillingFrequency | EnumFeeBillingFrequencyFieldRefInput<$PrismaModel>
+    in?: $Enums.FeeBillingFrequency[] | ListEnumFeeBillingFrequencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FeeBillingFrequency[] | ListEnumFeeBillingFrequencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumFeeBillingFrequencyWithAggregatesFilter<$PrismaModel> | $Enums.FeeBillingFrequency
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFeeBillingFrequencyFilter<$PrismaModel>
+    _max?: NestedEnumFeeBillingFrequencyFilter<$PrismaModel>
   }
 
   export type NestedEnumBillStatusFilter<$PrismaModel = never> = {
@@ -194152,6 +194248,7 @@ export namespace Prisma {
     name: string
     amount: Decimal | DecimalJsLike | number | string
     category: $Enums.FeeCategory
+    billingFrequency?: $Enums.FeeBillingFrequency
     isOptional?: boolean
     description?: string | null
     createdAt?: Date | string
@@ -194163,6 +194260,7 @@ export namespace Prisma {
     name: string
     amount: Decimal | DecimalJsLike | number | string
     category: $Enums.FeeCategory
+    billingFrequency?: $Enums.FeeBillingFrequency
     isOptional?: boolean
     description?: string | null
     createdAt?: Date | string
@@ -194485,6 +194583,7 @@ export namespace Prisma {
     name?: StringFilter<"FeeItem"> | string
     amount?: DecimalFilter<"FeeItem"> | Decimal | DecimalJsLike | number | string
     category?: EnumFeeCategoryFilter<"FeeItem"> | $Enums.FeeCategory
+    billingFrequency?: EnumFeeBillingFrequencyFilter<"FeeItem"> | $Enums.FeeBillingFrequency
     isOptional?: BoolFilter<"FeeItem"> | boolean
     description?: StringNullableFilter<"FeeItem"> | string | null
     feeStructureId?: IntFilter<"FeeItem"> | number
@@ -195687,6 +195786,7 @@ export namespace Prisma {
     name: string
     amount: Decimal | DecimalJsLike | number | string
     category: $Enums.FeeCategory
+    billingFrequency?: $Enums.FeeBillingFrequency
     isOptional?: boolean
     description?: string | null
     createdAt?: Date | string
@@ -195698,6 +195798,7 @@ export namespace Prisma {
     name: string
     amount: Decimal | DecimalJsLike | number | string
     category: $Enums.FeeCategory
+    billingFrequency?: $Enums.FeeBillingFrequency
     isOptional?: boolean
     description?: string | null
     feeStructureId: number
@@ -195778,6 +195879,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
+    billingFrequency?: EnumFeeBillingFrequencyFieldUpdateOperationsInput | $Enums.FeeBillingFrequency
     isOptional?: BoolFieldUpdateOperationsInput | boolean
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -195789,6 +195891,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
+    billingFrequency?: EnumFeeBillingFrequencyFieldUpdateOperationsInput | $Enums.FeeBillingFrequency
     isOptional?: BoolFieldUpdateOperationsInput | boolean
     description?: NullableStringFieldUpdateOperationsInput | string | null
     feeStructureId?: IntFieldUpdateOperationsInput | number
@@ -217137,6 +217240,7 @@ export namespace Prisma {
     name: string
     amount: Decimal | DecimalJsLike | number | string
     category: $Enums.FeeCategory
+    billingFrequency?: $Enums.FeeBillingFrequency
     isOptional?: boolean
     description?: string | null
     createdAt?: Date | string
@@ -217162,6 +217266,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
+    billingFrequency?: EnumFeeBillingFrequencyFieldUpdateOperationsInput | $Enums.FeeBillingFrequency
     isOptional?: BoolFieldUpdateOperationsInput | boolean
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -217173,6 +217278,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
+    billingFrequency?: EnumFeeBillingFrequencyFieldUpdateOperationsInput | $Enums.FeeBillingFrequency
     isOptional?: BoolFieldUpdateOperationsInput | boolean
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -217184,6 +217290,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
+    billingFrequency?: EnumFeeBillingFrequencyFieldUpdateOperationsInput | $Enums.FeeBillingFrequency
     isOptional?: BoolFieldUpdateOperationsInput | boolean
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

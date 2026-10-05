@@ -21,7 +21,6 @@ export type AdminDashboardData = {
   boys: number;
   girls: number;
   attendanceData: { name: string; present: number; absent: number }[];
-  financeData: { name: string; income: number; expense: number }[];
   timetableSnapshot: {
     totalLessons: number;
     totalClasses: number;
@@ -104,68 +103,19 @@ function aggregateAttendanceByDay(
   });
 }
 
-function aggregateMonthlyScores(
-  rows: {
-    score: number;
-    exam: { startTime: Date } | null;
-    assignment: { dueDate: Date } | null;
-  }[],
-  monthNames: string[],
-): { name: string; income: number; expense: number }[] {
-  const buckets = monthNames.map((name) => ({
-    name,
-    examTotal: 0,
-    examCount: 0,
-    assignmentTotal: 0,
-    assignmentCount: 0,
-  }));
-
-  for (const row of rows) {
-    if (row.exam) {
-      const month = row.exam.startTime.getMonth();
-      buckets[month].examTotal += row.score;
-      buckets[month].examCount += 1;
-    }
-    if (row.assignment) {
-      const month = row.assignment.dueDate.getMonth();
-      buckets[month].assignmentTotal += row.score;
-      buckets[month].assignmentCount += 1;
-    }
-  }
-
-  return buckets.map((bucket) => ({
-    name: bucket.name,
-    income:
-      bucket.examCount > 0
-        ? Math.round(bucket.examTotal / bucket.examCount)
-        : 0,
-    expense:
-      bucket.assignmentCount > 0
-        ? Math.round(bucket.assignmentTotal / bucket.assignmentCount)
-        : 0,
-  }));
-}
-
 /** Batched dashboard queries for the admin home page (avoids N+1 per student/day). */
 export async function getAdminDashboardData(
   schoolId: string,
 ): Promise<AdminDashboardData> {
   const tenantWhere = { schoolId };
-  const currentYear = new Date().getFullYear();
   const now = new Date();
   const weekDays = buildWeekDays(now);
-  const monthNames = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-  ];
   const todayEnum = DAY_ENUM_MAP[now.getDay()] ?? "MONDAY";
   const todayLabel = now.toLocaleDateString("en-US", { weekday: "long" });
   const todayStart = startOfDay(now);
   const todayEnd = endOfDay(now);
   const weekStart = startOfDay(weekDays[0]?.date ?? now);
   const weekEnd = endOfDay(weekDays[weekDays.length - 1]?.date ?? now);
-  const yearStart = new Date(currentYear, 0, 1);
-  const yearEnd = new Date(currentYear, 11, 31, 23, 59, 59, 999);
   const absenceWindowStart = startOfDay(new Date(now));
   absenceWindowStart.setDate(absenceWindowStart.getDate() - 30);
   const activePeriod = await getActiveAcademicPeriod(schoolId);
@@ -188,7 +138,6 @@ export async function getAdminDashboardData(
     caAvgResult,
     weekAttendanceRecords,
     allStudents,
-    yearlyScoreRows,
   ] = await Promise.all([
     prisma.admin.count({ where: tenantWhere }),
     prisma.teacher.count({ where: tenantWhere }),
@@ -248,20 +197,6 @@ export async function getAdminDashboardData(
         class: { select: { name: true } },
       },
     }),
-    prisma.result.findMany({
-      where: {
-        schoolId,
-        OR: [
-          { exam: { startTime: { gte: yearStart, lte: yearEnd } } },
-          { assignment: { dueDate: { gte: yearStart, lte: yearEnd } } },
-        ],
-      },
-      select: {
-        score: true,
-        exam: { select: { startTime: true } },
-        assignment: { select: { dueDate: true } },
-      },
-    }),
   ]);
 
   const statusCounts = normalizeAttendanceStatusCounts(todayAttendanceGrouped);
@@ -274,8 +209,6 @@ export async function getAdminDashboardData(
 
   const caAvg = Math.round((caAvgResult._avg.totalScore ?? 0) * 10) / 10;
   const attendanceData = aggregateAttendanceByDay(weekAttendanceRecords, weekDays);
-
-  const financeData = aggregateMonthlyScores(yearlyScoreRows, monthNames);
 
   const flagged = await getFlaggedAttendanceStudents({
     schoolId,
@@ -296,7 +229,6 @@ export async function getAdminDashboardData(
     boys: boyCount,
     girls: girlCount,
     attendanceData,
-    financeData,
     timetableSnapshot: {
       totalLessons,
       totalClasses,

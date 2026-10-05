@@ -14,14 +14,19 @@ import {
   updateFeeItem,
   deleteFeeItem,
 } from "@/src/lib/actions/feeStructureActions";
-import { FEE_CATEGORY_LABELS, formatGHS } from "@/src/lib/constants/finance";
-import type { FeeCategory } from "@/src/generated/prisma";
+import {
+  FEE_BILLING_FREQUENCY_LABELS,
+  FEE_CATEGORY_LABELS,
+  formatGHS,
+} from "@/src/lib/constants/finance";
+import type { FeeBillingFrequency, FeeCategory } from "@/src/generated/prisma";
 
 type FeeItem = {
   id:          number;
   name:        string;
   amount:      number;
   category:    string;
+  billingFrequency: string;
   isOptional:  boolean;
   description: string;
 };
@@ -39,12 +44,13 @@ type FormState = {
   name:        string;
   amount:      string;
   category:    string;
+  billingFrequency: string;
   isOptional:  boolean;
   description: string;
 };
 
 const emptyForm = (): FormState => ({
-  name: "", amount: "", category: "TUITION", isOptional: false, description: "",
+  name: "", amount: "", category: "TUITION", billingFrequency: "TERM", isOptional: false, description: "",
 });
 
 const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Props) => {
@@ -70,6 +76,7 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
       name:        item.name,
       amount:      String(item.amount),
       category:    item.category,
+      billingFrequency: item.billingFrequency,
       isOptional:  item.isOptional,
       description: item.description,
     });
@@ -93,6 +100,7 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
           name:        form.name.trim(),
           amount:      Number(form.amount),
           category:    form.category as FeeCategory,
+          billingFrequency: form.billingFrequency as FeeBillingFrequency,
           isOptional:  form.isOptional,
           description: form.description.trim() || undefined,
         });
@@ -101,6 +109,7 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
           name:        item.name,
           amount:      Number(item.amount),
           category:    item.category,
+          billingFrequency: item.billingFrequency,
           isOptional:  item.isOptional,
           description: item.description ?? "",
         }]);
@@ -125,12 +134,21 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
           name:        form.name.trim(),
           amount:      Number(form.amount),
           category:    form.category as FeeCategory,
+          billingFrequency: form.billingFrequency as FeeBillingFrequency,
           isOptional:  form.isOptional,
           description: form.description.trim() || undefined,
         });
         setItems((prev) => prev.map((item) =>
           item.id === id
-            ? { ...item, name: form.name.trim(), amount: Number(form.amount), category: form.category, isOptional: form.isOptional, description: form.description }
+            ? {
+                ...item,
+                name: form.name.trim(),
+                amount: Number(form.amount),
+                category: form.category,
+                billingFrequency: form.billingFrequency,
+                isOptional: form.isOptional,
+                description: form.description,
+              }
             : item
         ));
         setEditingId(null);
@@ -214,6 +232,27 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
             className="ring-[1.5px] ring-gray-200 px-3 py-2.5 rounded-xl text-sm text-gray-700 focus:ring-violet-500 outline-none bg-white"
           />
         </div>
+        {/* Billing frequency */}
+        <div className="flex flex-col gap-1 sm:col-span-2">
+          <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">Billing frequency *</label>
+          <div className="relative">
+            <select
+              value={form.billingFrequency}
+              onChange={(e) => setForm({ ...form, billingFrequency: e.target.value })}
+              className="w-full appearance-none ring-[1.5px] ring-gray-200 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 focus:ring-violet-500 outline-none bg-white pr-8"
+            >
+              {Object.entries(FEE_BILLING_FREQUENCY_LABELS).map(([val, label]) => (
+                <option key={val} value={val}>{label}</option>
+              ))}
+            </select>
+            <ChevronDown size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          </div>
+          {form.billingFrequency === "DAILY" && (
+            <p className="text-[11px] font-semibold leading-5 text-amber-700">
+              Daily collection items are kept out of generated student bills. They will be handled through daily collection sessions.
+            </p>
+          )}
+        </div>
       </div>
       {/* Optional toggle */}
       <label className="flex items-center gap-3 cursor-pointer w-fit">
@@ -247,6 +286,9 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
   );
 
   const mandatoryTotal = items.filter((i) => !i.isOptional).reduce((s, i) => s + i.amount, 0);
+  const billableMandatoryTotal = items
+    .filter((i) => !i.isOptional && i.billingFrequency !== "DAILY")
+    .reduce((s, i) => s + i.amount, 0);
 
   return (
     <div className="flex flex-col gap-4">
@@ -257,8 +299,13 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
           <div>
             <h2 className="text-sm font-black text-gray-800">Fee Items</h2>
             <p className="text-xs text-gray-400 mt-0.5">
-              {items.length} item{items.length !== 1 ? "s" : ""} · mandatory total:{" "}
-              <span className="font-black text-violet-700">{formatGHS(mandatoryTotal)}</span>
+              {items.length} item{items.length !== 1 ? "s" : ""} · billable mandatory total:{" "}
+              <span className="font-black text-violet-700">{formatGHS(billableMandatoryTotal)}</span>
+              {mandatoryTotal !== billableMandatoryTotal && (
+                <span className="ml-1 text-gray-400">
+                  · {formatGHS(mandatoryTotal - billableMandatoryTotal)} daily collection setup
+                </span>
+              )}
             </p>
           </div>
           {!isPublished && (
@@ -321,6 +368,13 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
                       <p className="text-sm font-black text-gray-800">{item.name}</p>
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-gray-100 text-gray-500">
                         {FEE_CATEGORY_LABELS[item.category] ?? item.category}
+                      </span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg ${
+                        item.billingFrequency === "DAILY"
+                          ? "bg-blue-50 text-blue-700"
+                          : "bg-emerald-50 text-emerald-700"
+                      }`}>
+                        {FEE_BILLING_FREQUENCY_LABELS[item.billingFrequency] ?? item.billingFrequency}
                       </span>
                       {item.isOptional && (
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-amber-50 text-amber-600">

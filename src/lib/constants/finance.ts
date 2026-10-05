@@ -27,6 +27,14 @@ export const FEE_CATEGORY_LABELS: Record<string, string> = {
   OTHER: "Other",
 };
 
+export const FEE_BILLING_FREQUENCY_LABELS: Record<string, string> = {
+  TERM: "Term bill",
+  MONTHLY: "Monthly bill",
+  WEEKLY: "Weekly bill",
+  DAILY: "Daily collection",
+  ONE_TIME: "One-time bill",
+};
+
 // 3. Discount Type Labels
 export const DISCOUNT_TYPE_LABELS: Record<string, string> = {
   SCHOLARSHIP: "Scholarship",

@@ -40,6 +40,7 @@ type ValidationContext = {
 const VALID_SEX_VALUES = new Set(["MALE", "FEMALE"]);
 const VALID_STUDENT_STATUS_VALUES = new Set(["ACTIVE", "INCOMPLETE_SETUP", "TRANSFERRED", "GRADUATED", "WITHDRAWN"]);
 const VALID_TERM_VALUES = new Set(["TERM_1", "TERM_2", "TERM_3"]);
+const VALID_FEE_FREQUENCY_VALUES = new Set(["TERM", "MONTHLY", "WEEKLY", "DAILY", "ONE_TIME"]);
 const SIMPLE_EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function normalize(value: string | null | undefined) {
@@ -63,6 +64,17 @@ function normalizeTerm(value: string) {
   if (["2", "term2", "term_2", "secondterm"].includes(clean)) return "TERM_2";
   if (["3", "term3", "term_3", "thirdterm"].includes(clean)) return "TERM_3";
   return value.trim().toUpperCase();
+}
+
+function normalizeFeeFrequency(value: string | null | undefined) {
+  const clean = (value ?? "TERM").trim().toLowerCase().replace(/[\s-]+/g, "_");
+  if (!clean) return "TERM";
+  if (["term", "termly", "per_term"].includes(clean)) return "TERM";
+  if (["month", "monthly", "per_month"].includes(clean)) return "MONTHLY";
+  if (["week", "weekly", "per_week"].includes(clean)) return "WEEKLY";
+  if (["day", "daily", "per_day", "every_day"].includes(clean)) return "DAILY";
+  if (["one_time", "onetime", "once", "single"].includes(clean)) return "ONE_TIME";
+  return clean.toUpperCase();
 }
 
 function parseMoney(value: string) {
@@ -351,6 +363,7 @@ export async function validateMigrationRows(
     if (context.areaKey === "fees") {
       const amount = parseMoney(values.amount);
       const amountPaid = values.amountPaid ? parseMoney(values.amountPaid) : 0;
+      const feeFrequency = normalizeFeeFrequency(values.feeFrequency);
       if (!existing.schoolCode) {
         issues.push({ severity: "ERROR", field: "admissionNumber", message: "Save the school code before importing fee bills." });
       } else if (values.admissionNumber) {
@@ -377,6 +390,16 @@ export async function validateMigrationRows(
       }
       if (amount !== null && amountPaid !== null && amountPaid > amount) {
         issues.push({ severity: "WARNING", field: "amountPaid", message: "Amount paid is higher than billed amount. This may be an overpayment." });
+      }
+      if (!VALID_FEE_FREQUENCY_VALUES.has(feeFrequency)) {
+        issues.push({ severity: "ERROR", field: "feeFrequency", message: "Billing frequency must be TERM, MONTHLY, WEEKLY, DAILY, or ONE_TIME." });
+      }
+      if (feeFrequency === "DAILY") {
+        issues.push({
+          severity: "ERROR",
+          field: "feeFrequency",
+          message: "Daily collection items cannot be imported as student term bills. Use the daily collection setup when that module is enabled.",
+        });
       }
       const feeKey = `${identity(values.feeName)}:${normalizeTerm(values.term)}:${identity(values.academicYear)}`;
       if (values.feeName && values.term && values.academicYear && existing.feeKeys.has(feeKey)) {

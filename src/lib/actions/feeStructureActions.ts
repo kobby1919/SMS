@@ -11,7 +11,7 @@ import {
   requireFinanceAccess,
   writeAuditLog,
 } from "@/src/lib/actions/financeActions";
-import type { FeeCategory, Term } from "@/src/generated/prisma";
+import type { FeeBillingFrequency, FeeCategory, Term } from "@/src/generated/prisma";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   feeItemSchema,
@@ -125,10 +125,13 @@ export async function publishFeeStructure(id: number) {
     include: { feeItems: true },
   });
   if (!structure) throw new Error("Fee structure not found.");
+  const billableMandatoryItems = structure.feeItems.filter(
+    (item) => !item.isOptional && item.billingFrequency !== "DAILY",
+  );
   assertCanPublishFeeStructure({
     status: structure.status,
     feeItemCount: structure.feeItems.length,
-    mandatoryFeeItemCount: structure.feeItems.filter((item) => !item.isOptional).length,
+    mandatoryFeeItemCount: billableMandatoryItems.length,
   });
 
   await prisma.feeStructure.update({
@@ -192,6 +195,7 @@ export type FeeItemInput = {
   name:          string;
   amount:        number;
   category:      FeeCategory;
+  billingFrequency: FeeBillingFrequency;
   isOptional:    boolean;
   description?:  string | null;
 };
@@ -220,6 +224,7 @@ export async function addFeeItem(
       name:        data.name.trim(),
       amount:      data.amount,
       category:    data.category,
+      billingFrequency: data.billingFrequency,
       isOptional:  data.isOptional,
       description: data.description?.trim() ?? null,
     },
@@ -254,6 +259,7 @@ export async function updateFeeItem(
       name:        data.name?.trim(),
       amount:      data.amount,
       category:    data.category,
+      billingFrequency: data.billingFrequency,
       isOptional:  data.isOptional,
       description: data.description?.trim() ?? null,
     },

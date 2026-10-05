@@ -65,11 +65,12 @@ export async function previewBillGeneration(
   if (!structure) throw new Error("Fee structure not found.");
   assertCanGenerateBills(structure.status);
 
-  const mandatoryTotal = structure.feeItems
+  const billableItems = structure.feeItems.filter((i) => i.billingFrequency !== "DAILY");
+  const mandatoryTotal = billableItems
     .filter((i) => !i.isOptional)
     .reduce((sum, i) => sum + Number(i.amount), 0);
 
-  const optionalTotal = structure.feeItems
+  const optionalTotal = billableItems
     .filter((i) => i.isOptional)
     .reduce((sum, i) => sum + Number(i.amount), 0);
 
@@ -137,12 +138,15 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
     throw new Error("Select at least one class to generate bills for.");
   }
 
+  const billableItems = structure.feeItems.filter((i) => i.billingFrequency !== "DAILY");
   const itemsToInclude = input.includeOptionalItems
-    ? structure.feeItems
-    : structure.feeItems.filter((i) => !i.isOptional);
+    ? billableItems
+    : billableItems.filter((i) => !i.isOptional);
 
   if (itemsToInclude.length === 0) {
-    throw new Error("No fee items to bill. Add items to the structure first.");
+    throw new Error(
+      "No billable fee items found. Daily collection items are handled separately and cannot generate term bills.",
+    );
   }
 
   // Use Prisma.Decimal for consistent math

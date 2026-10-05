@@ -151,6 +151,7 @@ export const feeItemSchema = z.object({
   name: nonEmptyStringSchema.max(150),
   amount: z.coerce.number().positive(),
   category: z.enum(["TUITION", "LEVY", "EXAM", "FEEDING", "TRANSPORT", "UNIFORM", "LIBRARY", "SPORTS", "OTHER"]),
+  billingFrequency: z.enum(["TERM", "MONTHLY", "WEEKLY", "DAILY", "ONE_TIME"]).default("TERM"),
   isOptional: z.boolean(),
   description: z.string().trim().max(1000).optional().nullable(),
 });

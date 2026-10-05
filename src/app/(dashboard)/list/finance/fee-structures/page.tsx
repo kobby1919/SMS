@@ -41,7 +41,7 @@ const FeeStructuresPage = async ({
       where,
       include: {
         grade:    { select: { level: true } },
-        feeItems: { select: { amount: true, isOptional: true } },
+        feeItems: { select: { amount: true, billingFrequency: true, isOptional: true } },
         bills:    { select: { id: true } },
       },
       orderBy: [{ academicYear: "desc" }, { grade: { order: "asc" } }, { term: "asc" }],
@@ -119,9 +119,12 @@ const FeeStructuresPage = async ({
         <div className="flex flex-col gap-3">
           {structures.map((s) => {
             const isPublished    = s.status === "PUBLISHED";
-            const mandatoryItems = s.feeItems.filter((i) => !i.isOptional);
-            const optionalItems  = s.feeItems.filter((i) => i.isOptional);
+            const dailyItems     = s.feeItems.filter((i) => i.billingFrequency === "DAILY");
+            const billableItems  = s.feeItems.filter((i) => i.billingFrequency !== "DAILY");
+            const mandatoryItems = billableItems.filter((i) => !i.isOptional);
+            const optionalItems  = billableItems.filter((i) => i.isOptional);
             const mandatoryTotal = mandatoryItems.reduce((sum, i) => sum + Number(i.amount), 0);
+            const dailyTotal     = dailyItems.reduce((sum, i) => sum + Number(i.amount), 0);
             const hasBills       = s.bills.length > 0;
 
             return (
@@ -161,13 +164,18 @@ const FeeStructuresPage = async ({
                     {/* Fee item summary */}
                     <div className="flex flex-wrap gap-3 mt-2">
                       <span className="text-xs text-gray-500">
-                        <span className="font-black text-gray-800">{mandatoryItems.length}</span> mandatory fee{mandatoryItems.length !== 1 ? "s" : ""}
+                        <span className="font-black text-gray-800">{mandatoryItems.length}</span> billable mandatory fee{mandatoryItems.length !== 1 ? "s" : ""}
                         {" · "}
                         <span className="font-black text-violet-700">{formatGHS(mandatoryTotal)}</span> base total
                       </span>
                       {optionalItems.length > 0 && (
                         <span className="text-xs text-gray-400">
-                          + {optionalItems.length} optional item{optionalItems.length !== 1 ? "s" : ""}
+                          + {optionalItems.length} optional non-daily item{optionalItems.length !== 1 ? "s" : ""}
+                        </span>
+                      )}
+                      {dailyItems.length > 0 && (
+                        <span className="text-xs font-bold text-blue-600">
+                          + {dailyItems.length} daily collection setup{dailyItems.length !== 1 ? "s" : ""} ({formatGHS(dailyTotal)})
                         </span>
                       )}
                     </div>

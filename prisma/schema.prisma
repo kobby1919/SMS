@@ -73,6 +73,14 @@ enum FeeCategory {
   OTHER
 }
 
+enum FeeBillingFrequency {
+  TERM
+  MONTHLY
+  WEEKLY
+  DAILY
+  ONE_TIME
+}
+
 enum FeeStructureStatus {
   DRAFT
   PUBLISHED
@@ -2206,12 +2214,13 @@ model FeeStructure {
 // This means changing a FeeItem after bills are generated does NOT affect bills.
 
 model FeeItem {
-  id          Int         @id @default(autoincrement())
-  name        String // e.g. "Tuition Fee"
-  amount      Decimal     @db.Decimal(10, 2)
-  category    FeeCategory
-  isOptional  Boolean     @default(false)
-  description String?
+  id               Int                 @id @default(autoincrement())
+  name             String // e.g. "Tuition Fee"
+  amount           Decimal             @db.Decimal(10, 2)
+  category         FeeCategory
+  billingFrequency FeeBillingFrequency @default(TERM)
+  isOptional       Boolean             @default(false)
+  description      String?
 
   feeStructureId Int
   feeStructure   FeeStructure @relation(fields: [feeStructureId], references: [id], onDelete: Cascade)
@@ -2219,6 +2228,8 @@ model FeeItem {
   billLineItems BillLineItem[]
 
   createdAt DateTime @default(now())
+
+  @@index([feeStructureId, billingFrequency])
 }
 
 // StudentBill: one bill per student per fee structure.

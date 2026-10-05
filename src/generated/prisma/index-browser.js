@@ -998,6 +998,7 @@ exports.Prisma.FeeItemScalarFieldEnum = {
   name: 'name',
   amount: 'amount',
   category: 'category',
+  billingFrequency: 'billingFrequency',
   isOptional: 'isOptional',
   description: 'description',
   feeStructureId: 'feeStructureId',
@@ -1794,6 +1795,14 @@ exports.FeeCategory = exports.$Enums.FeeCategory = {
   LIBRARY: 'LIBRARY',
   SPORTS: 'SPORTS',
   OTHER: 'OTHER'
+};
+
+exports.FeeBillingFrequency = exports.$Enums.FeeBillingFrequency = {
+  TERM: 'TERM',
+  MONTHLY: 'MONTHLY',
+  WEEKLY: 'WEEKLY',
+  DAILY: 'DAILY',
+  ONE_TIME: 'ONE_TIME'
 };
 
 exports.BillStatus = exports.$Enums.BillStatus = {

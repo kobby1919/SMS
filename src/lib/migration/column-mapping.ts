@@ -118,12 +118,13 @@ export const MIGRATION_AREAS: MigrationAreaDefinition[] = [
     fields: [
       { key: "admissionNumber", label: "Admission number", required: true, aliases: ["adm no", "admission no", "student id", "admission number"], help: "Student the fee belongs to. Use SCHOOLCODE-YYYY-0001 format." },
       { key: "feeName", label: "Fee item", required: true, aliases: ["fee", "fee item", "bill item", "description"], help: "Example: Tuition, Feeding, Bus." },
+      { key: "feeFrequency", label: "Billing frequency", required: false, aliases: ["frequency", "billing frequency", "fee frequency", "billing type"], help: "TERM, MONTHLY, WEEKLY, DAILY, or ONE_TIME. Missing means TERM." },
       { key: "amount", label: "Amount", required: true, aliases: ["amount", "bill amount", "total"], help: "Amount billed." },
       { key: "amountPaid", label: "Amount paid", required: false, aliases: ["paid", "amount paid", "collected"], help: "Existing amount paid, if any." },
       { key: "term", label: "Term", required: true, aliases: ["term", "semester"], help: "School term." },
       { key: "academicYear", label: "Academic year", required: true, aliases: ["academic year", "year", "session"], help: "Example: 2026/27." },
     ],
-    sampleRows: [["EDJ-2026-0001", "Tuition", "1200", "500", "TERM_1", "2026/27"]],
+    sampleRows: [["EDJ-2026-0001", "Tuition", "TERM", "1200", "500", "TERM_1", "2026/27"]],
   },
 ];
 

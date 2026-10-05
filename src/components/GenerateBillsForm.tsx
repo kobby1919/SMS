@@ -313,7 +313,7 @@ const GenerateBillsForm = ({
             <div>
               <p className="text-sm font-black text-amber-800">Include optional fee items</p>
               <p className="text-xs text-amber-700 mt-0.5">
-                Adds optional fees (e.g. transport, feeding) to every student&apos;s bill in the
+                Adds optional non-daily fees to every student&apos;s bill in the
                 selected classes. This adds {formatGHS(optionalTotal)} per student.
               </p>
             </div>

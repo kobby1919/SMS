@@ -2,13 +2,14 @@
 
 // src/components/AdminDashboard.tsx
 
-import FinanceChart from "@/src/components/FinanceChart";
 import CountChart from "@/src/components/CountChart";
 import AttendanceBarChart from "@/src/components/AttendanceBarChart";
 import EventCalendar from "@/src/components/EventCalendar";
 import WelcomeBanner from "@/src/components/WelcomeBanner";
 import AdminOwnerSchoolPulse from "@/src/components/AdminOwnerSchoolPulse";
+import AdminFinanceSnapshot from "@/src/components/AdminFinanceSnapshot";
 import type { AdminOwnerDashboardData } from "@/src/lib/queries/admin-owner-dashboard";
+import type { AdminFinanceSnapshot as AdminFinanceSnapshotData } from "@/src/lib/services/admin-finance-snapshot";
 import { motion } from "framer-motion";
 import UserCardClient from "./UserCardClient ";
 import { useRouter } from "next/navigation";
@@ -25,7 +26,6 @@ type CountEntry = {
   count: number;
 };
 type DayData = { name: string; present: number; absent: number };
-type MonthData = { name: string; income: number; expense: number };
 type TimetableSnapshot = {
   totalLessons: number;
   totalClasses: number;
@@ -49,7 +49,7 @@ type Props = {
   boys: number;
   girls: number;
   attendanceData: DayData[];
-  financeData: MonthData[];
+  financeSnapshot: AdminFinanceSnapshotData;
   eventList: React.ReactNode;
   announcements: React.ReactNode;
   timetableSnapshot: TimetableSnapshot;
@@ -63,7 +63,7 @@ const AdminDashboard = ({
   boys,
   girls,
   attendanceData,
-  financeData,
+  financeSnapshot,
   eventList,
   announcements,
   timetableSnapshot,
@@ -85,6 +85,8 @@ const AdminDashboard = ({
         pulse={ownerDashboard.schoolPulse}
         activePeriod={ownerDashboard.activePeriod}
       />
+
+      <AdminFinanceSnapshot snapshot={financeSnapshot} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {counts.map(({ type, count }, i) => (
@@ -139,10 +141,6 @@ const AdminDashboard = ({
             <div className="md:col-span-2 h-[300px]">
               <AttendanceBarChart data={attendanceData} />
             </div>
-          </div>
-
-          <div className="h-[420px]">
-            <FinanceChart data={financeData} />
           </div>
 
           {/* ── Timetable card — uses <a> (no nested links inside) ── */}

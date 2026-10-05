@@ -26,7 +26,7 @@ export function assertCanPublishFeeStructure(input: {
 
   if (input.mandatoryFeeItemCount === 0) {
     throw new Error(
-      "At least one fee item must be non-optional. A structure with only optional items cannot be published.",
+      "At least one non-daily fee item must be non-optional. Daily collection items are handled separately and cannot publish a normal bill structure on their own.",
     );
   }
 }

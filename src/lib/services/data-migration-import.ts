@@ -3,6 +3,7 @@ import { createHash, randomUUID } from "crypto";
 import {
   BillStatus,
   BursarStatus,
+  FeeBillingFrequency,
   FeeCategory,
   FeeStructureStatus,
   ParentStudentRelationshipRole,
@@ -96,10 +97,6 @@ function normalize(value: string | null | undefined) {
   return (value ?? "").trim();
 }
 
-function identity(value: string | null | undefined) {
-  return normalize(value).toLowerCase();
-}
-
 function normalizeEmail(value: string | null | undefined) {
   const email = normalize(value).toLowerCase();
   return email || null;
@@ -123,6 +120,17 @@ function normalizeTerm(value: string): Term {
   if (["1", "term1", "term_1", "firstterm"].includes(clean)) return Term.TERM_1;
   if (["2", "term2", "term_2", "secondterm"].includes(clean)) return Term.TERM_2;
   return Term.TERM_3;
+}
+
+function normalizeFeeFrequency(value: string | null | undefined): FeeBillingFrequency {
+  const clean = (value ?? "TERM").trim().toLowerCase().replace(/[\s-]+/g, "_");
+  if (!clean) return FeeBillingFrequency.TERM;
+  if (["term", "termly", "per_term"].includes(clean)) return FeeBillingFrequency.TERM;
+  if (["month", "monthly", "per_month"].includes(clean)) return FeeBillingFrequency.MONTHLY;
+  if (["week", "weekly", "per_week"].includes(clean)) return FeeBillingFrequency.WEEKLY;
+  if (["day", "daily", "per_day", "every_day"].includes(clean)) return FeeBillingFrequency.DAILY;
+  if (["one_time", "onetime", "once", "single"].includes(clean)) return FeeBillingFrequency.ONE_TIME;
+  return FeeBillingFrequency.TERM;
 }
 
 function parseMoney(value: string) {
@@ -472,17 +480,31 @@ async function importFees(
     });
 
     const feeAmount = parseMoney(row.values.amount);
+    const billingFrequency = normalizeFeeFrequency(row.values.feeFrequency);
+    if (billingFrequency === FeeBillingFrequency.DAILY) {
+      throw new MigrationImportError(
+        "Daily collection items cannot be imported as student term bills. Use daily collection setup instead.",
+        400,
+      );
+    }
+
     const existingFeeItem = await tx.feeItem.findFirst({
       where: {
         feeStructureId: feeStructure.id,
         name: { equals: row.values.feeName.trim(), mode: Prisma.QueryMode.insensitive },
       },
-      select: { id: true, amount: true },
+      select: { id: true, amount: true, billingFrequency: true },
     });
 
     if (existingFeeItem && existingFeeItem.amount.toString() !== feeAmount.toString()) {
       throw new MigrationImportError(
         "Fee item already exists with a different amount. Review the fee rows before importing.",
+        409,
+      );
+    }
+    if (existingFeeItem && existingFeeItem.billingFrequency !== billingFrequency) {
+      throw new MigrationImportError(
+        "Fee item already exists with a different billing frequency. Review the fee rows before importing.",
         409,
       );
     }
@@ -495,6 +517,7 @@ async function importFees(
           name: row.values.feeName.trim(),
           amount: feeAmount,
           category: FeeCategory.OTHER,
+          billingFrequency,
         },
         select: { id: true, amount: true },
       }));

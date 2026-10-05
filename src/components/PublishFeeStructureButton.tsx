@@ -42,7 +42,7 @@ const PublishFeeStructureButton = ({ id, hasItems, hasMandatory }: Props) => {
         type="button"
         onClick={() => setOpen(true)}
         disabled={!canPublish}
-        title={!canPublish ? "Add at least one mandatory fee item before publishing" : "Publish this fee structure"}
+        title={!canPublish ? "Add at least one non-daily mandatory fee item before publishing" : "Publish this fee structure"}
         className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-colors shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
       >
         <Globe size={15} /> Publish Structure
@@ -76,7 +76,7 @@ const PublishFeeStructureButton = ({ id, hasItems, hasMandatory }: Props) => {
                   </p>
                   <p className="flex items-start gap-2">
                     <span className="text-emerald-500 font-black mt-0.5">✓</span>
-                    <span><strong>Ready for billing</strong> — you can generate student bills from it</span>
+                    <span><strong>Ready for billing</strong> — you can generate student bills from non-daily items</span>
                   </p>
                   <p className="flex items-start gap-2">
                     <span className="text-amber-500 font-black mt-0.5">!</span>
