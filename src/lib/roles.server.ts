@@ -42,6 +42,23 @@ async function getBursarIdentityFromDatabase(userId: string): Promise<{
 
   return { role: "bursar", schoolId: bursar.schoolId };
 }
+
+async function getCollectorIdentityFromDatabase(userId: string): Promise<{
+  role: AppRole;
+  schoolId: string;
+} | null> {
+  const collector = await prisma.collector.findUnique({
+    where: { id: userId },
+    select: { schoolId: true, status: true },
+  });
+
+  if (!collector || collector.status !== "ACTIVE") {
+    return null;
+  }
+
+  return { role: "collector", schoolId: collector.schoolId };
+}
+
 export async function getTeacherAccessBlock(userId: string | null | undefined): Promise<{
   status: string;
   schoolId: string;
@@ -139,6 +156,14 @@ export async function resolveSessionIdentity(
     };
   }
 
+  if (roleFromClaims === "collector" && userId) {
+    const collectorIdentity = await getCollectorIdentityFromDatabase(userId);
+    return {
+      role: collectorIdentity?.role,
+      schoolId: collectorIdentity?.schoolId ?? schoolIdFromClaims ?? DEFAULT_SCHOOL_ID,
+    };
+  }
+
   if ((roleFromClaims && schoolIdFromClaims) || !userId) {
     return {
       role: roleFromClaims,
@@ -165,6 +190,14 @@ export async function resolveSessionIdentity(
       };
     }
 
+    if (resolvedRole === "collector") {
+      const collectorIdentity = await getCollectorIdentityFromDatabase(userId);
+      return {
+        role: collectorIdentity?.role,
+        schoolId: collectorIdentity?.schoolId ?? resolvedSchoolId ?? DEFAULT_SCHOOL_ID,
+      };
+    }
+
     if (resolvedRole) {
       return {
         role: resolvedRole,
@@ -184,6 +217,11 @@ export async function resolveSessionIdentity(
     const bursarIdentity = await getBursarIdentityFromDatabase(userId);
     if (bursarIdentity) {
       return bursarIdentity;
+    }
+
+    const collectorIdentity = await getCollectorIdentityFromDatabase(userId);
+    if (collectorIdentity) {
+      return collectorIdentity;
     }
   }
 
@@ -210,6 +248,9 @@ export async function resolveSessionRole(
     if (metadataRole === "teacher") {
       return (await getTeacherIdentityFromDatabase(userId))?.role;
     }
+    if (metadataRole === "collector") {
+      return (await getCollectorIdentityFromDatabase(userId))?.role;
+    }
     if (metadataRole) return metadataRole;
   } catch {
     // Fall back to database identity checks below.
@@ -219,7 +260,10 @@ export async function resolveSessionRole(
   if (teacherIdentity) return teacherIdentity.role;
 
   const bursarIdentity = await getBursarIdentityFromDatabase(userId);
-  return bursarIdentity?.role;
+  if (bursarIdentity) return bursarIdentity.role;
+
+  const collectorIdentity = await getCollectorIdentityFromDatabase(userId);
+  return collectorIdentity?.role;
 }
 
 /** Resolve school tenant id from JWT, falling back to Clerk publicMetadata. */
@@ -247,6 +291,9 @@ export async function resolveSessionSchoolId(
 
   const bursarIdentity = await getBursarIdentityFromDatabase(userId);
   if (bursarIdentity) return bursarIdentity.schoolId;
+
+  const collectorIdentity = await getCollectorIdentityFromDatabase(userId);
+  if (collectorIdentity) return collectorIdentity.schoolId;
 
   return DEFAULT_SCHOOL_ID;
 }

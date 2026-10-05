@@ -162,6 +162,21 @@ exports.Prisma.BursarScalarFieldEnum = {
   schoolId: 'schoolId'
 };
 
+exports.Prisma.CollectorScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  name: 'name',
+  surname: 'surname',
+  sex: 'sex',
+  email: 'email',
+  phone: 'phone',
+  address: 'address',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+};
+
 exports.Prisma.StudentScalarFieldEnum = {
   id: 'id',
   username: 'username',
@@ -1005,6 +1020,43 @@ exports.Prisma.FeeItemScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.DailyCollectionTypeScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  category: 'category',
+  amount: 'amount',
+  description: 'description',
+  isActive: 'isActive',
+  requiresBursarConfirmation: 'requiresBursarConfirmation',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+};
+
+exports.Prisma.DailyCollectionTypeCollectorScalarFieldEnum = {
+  id: 'id',
+  assignedAt: 'assignedAt',
+  assignedBy: 'assignedBy',
+  schoolId: 'schoolId',
+  collectorId: 'collectorId',
+  collectionTypeId: 'collectionTypeId'
+};
+
+exports.Prisma.DailyCollectionAuditLogScalarFieldEnum = {
+  id: 'id',
+  action: 'action',
+  performedBy: 'performedBy',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  schoolId: 'schoolId',
+  collectorId: 'collectorId',
+  collectionTypeId: 'collectionTypeId'
+};
+
 exports.Prisma.StudentBillScalarFieldEnum = {
   id: 'id',
   totalAmount: 'totalAmount',
@@ -1417,6 +1469,12 @@ exports.BursarStatus = exports.$Enums.BursarStatus = {
   LEFT_SCHOOL: 'LEFT_SCHOOL'
 };
 
+exports.CollectorStatus = exports.$Enums.CollectorStatus = {
+  ACTIVE: 'ACTIVE',
+  SUSPENDED: 'SUSPENDED',
+  LEFT_SCHOOL: 'LEFT_SCHOOL'
+};
+
 exports.StudentStatus = exports.$Enums.StudentStatus = {
   INCOMPLETE_SETUP: 'INCOMPLETE_SETUP',
   ACTIVE: 'ACTIVE',
@@ -1805,6 +1863,20 @@ exports.FeeBillingFrequency = exports.$Enums.FeeBillingFrequency = {
   ONE_TIME: 'ONE_TIME'
 };
 
+exports.DailyCollectionAuditAction = exports.$Enums.DailyCollectionAuditAction = {
+  COLLECTOR_CREATED: 'COLLECTOR_CREATED',
+  COLLECTOR_UPDATED: 'COLLECTOR_UPDATED',
+  COLLECTOR_SUSPENDED: 'COLLECTOR_SUSPENDED',
+  COLLECTOR_REACTIVATED: 'COLLECTOR_REACTIVATED',
+  COLLECTOR_LEFT_SCHOOL: 'COLLECTOR_LEFT_SCHOOL',
+  COLLECTION_TYPE_CREATED: 'COLLECTION_TYPE_CREATED',
+  COLLECTION_TYPE_UPDATED: 'COLLECTION_TYPE_UPDATED',
+  COLLECTION_TYPE_DEACTIVATED: 'COLLECTION_TYPE_DEACTIVATED',
+  COLLECTION_TYPE_REACTIVATED: 'COLLECTION_TYPE_REACTIVATED',
+  COLLECTOR_ASSIGNED: 'COLLECTOR_ASSIGNED',
+  COLLECTOR_UNASSIGNED: 'COLLECTOR_UNASSIGNED'
+};
+
 exports.BillStatus = exports.$Enums.BillStatus = {
   UNPAID: 'UNPAID',
   PARTIAL: 'PARTIAL',
@@ -2035,6 +2107,7 @@ exports.Prisma.ModelName = {
   School: 'School',
   Admin: 'Admin',
   Bursar: 'Bursar',
+  Collector: 'Collector',
   Student: 'Student',
   Teacher: 'Teacher',
   Parent: 'Parent',
@@ -2088,6 +2161,9 @@ exports.Prisma.ModelName = {
   SyllabusTopicProgress: 'SyllabusTopicProgress',
   FeeStructure: 'FeeStructure',
   FeeItem: 'FeeItem',
+  DailyCollectionType: 'DailyCollectionType',
+  DailyCollectionTypeCollector: 'DailyCollectionTypeCollector',
+  DailyCollectionAuditLog: 'DailyCollectionAuditLog',
   StudentBill: 'StudentBill',
   BillLineItem: 'BillLineItem',
   PaymentIntent: 'PaymentIntent',

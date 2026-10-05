@@ -280,6 +280,12 @@ enum BursarStatus {
   LEFT_SCHOOL
 }
 
+enum CollectorStatus {
+  ACTIVE
+  SUSPENDED
+  LEFT_SCHOOL
+}
+
 enum StudentStatus {
   INCOMPLETE_SETUP
   ACTIVE
@@ -310,6 +316,20 @@ enum BursarInviteAuditAction {
   INVITE_REVOKED
   INVITE_EXPIRED
   INVITE_ACCEPTED
+}
+
+enum DailyCollectionAuditAction {
+  COLLECTOR_CREATED
+  COLLECTOR_UPDATED
+  COLLECTOR_SUSPENDED
+  COLLECTOR_REACTIVATED
+  COLLECTOR_LEFT_SCHOOL
+  COLLECTION_TYPE_CREATED
+  COLLECTION_TYPE_UPDATED
+  COLLECTION_TYPE_DEACTIVATED
+  COLLECTION_TYPE_REACTIVATED
+  COLLECTOR_ASSIGNED
+  COLLECTOR_UNASSIGNED
 }
 
 enum OnboardingAuditAction {
@@ -668,6 +688,7 @@ model School {
   students                       Student[]
   teachers                       Teacher[]
   parents                        Parent[]
+  collectors                     Collector[]
   grades                         Grade[]
   classes                        Class[]
   subjects                       Subject[]
@@ -707,6 +728,8 @@ model School {
   bursars                        Bursar[]
   bursarInvites                  BursarInvite[]
   bursarInviteAuditLogs          BursarInviteAuditLog[]
+  dailyCollectionTypes           DailyCollectionType[]
+  dailyCollectionAuditLogs       DailyCollectionAuditLog[]
   invites                        SchoolInvite[]
   waitlistEntries                WaitlistEntry[]
   onboardingAuditLogs            OnboardingAuditLog[]
@@ -767,6 +790,31 @@ model Bursar {
   school   School @relation(fields: [schoolId], references: [id])
 
   acceptedInvites BursarInvite[] @relation("AcceptedBursarInvite")
+
+  @@unique([schoolId, email])
+  @@index([schoolId])
+  @@index([schoolId, status])
+  @@index([schoolId, createdAt])
+}
+
+model Collector {
+  id        String          @id
+  username  String          @unique
+  name      String
+  surname   String
+  sex       UserSex
+  email     String?
+  phone     String?
+  address   String?
+  status    CollectorStatus @default(ACTIVE)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
+  collectionTypes DailyCollectionTypeCollector[]
+  auditLogs       DailyCollectionAuditLog[]
 
   @@unique([schoolId, email])
   @@index([schoolId])
@@ -2230,6 +2278,76 @@ model FeeItem {
   createdAt DateTime @default(now())
 
   @@index([feeStructureId, billingFrequency])
+}
+
+// DailyCollectionType: setup record for recurring daily money collected outside
+// normal term/monthly bills, e.g. feeding-at-gate. Sessions/entries are created
+// later from this setup, and old setup is deactivated rather than deleted.
+model DailyCollectionType {
+  id                         String      @id @default(cuid())
+  name                       String
+  category                   FeeCategory @default(FEEDING)
+  amount                     Decimal     @db.Decimal(10, 2)
+  description                String?
+  isActive                   Boolean     @default(true)
+  requiresBursarConfirmation Boolean     @default(true)
+  createdBy                  String
+  updatedBy                  String?
+  createdAt                  DateTime    @default(now())
+  updatedAt                  DateTime    @updatedAt
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
+  collectors DailyCollectionTypeCollector[]
+  auditLogs  DailyCollectionAuditLog[]
+
+  @@unique([schoolId, name])
+  @@index([schoolId, isActive])
+  @@index([schoolId, category])
+  @@index([schoolId, createdAt])
+}
+
+model DailyCollectionTypeCollector {
+  id         String   @id @default(cuid())
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  schoolId String @default("default-school")
+
+  collectorId String
+  collector   Collector @relation(fields: [collectorId], references: [id], onDelete: Cascade)
+
+  collectionTypeId String
+  collectionType   DailyCollectionType @relation(fields: [collectionTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([collectorId, collectionTypeId])
+  @@index([schoolId, collectorId])
+  @@index([schoolId, collectionTypeId])
+}
+
+model DailyCollectionAuditLog {
+  id          String                     @id @default(cuid())
+  action      DailyCollectionAuditAction
+  performedBy String
+  entityType  String
+  entityId    String
+  metadata    Json
+  createdAt   DateTime                   @default(now())
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
+  collectorId String?
+  collector   Collector? @relation(fields: [collectorId], references: [id], onDelete: SetNull)
+
+  collectionTypeId String?
+  collectionType   DailyCollectionType? @relation(fields: [collectionTypeId], references: [id], onDelete: SetNull)
+
+  @@index([schoolId, createdAt])
+  @@index([schoolId, action, createdAt])
+  @@index([schoolId, collectorId, createdAt])
+  @@index([schoolId, collectionTypeId, createdAt])
 }
 
 // StudentBill: one bill per student per fee structure.

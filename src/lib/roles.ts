@@ -4,7 +4,8 @@ export type AppRole =
   | "teacher"
   | "student"
   | "parent"
-  | "bursar";
+  | "bursar"
+  | "collector";
 
 const APP_ROLES: AppRole[] = [
   "platform_admin",
@@ -13,6 +14,7 @@ const APP_ROLES: AppRole[] = [
   "student",
   "parent",
   "bursar",
+  "collector",
 ];
 
 export function isAppRole(role: string | undefined): role is AppRole {

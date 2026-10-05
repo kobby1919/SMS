@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { BriefcaseBusiness } from "lucide-react";
 
 type Props = {
-  role:      "admin" | "teacher" | "student" | "parent" | "bursar";
+  role:      "admin" | "teacher" | "student" | "parent" | "bursar" | "collector";
   name:      string;       // first name or full name
   subtitle?: string;       // e.g. "Class 3A" or "3 children enrolled"
   tag?:      string;       // e.g. "Term 2 · 2025/26"
@@ -49,6 +49,14 @@ const ROLE_CONFIG = {
   bursar: {
     greeting:  "Good day",
     roleLabel: "Bursar",
+    accent:    "bg-edujay-primary",
+    ring:      "ring-edujay-ring",
+    initials:  "bg-edujay-soft text-edujay-primary",
+    tagBg:     "bg-edujay-soft text-edujay-primary",
+  },
+  collector: {
+    greeting:  "Good day",
+    roleLabel: "Collector",
     accent:    "bg-edujay-primary",
     ring:      "ring-edujay-ring",
     initials:  "bg-edujay-soft text-edujay-primary",

@@ -161,6 +161,19 @@ export const feeItemUpdateSchema = feeItemSchema.partial().refine(
   "Provide a fee item field to update.",
 );
 
+export const dailyCollectionTypeSchema = z.object({
+  name: nonEmptyStringSchema.max(120),
+  amount: z.coerce.number().positive(),
+  category: z.enum(["TUITION", "LEVY", "EXAM", "FEEDING", "TRANSPORT", "UNIFORM", "LIBRARY", "SPORTS", "OTHER"]).default("FEEDING"),
+  description: z.string().trim().max(1000).optional().nullable(),
+  requiresBursarConfirmation: z.boolean().default(true),
+});
+
+export const dailyCollectionTypeUpdateSchema = dailyCollectionTypeSchema.partial().refine(
+  (value) => Object.keys(value).length > 0,
+  "Provide a daily collection setup field to update.",
+);
+
 export const waiveBillSchema = z.object({
   billId: positiveIntSchema,
   reason: nonEmptyStringSchema.max(500),

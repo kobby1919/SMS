@@ -12,6 +12,7 @@ export const routeAccessMap: RouteAccessMap = {
   "/student(.*)":                 ["student"],
   "/teacher(.*)":                 ["teacher"],
   "/parent(.*)":                  ["parent"],
+  "/collector(.*)":               ["collector"],
 
   // ── Bursar dashboard ──────────────────────────────────────────────────────
   // Bursar gets their own dashboard — no access to academic management
@@ -66,6 +67,10 @@ export const routeAccessMap: RouteAccessMap = {
 
   // Discounts — both can view, both can apply (audit tracked)
   "/list/finance/discounts":                ["admin", "bursar"],
+
+  // Daily collection setup — admin/bursar configure; collectors operate only from /collector
+  "/list/finance/daily-collections":        ["admin", "bursar"],
+  "/list/finance/daily-collections/(.*)":   ["admin", "bursar"],
 
   // Reports — both can view and export
   "/list/finance/reports":                  ["admin", "bursar"],

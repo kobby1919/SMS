@@ -22,6 +22,7 @@ const roleLabel: Record<AppRole, string> = {
   student: "Student",
   parent: "Parent",
   bursar: "Bursar",
+  collector: "Collector",
 };
 
 const roleRecipientType: Partial<Record<AppRole, AppNotificationRecipientType>> = {

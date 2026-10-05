@@ -140,6 +140,16 @@ export async function requireFinanceAccess(): Promise<AuthzContext> {
   return requireRole(["admin", "bursar"]);
 }
 
+/** Daily collection setup is finance configuration: admin or bursar only. */
+export async function requireDailyCollectionSetupAccess(): Promise<AuthzContext> {
+  return requireRole(["admin", "bursar"]);
+}
+
+/** Daily collection operation can include scoped collectors. */
+export async function requireDailyCollectionAccess(): Promise<AuthzContext> {
+  return requireRole(["admin", "bursar", "collector"]);
+}
+
 /** Verify a record belongs to the caller's school before mutating it. */
 export function requireResourceAccess<T extends { schoolId: string }>(
   record: T | null | undefined,

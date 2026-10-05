@@ -358,6 +358,12 @@ const menuItems = [
       },
       {
         icon: Wallet,
+        label: "Daily Collections",
+        href: "/list/finance/daily-collections",
+        visible: ["admin", "bursar"],
+      },
+      {
+        icon: Wallet,
         label: "My Fees",
         href: "/parent/finance",
         visible: ["parent"],
