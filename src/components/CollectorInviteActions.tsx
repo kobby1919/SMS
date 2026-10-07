@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Copy, Loader2, RotateCcw, XCircle } from "lucide-react";
+import { Loader2, RotateCcw, XCircle } from "lucide-react";
 import {
   resendCollectorInviteAction,
   revokeCollectorInviteAction,
@@ -68,15 +68,6 @@ export default function CollectorInviteActions({ inviteId }: { inviteId: string 
         >
           {busyKey === "resend" ? <Loader2 size={12} className="animate-spin" /> : <RotateCcw size={12} />}
           Resend
-        </button>
-        <button
-          type="button"
-          onClick={resend}
-          disabled={isPending}
-          className="inline-flex h-8 items-center justify-center gap-1 rounded-lg border border-blue-100 bg-blue-50 px-2 text-[11px] font-black text-blue-700 transition hover:bg-blue-100 disabled:opacity-50"
-        >
-          <Copy size={12} />
-          Copy fresh link
         </button>
         <button
           type="button"
