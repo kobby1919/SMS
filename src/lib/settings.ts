@@ -15,8 +15,8 @@ export const routeAccessMap: RouteAccessMap = {
   "/collector(.*)":               ["collector"],
 
   // ── Bursar dashboard ──────────────────────────────────────────────────────
-  // Bursar gets their own dashboard — no access to academic management
-  "/bursar(.*)":                  ["bursar", "admin"],
+  // Bursar gets their own dashboard — admin uses the admin control room
+  "/bursar(.*)":                  ["bursar"],
 
   // ── People management ─────────────────────────────────────────────────────
   "/list/admins(.*)":             ["admin"],
@@ -68,7 +68,7 @@ export const routeAccessMap: RouteAccessMap = {
   // Discounts — both can view, both can apply (audit tracked)
   "/list/finance/discounts":                ["admin", "bursar"],
 
-  // Daily collection setup — admin/bursar configure; collectors operate only from /collector
+  // Daily collections — admin reviews reports; bursar manages setup and settlement
   "/list/finance/daily-collections":        ["admin", "bursar"],
   "/list/finance/daily-collections/(.*)":   ["admin", "bursar"],
 

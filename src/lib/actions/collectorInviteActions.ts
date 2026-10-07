@@ -29,7 +29,7 @@ export async function createCollectorInviteAction(
   input: unknown,
 ): Promise<CollectorInviteCreateActionResult> {
   try {
-    const context = await requireRole(["admin", "bursar"]);
+    const context = await requireRole(["bursar"]);
     const data = parseActionInput(collectorInviteCreateSchema, input);
     const invite = await createCollectorInvite(data, context);
     revalidatePath("/list/finance/daily-collections");
@@ -46,7 +46,7 @@ export async function resendCollectorInviteAction(
   input: unknown,
 ): Promise<CollectorInviteActionResult> {
   try {
-    const context = await requireRole(["admin", "bursar"]);
+    const context = await requireRole(["bursar"]);
     const data = parseActionInput(collectorInviteIdSchema, input);
     const invite = await resendCollectorInvite(data, context);
     revalidatePath("/list/finance/daily-collections");
@@ -63,7 +63,7 @@ export async function revokeCollectorInviteAction(
   input: unknown,
 ): Promise<CollectorInviteActionResult> {
   try {
-    const context = await requireRole(["admin", "bursar"]);
+    const context = await requireRole(["bursar"]);
     const data = parseActionInput(collectorInviteIdSchema, input);
     await revokeCollectorInvite(data, context);
     revalidatePath("/list/finance/daily-collections");

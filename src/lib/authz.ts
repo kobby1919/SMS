@@ -145,9 +145,9 @@ export async function requireFinanceOperationAccess(): Promise<AuthzContext> {
   return requireRole(["bursar"]);
 }
 
-/** Daily collection setup is finance configuration: admin or bursar only. */
+/** Daily collection setup and settlement are bursar desk operations. */
 export async function requireDailyCollectionSetupAccess(): Promise<AuthzContext> {
-  return requireRole(["admin", "bursar"]);
+  return requireRole(["bursar"]);
 }
 
 /** Daily collection operation can include scoped collectors. */

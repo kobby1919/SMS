@@ -353,7 +353,7 @@ const menuItems = [
       },
       {
         icon: Wallet,
-        label: "Daily Collection Review",
+        label: "Daily Collection Report",
         href: "/list/finance/daily-collections",
         visible: ["admin"],
       },
