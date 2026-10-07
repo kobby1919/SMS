@@ -60,7 +60,7 @@ export async function createParentCheckoutWithState(
   }
 }
 export async function verifyOnlinePaymentIntent(formData: FormData) {
-  const { userId, schoolId } = await requireRole(["admin", "bursar"]);
+  const { userId, schoolId } = await requireRole(["bursar"]);
   await enforceActionRateLimit({
     key: `finance:verify-online-payment:${schoolId}:${userId}`,
     limit: 20,

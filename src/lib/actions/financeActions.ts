@@ -5,6 +5,7 @@
 // Finance foundation — the building blocks every other finance action depends on.
 //
 //  1. requireFinanceAccess()  — auth guard: admin or bursar only
+//     requireFinanceOperationAccess() — bursar-only guard for money-entry operations
 //  2. generateReceiptNumber() — atomic RCP-YYYY-NNN generator
 //  3. writeAuditLog()         — immutable finance audit trail writer
 //  4. recomputeBillStatus()   — keeps bill.balance and bill.status in sync
@@ -14,7 +15,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import prisma from "@/src/lib/prisma";
-import { requireFinanceAccess } from "@/src/lib/authz";
+import { requireFinanceAccess, requireFinanceOperationAccess } from "@/src/lib/authz";
 import {
   getWeeklyFinanceSummary,
   parseWeeklyReportDate,
@@ -30,7 +31,7 @@ import {
   notificationIdempotencyKeys,
 } from "@/src/lib/services/app-notifications";
 
-export { requireFinanceAccess };
+export { requireFinanceAccess, requireFinanceOperationAccess };
 import { Prisma } from "@/src/generated/prisma";                 // ← fix 1: Prisma namespace (gives us Decimal + InputJsonValue)
 import type { AuditAction } from "@/src/generated/prisma";
 

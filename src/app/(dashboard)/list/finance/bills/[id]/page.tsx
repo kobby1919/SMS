@@ -31,7 +31,7 @@ const BillDetailPage = async ({
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const { schoolId } = await requirePageSession(["admin", "bursar"]);
+  const { schoolId, role } = await requirePageSession(["admin", "bursar"]);
 
   const { id } = await params;
   const billId = parseInt(id);
@@ -86,7 +86,8 @@ const BillDetailPage = async ({
   if (!bill) notFound();
 
   const statusStyle    = BILL_STATUS_STYLES[bill.status];
-  const canRecordPayment = bill.status !== "PAID" && bill.status !== "WAIVED";
+  const canOperatePayments = role === "bursar";
+  const canRecordPayment = canOperatePayments && bill.status !== "PAID" && bill.status !== "WAIVED";
   const confirmedPayments = bill.payments.filter((p) => p.status === "CONFIRMED");
   const reversedPayments  = bill.payments.filter((p) => p.status === "REVERSED");
   const activeDiscounts = bill.discounts.filter((d) => d.status === "ACTIVE");
@@ -135,6 +136,11 @@ const BillDetailPage = async ({
               >
                 <Receipt size={15} /> Record Payment
               </Link>
+            )}
+            {!canOperatePayments && bill.status !== "PAID" && bill.status !== "WAIVED" && (
+              <span className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-xs font-black text-gray-500">
+                Review only
+              </span>
             )}
             {bill.status !== "PAID" && bill.status !== "WAIVED" && (
               <WaiveBillButton billId={billId} studentName={`${bill.student.name} ${bill.student.surname}`} />

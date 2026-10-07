@@ -5,6 +5,7 @@ import prisma from "@/src/lib/prisma";
 import { revalidatePath } from "next/cache";
 import {
   requireFinanceAccess,
+  requireFinanceOperationAccess,
   writeAuditLog,
   recomputeBillStatus,
 } from "@/src/lib/actions/financeActions";
@@ -13,7 +14,6 @@ import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   paymentFiltersSchema,
   recordPaymentSchema,
-  reversePaymentSchema,
 } from "@/src/lib/validation/finance";
 import { Prisma } from "@/src/generated/prisma";
 import type { PaymentMethod } from "@/src/generated/prisma";
@@ -22,15 +22,10 @@ import { revalidateDashboard, revalidateDocument } from "@/src/lib/cacheTags";
 import { enqueueFinanceJob } from "@/src/lib/services/finance-queue";
 import {
   assertCanRecordPayment,
-  assertCanReversePayment,
   assertPaymentWithinAllowedOverpay,
 } from "@/src/lib/services/finance-policy";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
 import { PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
-
-function isProviderConfirmedPayment(payment: { externalProvider: unknown; externalReference: unknown }) {
-  return Boolean(payment.externalProvider && payment.externalReference);
-}
 const REFERENCE_REQUIRED_PAYMENT_METHODS = new Set<PaymentMethod>([
   "MTN_MOMO",
   "VODAFONE_CASH",
@@ -101,7 +96,7 @@ export type RecordPaymentInput = {
 };
 
 export async function recordPayment(input: RecordPaymentInput) {
-  const ctx = await requireFinanceAccess();
+  const ctx = await requireFinanceOperationAccess();
   const { userId, schoolId } = ctx;
   await enforceActionRateLimit({
     key: `finance:record-payment:${schoolId}:${userId}`,
@@ -374,175 +369,9 @@ export async function recordPayment(input: RecordPaymentInput) {
 // ─── Reverse a payment ────────────────────────────────────────────────────────
 
 export async function reversePayment(paymentId: number, reason: string) {
-  const ctx = await requireFinanceAccess();
-  const { userId, schoolId } = ctx;
-  await enforceActionRateLimit({
-    key: `finance:reverse-payment:${schoolId}:${userId}`,
-    limit: 10,
-    windowMs: 10 * 60_000,
-  });
-  const data = parseActionInput(reversePaymentSchema, { paymentId, reason });
-
-  const payment = requireResourceAccess(
-    await prisma.payment.findFirst({
-      where:   { id: data.paymentId, schoolId },
-      include: {
-        studentBill: {
-          include: {
-            student:   { select: { name: true, surname: true } },
-            lineItems: true,
-          },
-        },
-        reversal: true,
-        correctionRequests: {
-          where: { status: { in: ["PENDING_REVIEW", "APPROVED"] } },
-          select: { id: true, status: true },
-          take: 1,
-        },
-        correctedPaymentCorrections: {
-          select: { id: true, originalPayment: { select: { receiptNumber: true } } },
-          take: 1,
-        },
-      },
-    }),
-    ctx,
-    "Payment not found.",
-  );
-  assertCanReversePayment({
-    status: payment.status,
-    hasReversal: Boolean(payment.reversal),
-  });
-
-  if (payment.correctionRequests.length > 0) {
-    throw new Error("This payment already has an open correction request. Review or cancel that request before reversing the receipt directly.");
-  }
-
-  if (payment.correctedPaymentCorrections.length > 0) {
-    throw new Error("This receipt was issued as a correction. Ask an admin to review the finance history before reversing it directly.");
-  }
-  const billId = payment.studentBillId;
-  const amountToReverse = new Prisma.Decimal(payment.amount);
-
-  await prisma.$transaction(async (tx) => {
-    await tx.payment.update({
-      where: { id: data.paymentId },
-      data:  { status: "REVERSED" },
-    });
-
-    await tx.paymentReversal.create({
-      data: {
-        schoolId,
-        paymentId: data.paymentId,
-        reason:      data.reason.trim(),
-        reversedBy: userId,
-        reversedAt: new Date(),
-      },
-    });
-
-    // 3. Reduce bill amountPaid
-    await tx.studentBill.update({
-      where: { id: billId },
-      data:  { amountPaid: { decrement: amountToReverse } },
-    });
-
-    // 4. Reverse FIFO line item allocation (LIFO order for unwinding)
-    let toUnwind = new Prisma.Decimal(amountToReverse);
-    const sortedLines = [...payment.studentBill.lineItems]
-      .sort((a, b) => b.id - a.id);
-
-    for (const line of sortedLines) {
-      if (toUnwind.lte(0)) break;
-
-      const paid      = new Prisma.Decimal(line.amountPaid);
-      const toDeduct  = Prisma.Decimal.min(toUnwind, paid);
-      const newPaid   = paid.sub(toDeduct);
-      const newBal    = new Prisma.Decimal(line.amount).sub(newPaid);
-
-      await tx.billLineItem.update({
-        where: { id: line.id },
-        data: {
-          amountPaid: Prisma.Decimal.max(newPaid, 0),
-          balance:    newBal,
-          isPaid:     false,
-        },
-      });
-
-      toUnwind = toUnwind.sub(toDeduct);
-    }
-  });
-
-  await recomputeBillStatus(billId, schoolId);
-
-  await writeAuditLog({
-    schoolId,
-    action:      "PAYMENT_REVERSED",
-    performedBy: userId,
-    entityType:  "Payment",
-    entityId:    String(data.paymentId),
-    metadata: {
-      paymentId: data.paymentId,
-      receiptNumber: payment.receiptNumber,
-      amount: amountToReverse.toNumber(),
-      reason: data.reason,
-      studentBillId: billId,
-    },
-  });
-
-  await Promise.all([
-    enqueueFinanceJob({
-      schoolId,
-      type: "RECOMPUTE_FINANCE_SUMMARY",
-      payload: {
-        reason: "PAYMENT_REVERSED",
-        paymentId: data.paymentId,
-        studentBillId: billId,
-      },
-      idempotencyKey: `finance-summary:${schoolId}:payment-reversal:${data.paymentId}`,
-      createdBy: userId,
-    }),
-    enqueueFinanceJob({
-      schoolId,
-      type: "GENERATE_DAILY_REPORT",
-      payload: {
-        date: payment.paymentDate.toISOString().slice(0, 10),
-      },
-      idempotencyKey: `daily-report:${schoolId}:${payment.paymentDate.toISOString().slice(0, 10)}`,
-      createdBy: userId,
-    }),
-  ]);
-
-  await recordParentActivityEvents({
-    schoolId,
-    studentIds: [payment.studentBill.studentId],
-    type: "PAYMENT",
-    title: `Payment reversed: ${payment.receiptNumber}`,
-    body: `A payment of GHS ${amountToReverse.toNumber().toFixed(2)} was reversed. Reason: ${data.reason}.`,
-    href: `/parent/finance/bills/${billId}`,
-    sourceModel: "PaymentReversal",
-    sourceId: String(data.paymentId),
-    sourceKey: `payment:${data.paymentId}:reversed`,
-    occurredAt: new Date(),
-    payload: {
-      paymentId: data.paymentId,
-      receiptNumber: payment.receiptNumber,
-      amount: amountToReverse.toNumber(),
-      reason: data.reason,
-    },
-  });
-
-  revalidatePath(`/list/finance/bills/${billId}`);
-  revalidatePath("/list/finance/payments");
-  revalidatePath("/parent");
-  revalidatePath("/parent/finance");
-  revalidatePath(`/parent/finance/bills/${billId}`);
-  revalidatePath("/bursar");
-  revalidateDashboard(schoolId);
-  revalidateDocument(schoolId, "receipt", data.paymentId);
-  revalidateDocument(
-    schoolId,
-    "daily-finance",
-    payment.paymentDate.toISOString().slice(0, 10),
-  );
+  void paymentId;
+  void reason;
+  throw new Error("Direct payment reversal is disabled. Use the correction request and admin review workflow so the full finance audit trail is preserved.");
 }
 
 // ─── Get all payments ─────────────────────────────────────────────────────────

@@ -140,6 +140,11 @@ export async function requireFinanceAccess(): Promise<AuthzContext> {
   return requireRole(["admin", "bursar"]);
 }
 
+/** Finance operations that record money are bursar-only. */
+export async function requireFinanceOperationAccess(): Promise<AuthzContext> {
+  return requireRole(["bursar"]);
+}
+
 /** Daily collection setup is finance configuration: admin or bursar only. */
 export async function requireDailyCollectionSetupAccess(): Promise<AuthzContext> {
   return requireRole(["admin", "bursar"]);

@@ -20,7 +20,6 @@ import {
 import { formatGHS, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import Pagination from "@/src/components/pagination";
-import PaymentReverseButton from "@/src/components/PaymentReverseButton";
 import { requestPaymentCorrection } from "@/src/lib/actions/paymentCorrectionActions";
 import { verifyOnlinePaymentIntent } from "@/src/lib/actions/paymentIntentActions";
 import { Prisma } from "@/src/generated/prisma";
@@ -130,6 +129,7 @@ const PaymentsPage = async ({
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
   const { schoolId, role } = await requirePageSession(["admin", "bursar"]);
+  const canOperatePayments = role === "bursar";
 
   const sp = await searchParams;
   const page = sp.page ? parseInt(sp.page) : 1;
@@ -549,7 +549,7 @@ const PaymentsPage = async ({
               const receipt = bill?.payments.find(
                 (payment) => payment.externalReference === attempt.reference && payment.status === "CONFIRMED",
               );
-              const canVerifyAgain = attempt.status !== "PAID";
+              const canVerifyAgain = canOperatePayments && attempt.status !== "PAID";
               const studentName = bill
                 ? `${bill.student.surname} ${bill.student.name}`.trim()
                 : "Unknown student";
@@ -606,9 +606,13 @@ const PaymentsPage = async ({
                             <RefreshCw size={13} /> Verify again
                           </button>
                         </form>
-                      ) : (
+                      ) : attempt.status === "PAID" ? (
                         <span className="inline-flex items-center gap-1 rounded-xl bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">
                           <ShieldCheck size={13} /> Applied
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded-xl bg-gray-100 px-3 py-2 text-xs font-black text-gray-600">
+                          <ShieldCheck size={13} /> Bursar verifies
                         </span>
                       )}
                     </div>
@@ -876,15 +880,6 @@ const PaymentsPage = async ({
                       >
                         <Download size={13} />
                       </a>
-                    )}
-
-                    {/* Reverse button (admin/bursar, confirmed only, no active correction chain) */}
-                    {isConfirmed && !isOnlineVerified && !correction && !correctedFrom && (
-                      <PaymentReverseButton
-                        paymentId={p.id}
-                        receiptNumber={p.receiptNumber}
-                        amount={Number(p.amount)}
-                      />
                     )}
 
                     {/* View bill */}

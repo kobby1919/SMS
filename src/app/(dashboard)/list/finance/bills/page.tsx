@@ -134,7 +134,8 @@ const BillsPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { schoolId } = await requirePageSession(["admin", "bursar"]);
+  const { schoolId, role } = await requirePageSession(["admin", "bursar"]);
+  const canOperatePayments = role === "bursar";
 
   const sp = await searchParams;
   const page = parsePositiveInt(sp.page) ?? 1;
@@ -296,9 +297,10 @@ const BillsPage = async ({
             </div>
             <div>
               <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-600">Student fee status</p>
-              <h1 className="mt-1 text-xl font-black tracking-tight text-gray-900">Bursar student collection list</h1>
+              <h1 className="mt-1 text-xl font-black tracking-tight text-gray-900">Student fee status</h1>
               <p className="mt-1 max-w-2xl text-sm font-semibold text-gray-500">
                 Search every student bill, see parent contacts, last payment, payment state, and the next action without leaving the finance source of truth.
+                {canOperatePayments ? " Bursars can record payments from here." : " Admin access is review-only for payment entry."}
               </p>
             </div>
           </div>
@@ -442,7 +444,7 @@ const BillsPage = async ({
                     const meta = statusMeta({ status: bill.status, hasActiveDiscount, hasOpenIssue });
                     const lastPayment = bill.payments[0];
                     const guardian = bill.student.parentRelationships[0]?.parent ?? (bill.student._count.parentRelationships === 0 ? bill.student.parent : null);
-                    const canRecordPayment = bill.status !== "PAID" && bill.status !== "WAIVED";
+                    const canRecordPayment = canOperatePayments && bill.status !== "PAID" && bill.status !== "WAIVED";
 
                     return (
                       <tr key={bill.id} className="hover:bg-emerald-50/30">
@@ -509,7 +511,7 @@ const BillsPage = async ({
                 const meta = statusMeta({ status: bill.status, hasActiveDiscount, hasOpenIssue });
                 const lastPayment = bill.payments[0];
                 const guardian = bill.student.parentRelationships[0]?.parent ?? (bill.student._count.parentRelationships === 0 ? bill.student.parent : null);
-                const canRecordPayment = bill.status !== "PAID" && bill.status !== "WAIVED";
+                const canRecordPayment = canOperatePayments && bill.status !== "PAID" && bill.status !== "WAIVED";
 
                 return (
                   <div key={bill.id} className="p-4">
