@@ -4,13 +4,14 @@ import { ArrowLeft, Banknote, ShieldCheck, Users } from "lucide-react";
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import DailyCollectionSetupPanel from "@/src/components/DailyCollectionSetupPanel";
+import DailyCollectionReviewPanel from "@/src/components/DailyCollectionReviewPanel";
 
 export const dynamic = "force-dynamic";
 
 export default async function DailyCollectionsSetupPage() {
   const { schoolId } = await requirePageSession(["admin", "bursar"]);
 
-  const [collectionTypes, activeCollectorCount, auditCount] = await Promise.all([
+  const [collectionTypes, activeCollectorCount, auditCount, reviewSessions] = await Promise.all([
     prisma.dailyCollectionType.findMany({
       where: { schoolId },
       include: {
@@ -26,6 +27,16 @@ export default async function DailyCollectionsSetupPage() {
     }),
     prisma.collector.count({ where: { schoolId, status: "ACTIVE" } }),
     prisma.dailyCollectionAuditLog.count({ where: { schoolId } }),
+    prisma.dailyCollectionSession.findMany({
+      where: { schoolId },
+      include: {
+        collectionType: { select: { name: true, category: true } },
+        collector: { select: { name: true, surname: true } },
+        _count: { select: { entries: true } },
+      },
+      orderBy: [{ status: "asc" }, { collectionDate: "desc" }, { createdAt: "desc" }],
+      take: 20,
+    }),
   ]);
 
   return (
@@ -59,11 +70,26 @@ export default async function DailyCollectionsSetupPage() {
       </section>
 
       <section className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
-        <p className="text-sm font-black text-blue-900">Step 4 boundary</p>
+        <p className="text-sm font-black text-blue-900">Daily collection control rule</p>
         <p className="mt-1 text-sm font-semibold leading-6 text-blue-800">
-          This page only defines what can be collected daily. It does not mark students paid, update balances, or confirm cash received. Those controls start in the next steps.
+          Setup defines what can be collected. Collector sessions record what was collected. Bursar confirmation locks the session only after the received amount is checked.
         </p>
       </section>
+
+      <DailyCollectionReviewPanel
+        sessions={reviewSessions.map((session) => ({
+          id: session.id,
+          collectionDate: session.collectionDate.toISOString(),
+          status: session.status,
+          expectedAmount: Number(session.expectedAmount),
+          reportedAmount: Number(session.reportedAmount),
+          confirmedAmount: session.confirmedAmount === null ? null : Number(session.confirmedAmount),
+          mismatchReason: session.mismatchReason,
+          collectionType: session.collectionType,
+          collector: session.collector,
+          counts: { entries: session._count.entries },
+        }))}
+      />
 
       <DailyCollectionSetupPanel
         collectionTypes={collectionTypes.map((item) => ({

@@ -330,6 +330,25 @@ enum DailyCollectionAuditAction {
   COLLECTION_TYPE_REACTIVATED
   COLLECTOR_ASSIGNED
   COLLECTOR_UNASSIGNED
+  SESSION_OPENED
+  ENTRY_MARKED
+  SESSION_SUBMITTED
+  SESSION_CONFIRMED
+  SESSION_FLAGGED
+}
+
+enum DailyCollectionSessionStatus {
+  OPEN
+  SUBMITTED
+  CONFIRMED
+  FLAGGED
+  CANCELLED
+}
+
+enum DailyCollectionEntryStatus {
+  UNPAID
+  PAID
+  EXCUSED
 }
 
 enum OnboardingAuditAction {
@@ -730,6 +749,8 @@ model School {
   bursarInviteAuditLogs          BursarInviteAuditLog[]
   dailyCollectionTypes           DailyCollectionType[]
   dailyCollectionAuditLogs       DailyCollectionAuditLog[]
+  dailyCollectionSessions        DailyCollectionSession[]
+  dailyCollectionEntries         DailyCollectionEntry[]
   invites                        SchoolInvite[]
   waitlistEntries                WaitlistEntry[]
   onboardingAuditLogs            OnboardingAuditLog[]
@@ -813,8 +834,10 @@ model Collector {
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
 
-  collectionTypes DailyCollectionTypeCollector[]
-  auditLogs       DailyCollectionAuditLog[]
+  collectionTypes    DailyCollectionTypeCollector[]
+  collectionSessions DailyCollectionSession[]
+  collectionEntries  DailyCollectionEntry[]
+  auditLogs          DailyCollectionAuditLog[]
 
   @@unique([schoolId, email])
   @@index([schoolId])
@@ -864,6 +887,7 @@ model Student {
   teacherContactMessages ParentTeacherContactMessage[]
   parentAccessAuditLogs  ParentAccessAuditLog[]
   paymentIntents         PaymentIntent[]
+  dailyCollectionEntries DailyCollectionEntry[]
 
   @@unique([schoolId, admissionNumber])
   @@index([schoolId])
@@ -2302,6 +2326,7 @@ model DailyCollectionType {
 
   collectors DailyCollectionTypeCollector[]
   auditLogs  DailyCollectionAuditLog[]
+  sessions   DailyCollectionSession[]
 
   @@unique([schoolId, name])
   @@unique([schoolId, normalizedName])
@@ -2326,6 +2351,69 @@ model DailyCollectionTypeCollector {
   @@unique([collectorId, collectionTypeId])
   @@index([schoolId, collectorId])
   @@index([schoolId, collectionTypeId])
+}
+
+model DailyCollectionSession {
+  id              String                       @id @default(cuid())
+  collectionDate  DateTime
+  status          DailyCollectionSessionStatus @default(OPEN)
+  expectedAmount  Decimal                      @db.Decimal(10, 2)
+  reportedAmount  Decimal                      @default(0) @db.Decimal(10, 2)
+  confirmedAmount Decimal?                     @db.Decimal(10, 2)
+  submittedAt     DateTime?
+  confirmedAt     DateTime?
+  confirmedBy     String?
+  mismatchReason  String?
+  note            String?
+  createdAt       DateTime                     @default(now())
+  updatedAt       DateTime                     @updatedAt
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+
+  collectorId String
+  collector   Collector @relation(fields: [collectorId], references: [id], onDelete: Restrict)
+
+  collectionTypeId String
+  collectionType   DailyCollectionType @relation(fields: [collectionTypeId], references: [id], onDelete: Restrict)
+
+  entries DailyCollectionEntry[]
+
+  @@unique([schoolId, collectionTypeId, collectorId, collectionDate])
+  @@index([schoolId, status, collectionDate])
+  @@index([schoolId, collectorId, collectionDate])
+  @@index([schoolId, collectionTypeId, collectionDate])
+  @@index([schoolId, createdAt])
+}
+
+model DailyCollectionEntry {
+  id              String                     @id @default(cuid())
+  status          DailyCollectionEntryStatus @default(UNPAID)
+  amountExpected  Decimal                    @db.Decimal(10, 2)
+  amountCollected Decimal                    @default(0) @db.Decimal(10, 2)
+  note            String?
+  markedAt        DateTime?
+  markedBy        String?
+  createdAt       DateTime                   @default(now())
+  updatedAt       DateTime                   @updatedAt
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+
+  sessionId String
+  session   DailyCollectionSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Restrict)
+
+  collectorId String
+  collector   Collector @relation(fields: [collectorId], references: [id], onDelete: Restrict)
+
+  @@unique([sessionId, studentId])
+  @@index([schoolId, sessionId])
+  @@index([schoolId, studentId])
+  @@index([schoolId, collectorId, createdAt])
+  @@index([schoolId, status, createdAt])
 }
 
 model DailyCollectionAuditLog {

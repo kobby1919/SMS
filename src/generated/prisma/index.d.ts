@@ -309,6 +309,16 @@ export type DailyCollectionType = $Result.DefaultSelection<Prisma.$DailyCollecti
  */
 export type DailyCollectionTypeCollector = $Result.DefaultSelection<Prisma.$DailyCollectionTypeCollectorPayload>
 /**
+ * Model DailyCollectionSession
+ *
+ */
+export type DailyCollectionSession = $Result.DefaultSelection<Prisma.$DailyCollectionSessionPayload>
+/**
+ * Model DailyCollectionEntry
+ *
+ */
+export type DailyCollectionEntry = $Result.DefaultSelection<Prisma.$DailyCollectionEntryPayload>
+/**
  * Model DailyCollectionAuditLog
  *
  */
@@ -880,10 +890,35 @@ export const DailyCollectionAuditAction: {
   COLLECTION_TYPE_DEACTIVATED: 'COLLECTION_TYPE_DEACTIVATED',
   COLLECTION_TYPE_REACTIVATED: 'COLLECTION_TYPE_REACTIVATED',
   COLLECTOR_ASSIGNED: 'COLLECTOR_ASSIGNED',
-  COLLECTOR_UNASSIGNED: 'COLLECTOR_UNASSIGNED'
+  COLLECTOR_UNASSIGNED: 'COLLECTOR_UNASSIGNED',
+  SESSION_OPENED: 'SESSION_OPENED',
+  ENTRY_MARKED: 'ENTRY_MARKED',
+  SESSION_SUBMITTED: 'SESSION_SUBMITTED',
+  SESSION_CONFIRMED: 'SESSION_CONFIRMED',
+  SESSION_FLAGGED: 'SESSION_FLAGGED'
 };
 
 export type DailyCollectionAuditAction = (typeof DailyCollectionAuditAction)[keyof typeof DailyCollectionAuditAction]
+
+
+export const DailyCollectionSessionStatus: {
+  OPEN: 'OPEN',
+  SUBMITTED: 'SUBMITTED',
+  CONFIRMED: 'CONFIRMED',
+  FLAGGED: 'FLAGGED',
+  CANCELLED: 'CANCELLED'
+};
+
+export type DailyCollectionSessionStatus = (typeof DailyCollectionSessionStatus)[keyof typeof DailyCollectionSessionStatus]
+
+
+export const DailyCollectionEntryStatus: {
+  UNPAID: 'UNPAID',
+  PAID: 'PAID',
+  EXCUSED: 'EXCUSED'
+};
+
+export type DailyCollectionEntryStatus = (typeof DailyCollectionEntryStatus)[keyof typeof DailyCollectionEntryStatus]
 
 
 export const OnboardingAuditAction: {
@@ -1490,6 +1525,14 @@ export const BursarInviteAuditAction: typeof $Enums.BursarInviteAuditAction
 export type DailyCollectionAuditAction = $Enums.DailyCollectionAuditAction
 
 export const DailyCollectionAuditAction: typeof $Enums.DailyCollectionAuditAction
+
+export type DailyCollectionSessionStatus = $Enums.DailyCollectionSessionStatus
+
+export const DailyCollectionSessionStatus: typeof $Enums.DailyCollectionSessionStatus
+
+export type DailyCollectionEntryStatus = $Enums.DailyCollectionEntryStatus
+
+export const DailyCollectionEntryStatus: typeof $Enums.DailyCollectionEntryStatus
 
 export type OnboardingAuditAction = $Enums.OnboardingAuditAction
 
@@ -2355,6 +2398,26 @@ export class PrismaClient<
   get dailyCollectionTypeCollector(): Prisma.DailyCollectionTypeCollectorDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.dailyCollectionSession`: Exposes CRUD operations for the **DailyCollectionSession** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DailyCollectionSessions
+    * const dailyCollectionSessions = await prisma.dailyCollectionSession.findMany()
+    * ```
+    */
+  get dailyCollectionSession(): Prisma.DailyCollectionSessionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.dailyCollectionEntry`: Exposes CRUD operations for the **DailyCollectionEntry** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DailyCollectionEntries
+    * const dailyCollectionEntries = await prisma.dailyCollectionEntry.findMany()
+    * ```
+    */
+  get dailyCollectionEntry(): Prisma.DailyCollectionEntryDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.dailyCollectionAuditLog`: Exposes CRUD operations for the **DailyCollectionAuditLog** model.
     * Example usage:
     * ```ts
@@ -3106,6 +3169,8 @@ export namespace Prisma {
     FeeItem: 'FeeItem',
     DailyCollectionType: 'DailyCollectionType',
     DailyCollectionTypeCollector: 'DailyCollectionTypeCollector',
+    DailyCollectionSession: 'DailyCollectionSession',
+    DailyCollectionEntry: 'DailyCollectionEntry',
     DailyCollectionAuditLog: 'DailyCollectionAuditLog',
     StudentBill: 'StudentBill',
     BillLineItem: 'BillLineItem',
@@ -3147,7 +3212,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "bursar" | "collector" | "student" | "teacher" | "parent" | "parentStudentRelationship" | "schoolPaymentSetting" | "schoolNotificationSetting" | "appNotificationSetting" | "appNotificationPreference" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "schoolPeriodTemplate" | "timetablePublication" | "publishedTimetableLesson" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "appNotification" | "appNotificationDelivery" | "appNotificationAuditLog" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentTeacherContactMessage" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "dailyCollectionType" | "dailyCollectionTypeCollector" | "dailyCollectionAuditLog" | "studentBill" | "billLineItem" | "paymentIntent" | "paymentIntentLine" | "payment" | "paymentCorrectionRequest" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "teacherInvite" | "parentInvite" | "parentInviteStudent" | "parentInviteAuditLog" | "bursarInvite" | "bursarInviteAuditLog" | "parentAccessAuditLog" | "teacherInviteAuditLog" | "onboardingAuditLog"
+      modelProps: "school" | "admin" | "bursar" | "collector" | "student" | "teacher" | "parent" | "parentStudentRelationship" | "schoolPaymentSetting" | "schoolNotificationSetting" | "appNotificationSetting" | "appNotificationPreference" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "schoolPeriodTemplate" | "timetablePublication" | "publishedTimetableLesson" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "appNotification" | "appNotificationDelivery" | "appNotificationAuditLog" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentTeacherContactMessage" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "dailyCollectionType" | "dailyCollectionTypeCollector" | "dailyCollectionSession" | "dailyCollectionEntry" | "dailyCollectionAuditLog" | "studentBill" | "billLineItem" | "paymentIntent" | "paymentIntentLine" | "payment" | "paymentCorrectionRequest" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "teacherInvite" | "parentInvite" | "parentInviteStudent" | "parentInviteAuditLog" | "bursarInvite" | "bursarInviteAuditLog" | "parentAccessAuditLog" | "teacherInviteAuditLog" | "onboardingAuditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -7517,6 +7582,154 @@ export namespace Prisma {
           }
         }
       }
+      DailyCollectionSession: {
+        payload: Prisma.$DailyCollectionSessionPayload<ExtArgs>
+        fields: Prisma.DailyCollectionSessionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DailyCollectionSessionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionSessionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DailyCollectionSessionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionSessionPayload>
+          }
+          findFirst: {
+            args: Prisma.DailyCollectionSessionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionSessionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DailyCollectionSessionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionSessionPayload>
+          }
+          findMany: {
+            args: Prisma.DailyCollectionSessionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionSessionPayload>[]
+          }
+          create: {
+            args: Prisma.DailyCollectionSessionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionSessionPayload>
+          }
+          createMany: {
+            args: Prisma.DailyCollectionSessionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DailyCollectionSessionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionSessionPayload>[]
+          }
+          delete: {
+            args: Prisma.DailyCollectionSessionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionSessionPayload>
+          }
+          update: {
+            args: Prisma.DailyCollectionSessionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionSessionPayload>
+          }
+          deleteMany: {
+            args: Prisma.DailyCollectionSessionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DailyCollectionSessionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DailyCollectionSessionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionSessionPayload>[]
+          }
+          upsert: {
+            args: Prisma.DailyCollectionSessionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionSessionPayload>
+          }
+          aggregate: {
+            args: Prisma.DailyCollectionSessionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDailyCollectionSession>
+          }
+          groupBy: {
+            args: Prisma.DailyCollectionSessionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DailyCollectionSessionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DailyCollectionSessionCountArgs<ExtArgs>
+            result: $Utils.Optional<DailyCollectionSessionCountAggregateOutputType> | number
+          }
+        }
+      }
+      DailyCollectionEntry: {
+        payload: Prisma.$DailyCollectionEntryPayload<ExtArgs>
+        fields: Prisma.DailyCollectionEntryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DailyCollectionEntryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionEntryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DailyCollectionEntryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionEntryPayload>
+          }
+          findFirst: {
+            args: Prisma.DailyCollectionEntryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionEntryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DailyCollectionEntryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionEntryPayload>
+          }
+          findMany: {
+            args: Prisma.DailyCollectionEntryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionEntryPayload>[]
+          }
+          create: {
+            args: Prisma.DailyCollectionEntryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionEntryPayload>
+          }
+          createMany: {
+            args: Prisma.DailyCollectionEntryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DailyCollectionEntryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionEntryPayload>[]
+          }
+          delete: {
+            args: Prisma.DailyCollectionEntryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionEntryPayload>
+          }
+          update: {
+            args: Prisma.DailyCollectionEntryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionEntryPayload>
+          }
+          deleteMany: {
+            args: Prisma.DailyCollectionEntryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DailyCollectionEntryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DailyCollectionEntryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionEntryPayload>[]
+          }
+          upsert: {
+            args: Prisma.DailyCollectionEntryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyCollectionEntryPayload>
+          }
+          aggregate: {
+            args: Prisma.DailyCollectionEntryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDailyCollectionEntry>
+          }
+          groupBy: {
+            args: Prisma.DailyCollectionEntryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DailyCollectionEntryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DailyCollectionEntryCountArgs<ExtArgs>
+            result: $Utils.Optional<DailyCollectionEntryCountAggregateOutputType> | number
+          }
+        }
+      }
       DailyCollectionAuditLog: {
         payload: Prisma.$DailyCollectionAuditLogPayload<ExtArgs>
         fields: Prisma.DailyCollectionAuditLogFieldRefs
@@ -9608,6 +9821,8 @@ export namespace Prisma {
     feeItem?: FeeItemOmit
     dailyCollectionType?: DailyCollectionTypeOmit
     dailyCollectionTypeCollector?: DailyCollectionTypeCollectorOmit
+    dailyCollectionSession?: DailyCollectionSessionOmit
+    dailyCollectionEntry?: DailyCollectionEntryOmit
     dailyCollectionAuditLog?: DailyCollectionAuditLogOmit
     studentBill?: StudentBillOmit
     billLineItem?: BillLineItemOmit
@@ -9759,6 +9974,8 @@ export namespace Prisma {
     bursarInviteAuditLogs: number
     dailyCollectionTypes: number
     dailyCollectionAuditLogs: number
+    dailyCollectionSessions: number
+    dailyCollectionEntries: number
     invites: number
     waitlistEntries: number
     onboardingAuditLogs: number
@@ -9834,6 +10051,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: boolean | SchoolCountOutputTypeCountBursarInviteAuditLogsArgs
     dailyCollectionTypes?: boolean | SchoolCountOutputTypeCountDailyCollectionTypesArgs
     dailyCollectionAuditLogs?: boolean | SchoolCountOutputTypeCountDailyCollectionAuditLogsArgs
+    dailyCollectionSessions?: boolean | SchoolCountOutputTypeCountDailyCollectionSessionsArgs
+    dailyCollectionEntries?: boolean | SchoolCountOutputTypeCountDailyCollectionEntriesArgs
     invites?: boolean | SchoolCountOutputTypeCountInvitesArgs
     waitlistEntries?: boolean | SchoolCountOutputTypeCountWaitlistEntriesArgs
     onboardingAuditLogs?: boolean | SchoolCountOutputTypeCountOnboardingAuditLogsArgs
@@ -10192,6 +10411,20 @@ export namespace Prisma {
   /**
    * SchoolCountOutputType without action
    */
+  export type SchoolCountOutputTypeCountDailyCollectionSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DailyCollectionSessionWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountDailyCollectionEntriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DailyCollectionEntryWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
   export type SchoolCountOutputTypeCountInvitesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SchoolInviteWhereInput
   }
@@ -10416,11 +10649,15 @@ export namespace Prisma {
 
   export type CollectorCountOutputType = {
     collectionTypes: number
+    collectionSessions: number
+    collectionEntries: number
     auditLogs: number
   }
 
   export type CollectorCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     collectionTypes?: boolean | CollectorCountOutputTypeCountCollectionTypesArgs
+    collectionSessions?: boolean | CollectorCountOutputTypeCountCollectionSessionsArgs
+    collectionEntries?: boolean | CollectorCountOutputTypeCountCollectionEntriesArgs
     auditLogs?: boolean | CollectorCountOutputTypeCountAuditLogsArgs
   }
 
@@ -10440,6 +10677,20 @@ export namespace Prisma {
    */
   export type CollectorCountOutputTypeCountCollectionTypesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: DailyCollectionTypeCollectorWhereInput
+  }
+
+  /**
+   * CollectorCountOutputType without action
+   */
+  export type CollectorCountOutputTypeCountCollectionSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DailyCollectionSessionWhereInput
+  }
+
+  /**
+   * CollectorCountOutputType without action
+   */
+  export type CollectorCountOutputTypeCountCollectionEntriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DailyCollectionEntryWhereInput
   }
 
   /**
@@ -10471,6 +10722,7 @@ export namespace Prisma {
     teacherContactMessages: number
     parentAccessAuditLogs: number
     paymentIntents: number
+    dailyCollectionEntries: number
   }
 
   export type StudentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10490,6 +10742,7 @@ export namespace Prisma {
     teacherContactMessages?: boolean | StudentCountOutputTypeCountTeacherContactMessagesArgs
     parentAccessAuditLogs?: boolean | StudentCountOutputTypeCountParentAccessAuditLogsArgs
     paymentIntents?: boolean | StudentCountOutputTypeCountPaymentIntentsArgs
+    dailyCollectionEntries?: boolean | StudentCountOutputTypeCountDailyCollectionEntriesArgs
   }
 
   // Custom InputTypes
@@ -10613,6 +10866,13 @@ export namespace Prisma {
    */
   export type StudentCountOutputTypeCountPaymentIntentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PaymentIntentWhereInput
+  }
+
+  /**
+   * StudentCountOutputType without action
+   */
+  export type StudentCountOutputTypeCountDailyCollectionEntriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DailyCollectionEntryWhereInput
   }
 
 
@@ -11804,11 +12064,13 @@ export namespace Prisma {
   export type DailyCollectionTypeCountOutputType = {
     collectors: number
     auditLogs: number
+    sessions: number
   }
 
   export type DailyCollectionTypeCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     collectors?: boolean | DailyCollectionTypeCountOutputTypeCountCollectorsArgs
     auditLogs?: boolean | DailyCollectionTypeCountOutputTypeCountAuditLogsArgs
+    sessions?: boolean | DailyCollectionTypeCountOutputTypeCountSessionsArgs
   }
 
   // Custom InputTypes
@@ -11834,6 +12096,44 @@ export namespace Prisma {
    */
   export type DailyCollectionTypeCountOutputTypeCountAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: DailyCollectionAuditLogWhereInput
+  }
+
+  /**
+   * DailyCollectionTypeCountOutputType without action
+   */
+  export type DailyCollectionTypeCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DailyCollectionSessionWhereInput
+  }
+
+
+  /**
+   * Count Type DailyCollectionSessionCountOutputType
+   */
+
+  export type DailyCollectionSessionCountOutputType = {
+    entries: number
+  }
+
+  export type DailyCollectionSessionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    entries?: boolean | DailyCollectionSessionCountOutputTypeCountEntriesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * DailyCollectionSessionCountOutputType without action
+   */
+  export type DailyCollectionSessionCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSessionCountOutputType
+     */
+    select?: DailyCollectionSessionCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * DailyCollectionSessionCountOutputType without action
+   */
+  export type DailyCollectionSessionCountOutputTypeCountEntriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DailyCollectionEntryWhereInput
   }
 
 
@@ -12431,6 +12731,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: boolean | School$bursarInviteAuditLogsArgs<ExtArgs>
     dailyCollectionTypes?: boolean | School$dailyCollectionTypesArgs<ExtArgs>
     dailyCollectionAuditLogs?: boolean | School$dailyCollectionAuditLogsArgs<ExtArgs>
+    dailyCollectionSessions?: boolean | School$dailyCollectionSessionsArgs<ExtArgs>
+    dailyCollectionEntries?: boolean | School$dailyCollectionEntriesArgs<ExtArgs>
     invites?: boolean | School$invitesArgs<ExtArgs>
     waitlistEntries?: boolean | School$waitlistEntriesArgs<ExtArgs>
     onboardingAuditLogs?: boolean | School$onboardingAuditLogsArgs<ExtArgs>
@@ -12576,6 +12878,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: boolean | School$bursarInviteAuditLogsArgs<ExtArgs>
     dailyCollectionTypes?: boolean | School$dailyCollectionTypesArgs<ExtArgs>
     dailyCollectionAuditLogs?: boolean | School$dailyCollectionAuditLogsArgs<ExtArgs>
+    dailyCollectionSessions?: boolean | School$dailyCollectionSessionsArgs<ExtArgs>
+    dailyCollectionEntries?: boolean | School$dailyCollectionEntriesArgs<ExtArgs>
     invites?: boolean | School$invitesArgs<ExtArgs>
     waitlistEntries?: boolean | School$waitlistEntriesArgs<ExtArgs>
     onboardingAuditLogs?: boolean | School$onboardingAuditLogsArgs<ExtArgs>
@@ -12661,6 +12965,8 @@ export namespace Prisma {
       bursarInviteAuditLogs: Prisma.$BursarInviteAuditLogPayload<ExtArgs>[]
       dailyCollectionTypes: Prisma.$DailyCollectionTypePayload<ExtArgs>[]
       dailyCollectionAuditLogs: Prisma.$DailyCollectionAuditLogPayload<ExtArgs>[]
+      dailyCollectionSessions: Prisma.$DailyCollectionSessionPayload<ExtArgs>[]
+      dailyCollectionEntries: Prisma.$DailyCollectionEntryPayload<ExtArgs>[]
       invites: Prisma.$SchoolInvitePayload<ExtArgs>[]
       waitlistEntries: Prisma.$WaitlistEntryPayload<ExtArgs>[]
       onboardingAuditLogs: Prisma.$OnboardingAuditLogPayload<ExtArgs>[]
@@ -13152,6 +13458,8 @@ export namespace Prisma {
     bursarInviteAuditLogs<T extends School$bursarInviteAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$bursarInviteAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BursarInviteAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     dailyCollectionTypes<T extends School$dailyCollectionTypesArgs<ExtArgs> = {}>(args?: Subset<T, School$dailyCollectionTypesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionTypePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     dailyCollectionAuditLogs<T extends School$dailyCollectionAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$dailyCollectionAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    dailyCollectionSessions<T extends School$dailyCollectionSessionsArgs<ExtArgs> = {}>(args?: Subset<T, School$dailyCollectionSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    dailyCollectionEntries<T extends School$dailyCollectionEntriesArgs<ExtArgs> = {}>(args?: Subset<T, School$dailyCollectionEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invites<T extends School$invitesArgs<ExtArgs> = {}>(args?: Subset<T, School$invitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     waitlistEntries<T extends School$waitlistEntriesArgs<ExtArgs> = {}>(args?: Subset<T, School$waitlistEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WaitlistEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     onboardingAuditLogs<T extends School$onboardingAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$onboardingAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -14719,6 +15027,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DailyCollectionAuditLogScalarFieldEnum | DailyCollectionAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * School.dailyCollectionSessions
+   */
+  export type School$dailyCollectionSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionInclude<ExtArgs> | null
+    where?: DailyCollectionSessionWhereInput
+    orderBy?: DailyCollectionSessionOrderByWithRelationInput | DailyCollectionSessionOrderByWithRelationInput[]
+    cursor?: DailyCollectionSessionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DailyCollectionSessionScalarFieldEnum | DailyCollectionSessionScalarFieldEnum[]
+  }
+
+  /**
+   * School.dailyCollectionEntries
+   */
+  export type School$dailyCollectionEntriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryInclude<ExtArgs> | null
+    where?: DailyCollectionEntryWhereInput
+    orderBy?: DailyCollectionEntryOrderByWithRelationInput | DailyCollectionEntryOrderByWithRelationInput[]
+    cursor?: DailyCollectionEntryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DailyCollectionEntryScalarFieldEnum | DailyCollectionEntryScalarFieldEnum[]
   }
 
   /**
@@ -17907,6 +18263,8 @@ export namespace Prisma {
     schoolId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     collectionTypes?: boolean | Collector$collectionTypesArgs<ExtArgs>
+    collectionSessions?: boolean | Collector$collectionSessionsArgs<ExtArgs>
+    collectionEntries?: boolean | Collector$collectionEntriesArgs<ExtArgs>
     auditLogs?: boolean | Collector$auditLogsArgs<ExtArgs>
     _count?: boolean | CollectorCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["collector"]>
@@ -17962,6 +18320,8 @@ export namespace Prisma {
   export type CollectorInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     collectionTypes?: boolean | Collector$collectionTypesArgs<ExtArgs>
+    collectionSessions?: boolean | Collector$collectionSessionsArgs<ExtArgs>
+    collectionEntries?: boolean | Collector$collectionEntriesArgs<ExtArgs>
     auditLogs?: boolean | Collector$auditLogsArgs<ExtArgs>
     _count?: boolean | CollectorCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -17977,6 +18337,8 @@ export namespace Prisma {
     objects: {
       school: Prisma.$SchoolPayload<ExtArgs>
       collectionTypes: Prisma.$DailyCollectionTypeCollectorPayload<ExtArgs>[]
+      collectionSessions: Prisma.$DailyCollectionSessionPayload<ExtArgs>[]
+      collectionEntries: Prisma.$DailyCollectionEntryPayload<ExtArgs>[]
       auditLogs: Prisma.$DailyCollectionAuditLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -18388,6 +18750,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     collectionTypes<T extends Collector$collectionTypesArgs<ExtArgs> = {}>(args?: Subset<T, Collector$collectionTypesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionTypeCollectorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    collectionSessions<T extends Collector$collectionSessionsArgs<ExtArgs> = {}>(args?: Subset<T, Collector$collectionSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    collectionEntries<T extends Collector$collectionEntriesArgs<ExtArgs> = {}>(args?: Subset<T, Collector$collectionEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends Collector$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, Collector$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -18855,6 +19219,54 @@ export namespace Prisma {
   }
 
   /**
+   * Collector.collectionSessions
+   */
+  export type Collector$collectionSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionInclude<ExtArgs> | null
+    where?: DailyCollectionSessionWhereInput
+    orderBy?: DailyCollectionSessionOrderByWithRelationInput | DailyCollectionSessionOrderByWithRelationInput[]
+    cursor?: DailyCollectionSessionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DailyCollectionSessionScalarFieldEnum | DailyCollectionSessionScalarFieldEnum[]
+  }
+
+  /**
+   * Collector.collectionEntries
+   */
+  export type Collector$collectionEntriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryInclude<ExtArgs> | null
+    where?: DailyCollectionEntryWhereInput
+    orderBy?: DailyCollectionEntryOrderByWithRelationInput | DailyCollectionEntryOrderByWithRelationInput[]
+    cursor?: DailyCollectionEntryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DailyCollectionEntryScalarFieldEnum | DailyCollectionEntryScalarFieldEnum[]
+  }
+
+  /**
    * Collector.auditLogs
    */
   export type Collector$auditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -19223,6 +19635,7 @@ export namespace Prisma {
     teacherContactMessages?: boolean | Student$teacherContactMessagesArgs<ExtArgs>
     parentAccessAuditLogs?: boolean | Student$parentAccessAuditLogsArgs<ExtArgs>
     paymentIntents?: boolean | Student$paymentIntentsArgs<ExtArgs>
+    dailyCollectionEntries?: boolean | Student$dailyCollectionEntriesArgs<ExtArgs>
     _count?: boolean | StudentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["student"]>
 
@@ -19319,6 +19732,7 @@ export namespace Prisma {
     teacherContactMessages?: boolean | Student$teacherContactMessagesArgs<ExtArgs>
     parentAccessAuditLogs?: boolean | Student$parentAccessAuditLogsArgs<ExtArgs>
     paymentIntents?: boolean | Student$paymentIntentsArgs<ExtArgs>
+    dailyCollectionEntries?: boolean | Student$dailyCollectionEntriesArgs<ExtArgs>
     _count?: boolean | StudentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type StudentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -19357,6 +19771,7 @@ export namespace Prisma {
       teacherContactMessages: Prisma.$ParentTeacherContactMessagePayload<ExtArgs>[]
       parentAccessAuditLogs: Prisma.$ParentAccessAuditLogPayload<ExtArgs>[]
       paymentIntents: Prisma.$PaymentIntentPayload<ExtArgs>[]
+      dailyCollectionEntries: Prisma.$DailyCollectionEntryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -19791,6 +20206,7 @@ export namespace Prisma {
     teacherContactMessages<T extends Student$teacherContactMessagesArgs<ExtArgs> = {}>(args?: Subset<T, Student$teacherContactMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentTeacherContactMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentAccessAuditLogs<T extends Student$parentAccessAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, Student$parentAccessAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentAccessAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     paymentIntents<T extends Student$paymentIntentsArgs<ExtArgs> = {}>(args?: Subset<T, Student$paymentIntentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentIntentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    dailyCollectionEntries<T extends Student$dailyCollectionEntriesArgs<ExtArgs> = {}>(args?: Subset<T, Student$dailyCollectionEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -20620,6 +21036,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PaymentIntentScalarFieldEnum | PaymentIntentScalarFieldEnum[]
+  }
+
+  /**
+   * Student.dailyCollectionEntries
+   */
+  export type Student$dailyCollectionEntriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryInclude<ExtArgs> | null
+    where?: DailyCollectionEntryWhereInput
+    orderBy?: DailyCollectionEntryOrderByWithRelationInput | DailyCollectionEntryOrderByWithRelationInput[]
+    cursor?: DailyCollectionEntryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DailyCollectionEntryScalarFieldEnum | DailyCollectionEntryScalarFieldEnum[]
   }
 
   /**
@@ -85899,6 +86339,7 @@ export namespace Prisma {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     collectors?: boolean | DailyCollectionType$collectorsArgs<ExtArgs>
     auditLogs?: boolean | DailyCollectionType$auditLogsArgs<ExtArgs>
+    sessions?: boolean | DailyCollectionType$sessionsArgs<ExtArgs>
     _count?: boolean | DailyCollectionTypeCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["dailyCollectionType"]>
 
@@ -85957,6 +86398,7 @@ export namespace Prisma {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     collectors?: boolean | DailyCollectionType$collectorsArgs<ExtArgs>
     auditLogs?: boolean | DailyCollectionType$auditLogsArgs<ExtArgs>
+    sessions?: boolean | DailyCollectionType$sessionsArgs<ExtArgs>
     _count?: boolean | DailyCollectionTypeCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type DailyCollectionTypeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -85972,6 +86414,7 @@ export namespace Prisma {
       school: Prisma.$SchoolPayload<ExtArgs>
       collectors: Prisma.$DailyCollectionTypeCollectorPayload<ExtArgs>[]
       auditLogs: Prisma.$DailyCollectionAuditLogPayload<ExtArgs>[]
+      sessions: Prisma.$DailyCollectionSessionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -86384,6 +86827,7 @@ export namespace Prisma {
     school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     collectors<T extends DailyCollectionType$collectorsArgs<ExtArgs> = {}>(args?: Subset<T, DailyCollectionType$collectorsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionTypeCollectorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends DailyCollectionType$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, DailyCollectionType$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sessions<T extends DailyCollectionType$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, DailyCollectionType$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -86872,6 +87316,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DailyCollectionAuditLogScalarFieldEnum | DailyCollectionAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * DailyCollectionType.sessions
+   */
+  export type DailyCollectionType$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionInclude<ExtArgs> | null
+    where?: DailyCollectionSessionWhereInput
+    orderBy?: DailyCollectionSessionOrderByWithRelationInput | DailyCollectionSessionOrderByWithRelationInput[]
+    cursor?: DailyCollectionSessionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DailyCollectionSessionScalarFieldEnum | DailyCollectionSessionScalarFieldEnum[]
   }
 
   /**
@@ -87974,6 +88442,2529 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: DailyCollectionTypeCollectorInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model DailyCollectionSession
+   */
+
+  export type AggregateDailyCollectionSession = {
+    _count: DailyCollectionSessionCountAggregateOutputType | null
+    _avg: DailyCollectionSessionAvgAggregateOutputType | null
+    _sum: DailyCollectionSessionSumAggregateOutputType | null
+    _min: DailyCollectionSessionMinAggregateOutputType | null
+    _max: DailyCollectionSessionMaxAggregateOutputType | null
+  }
+
+  export type DailyCollectionSessionAvgAggregateOutputType = {
+    expectedAmount: Decimal | null
+    reportedAmount: Decimal | null
+    confirmedAmount: Decimal | null
+  }
+
+  export type DailyCollectionSessionSumAggregateOutputType = {
+    expectedAmount: Decimal | null
+    reportedAmount: Decimal | null
+    confirmedAmount: Decimal | null
+  }
+
+  export type DailyCollectionSessionMinAggregateOutputType = {
+    id: string | null
+    collectionDate: Date | null
+    status: $Enums.DailyCollectionSessionStatus | null
+    expectedAmount: Decimal | null
+    reportedAmount: Decimal | null
+    confirmedAmount: Decimal | null
+    submittedAt: Date | null
+    confirmedAt: Date | null
+    confirmedBy: string | null
+    mismatchReason: string | null
+    note: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    collectorId: string | null
+    collectionTypeId: string | null
+  }
+
+  export type DailyCollectionSessionMaxAggregateOutputType = {
+    id: string | null
+    collectionDate: Date | null
+    status: $Enums.DailyCollectionSessionStatus | null
+    expectedAmount: Decimal | null
+    reportedAmount: Decimal | null
+    confirmedAmount: Decimal | null
+    submittedAt: Date | null
+    confirmedAt: Date | null
+    confirmedBy: string | null
+    mismatchReason: string | null
+    note: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    collectorId: string | null
+    collectionTypeId: string | null
+  }
+
+  export type DailyCollectionSessionCountAggregateOutputType = {
+    id: number
+    collectionDate: number
+    status: number
+    expectedAmount: number
+    reportedAmount: number
+    confirmedAmount: number
+    submittedAt: number
+    confirmedAt: number
+    confirmedBy: number
+    mismatchReason: number
+    note: number
+    createdAt: number
+    updatedAt: number
+    schoolId: number
+    collectorId: number
+    collectionTypeId: number
+    _all: number
+  }
+
+
+  export type DailyCollectionSessionAvgAggregateInputType = {
+    expectedAmount?: true
+    reportedAmount?: true
+    confirmedAmount?: true
+  }
+
+  export type DailyCollectionSessionSumAggregateInputType = {
+    expectedAmount?: true
+    reportedAmount?: true
+    confirmedAmount?: true
+  }
+
+  export type DailyCollectionSessionMinAggregateInputType = {
+    id?: true
+    collectionDate?: true
+    status?: true
+    expectedAmount?: true
+    reportedAmount?: true
+    confirmedAmount?: true
+    submittedAt?: true
+    confirmedAt?: true
+    confirmedBy?: true
+    mismatchReason?: true
+    note?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    collectorId?: true
+    collectionTypeId?: true
+  }
+
+  export type DailyCollectionSessionMaxAggregateInputType = {
+    id?: true
+    collectionDate?: true
+    status?: true
+    expectedAmount?: true
+    reportedAmount?: true
+    confirmedAmount?: true
+    submittedAt?: true
+    confirmedAt?: true
+    confirmedBy?: true
+    mismatchReason?: true
+    note?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    collectorId?: true
+    collectionTypeId?: true
+  }
+
+  export type DailyCollectionSessionCountAggregateInputType = {
+    id?: true
+    collectionDate?: true
+    status?: true
+    expectedAmount?: true
+    reportedAmount?: true
+    confirmedAmount?: true
+    submittedAt?: true
+    confirmedAt?: true
+    confirmedBy?: true
+    mismatchReason?: true
+    note?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    collectorId?: true
+    collectionTypeId?: true
+    _all?: true
+  }
+
+  export type DailyCollectionSessionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DailyCollectionSession to aggregate.
+     */
+    where?: DailyCollectionSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of DailyCollectionSessions to fetch.
+     */
+    orderBy?: DailyCollectionSessionOrderByWithRelationInput | DailyCollectionSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the start position
+     */
+    cursor?: DailyCollectionSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` DailyCollectionSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` DailyCollectionSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Count returned DailyCollectionSessions
+    **/
+    _count?: true | DailyCollectionSessionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to average
+    **/
+    _avg?: DailyCollectionSessionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to sum
+    **/
+    _sum?: DailyCollectionSessionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to find the minimum value
+    **/
+    _min?: DailyCollectionSessionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to find the maximum value
+    **/
+    _max?: DailyCollectionSessionMaxAggregateInputType
+  }
+
+  export type GetDailyCollectionSessionAggregateType<T extends DailyCollectionSessionAggregateArgs> = {
+        [P in keyof T & keyof AggregateDailyCollectionSession]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDailyCollectionSession[P]>
+      : GetScalarType<T[P], AggregateDailyCollectionSession[P]>
+  }
+
+
+
+
+  export type DailyCollectionSessionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DailyCollectionSessionWhereInput
+    orderBy?: DailyCollectionSessionOrderByWithAggregationInput | DailyCollectionSessionOrderByWithAggregationInput[]
+    by: DailyCollectionSessionScalarFieldEnum[] | DailyCollectionSessionScalarFieldEnum
+    having?: DailyCollectionSessionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DailyCollectionSessionCountAggregateInputType | true
+    _avg?: DailyCollectionSessionAvgAggregateInputType
+    _sum?: DailyCollectionSessionSumAggregateInputType
+    _min?: DailyCollectionSessionMinAggregateInputType
+    _max?: DailyCollectionSessionMaxAggregateInputType
+  }
+
+  export type DailyCollectionSessionGroupByOutputType = {
+    id: string
+    collectionDate: Date
+    status: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal
+    reportedAmount: Decimal
+    confirmedAmount: Decimal | null
+    submittedAt: Date | null
+    confirmedAt: Date | null
+    confirmedBy: string | null
+    mismatchReason: string | null
+    note: string | null
+    createdAt: Date
+    updatedAt: Date
+    schoolId: string
+    collectorId: string
+    collectionTypeId: string
+    _count: DailyCollectionSessionCountAggregateOutputType | null
+    _avg: DailyCollectionSessionAvgAggregateOutputType | null
+    _sum: DailyCollectionSessionSumAggregateOutputType | null
+    _min: DailyCollectionSessionMinAggregateOutputType | null
+    _max: DailyCollectionSessionMaxAggregateOutputType | null
+  }
+
+  type GetDailyCollectionSessionGroupByPayload<T extends DailyCollectionSessionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DailyCollectionSessionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DailyCollectionSessionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DailyCollectionSessionGroupByOutputType[P]>
+            : GetScalarType<T[P], DailyCollectionSessionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DailyCollectionSessionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    collectionDate?: boolean
+    status?: boolean
+    expectedAmount?: boolean
+    reportedAmount?: boolean
+    confirmedAmount?: boolean
+    submittedAt?: boolean
+    confirmedAt?: boolean
+    confirmedBy?: boolean
+    mismatchReason?: boolean
+    note?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    collectorId?: boolean
+    collectionTypeId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    collector?: boolean | CollectorDefaultArgs<ExtArgs>
+    collectionType?: boolean | DailyCollectionTypeDefaultArgs<ExtArgs>
+    entries?: boolean | DailyCollectionSession$entriesArgs<ExtArgs>
+    _count?: boolean | DailyCollectionSessionCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["dailyCollectionSession"]>
+
+  export type DailyCollectionSessionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    collectionDate?: boolean
+    status?: boolean
+    expectedAmount?: boolean
+    reportedAmount?: boolean
+    confirmedAmount?: boolean
+    submittedAt?: boolean
+    confirmedAt?: boolean
+    confirmedBy?: boolean
+    mismatchReason?: boolean
+    note?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    collectorId?: boolean
+    collectionTypeId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    collector?: boolean | CollectorDefaultArgs<ExtArgs>
+    collectionType?: boolean | DailyCollectionTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["dailyCollectionSession"]>
+
+  export type DailyCollectionSessionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    collectionDate?: boolean
+    status?: boolean
+    expectedAmount?: boolean
+    reportedAmount?: boolean
+    confirmedAmount?: boolean
+    submittedAt?: boolean
+    confirmedAt?: boolean
+    confirmedBy?: boolean
+    mismatchReason?: boolean
+    note?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    collectorId?: boolean
+    collectionTypeId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    collector?: boolean | CollectorDefaultArgs<ExtArgs>
+    collectionType?: boolean | DailyCollectionTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["dailyCollectionSession"]>
+
+  export type DailyCollectionSessionSelectScalar = {
+    id?: boolean
+    collectionDate?: boolean
+    status?: boolean
+    expectedAmount?: boolean
+    reportedAmount?: boolean
+    confirmedAmount?: boolean
+    submittedAt?: boolean
+    confirmedAt?: boolean
+    confirmedBy?: boolean
+    mismatchReason?: boolean
+    note?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    collectorId?: boolean
+    collectionTypeId?: boolean
+  }
+
+  export type DailyCollectionSessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "collectionDate" | "status" | "expectedAmount" | "reportedAmount" | "confirmedAmount" | "submittedAt" | "confirmedAt" | "confirmedBy" | "mismatchReason" | "note" | "createdAt" | "updatedAt" | "schoolId" | "collectorId" | "collectionTypeId", ExtArgs["result"]["dailyCollectionSession"]>
+  export type DailyCollectionSessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    collector?: boolean | CollectorDefaultArgs<ExtArgs>
+    collectionType?: boolean | DailyCollectionTypeDefaultArgs<ExtArgs>
+    entries?: boolean | DailyCollectionSession$entriesArgs<ExtArgs>
+    _count?: boolean | DailyCollectionSessionCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type DailyCollectionSessionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    collector?: boolean | CollectorDefaultArgs<ExtArgs>
+    collectionType?: boolean | DailyCollectionTypeDefaultArgs<ExtArgs>
+  }
+  export type DailyCollectionSessionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    collector?: boolean | CollectorDefaultArgs<ExtArgs>
+    collectionType?: boolean | DailyCollectionTypeDefaultArgs<ExtArgs>
+  }
+
+  export type $DailyCollectionSessionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DailyCollectionSession"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      collector: Prisma.$CollectorPayload<ExtArgs>
+      collectionType: Prisma.$DailyCollectionTypePayload<ExtArgs>
+      entries: Prisma.$DailyCollectionEntryPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      collectionDate: Date
+      status: $Enums.DailyCollectionSessionStatus
+      expectedAmount: Prisma.Decimal
+      reportedAmount: Prisma.Decimal
+      confirmedAmount: Prisma.Decimal | null
+      submittedAt: Date | null
+      confirmedAt: Date | null
+      confirmedBy: string | null
+      mismatchReason: string | null
+      note: string | null
+      createdAt: Date
+      updatedAt: Date
+      schoolId: string
+      collectorId: string
+      collectionTypeId: string
+    }, ExtArgs["result"]["dailyCollectionSession"]>
+    composites: {}
+  }
+
+  type DailyCollectionSessionGetPayload<S extends boolean | null | undefined | DailyCollectionSessionDefaultArgs> = $Result.GetResult<Prisma.$DailyCollectionSessionPayload, S>
+
+  type DailyCollectionSessionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DailyCollectionSessionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DailyCollectionSessionCountAggregateInputType | true
+    }
+
+  export interface DailyCollectionSessionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DailyCollectionSession'], meta: { name: 'DailyCollectionSession' } }
+    /**
+     * Find zero or one DailyCollectionSession that matches the filter.
+     * @param {DailyCollectionSessionFindUniqueArgs} args - Arguments to find a DailyCollectionSession
+     * @example
+     * // Get one DailyCollectionSession
+     * const dailyCollectionSession = await prisma.dailyCollectionSession.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DailyCollectionSessionFindUniqueArgs>(args: SelectSubset<T, DailyCollectionSessionFindUniqueArgs<ExtArgs>>): Prisma__DailyCollectionSessionClient<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one DailyCollectionSession that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DailyCollectionSessionFindUniqueOrThrowArgs} args - Arguments to find a DailyCollectionSession
+     * @example
+     * // Get one DailyCollectionSession
+     * const dailyCollectionSession = await prisma.dailyCollectionSession.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DailyCollectionSessionFindUniqueOrThrowArgs>(args: SelectSubset<T, DailyCollectionSessionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DailyCollectionSessionClient<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DailyCollectionSession that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyCollectionSessionFindFirstArgs} args - Arguments to find a DailyCollectionSession
+     * @example
+     * // Get one DailyCollectionSession
+     * const dailyCollectionSession = await prisma.dailyCollectionSession.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DailyCollectionSessionFindFirstArgs>(args?: SelectSubset<T, DailyCollectionSessionFindFirstArgs<ExtArgs>>): Prisma__DailyCollectionSessionClient<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DailyCollectionSession that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyCollectionSessionFindFirstOrThrowArgs} args - Arguments to find a DailyCollectionSession
+     * @example
+     * // Get one DailyCollectionSession
+     * const dailyCollectionSession = await prisma.dailyCollectionSession.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DailyCollectionSessionFindFirstOrThrowArgs>(args?: SelectSubset<T, DailyCollectionSessionFindFirstOrThrowArgs<ExtArgs>>): Prisma__DailyCollectionSessionClient<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more DailyCollectionSessions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyCollectionSessionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DailyCollectionSessions
+     * const dailyCollectionSessions = await prisma.dailyCollectionSession.findMany()
+     *
+     * // Get first 10 DailyCollectionSessions
+     * const dailyCollectionSessions = await prisma.dailyCollectionSession.findMany({ take: 10 })
+     *
+     * // Only select the `id`
+     * const dailyCollectionSessionWithIdOnly = await prisma.dailyCollectionSession.findMany({ select: { id: true } })
+     *
+     */
+    findMany<T extends DailyCollectionSessionFindManyArgs>(args?: SelectSubset<T, DailyCollectionSessionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a DailyCollectionSession.
+     * @param {DailyCollectionSessionCreateArgs} args - Arguments to create a DailyCollectionSession.
+     * @example
+     * // Create one DailyCollectionSession
+     * const DailyCollectionSession = await prisma.dailyCollectionSession.create({
+     *   data: {
+     *     // ... data to create a DailyCollectionSession
+     *   }
+     * })
+     *
+     */
+    create<T extends DailyCollectionSessionCreateArgs>(args: SelectSubset<T, DailyCollectionSessionCreateArgs<ExtArgs>>): Prisma__DailyCollectionSessionClient<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many DailyCollectionSessions.
+     * @param {DailyCollectionSessionCreateManyArgs} args - Arguments to create many DailyCollectionSessions.
+     * @example
+     * // Create many DailyCollectionSessions
+     * const dailyCollectionSession = await prisma.dailyCollectionSession.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     */
+    createMany<T extends DailyCollectionSessionCreateManyArgs>(args?: SelectSubset<T, DailyCollectionSessionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DailyCollectionSessions and returns the data saved in the database.
+     * @param {DailyCollectionSessionCreateManyAndReturnArgs} args - Arguments to create many DailyCollectionSessions.
+     * @example
+     * // Create many DailyCollectionSessions
+     * const dailyCollectionSession = await prisma.dailyCollectionSession.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     * // Create many DailyCollectionSessions and only return the `id`
+     * const dailyCollectionSessionWithIdOnly = await prisma.dailyCollectionSession.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     *
+     */
+    createManyAndReturn<T extends DailyCollectionSessionCreateManyAndReturnArgs>(args?: SelectSubset<T, DailyCollectionSessionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a DailyCollectionSession.
+     * @param {DailyCollectionSessionDeleteArgs} args - Arguments to delete one DailyCollectionSession.
+     * @example
+     * // Delete one DailyCollectionSession
+     * const DailyCollectionSession = await prisma.dailyCollectionSession.delete({
+     *   where: {
+     *     // ... filter to delete one DailyCollectionSession
+     *   }
+     * })
+     *
+     */
+    delete<T extends DailyCollectionSessionDeleteArgs>(args: SelectSubset<T, DailyCollectionSessionDeleteArgs<ExtArgs>>): Prisma__DailyCollectionSessionClient<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one DailyCollectionSession.
+     * @param {DailyCollectionSessionUpdateArgs} args - Arguments to update one DailyCollectionSession.
+     * @example
+     * // Update one DailyCollectionSession
+     * const dailyCollectionSession = await prisma.dailyCollectionSession.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     *
+     */
+    update<T extends DailyCollectionSessionUpdateArgs>(args: SelectSubset<T, DailyCollectionSessionUpdateArgs<ExtArgs>>): Prisma__DailyCollectionSessionClient<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more DailyCollectionSessions.
+     * @param {DailyCollectionSessionDeleteManyArgs} args - Arguments to filter DailyCollectionSessions to delete.
+     * @example
+     * // Delete a few DailyCollectionSessions
+     * const { count } = await prisma.dailyCollectionSession.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     *
+     */
+    deleteMany<T extends DailyCollectionSessionDeleteManyArgs>(args?: SelectSubset<T, DailyCollectionSessionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DailyCollectionSessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyCollectionSessionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DailyCollectionSessions
+     * const dailyCollectionSession = await prisma.dailyCollectionSession.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     *
+     */
+    updateMany<T extends DailyCollectionSessionUpdateManyArgs>(args: SelectSubset<T, DailyCollectionSessionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DailyCollectionSessions and returns the data updated in the database.
+     * @param {DailyCollectionSessionUpdateManyAndReturnArgs} args - Arguments to update many DailyCollectionSessions.
+     * @example
+     * // Update many DailyCollectionSessions
+     * const dailyCollectionSession = await prisma.dailyCollectionSession.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     * // Update zero or more DailyCollectionSessions and only return the `id`
+     * const dailyCollectionSessionWithIdOnly = await prisma.dailyCollectionSession.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     *
+     */
+    updateManyAndReturn<T extends DailyCollectionSessionUpdateManyAndReturnArgs>(args: SelectSubset<T, DailyCollectionSessionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one DailyCollectionSession.
+     * @param {DailyCollectionSessionUpsertArgs} args - Arguments to update or create a DailyCollectionSession.
+     * @example
+     * // Update or create a DailyCollectionSession
+     * const dailyCollectionSession = await prisma.dailyCollectionSession.upsert({
+     *   create: {
+     *     // ... data to create a DailyCollectionSession
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DailyCollectionSession we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DailyCollectionSessionUpsertArgs>(args: SelectSubset<T, DailyCollectionSessionUpsertArgs<ExtArgs>>): Prisma__DailyCollectionSessionClient<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of DailyCollectionSessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyCollectionSessionCountArgs} args - Arguments to filter DailyCollectionSessions to count.
+     * @example
+     * // Count the number of DailyCollectionSessions
+     * const count = await prisma.dailyCollectionSession.count({
+     *   where: {
+     *     // ... the filter for the DailyCollectionSessions we want to count
+     *   }
+     * })
+    **/
+    count<T extends DailyCollectionSessionCountArgs>(
+      args?: Subset<T, DailyCollectionSessionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DailyCollectionSessionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DailyCollectionSession.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyCollectionSessionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DailyCollectionSessionAggregateArgs>(args: Subset<T, DailyCollectionSessionAggregateArgs>): Prisma.PrismaPromise<GetDailyCollectionSessionAggregateType<T>>
+
+    /**
+     * Group by DailyCollectionSession.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyCollectionSessionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     *
+    **/
+    groupBy<
+      T extends DailyCollectionSessionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DailyCollectionSessionGroupByArgs['orderBy'] }
+        : { orderBy?: DailyCollectionSessionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DailyCollectionSessionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDailyCollectionSessionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DailyCollectionSession model
+   */
+  readonly fields: DailyCollectionSessionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DailyCollectionSession.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DailyCollectionSessionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    collector<T extends CollectorDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CollectorDefaultArgs<ExtArgs>>): Prisma__CollectorClient<$Result.GetResult<Prisma.$CollectorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    collectionType<T extends DailyCollectionTypeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DailyCollectionTypeDefaultArgs<ExtArgs>>): Prisma__DailyCollectionTypeClient<$Result.GetResult<Prisma.$DailyCollectionTypePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    entries<T extends DailyCollectionSession$entriesArgs<ExtArgs> = {}>(args?: Subset<T, DailyCollectionSession$entriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DailyCollectionSession model
+   */
+  interface DailyCollectionSessionFieldRefs {
+    readonly id: FieldRef<"DailyCollectionSession", 'String'>
+    readonly collectionDate: FieldRef<"DailyCollectionSession", 'DateTime'>
+    readonly status: FieldRef<"DailyCollectionSession", 'DailyCollectionSessionStatus'>
+    readonly expectedAmount: FieldRef<"DailyCollectionSession", 'Decimal'>
+    readonly reportedAmount: FieldRef<"DailyCollectionSession", 'Decimal'>
+    readonly confirmedAmount: FieldRef<"DailyCollectionSession", 'Decimal'>
+    readonly submittedAt: FieldRef<"DailyCollectionSession", 'DateTime'>
+    readonly confirmedAt: FieldRef<"DailyCollectionSession", 'DateTime'>
+    readonly confirmedBy: FieldRef<"DailyCollectionSession", 'String'>
+    readonly mismatchReason: FieldRef<"DailyCollectionSession", 'String'>
+    readonly note: FieldRef<"DailyCollectionSession", 'String'>
+    readonly createdAt: FieldRef<"DailyCollectionSession", 'DateTime'>
+    readonly updatedAt: FieldRef<"DailyCollectionSession", 'DateTime'>
+    readonly schoolId: FieldRef<"DailyCollectionSession", 'String'>
+    readonly collectorId: FieldRef<"DailyCollectionSession", 'String'>
+    readonly collectionTypeId: FieldRef<"DailyCollectionSession", 'String'>
+  }
+
+
+  // Custom InputTypes
+  /**
+   * DailyCollectionSession findUnique
+   */
+  export type DailyCollectionSessionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyCollectionSession to fetch.
+     */
+    where: DailyCollectionSessionWhereUniqueInput
+  }
+
+  /**
+   * DailyCollectionSession findUniqueOrThrow
+   */
+  export type DailyCollectionSessionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyCollectionSession to fetch.
+     */
+    where: DailyCollectionSessionWhereUniqueInput
+  }
+
+  /**
+   * DailyCollectionSession findFirst
+   */
+  export type DailyCollectionSessionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyCollectionSession to fetch.
+     */
+    where?: DailyCollectionSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of DailyCollectionSessions to fetch.
+     */
+    orderBy?: DailyCollectionSessionOrderByWithRelationInput | DailyCollectionSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for searching for DailyCollectionSessions.
+     */
+    cursor?: DailyCollectionSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` DailyCollectionSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` DailyCollectionSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of DailyCollectionSessions.
+     */
+    distinct?: DailyCollectionSessionScalarFieldEnum | DailyCollectionSessionScalarFieldEnum[]
+  }
+
+  /**
+   * DailyCollectionSession findFirstOrThrow
+   */
+  export type DailyCollectionSessionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyCollectionSession to fetch.
+     */
+    where?: DailyCollectionSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of DailyCollectionSessions to fetch.
+     */
+    orderBy?: DailyCollectionSessionOrderByWithRelationInput | DailyCollectionSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for searching for DailyCollectionSessions.
+     */
+    cursor?: DailyCollectionSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` DailyCollectionSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` DailyCollectionSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of DailyCollectionSessions.
+     */
+    distinct?: DailyCollectionSessionScalarFieldEnum | DailyCollectionSessionScalarFieldEnum[]
+  }
+
+  /**
+   * DailyCollectionSession findMany
+   */
+  export type DailyCollectionSessionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyCollectionSessions to fetch.
+     */
+    where?: DailyCollectionSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of DailyCollectionSessions to fetch.
+     */
+    orderBy?: DailyCollectionSessionOrderByWithRelationInput | DailyCollectionSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for listing DailyCollectionSessions.
+     */
+    cursor?: DailyCollectionSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` DailyCollectionSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` DailyCollectionSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of DailyCollectionSessions.
+     */
+    distinct?: DailyCollectionSessionScalarFieldEnum | DailyCollectionSessionScalarFieldEnum[]
+  }
+
+  /**
+   * DailyCollectionSession create
+   */
+  export type DailyCollectionSessionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a DailyCollectionSession.
+     */
+    data: XOR<DailyCollectionSessionCreateInput, DailyCollectionSessionUncheckedCreateInput>
+  }
+
+  /**
+   * DailyCollectionSession createMany
+   */
+  export type DailyCollectionSessionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DailyCollectionSessions.
+     */
+    data: DailyCollectionSessionCreateManyInput | DailyCollectionSessionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DailyCollectionSession createManyAndReturn
+   */
+  export type DailyCollectionSessionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * The data used to create many DailyCollectionSessions.
+     */
+    data: DailyCollectionSessionCreateManyInput | DailyCollectionSessionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DailyCollectionSession update
+   */
+  export type DailyCollectionSessionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a DailyCollectionSession.
+     */
+    data: XOR<DailyCollectionSessionUpdateInput, DailyCollectionSessionUncheckedUpdateInput>
+    /**
+     * Choose, which DailyCollectionSession to update.
+     */
+    where: DailyCollectionSessionWhereUniqueInput
+  }
+
+  /**
+   * DailyCollectionSession updateMany
+   */
+  export type DailyCollectionSessionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DailyCollectionSessions.
+     */
+    data: XOR<DailyCollectionSessionUpdateManyMutationInput, DailyCollectionSessionUncheckedUpdateManyInput>
+    /**
+     * Filter which DailyCollectionSessions to update
+     */
+    where?: DailyCollectionSessionWhereInput
+    /**
+     * Limit how many DailyCollectionSessions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DailyCollectionSession updateManyAndReturn
+   */
+  export type DailyCollectionSessionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * The data used to update DailyCollectionSessions.
+     */
+    data: XOR<DailyCollectionSessionUpdateManyMutationInput, DailyCollectionSessionUncheckedUpdateManyInput>
+    /**
+     * Filter which DailyCollectionSessions to update
+     */
+    where?: DailyCollectionSessionWhereInput
+    /**
+     * Limit how many DailyCollectionSessions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DailyCollectionSession upsert
+   */
+  export type DailyCollectionSessionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the DailyCollectionSession to update in case it exists.
+     */
+    where: DailyCollectionSessionWhereUniqueInput
+    /**
+     * In case the DailyCollectionSession found by the `where` argument doesn't exist, create a new DailyCollectionSession with this data.
+     */
+    create: XOR<DailyCollectionSessionCreateInput, DailyCollectionSessionUncheckedCreateInput>
+    /**
+     * In case the DailyCollectionSession was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DailyCollectionSessionUpdateInput, DailyCollectionSessionUncheckedUpdateInput>
+  }
+
+  /**
+   * DailyCollectionSession delete
+   */
+  export type DailyCollectionSessionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionInclude<ExtArgs> | null
+    /**
+     * Filter which DailyCollectionSession to delete.
+     */
+    where: DailyCollectionSessionWhereUniqueInput
+  }
+
+  /**
+   * DailyCollectionSession deleteMany
+   */
+  export type DailyCollectionSessionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DailyCollectionSessions to delete
+     */
+    where?: DailyCollectionSessionWhereInput
+    /**
+     * Limit how many DailyCollectionSessions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * DailyCollectionSession.entries
+   */
+  export type DailyCollectionSession$entriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryInclude<ExtArgs> | null
+    where?: DailyCollectionEntryWhereInput
+    orderBy?: DailyCollectionEntryOrderByWithRelationInput | DailyCollectionEntryOrderByWithRelationInput[]
+    cursor?: DailyCollectionEntryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DailyCollectionEntryScalarFieldEnum | DailyCollectionEntryScalarFieldEnum[]
+  }
+
+  /**
+   * DailyCollectionSession without action
+   */
+  export type DailyCollectionSessionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionSession
+     */
+    select?: DailyCollectionSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionSession
+     */
+    omit?: DailyCollectionSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionSessionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model DailyCollectionEntry
+   */
+
+  export type AggregateDailyCollectionEntry = {
+    _count: DailyCollectionEntryCountAggregateOutputType | null
+    _avg: DailyCollectionEntryAvgAggregateOutputType | null
+    _sum: DailyCollectionEntrySumAggregateOutputType | null
+    _min: DailyCollectionEntryMinAggregateOutputType | null
+    _max: DailyCollectionEntryMaxAggregateOutputType | null
+  }
+
+  export type DailyCollectionEntryAvgAggregateOutputType = {
+    amountExpected: Decimal | null
+    amountCollected: Decimal | null
+  }
+
+  export type DailyCollectionEntrySumAggregateOutputType = {
+    amountExpected: Decimal | null
+    amountCollected: Decimal | null
+  }
+
+  export type DailyCollectionEntryMinAggregateOutputType = {
+    id: string | null
+    status: $Enums.DailyCollectionEntryStatus | null
+    amountExpected: Decimal | null
+    amountCollected: Decimal | null
+    note: string | null
+    markedAt: Date | null
+    markedBy: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    sessionId: string | null
+    studentId: string | null
+    collectorId: string | null
+  }
+
+  export type DailyCollectionEntryMaxAggregateOutputType = {
+    id: string | null
+    status: $Enums.DailyCollectionEntryStatus | null
+    amountExpected: Decimal | null
+    amountCollected: Decimal | null
+    note: string | null
+    markedAt: Date | null
+    markedBy: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    sessionId: string | null
+    studentId: string | null
+    collectorId: string | null
+  }
+
+  export type DailyCollectionEntryCountAggregateOutputType = {
+    id: number
+    status: number
+    amountExpected: number
+    amountCollected: number
+    note: number
+    markedAt: number
+    markedBy: number
+    createdAt: number
+    updatedAt: number
+    schoolId: number
+    sessionId: number
+    studentId: number
+    collectorId: number
+    _all: number
+  }
+
+
+  export type DailyCollectionEntryAvgAggregateInputType = {
+    amountExpected?: true
+    amountCollected?: true
+  }
+
+  export type DailyCollectionEntrySumAggregateInputType = {
+    amountExpected?: true
+    amountCollected?: true
+  }
+
+  export type DailyCollectionEntryMinAggregateInputType = {
+    id?: true
+    status?: true
+    amountExpected?: true
+    amountCollected?: true
+    note?: true
+    markedAt?: true
+    markedBy?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    sessionId?: true
+    studentId?: true
+    collectorId?: true
+  }
+
+  export type DailyCollectionEntryMaxAggregateInputType = {
+    id?: true
+    status?: true
+    amountExpected?: true
+    amountCollected?: true
+    note?: true
+    markedAt?: true
+    markedBy?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    sessionId?: true
+    studentId?: true
+    collectorId?: true
+  }
+
+  export type DailyCollectionEntryCountAggregateInputType = {
+    id?: true
+    status?: true
+    amountExpected?: true
+    amountCollected?: true
+    note?: true
+    markedAt?: true
+    markedBy?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    sessionId?: true
+    studentId?: true
+    collectorId?: true
+    _all?: true
+  }
+
+  export type DailyCollectionEntryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DailyCollectionEntry to aggregate.
+     */
+    where?: DailyCollectionEntryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of DailyCollectionEntries to fetch.
+     */
+    orderBy?: DailyCollectionEntryOrderByWithRelationInput | DailyCollectionEntryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the start position
+     */
+    cursor?: DailyCollectionEntryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` DailyCollectionEntries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` DailyCollectionEntries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Count returned DailyCollectionEntries
+    **/
+    _count?: true | DailyCollectionEntryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to average
+    **/
+    _avg?: DailyCollectionEntryAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to sum
+    **/
+    _sum?: DailyCollectionEntrySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to find the minimum value
+    **/
+    _min?: DailyCollectionEntryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to find the maximum value
+    **/
+    _max?: DailyCollectionEntryMaxAggregateInputType
+  }
+
+  export type GetDailyCollectionEntryAggregateType<T extends DailyCollectionEntryAggregateArgs> = {
+        [P in keyof T & keyof AggregateDailyCollectionEntry]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDailyCollectionEntry[P]>
+      : GetScalarType<T[P], AggregateDailyCollectionEntry[P]>
+  }
+
+
+
+
+  export type DailyCollectionEntryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DailyCollectionEntryWhereInput
+    orderBy?: DailyCollectionEntryOrderByWithAggregationInput | DailyCollectionEntryOrderByWithAggregationInput[]
+    by: DailyCollectionEntryScalarFieldEnum[] | DailyCollectionEntryScalarFieldEnum
+    having?: DailyCollectionEntryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DailyCollectionEntryCountAggregateInputType | true
+    _avg?: DailyCollectionEntryAvgAggregateInputType
+    _sum?: DailyCollectionEntrySumAggregateInputType
+    _min?: DailyCollectionEntryMinAggregateInputType
+    _max?: DailyCollectionEntryMaxAggregateInputType
+  }
+
+  export type DailyCollectionEntryGroupByOutputType = {
+    id: string
+    status: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal
+    amountCollected: Decimal
+    note: string | null
+    markedAt: Date | null
+    markedBy: string | null
+    createdAt: Date
+    updatedAt: Date
+    schoolId: string
+    sessionId: string
+    studentId: string
+    collectorId: string
+    _count: DailyCollectionEntryCountAggregateOutputType | null
+    _avg: DailyCollectionEntryAvgAggregateOutputType | null
+    _sum: DailyCollectionEntrySumAggregateOutputType | null
+    _min: DailyCollectionEntryMinAggregateOutputType | null
+    _max: DailyCollectionEntryMaxAggregateOutputType | null
+  }
+
+  type GetDailyCollectionEntryGroupByPayload<T extends DailyCollectionEntryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DailyCollectionEntryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DailyCollectionEntryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DailyCollectionEntryGroupByOutputType[P]>
+            : GetScalarType<T[P], DailyCollectionEntryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DailyCollectionEntrySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    status?: boolean
+    amountExpected?: boolean
+    amountCollected?: boolean
+    note?: boolean
+    markedAt?: boolean
+    markedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    sessionId?: boolean
+    studentId?: boolean
+    collectorId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    session?: boolean | DailyCollectionSessionDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    collector?: boolean | CollectorDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["dailyCollectionEntry"]>
+
+  export type DailyCollectionEntrySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    status?: boolean
+    amountExpected?: boolean
+    amountCollected?: boolean
+    note?: boolean
+    markedAt?: boolean
+    markedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    sessionId?: boolean
+    studentId?: boolean
+    collectorId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    session?: boolean | DailyCollectionSessionDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    collector?: boolean | CollectorDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["dailyCollectionEntry"]>
+
+  export type DailyCollectionEntrySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    status?: boolean
+    amountExpected?: boolean
+    amountCollected?: boolean
+    note?: boolean
+    markedAt?: boolean
+    markedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    sessionId?: boolean
+    studentId?: boolean
+    collectorId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    session?: boolean | DailyCollectionSessionDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    collector?: boolean | CollectorDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["dailyCollectionEntry"]>
+
+  export type DailyCollectionEntrySelectScalar = {
+    id?: boolean
+    status?: boolean
+    amountExpected?: boolean
+    amountCollected?: boolean
+    note?: boolean
+    markedAt?: boolean
+    markedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    sessionId?: boolean
+    studentId?: boolean
+    collectorId?: boolean
+  }
+
+  export type DailyCollectionEntryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "amountExpected" | "amountCollected" | "note" | "markedAt" | "markedBy" | "createdAt" | "updatedAt" | "schoolId" | "sessionId" | "studentId" | "collectorId", ExtArgs["result"]["dailyCollectionEntry"]>
+  export type DailyCollectionEntryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    session?: boolean | DailyCollectionSessionDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    collector?: boolean | CollectorDefaultArgs<ExtArgs>
+  }
+  export type DailyCollectionEntryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    session?: boolean | DailyCollectionSessionDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    collector?: boolean | CollectorDefaultArgs<ExtArgs>
+  }
+  export type DailyCollectionEntryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    session?: boolean | DailyCollectionSessionDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    collector?: boolean | CollectorDefaultArgs<ExtArgs>
+  }
+
+  export type $DailyCollectionEntryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DailyCollectionEntry"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      session: Prisma.$DailyCollectionSessionPayload<ExtArgs>
+      student: Prisma.$StudentPayload<ExtArgs>
+      collector: Prisma.$CollectorPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      status: $Enums.DailyCollectionEntryStatus
+      amountExpected: Prisma.Decimal
+      amountCollected: Prisma.Decimal
+      note: string | null
+      markedAt: Date | null
+      markedBy: string | null
+      createdAt: Date
+      updatedAt: Date
+      schoolId: string
+      sessionId: string
+      studentId: string
+      collectorId: string
+    }, ExtArgs["result"]["dailyCollectionEntry"]>
+    composites: {}
+  }
+
+  type DailyCollectionEntryGetPayload<S extends boolean | null | undefined | DailyCollectionEntryDefaultArgs> = $Result.GetResult<Prisma.$DailyCollectionEntryPayload, S>
+
+  type DailyCollectionEntryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DailyCollectionEntryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DailyCollectionEntryCountAggregateInputType | true
+    }
+
+  export interface DailyCollectionEntryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DailyCollectionEntry'], meta: { name: 'DailyCollectionEntry' } }
+    /**
+     * Find zero or one DailyCollectionEntry that matches the filter.
+     * @param {DailyCollectionEntryFindUniqueArgs} args - Arguments to find a DailyCollectionEntry
+     * @example
+     * // Get one DailyCollectionEntry
+     * const dailyCollectionEntry = await prisma.dailyCollectionEntry.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DailyCollectionEntryFindUniqueArgs>(args: SelectSubset<T, DailyCollectionEntryFindUniqueArgs<ExtArgs>>): Prisma__DailyCollectionEntryClient<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one DailyCollectionEntry that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DailyCollectionEntryFindUniqueOrThrowArgs} args - Arguments to find a DailyCollectionEntry
+     * @example
+     * // Get one DailyCollectionEntry
+     * const dailyCollectionEntry = await prisma.dailyCollectionEntry.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DailyCollectionEntryFindUniqueOrThrowArgs>(args: SelectSubset<T, DailyCollectionEntryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DailyCollectionEntryClient<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DailyCollectionEntry that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyCollectionEntryFindFirstArgs} args - Arguments to find a DailyCollectionEntry
+     * @example
+     * // Get one DailyCollectionEntry
+     * const dailyCollectionEntry = await prisma.dailyCollectionEntry.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DailyCollectionEntryFindFirstArgs>(args?: SelectSubset<T, DailyCollectionEntryFindFirstArgs<ExtArgs>>): Prisma__DailyCollectionEntryClient<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DailyCollectionEntry that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyCollectionEntryFindFirstOrThrowArgs} args - Arguments to find a DailyCollectionEntry
+     * @example
+     * // Get one DailyCollectionEntry
+     * const dailyCollectionEntry = await prisma.dailyCollectionEntry.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DailyCollectionEntryFindFirstOrThrowArgs>(args?: SelectSubset<T, DailyCollectionEntryFindFirstOrThrowArgs<ExtArgs>>): Prisma__DailyCollectionEntryClient<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more DailyCollectionEntries that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyCollectionEntryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DailyCollectionEntries
+     * const dailyCollectionEntries = await prisma.dailyCollectionEntry.findMany()
+     *
+     * // Get first 10 DailyCollectionEntries
+     * const dailyCollectionEntries = await prisma.dailyCollectionEntry.findMany({ take: 10 })
+     *
+     * // Only select the `id`
+     * const dailyCollectionEntryWithIdOnly = await prisma.dailyCollectionEntry.findMany({ select: { id: true } })
+     *
+     */
+    findMany<T extends DailyCollectionEntryFindManyArgs>(args?: SelectSubset<T, DailyCollectionEntryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a DailyCollectionEntry.
+     * @param {DailyCollectionEntryCreateArgs} args - Arguments to create a DailyCollectionEntry.
+     * @example
+     * // Create one DailyCollectionEntry
+     * const DailyCollectionEntry = await prisma.dailyCollectionEntry.create({
+     *   data: {
+     *     // ... data to create a DailyCollectionEntry
+     *   }
+     * })
+     *
+     */
+    create<T extends DailyCollectionEntryCreateArgs>(args: SelectSubset<T, DailyCollectionEntryCreateArgs<ExtArgs>>): Prisma__DailyCollectionEntryClient<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many DailyCollectionEntries.
+     * @param {DailyCollectionEntryCreateManyArgs} args - Arguments to create many DailyCollectionEntries.
+     * @example
+     * // Create many DailyCollectionEntries
+     * const dailyCollectionEntry = await prisma.dailyCollectionEntry.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     */
+    createMany<T extends DailyCollectionEntryCreateManyArgs>(args?: SelectSubset<T, DailyCollectionEntryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DailyCollectionEntries and returns the data saved in the database.
+     * @param {DailyCollectionEntryCreateManyAndReturnArgs} args - Arguments to create many DailyCollectionEntries.
+     * @example
+     * // Create many DailyCollectionEntries
+     * const dailyCollectionEntry = await prisma.dailyCollectionEntry.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     * // Create many DailyCollectionEntries and only return the `id`
+     * const dailyCollectionEntryWithIdOnly = await prisma.dailyCollectionEntry.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     *
+     */
+    createManyAndReturn<T extends DailyCollectionEntryCreateManyAndReturnArgs>(args?: SelectSubset<T, DailyCollectionEntryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a DailyCollectionEntry.
+     * @param {DailyCollectionEntryDeleteArgs} args - Arguments to delete one DailyCollectionEntry.
+     * @example
+     * // Delete one DailyCollectionEntry
+     * const DailyCollectionEntry = await prisma.dailyCollectionEntry.delete({
+     *   where: {
+     *     // ... filter to delete one DailyCollectionEntry
+     *   }
+     * })
+     *
+     */
+    delete<T extends DailyCollectionEntryDeleteArgs>(args: SelectSubset<T, DailyCollectionEntryDeleteArgs<ExtArgs>>): Prisma__DailyCollectionEntryClient<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one DailyCollectionEntry.
+     * @param {DailyCollectionEntryUpdateArgs} args - Arguments to update one DailyCollectionEntry.
+     * @example
+     * // Update one DailyCollectionEntry
+     * const dailyCollectionEntry = await prisma.dailyCollectionEntry.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     *
+     */
+    update<T extends DailyCollectionEntryUpdateArgs>(args: SelectSubset<T, DailyCollectionEntryUpdateArgs<ExtArgs>>): Prisma__DailyCollectionEntryClient<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more DailyCollectionEntries.
+     * @param {DailyCollectionEntryDeleteManyArgs} args - Arguments to filter DailyCollectionEntries to delete.
+     * @example
+     * // Delete a few DailyCollectionEntries
+     * const { count } = await prisma.dailyCollectionEntry.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     *
+     */
+    deleteMany<T extends DailyCollectionEntryDeleteManyArgs>(args?: SelectSubset<T, DailyCollectionEntryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DailyCollectionEntries.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyCollectionEntryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DailyCollectionEntries
+     * const dailyCollectionEntry = await prisma.dailyCollectionEntry.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     *
+     */
+    updateMany<T extends DailyCollectionEntryUpdateManyArgs>(args: SelectSubset<T, DailyCollectionEntryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DailyCollectionEntries and returns the data updated in the database.
+     * @param {DailyCollectionEntryUpdateManyAndReturnArgs} args - Arguments to update many DailyCollectionEntries.
+     * @example
+     * // Update many DailyCollectionEntries
+     * const dailyCollectionEntry = await prisma.dailyCollectionEntry.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     * // Update zero or more DailyCollectionEntries and only return the `id`
+     * const dailyCollectionEntryWithIdOnly = await prisma.dailyCollectionEntry.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     *
+     */
+    updateManyAndReturn<T extends DailyCollectionEntryUpdateManyAndReturnArgs>(args: SelectSubset<T, DailyCollectionEntryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one DailyCollectionEntry.
+     * @param {DailyCollectionEntryUpsertArgs} args - Arguments to update or create a DailyCollectionEntry.
+     * @example
+     * // Update or create a DailyCollectionEntry
+     * const dailyCollectionEntry = await prisma.dailyCollectionEntry.upsert({
+     *   create: {
+     *     // ... data to create a DailyCollectionEntry
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DailyCollectionEntry we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DailyCollectionEntryUpsertArgs>(args: SelectSubset<T, DailyCollectionEntryUpsertArgs<ExtArgs>>): Prisma__DailyCollectionEntryClient<$Result.GetResult<Prisma.$DailyCollectionEntryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of DailyCollectionEntries.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyCollectionEntryCountArgs} args - Arguments to filter DailyCollectionEntries to count.
+     * @example
+     * // Count the number of DailyCollectionEntries
+     * const count = await prisma.dailyCollectionEntry.count({
+     *   where: {
+     *     // ... the filter for the DailyCollectionEntries we want to count
+     *   }
+     * })
+    **/
+    count<T extends DailyCollectionEntryCountArgs>(
+      args?: Subset<T, DailyCollectionEntryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DailyCollectionEntryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DailyCollectionEntry.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyCollectionEntryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DailyCollectionEntryAggregateArgs>(args: Subset<T, DailyCollectionEntryAggregateArgs>): Prisma.PrismaPromise<GetDailyCollectionEntryAggregateType<T>>
+
+    /**
+     * Group by DailyCollectionEntry.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyCollectionEntryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     *
+    **/
+    groupBy<
+      T extends DailyCollectionEntryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DailyCollectionEntryGroupByArgs['orderBy'] }
+        : { orderBy?: DailyCollectionEntryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DailyCollectionEntryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDailyCollectionEntryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DailyCollectionEntry model
+   */
+  readonly fields: DailyCollectionEntryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DailyCollectionEntry.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DailyCollectionEntryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    session<T extends DailyCollectionSessionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DailyCollectionSessionDefaultArgs<ExtArgs>>): Prisma__DailyCollectionSessionClient<$Result.GetResult<Prisma.$DailyCollectionSessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    student<T extends StudentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StudentDefaultArgs<ExtArgs>>): Prisma__StudentClient<$Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    collector<T extends CollectorDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CollectorDefaultArgs<ExtArgs>>): Prisma__CollectorClient<$Result.GetResult<Prisma.$CollectorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DailyCollectionEntry model
+   */
+  interface DailyCollectionEntryFieldRefs {
+    readonly id: FieldRef<"DailyCollectionEntry", 'String'>
+    readonly status: FieldRef<"DailyCollectionEntry", 'DailyCollectionEntryStatus'>
+    readonly amountExpected: FieldRef<"DailyCollectionEntry", 'Decimal'>
+    readonly amountCollected: FieldRef<"DailyCollectionEntry", 'Decimal'>
+    readonly note: FieldRef<"DailyCollectionEntry", 'String'>
+    readonly markedAt: FieldRef<"DailyCollectionEntry", 'DateTime'>
+    readonly markedBy: FieldRef<"DailyCollectionEntry", 'String'>
+    readonly createdAt: FieldRef<"DailyCollectionEntry", 'DateTime'>
+    readonly updatedAt: FieldRef<"DailyCollectionEntry", 'DateTime'>
+    readonly schoolId: FieldRef<"DailyCollectionEntry", 'String'>
+    readonly sessionId: FieldRef<"DailyCollectionEntry", 'String'>
+    readonly studentId: FieldRef<"DailyCollectionEntry", 'String'>
+    readonly collectorId: FieldRef<"DailyCollectionEntry", 'String'>
+  }
+
+
+  // Custom InputTypes
+  /**
+   * DailyCollectionEntry findUnique
+   */
+  export type DailyCollectionEntryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyCollectionEntry to fetch.
+     */
+    where: DailyCollectionEntryWhereUniqueInput
+  }
+
+  /**
+   * DailyCollectionEntry findUniqueOrThrow
+   */
+  export type DailyCollectionEntryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyCollectionEntry to fetch.
+     */
+    where: DailyCollectionEntryWhereUniqueInput
+  }
+
+  /**
+   * DailyCollectionEntry findFirst
+   */
+  export type DailyCollectionEntryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyCollectionEntry to fetch.
+     */
+    where?: DailyCollectionEntryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of DailyCollectionEntries to fetch.
+     */
+    orderBy?: DailyCollectionEntryOrderByWithRelationInput | DailyCollectionEntryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for searching for DailyCollectionEntries.
+     */
+    cursor?: DailyCollectionEntryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` DailyCollectionEntries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` DailyCollectionEntries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of DailyCollectionEntries.
+     */
+    distinct?: DailyCollectionEntryScalarFieldEnum | DailyCollectionEntryScalarFieldEnum[]
+  }
+
+  /**
+   * DailyCollectionEntry findFirstOrThrow
+   */
+  export type DailyCollectionEntryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyCollectionEntry to fetch.
+     */
+    where?: DailyCollectionEntryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of DailyCollectionEntries to fetch.
+     */
+    orderBy?: DailyCollectionEntryOrderByWithRelationInput | DailyCollectionEntryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for searching for DailyCollectionEntries.
+     */
+    cursor?: DailyCollectionEntryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` DailyCollectionEntries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` DailyCollectionEntries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of DailyCollectionEntries.
+     */
+    distinct?: DailyCollectionEntryScalarFieldEnum | DailyCollectionEntryScalarFieldEnum[]
+  }
+
+  /**
+   * DailyCollectionEntry findMany
+   */
+  export type DailyCollectionEntryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyCollectionEntries to fetch.
+     */
+    where?: DailyCollectionEntryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of DailyCollectionEntries to fetch.
+     */
+    orderBy?: DailyCollectionEntryOrderByWithRelationInput | DailyCollectionEntryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for listing DailyCollectionEntries.
+     */
+    cursor?: DailyCollectionEntryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` DailyCollectionEntries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` DailyCollectionEntries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of DailyCollectionEntries.
+     */
+    distinct?: DailyCollectionEntryScalarFieldEnum | DailyCollectionEntryScalarFieldEnum[]
+  }
+
+  /**
+   * DailyCollectionEntry create
+   */
+  export type DailyCollectionEntryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a DailyCollectionEntry.
+     */
+    data: XOR<DailyCollectionEntryCreateInput, DailyCollectionEntryUncheckedCreateInput>
+  }
+
+  /**
+   * DailyCollectionEntry createMany
+   */
+  export type DailyCollectionEntryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DailyCollectionEntries.
+     */
+    data: DailyCollectionEntryCreateManyInput | DailyCollectionEntryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DailyCollectionEntry createManyAndReturn
+   */
+  export type DailyCollectionEntryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * The data used to create many DailyCollectionEntries.
+     */
+    data: DailyCollectionEntryCreateManyInput | DailyCollectionEntryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DailyCollectionEntry update
+   */
+  export type DailyCollectionEntryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a DailyCollectionEntry.
+     */
+    data: XOR<DailyCollectionEntryUpdateInput, DailyCollectionEntryUncheckedUpdateInput>
+    /**
+     * Choose, which DailyCollectionEntry to update.
+     */
+    where: DailyCollectionEntryWhereUniqueInput
+  }
+
+  /**
+   * DailyCollectionEntry updateMany
+   */
+  export type DailyCollectionEntryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DailyCollectionEntries.
+     */
+    data: XOR<DailyCollectionEntryUpdateManyMutationInput, DailyCollectionEntryUncheckedUpdateManyInput>
+    /**
+     * Filter which DailyCollectionEntries to update
+     */
+    where?: DailyCollectionEntryWhereInput
+    /**
+     * Limit how many DailyCollectionEntries to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DailyCollectionEntry updateManyAndReturn
+   */
+  export type DailyCollectionEntryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * The data used to update DailyCollectionEntries.
+     */
+    data: XOR<DailyCollectionEntryUpdateManyMutationInput, DailyCollectionEntryUncheckedUpdateManyInput>
+    /**
+     * Filter which DailyCollectionEntries to update
+     */
+    where?: DailyCollectionEntryWhereInput
+    /**
+     * Limit how many DailyCollectionEntries to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DailyCollectionEntry upsert
+   */
+  export type DailyCollectionEntryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the DailyCollectionEntry to update in case it exists.
+     */
+    where: DailyCollectionEntryWhereUniqueInput
+    /**
+     * In case the DailyCollectionEntry found by the `where` argument doesn't exist, create a new DailyCollectionEntry with this data.
+     */
+    create: XOR<DailyCollectionEntryCreateInput, DailyCollectionEntryUncheckedCreateInput>
+    /**
+     * In case the DailyCollectionEntry was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DailyCollectionEntryUpdateInput, DailyCollectionEntryUncheckedUpdateInput>
+  }
+
+  /**
+   * DailyCollectionEntry delete
+   */
+  export type DailyCollectionEntryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryInclude<ExtArgs> | null
+    /**
+     * Filter which DailyCollectionEntry to delete.
+     */
+    where: DailyCollectionEntryWhereUniqueInput
+  }
+
+  /**
+   * DailyCollectionEntry deleteMany
+   */
+  export type DailyCollectionEntryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DailyCollectionEntries to delete
+     */
+    where?: DailyCollectionEntryWhereInput
+    /**
+     * Limit how many DailyCollectionEntries to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * DailyCollectionEntry without action
+   */
+  export type DailyCollectionEntryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyCollectionEntry
+     */
+    select?: DailyCollectionEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyCollectionEntry
+     */
+    omit?: DailyCollectionEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyCollectionEntryInclude<ExtArgs> | null
   }
 
 
@@ -120447,6 +123438,47 @@ export namespace Prisma {
   export type DailyCollectionTypeCollectorScalarFieldEnum = (typeof DailyCollectionTypeCollectorScalarFieldEnum)[keyof typeof DailyCollectionTypeCollectorScalarFieldEnum]
 
 
+  export const DailyCollectionSessionScalarFieldEnum: {
+    id: 'id',
+    collectionDate: 'collectionDate',
+    status: 'status',
+    expectedAmount: 'expectedAmount',
+    reportedAmount: 'reportedAmount',
+    confirmedAmount: 'confirmedAmount',
+    submittedAt: 'submittedAt',
+    confirmedAt: 'confirmedAt',
+    confirmedBy: 'confirmedBy',
+    mismatchReason: 'mismatchReason',
+    note: 'note',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    schoolId: 'schoolId',
+    collectorId: 'collectorId',
+    collectionTypeId: 'collectionTypeId'
+  };
+
+  export type DailyCollectionSessionScalarFieldEnum = (typeof DailyCollectionSessionScalarFieldEnum)[keyof typeof DailyCollectionSessionScalarFieldEnum]
+
+
+  export const DailyCollectionEntryScalarFieldEnum: {
+    id: 'id',
+    status: 'status',
+    amountExpected: 'amountExpected',
+    amountCollected: 'amountCollected',
+    note: 'note',
+    markedAt: 'markedAt',
+    markedBy: 'markedBy',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    schoolId: 'schoolId',
+    sessionId: 'sessionId',
+    studentId: 'studentId',
+    collectorId: 'collectorId'
+  };
+
+  export type DailyCollectionEntryScalarFieldEnum = (typeof DailyCollectionEntryScalarFieldEnum)[keyof typeof DailyCollectionEntryScalarFieldEnum]
+
+
   export const DailyCollectionAuditLogScalarFieldEnum: {
     id: 'id',
     action: 'action',
@@ -121761,6 +124793,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'DailyCollectionSessionStatus'
+   */
+  export type EnumDailyCollectionSessionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DailyCollectionSessionStatus'>
+
+
+
+  /**
+   * Reference to a field of type 'DailyCollectionSessionStatus[]'
+   */
+  export type ListEnumDailyCollectionSessionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DailyCollectionSessionStatus[]'>
+
+
+
+  /**
+   * Reference to a field of type 'DailyCollectionEntryStatus'
+   */
+  export type EnumDailyCollectionEntryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DailyCollectionEntryStatus'>
+
+
+
+  /**
+   * Reference to a field of type 'DailyCollectionEntryStatus[]'
+   */
+  export type ListEnumDailyCollectionEntryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DailyCollectionEntryStatus[]'>
+
+
+
+  /**
    * Reference to a field of type 'DailyCollectionAuditAction'
    */
   export type EnumDailyCollectionAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DailyCollectionAuditAction'>
@@ -122209,6 +125269,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogListRelationFilter
     dailyCollectionTypes?: DailyCollectionTypeListRelationFilter
     dailyCollectionAuditLogs?: DailyCollectionAuditLogListRelationFilter
+    dailyCollectionSessions?: DailyCollectionSessionListRelationFilter
+    dailyCollectionEntries?: DailyCollectionEntryListRelationFilter
     invites?: SchoolInviteListRelationFilter
     waitlistEntries?: WaitlistEntryListRelationFilter
     onboardingAuditLogs?: OnboardingAuditLogListRelationFilter
@@ -122307,6 +125369,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogOrderByRelationAggregateInput
     dailyCollectionTypes?: DailyCollectionTypeOrderByRelationAggregateInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogOrderByRelationAggregateInput
+    dailyCollectionSessions?: DailyCollectionSessionOrderByRelationAggregateInput
+    dailyCollectionEntries?: DailyCollectionEntryOrderByRelationAggregateInput
     invites?: SchoolInviteOrderByRelationAggregateInput
     waitlistEntries?: WaitlistEntryOrderByRelationAggregateInput
     onboardingAuditLogs?: OnboardingAuditLogOrderByRelationAggregateInput
@@ -122408,6 +125472,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogListRelationFilter
     dailyCollectionTypes?: DailyCollectionTypeListRelationFilter
     dailyCollectionAuditLogs?: DailyCollectionAuditLogListRelationFilter
+    dailyCollectionSessions?: DailyCollectionSessionListRelationFilter
+    dailyCollectionEntries?: DailyCollectionEntryListRelationFilter
     invites?: SchoolInviteListRelationFilter
     waitlistEntries?: WaitlistEntryListRelationFilter
     onboardingAuditLogs?: OnboardingAuditLogListRelationFilter
@@ -122646,6 +125712,8 @@ export namespace Prisma {
     schoolId?: StringFilter<"Collector"> | string
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     collectionTypes?: DailyCollectionTypeCollectorListRelationFilter
+    collectionSessions?: DailyCollectionSessionListRelationFilter
+    collectionEntries?: DailyCollectionEntryListRelationFilter
     auditLogs?: DailyCollectionAuditLogListRelationFilter
   }
 
@@ -122664,6 +125732,8 @@ export namespace Prisma {
     schoolId?: SortOrder
     school?: SchoolOrderByWithRelationInput
     collectionTypes?: DailyCollectionTypeCollectorOrderByRelationAggregateInput
+    collectionSessions?: DailyCollectionSessionOrderByRelationAggregateInput
+    collectionEntries?: DailyCollectionEntryOrderByRelationAggregateInput
     auditLogs?: DailyCollectionAuditLogOrderByRelationAggregateInput
   }
 
@@ -122686,6 +125756,8 @@ export namespace Prisma {
     schoolId?: StringFilter<"Collector"> | string
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     collectionTypes?: DailyCollectionTypeCollectorListRelationFilter
+    collectionSessions?: DailyCollectionSessionListRelationFilter
+    collectionEntries?: DailyCollectionEntryListRelationFilter
     auditLogs?: DailyCollectionAuditLogListRelationFilter
   }, "id" | "username" | "schoolId_email">
 
@@ -122767,6 +125839,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageListRelationFilter
     parentAccessAuditLogs?: ParentAccessAuditLogListRelationFilter
     paymentIntents?: PaymentIntentListRelationFilter
+    dailyCollectionEntries?: DailyCollectionEntryListRelationFilter
   }
 
   export type StudentOrderByWithRelationInput = {
@@ -122808,6 +125881,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageOrderByRelationAggregateInput
     parentAccessAuditLogs?: ParentAccessAuditLogOrderByRelationAggregateInput
     paymentIntents?: PaymentIntentOrderByRelationAggregateInput
+    dailyCollectionEntries?: DailyCollectionEntryOrderByRelationAggregateInput
   }
 
   export type StudentWhereUniqueInput = Prisma.AtLeast<{
@@ -122853,6 +125927,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageListRelationFilter
     parentAccessAuditLogs?: ParentAccessAuditLogListRelationFilter
     paymentIntents?: PaymentIntentListRelationFilter
+    dailyCollectionEntries?: DailyCollectionEntryListRelationFilter
   }, "id" | "username" | "schoolId_admissionNumber">
 
   export type StudentOrderByWithAggregationInput = {
@@ -128356,6 +131431,7 @@ export namespace Prisma {
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     collectors?: DailyCollectionTypeCollectorListRelationFilter
     auditLogs?: DailyCollectionAuditLogListRelationFilter
+    sessions?: DailyCollectionSessionListRelationFilter
   }
 
   export type DailyCollectionTypeOrderByWithRelationInput = {
@@ -128375,6 +131451,7 @@ export namespace Prisma {
     school?: SchoolOrderByWithRelationInput
     collectors?: DailyCollectionTypeCollectorOrderByRelationAggregateInput
     auditLogs?: DailyCollectionAuditLogOrderByRelationAggregateInput
+    sessions?: DailyCollectionSessionOrderByRelationAggregateInput
   }
 
   export type DailyCollectionTypeWhereUniqueInput = Prisma.AtLeast<{
@@ -128399,6 +131476,7 @@ export namespace Prisma {
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     collectors?: DailyCollectionTypeCollectorListRelationFilter
     auditLogs?: DailyCollectionAuditLogListRelationFilter
+    sessions?: DailyCollectionSessionListRelationFilter
   }, "id" | "schoolId_name" | "schoolId_normalizedName">
 
   export type DailyCollectionTypeOrderByWithAggregationInput = {
@@ -128503,6 +131581,235 @@ export namespace Prisma {
     schoolId?: StringWithAggregatesFilter<"DailyCollectionTypeCollector"> | string
     collectorId?: StringWithAggregatesFilter<"DailyCollectionTypeCollector"> | string
     collectionTypeId?: StringWithAggregatesFilter<"DailyCollectionTypeCollector"> | string
+  }
+
+  export type DailyCollectionSessionWhereInput = {
+    AND?: DailyCollectionSessionWhereInput | DailyCollectionSessionWhereInput[]
+    OR?: DailyCollectionSessionWhereInput[]
+    NOT?: DailyCollectionSessionWhereInput | DailyCollectionSessionWhereInput[]
+    id?: StringFilter<"DailyCollectionSession"> | string
+    collectionDate?: DateTimeFilter<"DailyCollectionSession"> | Date | string
+    status?: EnumDailyCollectionSessionStatusFilter<"DailyCollectionSession"> | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFilter<"DailyCollectionSession"> | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFilter<"DailyCollectionSession"> | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: DecimalNullableFilter<"DailyCollectionSession"> | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: DateTimeNullableFilter<"DailyCollectionSession"> | Date | string | null
+    confirmedAt?: DateTimeNullableFilter<"DailyCollectionSession"> | Date | string | null
+    confirmedBy?: StringNullableFilter<"DailyCollectionSession"> | string | null
+    mismatchReason?: StringNullableFilter<"DailyCollectionSession"> | string | null
+    note?: StringNullableFilter<"DailyCollectionSession"> | string | null
+    createdAt?: DateTimeFilter<"DailyCollectionSession"> | Date | string
+    updatedAt?: DateTimeFilter<"DailyCollectionSession"> | Date | string
+    schoolId?: StringFilter<"DailyCollectionSession"> | string
+    collectorId?: StringFilter<"DailyCollectionSession"> | string
+    collectionTypeId?: StringFilter<"DailyCollectionSession"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    collector?: XOR<CollectorScalarRelationFilter, CollectorWhereInput>
+    collectionType?: XOR<DailyCollectionTypeScalarRelationFilter, DailyCollectionTypeWhereInput>
+    entries?: DailyCollectionEntryListRelationFilter
+  }
+
+  export type DailyCollectionSessionOrderByWithRelationInput = {
+    id?: SortOrder
+    collectionDate?: SortOrder
+    status?: SortOrder
+    expectedAmount?: SortOrder
+    reportedAmount?: SortOrder
+    confirmedAmount?: SortOrderInput | SortOrder
+    submittedAt?: SortOrderInput | SortOrder
+    confirmedAt?: SortOrderInput | SortOrder
+    confirmedBy?: SortOrderInput | SortOrder
+    mismatchReason?: SortOrderInput | SortOrder
+    note?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    collectorId?: SortOrder
+    collectionTypeId?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    collector?: CollectorOrderByWithRelationInput
+    collectionType?: DailyCollectionTypeOrderByWithRelationInput
+    entries?: DailyCollectionEntryOrderByRelationAggregateInput
+  }
+
+  export type DailyCollectionSessionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    schoolId_collectionTypeId_collectorId_collectionDate?: DailyCollectionSessionSchoolIdCollectionTypeIdCollectorIdCollectionDateCompoundUniqueInput
+    AND?: DailyCollectionSessionWhereInput | DailyCollectionSessionWhereInput[]
+    OR?: DailyCollectionSessionWhereInput[]
+    NOT?: DailyCollectionSessionWhereInput | DailyCollectionSessionWhereInput[]
+    collectionDate?: DateTimeFilter<"DailyCollectionSession"> | Date | string
+    status?: EnumDailyCollectionSessionStatusFilter<"DailyCollectionSession"> | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFilter<"DailyCollectionSession"> | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFilter<"DailyCollectionSession"> | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: DecimalNullableFilter<"DailyCollectionSession"> | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: DateTimeNullableFilter<"DailyCollectionSession"> | Date | string | null
+    confirmedAt?: DateTimeNullableFilter<"DailyCollectionSession"> | Date | string | null
+    confirmedBy?: StringNullableFilter<"DailyCollectionSession"> | string | null
+    mismatchReason?: StringNullableFilter<"DailyCollectionSession"> | string | null
+    note?: StringNullableFilter<"DailyCollectionSession"> | string | null
+    createdAt?: DateTimeFilter<"DailyCollectionSession"> | Date | string
+    updatedAt?: DateTimeFilter<"DailyCollectionSession"> | Date | string
+    schoolId?: StringFilter<"DailyCollectionSession"> | string
+    collectorId?: StringFilter<"DailyCollectionSession"> | string
+    collectionTypeId?: StringFilter<"DailyCollectionSession"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    collector?: XOR<CollectorScalarRelationFilter, CollectorWhereInput>
+    collectionType?: XOR<DailyCollectionTypeScalarRelationFilter, DailyCollectionTypeWhereInput>
+    entries?: DailyCollectionEntryListRelationFilter
+  }, "id" | "schoolId_collectionTypeId_collectorId_collectionDate">
+
+  export type DailyCollectionSessionOrderByWithAggregationInput = {
+    id?: SortOrder
+    collectionDate?: SortOrder
+    status?: SortOrder
+    expectedAmount?: SortOrder
+    reportedAmount?: SortOrder
+    confirmedAmount?: SortOrderInput | SortOrder
+    submittedAt?: SortOrderInput | SortOrder
+    confirmedAt?: SortOrderInput | SortOrder
+    confirmedBy?: SortOrderInput | SortOrder
+    mismatchReason?: SortOrderInput | SortOrder
+    note?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    collectorId?: SortOrder
+    collectionTypeId?: SortOrder
+    _count?: DailyCollectionSessionCountOrderByAggregateInput
+    _avg?: DailyCollectionSessionAvgOrderByAggregateInput
+    _max?: DailyCollectionSessionMaxOrderByAggregateInput
+    _min?: DailyCollectionSessionMinOrderByAggregateInput
+    _sum?: DailyCollectionSessionSumOrderByAggregateInput
+  }
+
+  export type DailyCollectionSessionScalarWhereWithAggregatesInput = {
+    AND?: DailyCollectionSessionScalarWhereWithAggregatesInput | DailyCollectionSessionScalarWhereWithAggregatesInput[]
+    OR?: DailyCollectionSessionScalarWhereWithAggregatesInput[]
+    NOT?: DailyCollectionSessionScalarWhereWithAggregatesInput | DailyCollectionSessionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"DailyCollectionSession"> | string
+    collectionDate?: DateTimeWithAggregatesFilter<"DailyCollectionSession"> | Date | string
+    status?: EnumDailyCollectionSessionStatusWithAggregatesFilter<"DailyCollectionSession"> | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalWithAggregatesFilter<"DailyCollectionSession"> | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalWithAggregatesFilter<"DailyCollectionSession"> | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: DecimalNullableWithAggregatesFilter<"DailyCollectionSession"> | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: DateTimeNullableWithAggregatesFilter<"DailyCollectionSession"> | Date | string | null
+    confirmedAt?: DateTimeNullableWithAggregatesFilter<"DailyCollectionSession"> | Date | string | null
+    confirmedBy?: StringNullableWithAggregatesFilter<"DailyCollectionSession"> | string | null
+    mismatchReason?: StringNullableWithAggregatesFilter<"DailyCollectionSession"> | string | null
+    note?: StringNullableWithAggregatesFilter<"DailyCollectionSession"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"DailyCollectionSession"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"DailyCollectionSession"> | Date | string
+    schoolId?: StringWithAggregatesFilter<"DailyCollectionSession"> | string
+    collectorId?: StringWithAggregatesFilter<"DailyCollectionSession"> | string
+    collectionTypeId?: StringWithAggregatesFilter<"DailyCollectionSession"> | string
+  }
+
+  export type DailyCollectionEntryWhereInput = {
+    AND?: DailyCollectionEntryWhereInput | DailyCollectionEntryWhereInput[]
+    OR?: DailyCollectionEntryWhereInput[]
+    NOT?: DailyCollectionEntryWhereInput | DailyCollectionEntryWhereInput[]
+    id?: StringFilter<"DailyCollectionEntry"> | string
+    status?: EnumDailyCollectionEntryStatusFilter<"DailyCollectionEntry"> | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFilter<"DailyCollectionEntry"> | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFilter<"DailyCollectionEntry"> | Decimal | DecimalJsLike | number | string
+    note?: StringNullableFilter<"DailyCollectionEntry"> | string | null
+    markedAt?: DateTimeNullableFilter<"DailyCollectionEntry"> | Date | string | null
+    markedBy?: StringNullableFilter<"DailyCollectionEntry"> | string | null
+    createdAt?: DateTimeFilter<"DailyCollectionEntry"> | Date | string
+    updatedAt?: DateTimeFilter<"DailyCollectionEntry"> | Date | string
+    schoolId?: StringFilter<"DailyCollectionEntry"> | string
+    sessionId?: StringFilter<"DailyCollectionEntry"> | string
+    studentId?: StringFilter<"DailyCollectionEntry"> | string
+    collectorId?: StringFilter<"DailyCollectionEntry"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    session?: XOR<DailyCollectionSessionScalarRelationFilter, DailyCollectionSessionWhereInput>
+    student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
+    collector?: XOR<CollectorScalarRelationFilter, CollectorWhereInput>
+  }
+
+  export type DailyCollectionEntryOrderByWithRelationInput = {
+    id?: SortOrder
+    status?: SortOrder
+    amountExpected?: SortOrder
+    amountCollected?: SortOrder
+    note?: SortOrderInput | SortOrder
+    markedAt?: SortOrderInput | SortOrder
+    markedBy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    sessionId?: SortOrder
+    studentId?: SortOrder
+    collectorId?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    session?: DailyCollectionSessionOrderByWithRelationInput
+    student?: StudentOrderByWithRelationInput
+    collector?: CollectorOrderByWithRelationInput
+  }
+
+  export type DailyCollectionEntryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    sessionId_studentId?: DailyCollectionEntrySessionIdStudentIdCompoundUniqueInput
+    AND?: DailyCollectionEntryWhereInput | DailyCollectionEntryWhereInput[]
+    OR?: DailyCollectionEntryWhereInput[]
+    NOT?: DailyCollectionEntryWhereInput | DailyCollectionEntryWhereInput[]
+    status?: EnumDailyCollectionEntryStatusFilter<"DailyCollectionEntry"> | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFilter<"DailyCollectionEntry"> | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFilter<"DailyCollectionEntry"> | Decimal | DecimalJsLike | number | string
+    note?: StringNullableFilter<"DailyCollectionEntry"> | string | null
+    markedAt?: DateTimeNullableFilter<"DailyCollectionEntry"> | Date | string | null
+    markedBy?: StringNullableFilter<"DailyCollectionEntry"> | string | null
+    createdAt?: DateTimeFilter<"DailyCollectionEntry"> | Date | string
+    updatedAt?: DateTimeFilter<"DailyCollectionEntry"> | Date | string
+    schoolId?: StringFilter<"DailyCollectionEntry"> | string
+    sessionId?: StringFilter<"DailyCollectionEntry"> | string
+    studentId?: StringFilter<"DailyCollectionEntry"> | string
+    collectorId?: StringFilter<"DailyCollectionEntry"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    session?: XOR<DailyCollectionSessionScalarRelationFilter, DailyCollectionSessionWhereInput>
+    student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
+    collector?: XOR<CollectorScalarRelationFilter, CollectorWhereInput>
+  }, "id" | "sessionId_studentId">
+
+  export type DailyCollectionEntryOrderByWithAggregationInput = {
+    id?: SortOrder
+    status?: SortOrder
+    amountExpected?: SortOrder
+    amountCollected?: SortOrder
+    note?: SortOrderInput | SortOrder
+    markedAt?: SortOrderInput | SortOrder
+    markedBy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    sessionId?: SortOrder
+    studentId?: SortOrder
+    collectorId?: SortOrder
+    _count?: DailyCollectionEntryCountOrderByAggregateInput
+    _avg?: DailyCollectionEntryAvgOrderByAggregateInput
+    _max?: DailyCollectionEntryMaxOrderByAggregateInput
+    _min?: DailyCollectionEntryMinOrderByAggregateInput
+    _sum?: DailyCollectionEntrySumOrderByAggregateInput
+  }
+
+  export type DailyCollectionEntryScalarWhereWithAggregatesInput = {
+    AND?: DailyCollectionEntryScalarWhereWithAggregatesInput | DailyCollectionEntryScalarWhereWithAggregatesInput[]
+    OR?: DailyCollectionEntryScalarWhereWithAggregatesInput[]
+    NOT?: DailyCollectionEntryScalarWhereWithAggregatesInput | DailyCollectionEntryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"DailyCollectionEntry"> | string
+    status?: EnumDailyCollectionEntryStatusWithAggregatesFilter<"DailyCollectionEntry"> | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalWithAggregatesFilter<"DailyCollectionEntry"> | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalWithAggregatesFilter<"DailyCollectionEntry"> | Decimal | DecimalJsLike | number | string
+    note?: StringNullableWithAggregatesFilter<"DailyCollectionEntry"> | string | null
+    markedAt?: DateTimeNullableWithAggregatesFilter<"DailyCollectionEntry"> | Date | string | null
+    markedBy?: StringNullableWithAggregatesFilter<"DailyCollectionEntry"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"DailyCollectionEntry"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"DailyCollectionEntry"> | Date | string
+    schoolId?: StringWithAggregatesFilter<"DailyCollectionEntry"> | string
+    sessionId?: StringWithAggregatesFilter<"DailyCollectionEntry"> | string
+    studentId?: StringWithAggregatesFilter<"DailyCollectionEntry"> | string
+    collectorId?: StringWithAggregatesFilter<"DailyCollectionEntry"> | string
   }
 
   export type DailyCollectionAuditLogWhereInput = {
@@ -131023,6 +134330,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -131121,6 +134430,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -131219,6 +134530,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -131317,6 +134630,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -131576,6 +134891,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutCollectorsInput
     collectionTypes?: DailyCollectionTypeCollectorCreateNestedManyWithoutCollectorInput
+    collectionSessions?: DailyCollectionSessionCreateNestedManyWithoutCollectorInput
+    collectionEntries?: DailyCollectionEntryCreateNestedManyWithoutCollectorInput
     auditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutCollectorInput
   }
 
@@ -131593,6 +134910,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     schoolId?: string
     collectionTypes?: DailyCollectionTypeCollectorUncheckedCreateNestedManyWithoutCollectorInput
+    collectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutCollectorInput
+    collectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutCollectorInput
     auditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutCollectorInput
   }
 
@@ -131610,6 +134929,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutCollectorsNestedInput
     collectionTypes?: DailyCollectionTypeCollectorUpdateManyWithoutCollectorNestedInput
+    collectionSessions?: DailyCollectionSessionUpdateManyWithoutCollectorNestedInput
+    collectionEntries?: DailyCollectionEntryUpdateManyWithoutCollectorNestedInput
     auditLogs?: DailyCollectionAuditLogUpdateManyWithoutCollectorNestedInput
   }
 
@@ -131627,6 +134948,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     collectionTypes?: DailyCollectionTypeCollectorUncheckedUpdateManyWithoutCollectorNestedInput
+    collectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutCollectorNestedInput
+    collectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutCollectorNestedInput
     auditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutCollectorNestedInput
   }
 
@@ -131709,6 +135032,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateInput = {
@@ -131746,6 +135070,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUpdateInput = {
@@ -131783,6 +135108,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateInput = {
@@ -131820,6 +135146,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentCreateManyInput = {
@@ -137759,6 +141086,7 @@ export namespace Prisma {
     school?: SchoolCreateNestedOneWithoutDailyCollectionTypesInput
     collectors?: DailyCollectionTypeCollectorCreateNestedManyWithoutCollectionTypeInput
     auditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutCollectionTypeInput
+    sessions?: DailyCollectionSessionCreateNestedManyWithoutCollectionTypeInput
   }
 
   export type DailyCollectionTypeUncheckedCreateInput = {
@@ -137777,6 +141105,7 @@ export namespace Prisma {
     schoolId?: string
     collectors?: DailyCollectionTypeCollectorUncheckedCreateNestedManyWithoutCollectionTypeInput
     auditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutCollectionTypeInput
+    sessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutCollectionTypeInput
   }
 
   export type DailyCollectionTypeUpdateInput = {
@@ -137795,6 +141124,7 @@ export namespace Prisma {
     school?: SchoolUpdateOneRequiredWithoutDailyCollectionTypesNestedInput
     collectors?: DailyCollectionTypeCollectorUpdateManyWithoutCollectionTypeNestedInput
     auditLogs?: DailyCollectionAuditLogUpdateManyWithoutCollectionTypeNestedInput
+    sessions?: DailyCollectionSessionUpdateManyWithoutCollectionTypeNestedInput
   }
 
   export type DailyCollectionTypeUncheckedUpdateInput = {
@@ -137813,6 +141143,7 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     collectors?: DailyCollectionTypeCollectorUncheckedUpdateManyWithoutCollectionTypeNestedInput
     auditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutCollectionTypeNestedInput
+    sessions?: DailyCollectionSessionUncheckedUpdateManyWithoutCollectionTypeNestedInput
   }
 
   export type DailyCollectionTypeCreateManyInput = {
@@ -137921,6 +141252,248 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     collectorId?: StringFieldUpdateOperationsInput | string
     collectionTypeId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DailyCollectionSessionCreateInput = {
+    id?: string
+    collectionDate: Date | string
+    status?: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal | DecimalJsLike | number | string
+    reportedAmount?: Decimal | DecimalJsLike | number | string
+    confirmedAmount?: Decimal | DecimalJsLike | number | string | null
+    submittedAt?: Date | string | null
+    confirmedAt?: Date | string | null
+    confirmedBy?: string | null
+    mismatchReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutDailyCollectionSessionsInput
+    collector: CollectorCreateNestedOneWithoutCollectionSessionsInput
+    collectionType: DailyCollectionTypeCreateNestedOneWithoutSessionsInput
+    entries?: DailyCollectionEntryCreateNestedManyWithoutSessionInput
+  }
+
+  export type DailyCollectionSessionUncheckedCreateInput = {
+    id?: string
+    collectionDate: Date | string
+    status?: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal | DecimalJsLike | number | string
+    reportedAmount?: Decimal | DecimalJsLike | number | string
+    confirmedAmount?: Decimal | DecimalJsLike | number | string | null
+    submittedAt?: Date | string | null
+    confirmedAt?: Date | string | null
+    confirmedBy?: string | null
+    mismatchReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    collectorId: string
+    collectionTypeId: string
+    entries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSessionInput
+  }
+
+  export type DailyCollectionSessionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutDailyCollectionSessionsNestedInput
+    collector?: CollectorUpdateOneRequiredWithoutCollectionSessionsNestedInput
+    collectionType?: DailyCollectionTypeUpdateOneRequiredWithoutSessionsNestedInput
+    entries?: DailyCollectionEntryUpdateManyWithoutSessionNestedInput
+  }
+
+  export type DailyCollectionSessionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    collectorId?: StringFieldUpdateOperationsInput | string
+    collectionTypeId?: StringFieldUpdateOperationsInput | string
+    entries?: DailyCollectionEntryUncheckedUpdateManyWithoutSessionNestedInput
+  }
+
+  export type DailyCollectionSessionCreateManyInput = {
+    id?: string
+    collectionDate: Date | string
+    status?: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal | DecimalJsLike | number | string
+    reportedAmount?: Decimal | DecimalJsLike | number | string
+    confirmedAmount?: Decimal | DecimalJsLike | number | string | null
+    submittedAt?: Date | string | null
+    confirmedAt?: Date | string | null
+    confirmedBy?: string | null
+    mismatchReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    collectorId: string
+    collectionTypeId: string
+  }
+
+  export type DailyCollectionSessionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DailyCollectionSessionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    collectorId?: StringFieldUpdateOperationsInput | string
+    collectionTypeId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DailyCollectionEntryCreateInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutDailyCollectionEntriesInput
+    session: DailyCollectionSessionCreateNestedOneWithoutEntriesInput
+    student: StudentCreateNestedOneWithoutDailyCollectionEntriesInput
+    collector: CollectorCreateNestedOneWithoutCollectionEntriesInput
+  }
+
+  export type DailyCollectionEntryUncheckedCreateInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    sessionId: string
+    studentId: string
+    collectorId: string
+  }
+
+  export type DailyCollectionEntryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutDailyCollectionEntriesNestedInput
+    session?: DailyCollectionSessionUpdateOneRequiredWithoutEntriesNestedInput
+    student?: StudentUpdateOneRequiredWithoutDailyCollectionEntriesNestedInput
+    collector?: CollectorUpdateOneRequiredWithoutCollectionEntriesNestedInput
+  }
+
+  export type DailyCollectionEntryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    collectorId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DailyCollectionEntryCreateManyInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    sessionId: string
+    studentId: string
+    collectorId: string
+  }
+
+  export type DailyCollectionEntryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DailyCollectionEntryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    collectorId?: StringFieldUpdateOperationsInput | string
   }
 
   export type DailyCollectionAuditLogCreateInput = {
@@ -140879,6 +144452,18 @@ export namespace Prisma {
     none?: DailyCollectionAuditLogWhereInput
   }
 
+  export type DailyCollectionSessionListRelationFilter = {
+    every?: DailyCollectionSessionWhereInput
+    some?: DailyCollectionSessionWhereInput
+    none?: DailyCollectionSessionWhereInput
+  }
+
+  export type DailyCollectionEntryListRelationFilter = {
+    every?: DailyCollectionEntryWhereInput
+    some?: DailyCollectionEntryWhereInput
+    none?: DailyCollectionEntryWhereInput
+  }
+
   export type SchoolInviteListRelationFilter = {
     every?: SchoolInviteWhereInput
     some?: SchoolInviteWhereInput
@@ -141243,6 +144828,14 @@ export namespace Prisma {
   }
 
   export type DailyCollectionAuditLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DailyCollectionSessionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DailyCollectionEntryOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -146155,6 +149748,184 @@ export namespace Prisma {
     collectionTypeId?: SortOrder
   }
 
+  export type EnumDailyCollectionSessionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.DailyCollectionSessionStatus | EnumDailyCollectionSessionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DailyCollectionSessionStatus[] | ListEnumDailyCollectionSessionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DailyCollectionSessionStatus[] | ListEnumDailyCollectionSessionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDailyCollectionSessionStatusFilter<$PrismaModel> | $Enums.DailyCollectionSessionStatus
+  }
+
+  export type DailyCollectionSessionSchoolIdCollectionTypeIdCollectorIdCollectionDateCompoundUniqueInput = {
+    schoolId: string
+    collectionTypeId: string
+    collectorId: string
+    collectionDate: Date | string
+  }
+
+  export type DailyCollectionSessionCountOrderByAggregateInput = {
+    id?: SortOrder
+    collectionDate?: SortOrder
+    status?: SortOrder
+    expectedAmount?: SortOrder
+    reportedAmount?: SortOrder
+    confirmedAmount?: SortOrder
+    submittedAt?: SortOrder
+    confirmedAt?: SortOrder
+    confirmedBy?: SortOrder
+    mismatchReason?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    collectorId?: SortOrder
+    collectionTypeId?: SortOrder
+  }
+
+  export type DailyCollectionSessionAvgOrderByAggregateInput = {
+    expectedAmount?: SortOrder
+    reportedAmount?: SortOrder
+    confirmedAmount?: SortOrder
+  }
+
+  export type DailyCollectionSessionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    collectionDate?: SortOrder
+    status?: SortOrder
+    expectedAmount?: SortOrder
+    reportedAmount?: SortOrder
+    confirmedAmount?: SortOrder
+    submittedAt?: SortOrder
+    confirmedAt?: SortOrder
+    confirmedBy?: SortOrder
+    mismatchReason?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    collectorId?: SortOrder
+    collectionTypeId?: SortOrder
+  }
+
+  export type DailyCollectionSessionMinOrderByAggregateInput = {
+    id?: SortOrder
+    collectionDate?: SortOrder
+    status?: SortOrder
+    expectedAmount?: SortOrder
+    reportedAmount?: SortOrder
+    confirmedAmount?: SortOrder
+    submittedAt?: SortOrder
+    confirmedAt?: SortOrder
+    confirmedBy?: SortOrder
+    mismatchReason?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    collectorId?: SortOrder
+    collectionTypeId?: SortOrder
+  }
+
+  export type DailyCollectionSessionSumOrderByAggregateInput = {
+    expectedAmount?: SortOrder
+    reportedAmount?: SortOrder
+    confirmedAmount?: SortOrder
+  }
+
+  export type EnumDailyCollectionSessionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DailyCollectionSessionStatus | EnumDailyCollectionSessionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DailyCollectionSessionStatus[] | ListEnumDailyCollectionSessionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DailyCollectionSessionStatus[] | ListEnumDailyCollectionSessionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDailyCollectionSessionStatusWithAggregatesFilter<$PrismaModel> | $Enums.DailyCollectionSessionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDailyCollectionSessionStatusFilter<$PrismaModel>
+    _max?: NestedEnumDailyCollectionSessionStatusFilter<$PrismaModel>
+  }
+
+  export type EnumDailyCollectionEntryStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.DailyCollectionEntryStatus | EnumDailyCollectionEntryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DailyCollectionEntryStatus[] | ListEnumDailyCollectionEntryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DailyCollectionEntryStatus[] | ListEnumDailyCollectionEntryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDailyCollectionEntryStatusFilter<$PrismaModel> | $Enums.DailyCollectionEntryStatus
+  }
+
+  export type DailyCollectionSessionScalarRelationFilter = {
+    is?: DailyCollectionSessionWhereInput
+    isNot?: DailyCollectionSessionWhereInput
+  }
+
+  export type DailyCollectionEntrySessionIdStudentIdCompoundUniqueInput = {
+    sessionId: string
+    studentId: string
+  }
+
+  export type DailyCollectionEntryCountOrderByAggregateInput = {
+    id?: SortOrder
+    status?: SortOrder
+    amountExpected?: SortOrder
+    amountCollected?: SortOrder
+    note?: SortOrder
+    markedAt?: SortOrder
+    markedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    sessionId?: SortOrder
+    studentId?: SortOrder
+    collectorId?: SortOrder
+  }
+
+  export type DailyCollectionEntryAvgOrderByAggregateInput = {
+    amountExpected?: SortOrder
+    amountCollected?: SortOrder
+  }
+
+  export type DailyCollectionEntryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    status?: SortOrder
+    amountExpected?: SortOrder
+    amountCollected?: SortOrder
+    note?: SortOrder
+    markedAt?: SortOrder
+    markedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    sessionId?: SortOrder
+    studentId?: SortOrder
+    collectorId?: SortOrder
+  }
+
+  export type DailyCollectionEntryMinOrderByAggregateInput = {
+    id?: SortOrder
+    status?: SortOrder
+    amountExpected?: SortOrder
+    amountCollected?: SortOrder
+    note?: SortOrder
+    markedAt?: SortOrder
+    markedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    sessionId?: SortOrder
+    studentId?: SortOrder
+    collectorId?: SortOrder
+  }
+
+  export type DailyCollectionEntrySumOrderByAggregateInput = {
+    amountExpected?: SortOrder
+    amountCollected?: SortOrder
+  }
+
+  export type EnumDailyCollectionEntryStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DailyCollectionEntryStatus | EnumDailyCollectionEntryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DailyCollectionEntryStatus[] | ListEnumDailyCollectionEntryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DailyCollectionEntryStatus[] | ListEnumDailyCollectionEntryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDailyCollectionEntryStatusWithAggregatesFilter<$PrismaModel> | $Enums.DailyCollectionEntryStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDailyCollectionEntryStatusFilter<$PrismaModel>
+    _max?: NestedEnumDailyCollectionEntryStatusFilter<$PrismaModel>
+  }
+
   export type EnumDailyCollectionAuditActionFilter<$PrismaModel = never> = {
     equals?: $Enums.DailyCollectionAuditAction | EnumDailyCollectionAuditActionFieldRefInput<$PrismaModel>
     in?: $Enums.DailyCollectionAuditAction[] | ListEnumDailyCollectionAuditActionFieldRefInput<$PrismaModel>
@@ -148438,6 +152209,20 @@ export namespace Prisma {
     connect?: DailyCollectionAuditLogWhereUniqueInput | DailyCollectionAuditLogWhereUniqueInput[]
   }
 
+  export type DailyCollectionSessionCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<DailyCollectionSessionCreateWithoutSchoolInput, DailyCollectionSessionUncheckedCreateWithoutSchoolInput> | DailyCollectionSessionCreateWithoutSchoolInput[] | DailyCollectionSessionUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: DailyCollectionSessionCreateOrConnectWithoutSchoolInput | DailyCollectionSessionCreateOrConnectWithoutSchoolInput[]
+    createMany?: DailyCollectionSessionCreateManySchoolInputEnvelope
+    connect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+  }
+
+  export type DailyCollectionEntryCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutSchoolInput, DailyCollectionEntryUncheckedCreateWithoutSchoolInput> | DailyCollectionEntryCreateWithoutSchoolInput[] | DailyCollectionEntryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutSchoolInput | DailyCollectionEntryCreateOrConnectWithoutSchoolInput[]
+    createMany?: DailyCollectionEntryCreateManySchoolInputEnvelope
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+  }
+
   export type SchoolInviteCreateNestedManyWithoutSchoolInput = {
     create?: XOR<SchoolInviteCreateWithoutSchoolInput, SchoolInviteUncheckedCreateWithoutSchoolInput> | SchoolInviteCreateWithoutSchoolInput[] | SchoolInviteUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: SchoolInviteCreateOrConnectWithoutSchoolInput | SchoolInviteCreateOrConnectWithoutSchoolInput[]
@@ -148970,6 +152755,20 @@ export namespace Prisma {
     connectOrCreate?: DailyCollectionAuditLogCreateOrConnectWithoutSchoolInput | DailyCollectionAuditLogCreateOrConnectWithoutSchoolInput[]
     createMany?: DailyCollectionAuditLogCreateManySchoolInputEnvelope
     connect?: DailyCollectionAuditLogWhereUniqueInput | DailyCollectionAuditLogWhereUniqueInput[]
+  }
+
+  export type DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<DailyCollectionSessionCreateWithoutSchoolInput, DailyCollectionSessionUncheckedCreateWithoutSchoolInput> | DailyCollectionSessionCreateWithoutSchoolInput[] | DailyCollectionSessionUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: DailyCollectionSessionCreateOrConnectWithoutSchoolInput | DailyCollectionSessionCreateOrConnectWithoutSchoolInput[]
+    createMany?: DailyCollectionSessionCreateManySchoolInputEnvelope
+    connect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+  }
+
+  export type DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutSchoolInput, DailyCollectionEntryUncheckedCreateWithoutSchoolInput> | DailyCollectionEntryCreateWithoutSchoolInput[] | DailyCollectionEntryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutSchoolInput | DailyCollectionEntryCreateOrConnectWithoutSchoolInput[]
+    createMany?: DailyCollectionEntryCreateManySchoolInputEnvelope
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
   }
 
   export type SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput = {
@@ -149843,6 +153642,34 @@ export namespace Prisma {
     update?: DailyCollectionAuditLogUpdateWithWhereUniqueWithoutSchoolInput | DailyCollectionAuditLogUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: DailyCollectionAuditLogUpdateManyWithWhereWithoutSchoolInput | DailyCollectionAuditLogUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: DailyCollectionAuditLogScalarWhereInput | DailyCollectionAuditLogScalarWhereInput[]
+  }
+
+  export type DailyCollectionSessionUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<DailyCollectionSessionCreateWithoutSchoolInput, DailyCollectionSessionUncheckedCreateWithoutSchoolInput> | DailyCollectionSessionCreateWithoutSchoolInput[] | DailyCollectionSessionUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: DailyCollectionSessionCreateOrConnectWithoutSchoolInput | DailyCollectionSessionCreateOrConnectWithoutSchoolInput[]
+    upsert?: DailyCollectionSessionUpsertWithWhereUniqueWithoutSchoolInput | DailyCollectionSessionUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: DailyCollectionSessionCreateManySchoolInputEnvelope
+    set?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    disconnect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    delete?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    connect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    update?: DailyCollectionSessionUpdateWithWhereUniqueWithoutSchoolInput | DailyCollectionSessionUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: DailyCollectionSessionUpdateManyWithWhereWithoutSchoolInput | DailyCollectionSessionUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: DailyCollectionSessionScalarWhereInput | DailyCollectionSessionScalarWhereInput[]
+  }
+
+  export type DailyCollectionEntryUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutSchoolInput, DailyCollectionEntryUncheckedCreateWithoutSchoolInput> | DailyCollectionEntryCreateWithoutSchoolInput[] | DailyCollectionEntryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutSchoolInput | DailyCollectionEntryCreateOrConnectWithoutSchoolInput[]
+    upsert?: DailyCollectionEntryUpsertWithWhereUniqueWithoutSchoolInput | DailyCollectionEntryUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: DailyCollectionEntryCreateManySchoolInputEnvelope
+    set?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    disconnect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    delete?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    update?: DailyCollectionEntryUpdateWithWhereUniqueWithoutSchoolInput | DailyCollectionEntryUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: DailyCollectionEntryUpdateManyWithWhereWithoutSchoolInput | DailyCollectionEntryUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: DailyCollectionEntryScalarWhereInput | DailyCollectionEntryScalarWhereInput[]
   }
 
   export type SchoolInviteUpdateManyWithoutSchoolNestedInput = {
@@ -150903,6 +154730,34 @@ export namespace Prisma {
     deleteMany?: DailyCollectionAuditLogScalarWhereInput | DailyCollectionAuditLogScalarWhereInput[]
   }
 
+  export type DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<DailyCollectionSessionCreateWithoutSchoolInput, DailyCollectionSessionUncheckedCreateWithoutSchoolInput> | DailyCollectionSessionCreateWithoutSchoolInput[] | DailyCollectionSessionUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: DailyCollectionSessionCreateOrConnectWithoutSchoolInput | DailyCollectionSessionCreateOrConnectWithoutSchoolInput[]
+    upsert?: DailyCollectionSessionUpsertWithWhereUniqueWithoutSchoolInput | DailyCollectionSessionUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: DailyCollectionSessionCreateManySchoolInputEnvelope
+    set?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    disconnect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    delete?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    connect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    update?: DailyCollectionSessionUpdateWithWhereUniqueWithoutSchoolInput | DailyCollectionSessionUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: DailyCollectionSessionUpdateManyWithWhereWithoutSchoolInput | DailyCollectionSessionUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: DailyCollectionSessionScalarWhereInput | DailyCollectionSessionScalarWhereInput[]
+  }
+
+  export type DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutSchoolInput, DailyCollectionEntryUncheckedCreateWithoutSchoolInput> | DailyCollectionEntryCreateWithoutSchoolInput[] | DailyCollectionEntryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutSchoolInput | DailyCollectionEntryCreateOrConnectWithoutSchoolInput[]
+    upsert?: DailyCollectionEntryUpsertWithWhereUniqueWithoutSchoolInput | DailyCollectionEntryUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: DailyCollectionEntryCreateManySchoolInputEnvelope
+    set?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    disconnect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    delete?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    update?: DailyCollectionEntryUpdateWithWhereUniqueWithoutSchoolInput | DailyCollectionEntryUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: DailyCollectionEntryUpdateManyWithWhereWithoutSchoolInput | DailyCollectionEntryUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: DailyCollectionEntryScalarWhereInput | DailyCollectionEntryScalarWhereInput[]
+  }
+
   export type SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput = {
     create?: XOR<SchoolInviteCreateWithoutSchoolInput, SchoolInviteUncheckedCreateWithoutSchoolInput> | SchoolInviteCreateWithoutSchoolInput[] | SchoolInviteUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: SchoolInviteCreateOrConnectWithoutSchoolInput | SchoolInviteCreateOrConnectWithoutSchoolInput[]
@@ -151412,6 +155267,20 @@ export namespace Prisma {
     connect?: DailyCollectionTypeCollectorWhereUniqueInput | DailyCollectionTypeCollectorWhereUniqueInput[]
   }
 
+  export type DailyCollectionSessionCreateNestedManyWithoutCollectorInput = {
+    create?: XOR<DailyCollectionSessionCreateWithoutCollectorInput, DailyCollectionSessionUncheckedCreateWithoutCollectorInput> | DailyCollectionSessionCreateWithoutCollectorInput[] | DailyCollectionSessionUncheckedCreateWithoutCollectorInput[]
+    connectOrCreate?: DailyCollectionSessionCreateOrConnectWithoutCollectorInput | DailyCollectionSessionCreateOrConnectWithoutCollectorInput[]
+    createMany?: DailyCollectionSessionCreateManyCollectorInputEnvelope
+    connect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+  }
+
+  export type DailyCollectionEntryCreateNestedManyWithoutCollectorInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutCollectorInput, DailyCollectionEntryUncheckedCreateWithoutCollectorInput> | DailyCollectionEntryCreateWithoutCollectorInput[] | DailyCollectionEntryUncheckedCreateWithoutCollectorInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutCollectorInput | DailyCollectionEntryCreateOrConnectWithoutCollectorInput[]
+    createMany?: DailyCollectionEntryCreateManyCollectorInputEnvelope
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+  }
+
   export type DailyCollectionAuditLogCreateNestedManyWithoutCollectorInput = {
     create?: XOR<DailyCollectionAuditLogCreateWithoutCollectorInput, DailyCollectionAuditLogUncheckedCreateWithoutCollectorInput> | DailyCollectionAuditLogCreateWithoutCollectorInput[] | DailyCollectionAuditLogUncheckedCreateWithoutCollectorInput[]
     connectOrCreate?: DailyCollectionAuditLogCreateOrConnectWithoutCollectorInput | DailyCollectionAuditLogCreateOrConnectWithoutCollectorInput[]
@@ -151424,6 +155293,20 @@ export namespace Prisma {
     connectOrCreate?: DailyCollectionTypeCollectorCreateOrConnectWithoutCollectorInput | DailyCollectionTypeCollectorCreateOrConnectWithoutCollectorInput[]
     createMany?: DailyCollectionTypeCollectorCreateManyCollectorInputEnvelope
     connect?: DailyCollectionTypeCollectorWhereUniqueInput | DailyCollectionTypeCollectorWhereUniqueInput[]
+  }
+
+  export type DailyCollectionSessionUncheckedCreateNestedManyWithoutCollectorInput = {
+    create?: XOR<DailyCollectionSessionCreateWithoutCollectorInput, DailyCollectionSessionUncheckedCreateWithoutCollectorInput> | DailyCollectionSessionCreateWithoutCollectorInput[] | DailyCollectionSessionUncheckedCreateWithoutCollectorInput[]
+    connectOrCreate?: DailyCollectionSessionCreateOrConnectWithoutCollectorInput | DailyCollectionSessionCreateOrConnectWithoutCollectorInput[]
+    createMany?: DailyCollectionSessionCreateManyCollectorInputEnvelope
+    connect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+  }
+
+  export type DailyCollectionEntryUncheckedCreateNestedManyWithoutCollectorInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutCollectorInput, DailyCollectionEntryUncheckedCreateWithoutCollectorInput> | DailyCollectionEntryCreateWithoutCollectorInput[] | DailyCollectionEntryUncheckedCreateWithoutCollectorInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutCollectorInput | DailyCollectionEntryCreateOrConnectWithoutCollectorInput[]
+    createMany?: DailyCollectionEntryCreateManyCollectorInputEnvelope
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
   }
 
   export type DailyCollectionAuditLogUncheckedCreateNestedManyWithoutCollectorInput = {
@@ -151459,6 +155342,34 @@ export namespace Prisma {
     deleteMany?: DailyCollectionTypeCollectorScalarWhereInput | DailyCollectionTypeCollectorScalarWhereInput[]
   }
 
+  export type DailyCollectionSessionUpdateManyWithoutCollectorNestedInput = {
+    create?: XOR<DailyCollectionSessionCreateWithoutCollectorInput, DailyCollectionSessionUncheckedCreateWithoutCollectorInput> | DailyCollectionSessionCreateWithoutCollectorInput[] | DailyCollectionSessionUncheckedCreateWithoutCollectorInput[]
+    connectOrCreate?: DailyCollectionSessionCreateOrConnectWithoutCollectorInput | DailyCollectionSessionCreateOrConnectWithoutCollectorInput[]
+    upsert?: DailyCollectionSessionUpsertWithWhereUniqueWithoutCollectorInput | DailyCollectionSessionUpsertWithWhereUniqueWithoutCollectorInput[]
+    createMany?: DailyCollectionSessionCreateManyCollectorInputEnvelope
+    set?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    disconnect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    delete?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    connect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    update?: DailyCollectionSessionUpdateWithWhereUniqueWithoutCollectorInput | DailyCollectionSessionUpdateWithWhereUniqueWithoutCollectorInput[]
+    updateMany?: DailyCollectionSessionUpdateManyWithWhereWithoutCollectorInput | DailyCollectionSessionUpdateManyWithWhereWithoutCollectorInput[]
+    deleteMany?: DailyCollectionSessionScalarWhereInput | DailyCollectionSessionScalarWhereInput[]
+  }
+
+  export type DailyCollectionEntryUpdateManyWithoutCollectorNestedInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutCollectorInput, DailyCollectionEntryUncheckedCreateWithoutCollectorInput> | DailyCollectionEntryCreateWithoutCollectorInput[] | DailyCollectionEntryUncheckedCreateWithoutCollectorInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutCollectorInput | DailyCollectionEntryCreateOrConnectWithoutCollectorInput[]
+    upsert?: DailyCollectionEntryUpsertWithWhereUniqueWithoutCollectorInput | DailyCollectionEntryUpsertWithWhereUniqueWithoutCollectorInput[]
+    createMany?: DailyCollectionEntryCreateManyCollectorInputEnvelope
+    set?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    disconnect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    delete?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    update?: DailyCollectionEntryUpdateWithWhereUniqueWithoutCollectorInput | DailyCollectionEntryUpdateWithWhereUniqueWithoutCollectorInput[]
+    updateMany?: DailyCollectionEntryUpdateManyWithWhereWithoutCollectorInput | DailyCollectionEntryUpdateManyWithWhereWithoutCollectorInput[]
+    deleteMany?: DailyCollectionEntryScalarWhereInput | DailyCollectionEntryScalarWhereInput[]
+  }
+
   export type DailyCollectionAuditLogUpdateManyWithoutCollectorNestedInput = {
     create?: XOR<DailyCollectionAuditLogCreateWithoutCollectorInput, DailyCollectionAuditLogUncheckedCreateWithoutCollectorInput> | DailyCollectionAuditLogCreateWithoutCollectorInput[] | DailyCollectionAuditLogUncheckedCreateWithoutCollectorInput[]
     connectOrCreate?: DailyCollectionAuditLogCreateOrConnectWithoutCollectorInput | DailyCollectionAuditLogCreateOrConnectWithoutCollectorInput[]
@@ -151485,6 +155396,34 @@ export namespace Prisma {
     update?: DailyCollectionTypeCollectorUpdateWithWhereUniqueWithoutCollectorInput | DailyCollectionTypeCollectorUpdateWithWhereUniqueWithoutCollectorInput[]
     updateMany?: DailyCollectionTypeCollectorUpdateManyWithWhereWithoutCollectorInput | DailyCollectionTypeCollectorUpdateManyWithWhereWithoutCollectorInput[]
     deleteMany?: DailyCollectionTypeCollectorScalarWhereInput | DailyCollectionTypeCollectorScalarWhereInput[]
+  }
+
+  export type DailyCollectionSessionUncheckedUpdateManyWithoutCollectorNestedInput = {
+    create?: XOR<DailyCollectionSessionCreateWithoutCollectorInput, DailyCollectionSessionUncheckedCreateWithoutCollectorInput> | DailyCollectionSessionCreateWithoutCollectorInput[] | DailyCollectionSessionUncheckedCreateWithoutCollectorInput[]
+    connectOrCreate?: DailyCollectionSessionCreateOrConnectWithoutCollectorInput | DailyCollectionSessionCreateOrConnectWithoutCollectorInput[]
+    upsert?: DailyCollectionSessionUpsertWithWhereUniqueWithoutCollectorInput | DailyCollectionSessionUpsertWithWhereUniqueWithoutCollectorInput[]
+    createMany?: DailyCollectionSessionCreateManyCollectorInputEnvelope
+    set?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    disconnect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    delete?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    connect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    update?: DailyCollectionSessionUpdateWithWhereUniqueWithoutCollectorInput | DailyCollectionSessionUpdateWithWhereUniqueWithoutCollectorInput[]
+    updateMany?: DailyCollectionSessionUpdateManyWithWhereWithoutCollectorInput | DailyCollectionSessionUpdateManyWithWhereWithoutCollectorInput[]
+    deleteMany?: DailyCollectionSessionScalarWhereInput | DailyCollectionSessionScalarWhereInput[]
+  }
+
+  export type DailyCollectionEntryUncheckedUpdateManyWithoutCollectorNestedInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutCollectorInput, DailyCollectionEntryUncheckedCreateWithoutCollectorInput> | DailyCollectionEntryCreateWithoutCollectorInput[] | DailyCollectionEntryUncheckedCreateWithoutCollectorInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutCollectorInput | DailyCollectionEntryCreateOrConnectWithoutCollectorInput[]
+    upsert?: DailyCollectionEntryUpsertWithWhereUniqueWithoutCollectorInput | DailyCollectionEntryUpsertWithWhereUniqueWithoutCollectorInput[]
+    createMany?: DailyCollectionEntryCreateManyCollectorInputEnvelope
+    set?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    disconnect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    delete?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    update?: DailyCollectionEntryUpdateWithWhereUniqueWithoutCollectorInput | DailyCollectionEntryUpdateWithWhereUniqueWithoutCollectorInput[]
+    updateMany?: DailyCollectionEntryUpdateManyWithWhereWithoutCollectorInput | DailyCollectionEntryUpdateManyWithWhereWithoutCollectorInput[]
+    deleteMany?: DailyCollectionEntryScalarWhereInput | DailyCollectionEntryScalarWhereInput[]
   }
 
   export type DailyCollectionAuditLogUncheckedUpdateManyWithoutCollectorNestedInput = {
@@ -151637,6 +155576,13 @@ export namespace Prisma {
     connect?: PaymentIntentWhereUniqueInput | PaymentIntentWhereUniqueInput[]
   }
 
+  export type DailyCollectionEntryCreateNestedManyWithoutStudentInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutStudentInput, DailyCollectionEntryUncheckedCreateWithoutStudentInput> | DailyCollectionEntryCreateWithoutStudentInput[] | DailyCollectionEntryUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutStudentInput | DailyCollectionEntryCreateOrConnectWithoutStudentInput[]
+    createMany?: DailyCollectionEntryCreateManyStudentInputEnvelope
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+  }
+
   export type AttendanceUncheckedCreateNestedManyWithoutStudentInput = {
     create?: XOR<AttendanceCreateWithoutStudentInput, AttendanceUncheckedCreateWithoutStudentInput> | AttendanceCreateWithoutStudentInput[] | AttendanceUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: AttendanceCreateOrConnectWithoutStudentInput | AttendanceCreateOrConnectWithoutStudentInput[]
@@ -151747,6 +155693,13 @@ export namespace Prisma {
     connectOrCreate?: PaymentIntentCreateOrConnectWithoutStudentInput | PaymentIntentCreateOrConnectWithoutStudentInput[]
     createMany?: PaymentIntentCreateManyStudentInputEnvelope
     connect?: PaymentIntentWhereUniqueInput | PaymentIntentWhereUniqueInput[]
+  }
+
+  export type DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutStudentInput, DailyCollectionEntryUncheckedCreateWithoutStudentInput> | DailyCollectionEntryCreateWithoutStudentInput[] | DailyCollectionEntryUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutStudentInput | DailyCollectionEntryCreateOrConnectWithoutStudentInput[]
+    createMany?: DailyCollectionEntryCreateManyStudentInputEnvelope
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
   }
 
   export type EnumStudentStatusFieldUpdateOperationsInput = {
@@ -152009,6 +155962,20 @@ export namespace Prisma {
     deleteMany?: PaymentIntentScalarWhereInput | PaymentIntentScalarWhereInput[]
   }
 
+  export type DailyCollectionEntryUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutStudentInput, DailyCollectionEntryUncheckedCreateWithoutStudentInput> | DailyCollectionEntryCreateWithoutStudentInput[] | DailyCollectionEntryUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutStudentInput | DailyCollectionEntryCreateOrConnectWithoutStudentInput[]
+    upsert?: DailyCollectionEntryUpsertWithWhereUniqueWithoutStudentInput | DailyCollectionEntryUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: DailyCollectionEntryCreateManyStudentInputEnvelope
+    set?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    disconnect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    delete?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    update?: DailyCollectionEntryUpdateWithWhereUniqueWithoutStudentInput | DailyCollectionEntryUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: DailyCollectionEntryUpdateManyWithWhereWithoutStudentInput | DailyCollectionEntryUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: DailyCollectionEntryScalarWhereInput | DailyCollectionEntryScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -152239,6 +156206,20 @@ export namespace Prisma {
     update?: PaymentIntentUpdateWithWhereUniqueWithoutStudentInput | PaymentIntentUpdateWithWhereUniqueWithoutStudentInput[]
     updateMany?: PaymentIntentUpdateManyWithWhereWithoutStudentInput | PaymentIntentUpdateManyWithWhereWithoutStudentInput[]
     deleteMany?: PaymentIntentScalarWhereInput | PaymentIntentScalarWhereInput[]
+  }
+
+  export type DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutStudentInput, DailyCollectionEntryUncheckedCreateWithoutStudentInput> | DailyCollectionEntryCreateWithoutStudentInput[] | DailyCollectionEntryUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutStudentInput | DailyCollectionEntryCreateOrConnectWithoutStudentInput[]
+    upsert?: DailyCollectionEntryUpsertWithWhereUniqueWithoutStudentInput | DailyCollectionEntryUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: DailyCollectionEntryCreateManyStudentInputEnvelope
+    set?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    disconnect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    delete?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    update?: DailyCollectionEntryUpdateWithWhereUniqueWithoutStudentInput | DailyCollectionEntryUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: DailyCollectionEntryUpdateManyWithWhereWithoutStudentInput | DailyCollectionEntryUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: DailyCollectionEntryScalarWhereInput | DailyCollectionEntryScalarWhereInput[]
   }
 
   export type SchoolCreateNestedOneWithoutTeachersInput = {
@@ -157500,6 +161481,13 @@ export namespace Prisma {
     connect?: DailyCollectionAuditLogWhereUniqueInput | DailyCollectionAuditLogWhereUniqueInput[]
   }
 
+  export type DailyCollectionSessionCreateNestedManyWithoutCollectionTypeInput = {
+    create?: XOR<DailyCollectionSessionCreateWithoutCollectionTypeInput, DailyCollectionSessionUncheckedCreateWithoutCollectionTypeInput> | DailyCollectionSessionCreateWithoutCollectionTypeInput[] | DailyCollectionSessionUncheckedCreateWithoutCollectionTypeInput[]
+    connectOrCreate?: DailyCollectionSessionCreateOrConnectWithoutCollectionTypeInput | DailyCollectionSessionCreateOrConnectWithoutCollectionTypeInput[]
+    createMany?: DailyCollectionSessionCreateManyCollectionTypeInputEnvelope
+    connect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+  }
+
   export type DailyCollectionTypeCollectorUncheckedCreateNestedManyWithoutCollectionTypeInput = {
     create?: XOR<DailyCollectionTypeCollectorCreateWithoutCollectionTypeInput, DailyCollectionTypeCollectorUncheckedCreateWithoutCollectionTypeInput> | DailyCollectionTypeCollectorCreateWithoutCollectionTypeInput[] | DailyCollectionTypeCollectorUncheckedCreateWithoutCollectionTypeInput[]
     connectOrCreate?: DailyCollectionTypeCollectorCreateOrConnectWithoutCollectionTypeInput | DailyCollectionTypeCollectorCreateOrConnectWithoutCollectionTypeInput[]
@@ -157512,6 +161500,13 @@ export namespace Prisma {
     connectOrCreate?: DailyCollectionAuditLogCreateOrConnectWithoutCollectionTypeInput | DailyCollectionAuditLogCreateOrConnectWithoutCollectionTypeInput[]
     createMany?: DailyCollectionAuditLogCreateManyCollectionTypeInputEnvelope
     connect?: DailyCollectionAuditLogWhereUniqueInput | DailyCollectionAuditLogWhereUniqueInput[]
+  }
+
+  export type DailyCollectionSessionUncheckedCreateNestedManyWithoutCollectionTypeInput = {
+    create?: XOR<DailyCollectionSessionCreateWithoutCollectionTypeInput, DailyCollectionSessionUncheckedCreateWithoutCollectionTypeInput> | DailyCollectionSessionCreateWithoutCollectionTypeInput[] | DailyCollectionSessionUncheckedCreateWithoutCollectionTypeInput[]
+    connectOrCreate?: DailyCollectionSessionCreateOrConnectWithoutCollectionTypeInput | DailyCollectionSessionCreateOrConnectWithoutCollectionTypeInput[]
+    createMany?: DailyCollectionSessionCreateManyCollectionTypeInputEnvelope
+    connect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
   }
 
   export type SchoolUpdateOneRequiredWithoutDailyCollectionTypesNestedInput = {
@@ -157550,6 +161545,20 @@ export namespace Prisma {
     deleteMany?: DailyCollectionAuditLogScalarWhereInput | DailyCollectionAuditLogScalarWhereInput[]
   }
 
+  export type DailyCollectionSessionUpdateManyWithoutCollectionTypeNestedInput = {
+    create?: XOR<DailyCollectionSessionCreateWithoutCollectionTypeInput, DailyCollectionSessionUncheckedCreateWithoutCollectionTypeInput> | DailyCollectionSessionCreateWithoutCollectionTypeInput[] | DailyCollectionSessionUncheckedCreateWithoutCollectionTypeInput[]
+    connectOrCreate?: DailyCollectionSessionCreateOrConnectWithoutCollectionTypeInput | DailyCollectionSessionCreateOrConnectWithoutCollectionTypeInput[]
+    upsert?: DailyCollectionSessionUpsertWithWhereUniqueWithoutCollectionTypeInput | DailyCollectionSessionUpsertWithWhereUniqueWithoutCollectionTypeInput[]
+    createMany?: DailyCollectionSessionCreateManyCollectionTypeInputEnvelope
+    set?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    disconnect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    delete?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    connect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    update?: DailyCollectionSessionUpdateWithWhereUniqueWithoutCollectionTypeInput | DailyCollectionSessionUpdateWithWhereUniqueWithoutCollectionTypeInput[]
+    updateMany?: DailyCollectionSessionUpdateManyWithWhereWithoutCollectionTypeInput | DailyCollectionSessionUpdateManyWithWhereWithoutCollectionTypeInput[]
+    deleteMany?: DailyCollectionSessionScalarWhereInput | DailyCollectionSessionScalarWhereInput[]
+  }
+
   export type DailyCollectionTypeCollectorUncheckedUpdateManyWithoutCollectionTypeNestedInput = {
     create?: XOR<DailyCollectionTypeCollectorCreateWithoutCollectionTypeInput, DailyCollectionTypeCollectorUncheckedCreateWithoutCollectionTypeInput> | DailyCollectionTypeCollectorCreateWithoutCollectionTypeInput[] | DailyCollectionTypeCollectorUncheckedCreateWithoutCollectionTypeInput[]
     connectOrCreate?: DailyCollectionTypeCollectorCreateOrConnectWithoutCollectionTypeInput | DailyCollectionTypeCollectorCreateOrConnectWithoutCollectionTypeInput[]
@@ -157578,6 +161587,20 @@ export namespace Prisma {
     deleteMany?: DailyCollectionAuditLogScalarWhereInput | DailyCollectionAuditLogScalarWhereInput[]
   }
 
+  export type DailyCollectionSessionUncheckedUpdateManyWithoutCollectionTypeNestedInput = {
+    create?: XOR<DailyCollectionSessionCreateWithoutCollectionTypeInput, DailyCollectionSessionUncheckedCreateWithoutCollectionTypeInput> | DailyCollectionSessionCreateWithoutCollectionTypeInput[] | DailyCollectionSessionUncheckedCreateWithoutCollectionTypeInput[]
+    connectOrCreate?: DailyCollectionSessionCreateOrConnectWithoutCollectionTypeInput | DailyCollectionSessionCreateOrConnectWithoutCollectionTypeInput[]
+    upsert?: DailyCollectionSessionUpsertWithWhereUniqueWithoutCollectionTypeInput | DailyCollectionSessionUpsertWithWhereUniqueWithoutCollectionTypeInput[]
+    createMany?: DailyCollectionSessionCreateManyCollectionTypeInputEnvelope
+    set?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    disconnect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    delete?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    connect?: DailyCollectionSessionWhereUniqueInput | DailyCollectionSessionWhereUniqueInput[]
+    update?: DailyCollectionSessionUpdateWithWhereUniqueWithoutCollectionTypeInput | DailyCollectionSessionUpdateWithWhereUniqueWithoutCollectionTypeInput[]
+    updateMany?: DailyCollectionSessionUpdateManyWithWhereWithoutCollectionTypeInput | DailyCollectionSessionUpdateManyWithWhereWithoutCollectionTypeInput[]
+    deleteMany?: DailyCollectionSessionScalarWhereInput | DailyCollectionSessionScalarWhereInput[]
+  }
+
   export type CollectorCreateNestedOneWithoutCollectionTypesInput = {
     create?: XOR<CollectorCreateWithoutCollectionTypesInput, CollectorUncheckedCreateWithoutCollectionTypesInput>
     connectOrCreate?: CollectorCreateOrConnectWithoutCollectionTypesInput
@@ -157604,6 +161627,154 @@ export namespace Prisma {
     upsert?: DailyCollectionTypeUpsertWithoutCollectorsInput
     connect?: DailyCollectionTypeWhereUniqueInput
     update?: XOR<XOR<DailyCollectionTypeUpdateToOneWithWhereWithoutCollectorsInput, DailyCollectionTypeUpdateWithoutCollectorsInput>, DailyCollectionTypeUncheckedUpdateWithoutCollectorsInput>
+  }
+
+  export type SchoolCreateNestedOneWithoutDailyCollectionSessionsInput = {
+    create?: XOR<SchoolCreateWithoutDailyCollectionSessionsInput, SchoolUncheckedCreateWithoutDailyCollectionSessionsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutDailyCollectionSessionsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type CollectorCreateNestedOneWithoutCollectionSessionsInput = {
+    create?: XOR<CollectorCreateWithoutCollectionSessionsInput, CollectorUncheckedCreateWithoutCollectionSessionsInput>
+    connectOrCreate?: CollectorCreateOrConnectWithoutCollectionSessionsInput
+    connect?: CollectorWhereUniqueInput
+  }
+
+  export type DailyCollectionTypeCreateNestedOneWithoutSessionsInput = {
+    create?: XOR<DailyCollectionTypeCreateWithoutSessionsInput, DailyCollectionTypeUncheckedCreateWithoutSessionsInput>
+    connectOrCreate?: DailyCollectionTypeCreateOrConnectWithoutSessionsInput
+    connect?: DailyCollectionTypeWhereUniqueInput
+  }
+
+  export type DailyCollectionEntryCreateNestedManyWithoutSessionInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutSessionInput, DailyCollectionEntryUncheckedCreateWithoutSessionInput> | DailyCollectionEntryCreateWithoutSessionInput[] | DailyCollectionEntryUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutSessionInput | DailyCollectionEntryCreateOrConnectWithoutSessionInput[]
+    createMany?: DailyCollectionEntryCreateManySessionInputEnvelope
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+  }
+
+  export type DailyCollectionEntryUncheckedCreateNestedManyWithoutSessionInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutSessionInput, DailyCollectionEntryUncheckedCreateWithoutSessionInput> | DailyCollectionEntryCreateWithoutSessionInput[] | DailyCollectionEntryUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutSessionInput | DailyCollectionEntryCreateOrConnectWithoutSessionInput[]
+    createMany?: DailyCollectionEntryCreateManySessionInputEnvelope
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+  }
+
+  export type EnumDailyCollectionSessionStatusFieldUpdateOperationsInput = {
+    set?: $Enums.DailyCollectionSessionStatus
+  }
+
+  export type SchoolUpdateOneRequiredWithoutDailyCollectionSessionsNestedInput = {
+    create?: XOR<SchoolCreateWithoutDailyCollectionSessionsInput, SchoolUncheckedCreateWithoutDailyCollectionSessionsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutDailyCollectionSessionsInput
+    upsert?: SchoolUpsertWithoutDailyCollectionSessionsInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutDailyCollectionSessionsInput, SchoolUpdateWithoutDailyCollectionSessionsInput>, SchoolUncheckedUpdateWithoutDailyCollectionSessionsInput>
+  }
+
+  export type CollectorUpdateOneRequiredWithoutCollectionSessionsNestedInput = {
+    create?: XOR<CollectorCreateWithoutCollectionSessionsInput, CollectorUncheckedCreateWithoutCollectionSessionsInput>
+    connectOrCreate?: CollectorCreateOrConnectWithoutCollectionSessionsInput
+    upsert?: CollectorUpsertWithoutCollectionSessionsInput
+    connect?: CollectorWhereUniqueInput
+    update?: XOR<XOR<CollectorUpdateToOneWithWhereWithoutCollectionSessionsInput, CollectorUpdateWithoutCollectionSessionsInput>, CollectorUncheckedUpdateWithoutCollectionSessionsInput>
+  }
+
+  export type DailyCollectionTypeUpdateOneRequiredWithoutSessionsNestedInput = {
+    create?: XOR<DailyCollectionTypeCreateWithoutSessionsInput, DailyCollectionTypeUncheckedCreateWithoutSessionsInput>
+    connectOrCreate?: DailyCollectionTypeCreateOrConnectWithoutSessionsInput
+    upsert?: DailyCollectionTypeUpsertWithoutSessionsInput
+    connect?: DailyCollectionTypeWhereUniqueInput
+    update?: XOR<XOR<DailyCollectionTypeUpdateToOneWithWhereWithoutSessionsInput, DailyCollectionTypeUpdateWithoutSessionsInput>, DailyCollectionTypeUncheckedUpdateWithoutSessionsInput>
+  }
+
+  export type DailyCollectionEntryUpdateManyWithoutSessionNestedInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutSessionInput, DailyCollectionEntryUncheckedCreateWithoutSessionInput> | DailyCollectionEntryCreateWithoutSessionInput[] | DailyCollectionEntryUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutSessionInput | DailyCollectionEntryCreateOrConnectWithoutSessionInput[]
+    upsert?: DailyCollectionEntryUpsertWithWhereUniqueWithoutSessionInput | DailyCollectionEntryUpsertWithWhereUniqueWithoutSessionInput[]
+    createMany?: DailyCollectionEntryCreateManySessionInputEnvelope
+    set?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    disconnect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    delete?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    update?: DailyCollectionEntryUpdateWithWhereUniqueWithoutSessionInput | DailyCollectionEntryUpdateWithWhereUniqueWithoutSessionInput[]
+    updateMany?: DailyCollectionEntryUpdateManyWithWhereWithoutSessionInput | DailyCollectionEntryUpdateManyWithWhereWithoutSessionInput[]
+    deleteMany?: DailyCollectionEntryScalarWhereInput | DailyCollectionEntryScalarWhereInput[]
+  }
+
+  export type DailyCollectionEntryUncheckedUpdateManyWithoutSessionNestedInput = {
+    create?: XOR<DailyCollectionEntryCreateWithoutSessionInput, DailyCollectionEntryUncheckedCreateWithoutSessionInput> | DailyCollectionEntryCreateWithoutSessionInput[] | DailyCollectionEntryUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: DailyCollectionEntryCreateOrConnectWithoutSessionInput | DailyCollectionEntryCreateOrConnectWithoutSessionInput[]
+    upsert?: DailyCollectionEntryUpsertWithWhereUniqueWithoutSessionInput | DailyCollectionEntryUpsertWithWhereUniqueWithoutSessionInput[]
+    createMany?: DailyCollectionEntryCreateManySessionInputEnvelope
+    set?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    disconnect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    delete?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    connect?: DailyCollectionEntryWhereUniqueInput | DailyCollectionEntryWhereUniqueInput[]
+    update?: DailyCollectionEntryUpdateWithWhereUniqueWithoutSessionInput | DailyCollectionEntryUpdateWithWhereUniqueWithoutSessionInput[]
+    updateMany?: DailyCollectionEntryUpdateManyWithWhereWithoutSessionInput | DailyCollectionEntryUpdateManyWithWhereWithoutSessionInput[]
+    deleteMany?: DailyCollectionEntryScalarWhereInput | DailyCollectionEntryScalarWhereInput[]
+  }
+
+  export type SchoolCreateNestedOneWithoutDailyCollectionEntriesInput = {
+    create?: XOR<SchoolCreateWithoutDailyCollectionEntriesInput, SchoolUncheckedCreateWithoutDailyCollectionEntriesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutDailyCollectionEntriesInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type DailyCollectionSessionCreateNestedOneWithoutEntriesInput = {
+    create?: XOR<DailyCollectionSessionCreateWithoutEntriesInput, DailyCollectionSessionUncheckedCreateWithoutEntriesInput>
+    connectOrCreate?: DailyCollectionSessionCreateOrConnectWithoutEntriesInput
+    connect?: DailyCollectionSessionWhereUniqueInput
+  }
+
+  export type StudentCreateNestedOneWithoutDailyCollectionEntriesInput = {
+    create?: XOR<StudentCreateWithoutDailyCollectionEntriesInput, StudentUncheckedCreateWithoutDailyCollectionEntriesInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutDailyCollectionEntriesInput
+    connect?: StudentWhereUniqueInput
+  }
+
+  export type CollectorCreateNestedOneWithoutCollectionEntriesInput = {
+    create?: XOR<CollectorCreateWithoutCollectionEntriesInput, CollectorUncheckedCreateWithoutCollectionEntriesInput>
+    connectOrCreate?: CollectorCreateOrConnectWithoutCollectionEntriesInput
+    connect?: CollectorWhereUniqueInput
+  }
+
+  export type EnumDailyCollectionEntryStatusFieldUpdateOperationsInput = {
+    set?: $Enums.DailyCollectionEntryStatus
+  }
+
+  export type SchoolUpdateOneRequiredWithoutDailyCollectionEntriesNestedInput = {
+    create?: XOR<SchoolCreateWithoutDailyCollectionEntriesInput, SchoolUncheckedCreateWithoutDailyCollectionEntriesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutDailyCollectionEntriesInput
+    upsert?: SchoolUpsertWithoutDailyCollectionEntriesInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutDailyCollectionEntriesInput, SchoolUpdateWithoutDailyCollectionEntriesInput>, SchoolUncheckedUpdateWithoutDailyCollectionEntriesInput>
+  }
+
+  export type DailyCollectionSessionUpdateOneRequiredWithoutEntriesNestedInput = {
+    create?: XOR<DailyCollectionSessionCreateWithoutEntriesInput, DailyCollectionSessionUncheckedCreateWithoutEntriesInput>
+    connectOrCreate?: DailyCollectionSessionCreateOrConnectWithoutEntriesInput
+    upsert?: DailyCollectionSessionUpsertWithoutEntriesInput
+    connect?: DailyCollectionSessionWhereUniqueInput
+    update?: XOR<XOR<DailyCollectionSessionUpdateToOneWithWhereWithoutEntriesInput, DailyCollectionSessionUpdateWithoutEntriesInput>, DailyCollectionSessionUncheckedUpdateWithoutEntriesInput>
+  }
+
+  export type StudentUpdateOneRequiredWithoutDailyCollectionEntriesNestedInput = {
+    create?: XOR<StudentCreateWithoutDailyCollectionEntriesInput, StudentUncheckedCreateWithoutDailyCollectionEntriesInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutDailyCollectionEntriesInput
+    upsert?: StudentUpsertWithoutDailyCollectionEntriesInput
+    connect?: StudentWhereUniqueInput
+    update?: XOR<XOR<StudentUpdateToOneWithWhereWithoutDailyCollectionEntriesInput, StudentUpdateWithoutDailyCollectionEntriesInput>, StudentUncheckedUpdateWithoutDailyCollectionEntriesInput>
+  }
+
+  export type CollectorUpdateOneRequiredWithoutCollectionEntriesNestedInput = {
+    create?: XOR<CollectorCreateWithoutCollectionEntriesInput, CollectorUncheckedCreateWithoutCollectionEntriesInput>
+    connectOrCreate?: CollectorCreateOrConnectWithoutCollectionEntriesInput
+    upsert?: CollectorUpsertWithoutCollectionEntriesInput
+    connect?: CollectorWhereUniqueInput
+    update?: XOR<XOR<CollectorUpdateToOneWithWhereWithoutCollectionEntriesInput, CollectorUpdateWithoutCollectionEntriesInput>, CollectorUncheckedUpdateWithoutCollectionEntriesInput>
   }
 
   export type SchoolCreateNestedOneWithoutDailyCollectionAuditLogsInput = {
@@ -160472,6 +164643,40 @@ export namespace Prisma {
     _max?: NestedEnumFeeBillingFrequencyFilter<$PrismaModel>
   }
 
+  export type NestedEnumDailyCollectionSessionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.DailyCollectionSessionStatus | EnumDailyCollectionSessionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DailyCollectionSessionStatus[] | ListEnumDailyCollectionSessionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DailyCollectionSessionStatus[] | ListEnumDailyCollectionSessionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDailyCollectionSessionStatusFilter<$PrismaModel> | $Enums.DailyCollectionSessionStatus
+  }
+
+  export type NestedEnumDailyCollectionSessionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DailyCollectionSessionStatus | EnumDailyCollectionSessionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DailyCollectionSessionStatus[] | ListEnumDailyCollectionSessionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DailyCollectionSessionStatus[] | ListEnumDailyCollectionSessionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDailyCollectionSessionStatusWithAggregatesFilter<$PrismaModel> | $Enums.DailyCollectionSessionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDailyCollectionSessionStatusFilter<$PrismaModel>
+    _max?: NestedEnumDailyCollectionSessionStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumDailyCollectionEntryStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.DailyCollectionEntryStatus | EnumDailyCollectionEntryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DailyCollectionEntryStatus[] | ListEnumDailyCollectionEntryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DailyCollectionEntryStatus[] | ListEnumDailyCollectionEntryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDailyCollectionEntryStatusFilter<$PrismaModel> | $Enums.DailyCollectionEntryStatus
+  }
+
+  export type NestedEnumDailyCollectionEntryStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DailyCollectionEntryStatus | EnumDailyCollectionEntryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DailyCollectionEntryStatus[] | ListEnumDailyCollectionEntryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DailyCollectionEntryStatus[] | ListEnumDailyCollectionEntryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDailyCollectionEntryStatusWithAggregatesFilter<$PrismaModel> | $Enums.DailyCollectionEntryStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDailyCollectionEntryStatusFilter<$PrismaModel>
+    _max?: NestedEnumDailyCollectionEntryStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumDailyCollectionAuditActionFilter<$PrismaModel = never> = {
     equals?: $Enums.DailyCollectionAuditAction | EnumDailyCollectionAuditActionFieldRefInput<$PrismaModel>
     in?: $Enums.DailyCollectionAuditAction[] | ListEnumDailyCollectionAuditActionFieldRefInput<$PrismaModel>
@@ -161042,6 +165247,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutSchoolInput = {
@@ -161078,6 +165284,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutSchoolInput = {
@@ -161243,6 +165450,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     collectionTypes?: DailyCollectionTypeCollectorCreateNestedManyWithoutCollectorInput
+    collectionSessions?: DailyCollectionSessionCreateNestedManyWithoutCollectorInput
+    collectionEntries?: DailyCollectionEntryCreateNestedManyWithoutCollectorInput
     auditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutCollectorInput
   }
 
@@ -161259,6 +165468,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     collectionTypes?: DailyCollectionTypeCollectorUncheckedCreateNestedManyWithoutCollectorInput
+    collectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutCollectorInput
+    collectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutCollectorInput
     auditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutCollectorInput
   }
 
@@ -162792,6 +167003,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     collectors?: DailyCollectionTypeCollectorCreateNestedManyWithoutCollectionTypeInput
     auditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutCollectionTypeInput
+    sessions?: DailyCollectionSessionCreateNestedManyWithoutCollectionTypeInput
   }
 
   export type DailyCollectionTypeUncheckedCreateWithoutSchoolInput = {
@@ -162809,6 +167021,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     collectors?: DailyCollectionTypeCollectorUncheckedCreateNestedManyWithoutCollectionTypeInput
     auditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutCollectionTypeInput
+    sessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutCollectionTypeInput
   }
 
   export type DailyCollectionTypeCreateOrConnectWithoutSchoolInput = {
@@ -162852,6 +167065,94 @@ export namespace Prisma {
 
   export type DailyCollectionAuditLogCreateManySchoolInputEnvelope = {
     data: DailyCollectionAuditLogCreateManySchoolInput | DailyCollectionAuditLogCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DailyCollectionSessionCreateWithoutSchoolInput = {
+    id?: string
+    collectionDate: Date | string
+    status?: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal | DecimalJsLike | number | string
+    reportedAmount?: Decimal | DecimalJsLike | number | string
+    confirmedAmount?: Decimal | DecimalJsLike | number | string | null
+    submittedAt?: Date | string | null
+    confirmedAt?: Date | string | null
+    confirmedBy?: string | null
+    mismatchReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    collector: CollectorCreateNestedOneWithoutCollectionSessionsInput
+    collectionType: DailyCollectionTypeCreateNestedOneWithoutSessionsInput
+    entries?: DailyCollectionEntryCreateNestedManyWithoutSessionInput
+  }
+
+  export type DailyCollectionSessionUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    collectionDate: Date | string
+    status?: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal | DecimalJsLike | number | string
+    reportedAmount?: Decimal | DecimalJsLike | number | string
+    confirmedAmount?: Decimal | DecimalJsLike | number | string | null
+    submittedAt?: Date | string | null
+    confirmedAt?: Date | string | null
+    confirmedBy?: string | null
+    mismatchReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    collectorId: string
+    collectionTypeId: string
+    entries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSessionInput
+  }
+
+  export type DailyCollectionSessionCreateOrConnectWithoutSchoolInput = {
+    where: DailyCollectionSessionWhereUniqueInput
+    create: XOR<DailyCollectionSessionCreateWithoutSchoolInput, DailyCollectionSessionUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type DailyCollectionSessionCreateManySchoolInputEnvelope = {
+    data: DailyCollectionSessionCreateManySchoolInput | DailyCollectionSessionCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DailyCollectionEntryCreateWithoutSchoolInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    session: DailyCollectionSessionCreateNestedOneWithoutEntriesInput
+    student: StudentCreateNestedOneWithoutDailyCollectionEntriesInput
+    collector: CollectorCreateNestedOneWithoutCollectionEntriesInput
+  }
+
+  export type DailyCollectionEntryUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessionId: string
+    studentId: string
+    collectorId: string
+  }
+
+  export type DailyCollectionEntryCreateOrConnectWithoutSchoolInput = {
+    where: DailyCollectionEntryWhereUniqueInput
+    create: XOR<DailyCollectionEntryCreateWithoutSchoolInput, DailyCollectionEntryUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type DailyCollectionEntryCreateManySchoolInputEnvelope = {
+    data: DailyCollectionEntryCreateManySchoolInput | DailyCollectionEntryCreateManySchoolInput[]
     skipDuplicates?: boolean
   }
 
@@ -165739,6 +170040,79 @@ export namespace Prisma {
     collectionTypeId?: StringNullableFilter<"DailyCollectionAuditLog"> | string | null
   }
 
+  export type DailyCollectionSessionUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: DailyCollectionSessionWhereUniqueInput
+    update: XOR<DailyCollectionSessionUpdateWithoutSchoolInput, DailyCollectionSessionUncheckedUpdateWithoutSchoolInput>
+    create: XOR<DailyCollectionSessionCreateWithoutSchoolInput, DailyCollectionSessionUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type DailyCollectionSessionUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: DailyCollectionSessionWhereUniqueInput
+    data: XOR<DailyCollectionSessionUpdateWithoutSchoolInput, DailyCollectionSessionUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type DailyCollectionSessionUpdateManyWithWhereWithoutSchoolInput = {
+    where: DailyCollectionSessionScalarWhereInput
+    data: XOR<DailyCollectionSessionUpdateManyMutationInput, DailyCollectionSessionUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type DailyCollectionSessionScalarWhereInput = {
+    AND?: DailyCollectionSessionScalarWhereInput | DailyCollectionSessionScalarWhereInput[]
+    OR?: DailyCollectionSessionScalarWhereInput[]
+    NOT?: DailyCollectionSessionScalarWhereInput | DailyCollectionSessionScalarWhereInput[]
+    id?: StringFilter<"DailyCollectionSession"> | string
+    collectionDate?: DateTimeFilter<"DailyCollectionSession"> | Date | string
+    status?: EnumDailyCollectionSessionStatusFilter<"DailyCollectionSession"> | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFilter<"DailyCollectionSession"> | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFilter<"DailyCollectionSession"> | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: DecimalNullableFilter<"DailyCollectionSession"> | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: DateTimeNullableFilter<"DailyCollectionSession"> | Date | string | null
+    confirmedAt?: DateTimeNullableFilter<"DailyCollectionSession"> | Date | string | null
+    confirmedBy?: StringNullableFilter<"DailyCollectionSession"> | string | null
+    mismatchReason?: StringNullableFilter<"DailyCollectionSession"> | string | null
+    note?: StringNullableFilter<"DailyCollectionSession"> | string | null
+    createdAt?: DateTimeFilter<"DailyCollectionSession"> | Date | string
+    updatedAt?: DateTimeFilter<"DailyCollectionSession"> | Date | string
+    schoolId?: StringFilter<"DailyCollectionSession"> | string
+    collectorId?: StringFilter<"DailyCollectionSession"> | string
+    collectionTypeId?: StringFilter<"DailyCollectionSession"> | string
+  }
+
+  export type DailyCollectionEntryUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: DailyCollectionEntryWhereUniqueInput
+    update: XOR<DailyCollectionEntryUpdateWithoutSchoolInput, DailyCollectionEntryUncheckedUpdateWithoutSchoolInput>
+    create: XOR<DailyCollectionEntryCreateWithoutSchoolInput, DailyCollectionEntryUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type DailyCollectionEntryUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: DailyCollectionEntryWhereUniqueInput
+    data: XOR<DailyCollectionEntryUpdateWithoutSchoolInput, DailyCollectionEntryUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type DailyCollectionEntryUpdateManyWithWhereWithoutSchoolInput = {
+    where: DailyCollectionEntryScalarWhereInput
+    data: XOR<DailyCollectionEntryUpdateManyMutationInput, DailyCollectionEntryUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type DailyCollectionEntryScalarWhereInput = {
+    AND?: DailyCollectionEntryScalarWhereInput | DailyCollectionEntryScalarWhereInput[]
+    OR?: DailyCollectionEntryScalarWhereInput[]
+    NOT?: DailyCollectionEntryScalarWhereInput | DailyCollectionEntryScalarWhereInput[]
+    id?: StringFilter<"DailyCollectionEntry"> | string
+    status?: EnumDailyCollectionEntryStatusFilter<"DailyCollectionEntry"> | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFilter<"DailyCollectionEntry"> | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFilter<"DailyCollectionEntry"> | Decimal | DecimalJsLike | number | string
+    note?: StringNullableFilter<"DailyCollectionEntry"> | string | null
+    markedAt?: DateTimeNullableFilter<"DailyCollectionEntry"> | Date | string | null
+    markedBy?: StringNullableFilter<"DailyCollectionEntry"> | string | null
+    createdAt?: DateTimeFilter<"DailyCollectionEntry"> | Date | string
+    updatedAt?: DateTimeFilter<"DailyCollectionEntry"> | Date | string
+    schoolId?: StringFilter<"DailyCollectionEntry"> | string
+    sessionId?: StringFilter<"DailyCollectionEntry"> | string
+    studentId?: StringFilter<"DailyCollectionEntry"> | string
+    collectorId?: StringFilter<"DailyCollectionEntry"> | string
+  }
+
   export type SchoolInviteUpsertWithWhereUniqueWithoutSchoolInput = {
     where: SchoolInviteWhereUniqueInput
     update: XOR<SchoolInviteUpdateWithoutSchoolInput, SchoolInviteUncheckedUpdateWithoutSchoolInput>
@@ -166987,6 +171361,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -167084,6 +171460,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -167197,6 +171575,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -167294,6 +171674,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -167391,6 +171773,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -167488,6 +171872,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -167657,6 +172043,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -167754,6 +172142,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -167867,6 +172257,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -167964,6 +172356,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -168025,6 +172419,94 @@ export namespace Prisma {
 
   export type DailyCollectionTypeCollectorCreateManyCollectorInputEnvelope = {
     data: DailyCollectionTypeCollectorCreateManyCollectorInput | DailyCollectionTypeCollectorCreateManyCollectorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DailyCollectionSessionCreateWithoutCollectorInput = {
+    id?: string
+    collectionDate: Date | string
+    status?: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal | DecimalJsLike | number | string
+    reportedAmount?: Decimal | DecimalJsLike | number | string
+    confirmedAmount?: Decimal | DecimalJsLike | number | string | null
+    submittedAt?: Date | string | null
+    confirmedAt?: Date | string | null
+    confirmedBy?: string | null
+    mismatchReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutDailyCollectionSessionsInput
+    collectionType: DailyCollectionTypeCreateNestedOneWithoutSessionsInput
+    entries?: DailyCollectionEntryCreateNestedManyWithoutSessionInput
+  }
+
+  export type DailyCollectionSessionUncheckedCreateWithoutCollectorInput = {
+    id?: string
+    collectionDate: Date | string
+    status?: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal | DecimalJsLike | number | string
+    reportedAmount?: Decimal | DecimalJsLike | number | string
+    confirmedAmount?: Decimal | DecimalJsLike | number | string | null
+    submittedAt?: Date | string | null
+    confirmedAt?: Date | string | null
+    confirmedBy?: string | null
+    mismatchReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    collectionTypeId: string
+    entries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSessionInput
+  }
+
+  export type DailyCollectionSessionCreateOrConnectWithoutCollectorInput = {
+    where: DailyCollectionSessionWhereUniqueInput
+    create: XOR<DailyCollectionSessionCreateWithoutCollectorInput, DailyCollectionSessionUncheckedCreateWithoutCollectorInput>
+  }
+
+  export type DailyCollectionSessionCreateManyCollectorInputEnvelope = {
+    data: DailyCollectionSessionCreateManyCollectorInput | DailyCollectionSessionCreateManyCollectorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DailyCollectionEntryCreateWithoutCollectorInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutDailyCollectionEntriesInput
+    session: DailyCollectionSessionCreateNestedOneWithoutEntriesInput
+    student: StudentCreateNestedOneWithoutDailyCollectionEntriesInput
+  }
+
+  export type DailyCollectionEntryUncheckedCreateWithoutCollectorInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    sessionId: string
+    studentId: string
+  }
+
+  export type DailyCollectionEntryCreateOrConnectWithoutCollectorInput = {
+    where: DailyCollectionEntryWhereUniqueInput
+    create: XOR<DailyCollectionEntryCreateWithoutCollectorInput, DailyCollectionEntryUncheckedCreateWithoutCollectorInput>
+  }
+
+  export type DailyCollectionEntryCreateManyCollectorInputEnvelope = {
+    data: DailyCollectionEntryCreateManyCollectorInput | DailyCollectionEntryCreateManyCollectorInput[]
     skipDuplicates?: boolean
   }
 
@@ -168137,6 +172619,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -168234,6 +172718,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -168293,6 +172779,38 @@ export namespace Prisma {
     schoolId?: StringFilter<"DailyCollectionTypeCollector"> | string
     collectorId?: StringFilter<"DailyCollectionTypeCollector"> | string
     collectionTypeId?: StringFilter<"DailyCollectionTypeCollector"> | string
+  }
+
+  export type DailyCollectionSessionUpsertWithWhereUniqueWithoutCollectorInput = {
+    where: DailyCollectionSessionWhereUniqueInput
+    update: XOR<DailyCollectionSessionUpdateWithoutCollectorInput, DailyCollectionSessionUncheckedUpdateWithoutCollectorInput>
+    create: XOR<DailyCollectionSessionCreateWithoutCollectorInput, DailyCollectionSessionUncheckedCreateWithoutCollectorInput>
+  }
+
+  export type DailyCollectionSessionUpdateWithWhereUniqueWithoutCollectorInput = {
+    where: DailyCollectionSessionWhereUniqueInput
+    data: XOR<DailyCollectionSessionUpdateWithoutCollectorInput, DailyCollectionSessionUncheckedUpdateWithoutCollectorInput>
+  }
+
+  export type DailyCollectionSessionUpdateManyWithWhereWithoutCollectorInput = {
+    where: DailyCollectionSessionScalarWhereInput
+    data: XOR<DailyCollectionSessionUpdateManyMutationInput, DailyCollectionSessionUncheckedUpdateManyWithoutCollectorInput>
+  }
+
+  export type DailyCollectionEntryUpsertWithWhereUniqueWithoutCollectorInput = {
+    where: DailyCollectionEntryWhereUniqueInput
+    update: XOR<DailyCollectionEntryUpdateWithoutCollectorInput, DailyCollectionEntryUncheckedUpdateWithoutCollectorInput>
+    create: XOR<DailyCollectionEntryCreateWithoutCollectorInput, DailyCollectionEntryUncheckedCreateWithoutCollectorInput>
+  }
+
+  export type DailyCollectionEntryUpdateWithWhereUniqueWithoutCollectorInput = {
+    where: DailyCollectionEntryWhereUniqueInput
+    data: XOR<DailyCollectionEntryUpdateWithoutCollectorInput, DailyCollectionEntryUncheckedUpdateWithoutCollectorInput>
+  }
+
+  export type DailyCollectionEntryUpdateManyWithWhereWithoutCollectorInput = {
+    where: DailyCollectionEntryScalarWhereInput
+    data: XOR<DailyCollectionEntryUpdateManyMutationInput, DailyCollectionEntryUncheckedUpdateManyWithoutCollectorInput>
   }
 
   export type DailyCollectionAuditLogUpsertWithWhereUniqueWithoutCollectorInput = {
@@ -168375,6 +172893,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -168472,6 +172992,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -169308,6 +173830,46 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DailyCollectionEntryCreateWithoutStudentInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutDailyCollectionEntriesInput
+    session: DailyCollectionSessionCreateNestedOneWithoutEntriesInput
+    collector: CollectorCreateNestedOneWithoutCollectionEntriesInput
+  }
+
+  export type DailyCollectionEntryUncheckedCreateWithoutStudentInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    sessionId: string
+    collectorId: string
+  }
+
+  export type DailyCollectionEntryCreateOrConnectWithoutStudentInput = {
+    where: DailyCollectionEntryWhereUniqueInput
+    create: XOR<DailyCollectionEntryCreateWithoutStudentInput, DailyCollectionEntryUncheckedCreateWithoutStudentInput>
+  }
+
+  export type DailyCollectionEntryCreateManyStudentInputEnvelope = {
+    data: DailyCollectionEntryCreateManyStudentInput | DailyCollectionEntryCreateManyStudentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SchoolUpsertWithoutStudentsInput = {
     update: XOR<SchoolUpdateWithoutStudentsInput, SchoolUncheckedUpdateWithoutStudentsInput>
     create: XOR<SchoolCreateWithoutStudentsInput, SchoolUncheckedCreateWithoutStudentsInput>
@@ -169383,6 +173945,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -169480,6 +174044,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -169917,6 +174483,22 @@ export namespace Prisma {
     data: XOR<PaymentIntentUpdateManyMutationInput, PaymentIntentUncheckedUpdateManyWithoutStudentInput>
   }
 
+  export type DailyCollectionEntryUpsertWithWhereUniqueWithoutStudentInput = {
+    where: DailyCollectionEntryWhereUniqueInput
+    update: XOR<DailyCollectionEntryUpdateWithoutStudentInput, DailyCollectionEntryUncheckedUpdateWithoutStudentInput>
+    create: XOR<DailyCollectionEntryCreateWithoutStudentInput, DailyCollectionEntryUncheckedCreateWithoutStudentInput>
+  }
+
+  export type DailyCollectionEntryUpdateWithWhereUniqueWithoutStudentInput = {
+    where: DailyCollectionEntryWhereUniqueInput
+    data: XOR<DailyCollectionEntryUpdateWithoutStudentInput, DailyCollectionEntryUncheckedUpdateWithoutStudentInput>
+  }
+
+  export type DailyCollectionEntryUpdateManyWithWhereWithoutStudentInput = {
+    where: DailyCollectionEntryScalarWhereInput
+    data: XOR<DailyCollectionEntryUpdateManyMutationInput, DailyCollectionEntryUncheckedUpdateManyWithoutStudentInput>
+  }
+
   export type SchoolCreateWithoutTeachersInput = {
     id: string
     name: string
@@ -169981,6 +174563,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -170078,6 +174662,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -170981,6 +175567,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -171078,6 +175666,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -171479,6 +176069,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -171576,6 +176168,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -171648,6 +176242,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentInput = {
@@ -171684,6 +176279,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentInput = {
@@ -172269,6 +176865,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -172366,6 +176964,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -172681,6 +177281,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -172778,6 +177380,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -172902,6 +177506,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentRelationshipsInput = {
@@ -172938,6 +177543,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentRelationshipsInput = {
@@ -173055,6 +177661,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -173152,6 +177760,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -173288,6 +177898,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentRelationshipsInput = {
@@ -173324,6 +177935,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type ParentAccessAuditLogUpsertWithWhereUniqueWithoutRelationshipInput = {
@@ -173406,6 +178018,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -173503,6 +178117,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -173616,6 +178232,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -173713,6 +178331,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -173811,6 +178431,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -173908,6 +178530,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -174021,6 +178645,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -174118,6 +178744,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -174215,6 +178843,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -174312,6 +178942,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -174425,6 +179057,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -174522,6 +179156,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -174619,6 +179255,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -174716,6 +179354,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -174829,6 +179469,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -174926,6 +179568,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -175023,6 +179667,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -175120,6 +179766,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -175233,6 +179881,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -175330,6 +179980,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -175427,6 +180079,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -175524,6 +180178,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -175714,6 +180370,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -175811,6 +180469,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -175990,6 +180650,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -176087,6 +180749,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -176241,6 +180905,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -176338,6 +181004,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -176451,6 +181119,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -176548,6 +181218,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -176717,6 +181389,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -176814,6 +181488,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -176927,6 +181603,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -177024,6 +181702,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -177168,6 +181848,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -177265,6 +181947,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -177400,6 +182084,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -177497,6 +182183,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -177610,6 +182298,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -177707,6 +182397,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -177804,6 +182496,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -177901,6 +182595,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -178169,6 +182865,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -178266,6 +182964,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -178478,6 +183178,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -178575,6 +183277,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -178810,6 +183514,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -178907,6 +183613,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -179138,6 +183846,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -179235,6 +183945,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -179470,6 +184182,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -179567,6 +184281,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -179798,6 +184514,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -179895,6 +184613,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -180085,6 +184805,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -180182,6 +184904,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -180362,6 +185086,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -180459,6 +185185,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -180649,6 +185377,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -180746,6 +185476,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -180926,6 +185658,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -181023,6 +185757,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -181189,6 +185925,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -181286,6 +186024,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -181442,6 +186182,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -181539,6 +186281,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -181742,6 +186486,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -181839,6 +186585,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -181968,6 +186716,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -182065,6 +186815,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -182271,6 +187023,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -182368,6 +187122,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -182536,6 +187292,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -182633,6 +187391,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -182838,6 +187598,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -182935,6 +187697,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -183136,6 +187900,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -183233,6 +187999,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -183357,6 +188125,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentNotificationsInput = {
@@ -183393,6 +188162,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentNotificationsInput = {
@@ -183516,6 +188286,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -183613,6 +188385,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -183749,6 +188523,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentNotificationsInput = {
@@ -183785,6 +188560,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type ParentNotificationDeliveryLogUpsertWithWhereUniqueWithoutNotificationInput = {
@@ -183868,6 +188644,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -183965,6 +188743,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -184176,6 +188956,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -184273,6 +189055,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -184480,6 +189264,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -184577,6 +189363,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -184701,6 +189489,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutTeacherContactRequestsInput = {
@@ -184737,6 +189526,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutTeacherContactRequestsInput = {
@@ -184933,6 +189723,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -185030,6 +189822,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -185166,6 +189960,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutTeacherContactRequestsInput = {
@@ -185202,6 +189997,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type TeacherUpsertWithoutParentContactRequestsInput = {
@@ -185368,6 +190164,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -185465,6 +190263,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -185719,6 +190519,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutTeacherContactMessagesInput = {
@@ -185755,6 +190556,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutTeacherContactMessagesInput = {
@@ -185838,6 +190640,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -185935,6 +190739,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -186213,6 +191019,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutTeacherContactMessagesInput = {
@@ -186249,6 +191056,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type SchoolCreateWithoutParentActivityEventsInput = {
@@ -186316,6 +191124,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -186413,6 +191223,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -186537,6 +191349,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentActivityEventsInput = {
@@ -186573,6 +191386,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentActivityEventsInput = {
@@ -186733,6 +191547,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -186830,6 +191646,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -186966,6 +191784,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentActivityEventsInput = {
@@ -187002,6 +191821,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type TeacherUpsertWithoutParentActivityEventsInput = {
@@ -187151,6 +191971,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -187248,6 +192070,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -187320,6 +192144,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutGradeInput = {
@@ -187356,6 +192181,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutGradeInput = {
@@ -187568,6 +192394,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -187665,6 +192493,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -187826,6 +192656,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -187923,6 +192755,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -188113,6 +192947,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutClassInput = {
@@ -188149,6 +192984,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutClassInput = {
@@ -188570,6 +193406,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -188667,6 +193505,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -189037,6 +193877,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -189134,6 +193976,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -189537,6 +194381,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -189634,6 +194480,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -189827,6 +194675,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -189924,6 +194774,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -190364,6 +195216,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -190461,6 +195315,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -190822,6 +195678,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -190919,6 +195777,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -191097,6 +195957,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -191194,6 +196056,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -191349,6 +196213,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -191446,6 +196312,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -191659,6 +196527,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -191756,6 +196626,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -191927,6 +196799,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -192024,6 +196898,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -192122,6 +196998,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutHomeworkSubmissionsInput = {
@@ -192158,6 +197035,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutHomeworkSubmissionsInput = {
@@ -192317,6 +197195,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -192414,6 +197294,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -192524,6 +197406,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutHomeworkSubmissionsInput = {
@@ -192560,6 +197443,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type TeacherUpsertWithoutCheckedHomeworkInput = {
@@ -192709,6 +197593,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -192806,6 +197692,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -192926,6 +197814,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutResultsInput = {
@@ -192962,6 +197851,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutResultsInput = {
@@ -193044,6 +197934,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -193141,6 +198033,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -193279,6 +198173,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutResultsInput = {
@@ -193315,6 +198210,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type SchoolCreateWithoutAttendancesInput = {
@@ -193381,6 +198277,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -193478,6 +198376,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -193550,6 +198450,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutAttendancesInput = {
@@ -193586,6 +198487,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutAttendancesInput = {
@@ -193752,6 +198654,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -193849,6 +198753,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -193927,6 +198833,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutAttendancesInput = {
@@ -193963,6 +198870,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type LessonUpsertWithoutAttendancesInput = {
@@ -194087,6 +198995,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -194184,6 +199094,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -194296,6 +199208,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutAttendanceAuditLogsInput = {
@@ -194332,6 +199245,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutAttendanceAuditLogsInput = {
@@ -194450,6 +199364,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -194547,6 +199463,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -194671,6 +199589,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutAttendanceAuditLogsInput = {
@@ -194707,6 +199626,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type LessonUpsertWithoutAttendanceAuditLogsInput = {
@@ -194815,6 +199735,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -194912,6 +199834,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -195067,6 +199991,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -195164,6 +200090,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -195309,6 +200237,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -195406,6 +200336,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -195561,6 +200493,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -195658,6 +200592,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -195803,6 +200739,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -195900,6 +200838,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -196013,6 +200953,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -196110,6 +201052,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -196207,6 +201151,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -196304,6 +201250,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -196607,6 +201555,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -196704,6 +201654,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -196980,6 +201932,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -197077,6 +202031,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -197408,6 +202364,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -197505,6 +202463,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -197827,6 +202787,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -197924,6 +202886,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -198036,6 +203000,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutCaActivityScoresInput = {
@@ -198072,6 +203037,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutCaActivityScoresInput = {
@@ -198231,6 +203197,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -198328,6 +203296,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -198452,6 +203422,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutCaActivityScoresInput = {
@@ -198488,6 +203459,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type TeacherUpsertWithoutCaActivityScoresInput = {
@@ -198637,6 +203609,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -198734,6 +203708,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -198847,6 +203823,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -198944,6 +203922,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -199041,6 +204021,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -199138,6 +204120,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -199210,6 +204194,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutContinuousAssessmentsInput = {
@@ -199246,6 +204231,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutContinuousAssessmentsInput = {
@@ -199473,6 +204459,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -199570,6 +204558,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -199648,6 +204638,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutContinuousAssessmentsInput = {
@@ -199684,6 +204675,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type TeacherUpsertWithoutContinuousAssessmentsInput = {
@@ -199913,6 +204905,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -200010,6 +205004,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -200165,6 +205161,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -200262,6 +205260,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -200407,6 +205407,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -200504,6 +205506,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -200659,6 +205663,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -200756,6 +205762,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -200901,6 +205909,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -200998,6 +206008,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -201200,6 +206212,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -201297,6 +206311,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -201601,6 +206617,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -201698,6 +206716,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -201964,6 +206984,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -202061,6 +207083,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -202329,6 +207353,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -202426,6 +207452,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -202649,6 +207677,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -202746,6 +207776,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -203064,6 +208096,8 @@ export namespace Prisma {
     bursarInvites?: BursarInviteCreateNestedManyWithoutSchoolInput
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -203161,6 +208195,8 @@ export namespace Prisma {
     bursarInvites?: BursarInviteUncheckedCreateNestedManyWithoutSchoolInput
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -203259,6 +208295,54 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DailyCollectionSessionCreateWithoutCollectionTypeInput = {
+    id?: string
+    collectionDate: Date | string
+    status?: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal | DecimalJsLike | number | string
+    reportedAmount?: Decimal | DecimalJsLike | number | string
+    confirmedAmount?: Decimal | DecimalJsLike | number | string | null
+    submittedAt?: Date | string | null
+    confirmedAt?: Date | string | null
+    confirmedBy?: string | null
+    mismatchReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutDailyCollectionSessionsInput
+    collector: CollectorCreateNestedOneWithoutCollectionSessionsInput
+    entries?: DailyCollectionEntryCreateNestedManyWithoutSessionInput
+  }
+
+  export type DailyCollectionSessionUncheckedCreateWithoutCollectionTypeInput = {
+    id?: string
+    collectionDate: Date | string
+    status?: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal | DecimalJsLike | number | string
+    reportedAmount?: Decimal | DecimalJsLike | number | string
+    confirmedAmount?: Decimal | DecimalJsLike | number | string | null
+    submittedAt?: Date | string | null
+    confirmedAt?: Date | string | null
+    confirmedBy?: string | null
+    mismatchReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    collectorId: string
+    entries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSessionInput
+  }
+
+  export type DailyCollectionSessionCreateOrConnectWithoutCollectionTypeInput = {
+    where: DailyCollectionSessionWhereUniqueInput
+    create: XOR<DailyCollectionSessionCreateWithoutCollectionTypeInput, DailyCollectionSessionUncheckedCreateWithoutCollectionTypeInput>
+  }
+
+  export type DailyCollectionSessionCreateManyCollectionTypeInputEnvelope = {
+    data: DailyCollectionSessionCreateManyCollectionTypeInput | DailyCollectionSessionCreateManyCollectionTypeInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SchoolUpsertWithoutDailyCollectionTypesInput = {
     update: XOR<SchoolUpdateWithoutDailyCollectionTypesInput, SchoolUncheckedUpdateWithoutDailyCollectionTypesInput>
     create: XOR<SchoolCreateWithoutDailyCollectionTypesInput, SchoolUncheckedCreateWithoutDailyCollectionTypesInput>
@@ -203334,6 +208418,8 @@ export namespace Prisma {
     bursarInvites?: BursarInviteUpdateManyWithoutSchoolNestedInput
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -203431,6 +208517,8 @@ export namespace Prisma {
     bursarInvites?: BursarInviteUncheckedUpdateManyWithoutSchoolNestedInput
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -203496,6 +208584,22 @@ export namespace Prisma {
     data: XOR<DailyCollectionAuditLogUpdateManyMutationInput, DailyCollectionAuditLogUncheckedUpdateManyWithoutCollectionTypeInput>
   }
 
+  export type DailyCollectionSessionUpsertWithWhereUniqueWithoutCollectionTypeInput = {
+    where: DailyCollectionSessionWhereUniqueInput
+    update: XOR<DailyCollectionSessionUpdateWithoutCollectionTypeInput, DailyCollectionSessionUncheckedUpdateWithoutCollectionTypeInput>
+    create: XOR<DailyCollectionSessionCreateWithoutCollectionTypeInput, DailyCollectionSessionUncheckedCreateWithoutCollectionTypeInput>
+  }
+
+  export type DailyCollectionSessionUpdateWithWhereUniqueWithoutCollectionTypeInput = {
+    where: DailyCollectionSessionWhereUniqueInput
+    data: XOR<DailyCollectionSessionUpdateWithoutCollectionTypeInput, DailyCollectionSessionUncheckedUpdateWithoutCollectionTypeInput>
+  }
+
+  export type DailyCollectionSessionUpdateManyWithWhereWithoutCollectionTypeInput = {
+    where: DailyCollectionSessionScalarWhereInput
+    data: XOR<DailyCollectionSessionUpdateManyMutationInput, DailyCollectionSessionUncheckedUpdateManyWithoutCollectionTypeInput>
+  }
+
   export type CollectorCreateWithoutCollectionTypesInput = {
     id: string
     username: string
@@ -203509,6 +208613,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutCollectorsInput
+    collectionSessions?: DailyCollectionSessionCreateNestedManyWithoutCollectorInput
+    collectionEntries?: DailyCollectionEntryCreateNestedManyWithoutCollectorInput
     auditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutCollectorInput
   }
 
@@ -203525,6 +208631,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     schoolId?: string
+    collectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutCollectorInput
+    collectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutCollectorInput
     auditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutCollectorInput
   }
 
@@ -203548,6 +208656,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutDailyCollectionTypesInput
     auditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutCollectionTypeInput
+    sessions?: DailyCollectionSessionCreateNestedManyWithoutCollectionTypeInput
   }
 
   export type DailyCollectionTypeUncheckedCreateWithoutCollectorsInput = {
@@ -203565,6 +208674,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     schoolId?: string
     auditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutCollectionTypeInput
+    sessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutCollectionTypeInput
   }
 
   export type DailyCollectionTypeCreateOrConnectWithoutCollectorsInput = {
@@ -203596,6 +208706,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutCollectorsNestedInput
+    collectionSessions?: DailyCollectionSessionUpdateManyWithoutCollectorNestedInput
+    collectionEntries?: DailyCollectionEntryUpdateManyWithoutCollectorNestedInput
     auditLogs?: DailyCollectionAuditLogUpdateManyWithoutCollectorNestedInput
   }
 
@@ -203612,6 +208724,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
+    collectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutCollectorNestedInput
+    collectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutCollectorNestedInput
     auditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutCollectorNestedInput
   }
 
@@ -203641,6 +208755,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutDailyCollectionTypesNestedInput
     auditLogs?: DailyCollectionAuditLogUpdateManyWithoutCollectionTypeNestedInput
+    sessions?: DailyCollectionSessionUpdateManyWithoutCollectionTypeNestedInput
   }
 
   export type DailyCollectionTypeUncheckedUpdateWithoutCollectorsInput = {
@@ -203658,6 +208773,1407 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     auditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutCollectionTypeNestedInput
+    sessions?: DailyCollectionSessionUncheckedUpdateManyWithoutCollectionTypeNestedInput
+  }
+
+  export type SchoolCreateWithoutDailyCollectionSessionsInput = {
+    id: string
+    name: string
+    slug: string
+    code?: string | null
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    collectors?: CollectorCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
+    timetablePublications?: TimetablePublicationCreateNestedManyWithoutSchoolInput
+    publishedTimetableLessons?: PublishedTimetableLessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentSettings?: SchoolPaymentSettingCreateNestedOneWithoutSchoolInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    bursars?: BursarCreateNestedManyWithoutSchoolInput
+    bursarInvites?: BursarInviteCreateNestedManyWithoutSchoolInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
+    dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
+    appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
+    appNotificationAuditLogs?: AppNotificationAuditLogCreateNestedManyWithoutSchoolInput
+    appNotificationSettings?: AppNotificationSettingCreateNestedOneWithoutSchoolInput
+    appNotificationPreferences?: AppNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutDailyCollectionSessionsInput = {
+    id: string
+    name: string
+    slug: string
+    code?: string | null
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    collectors?: CollectorUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
+    timetablePublications?: TimetablePublicationUncheckedCreateNestedManyWithoutSchoolInput
+    publishedTimetableLessons?: PublishedTimetableLessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentSettings?: SchoolPaymentSettingUncheckedCreateNestedOneWithoutSchoolInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    bursars?: BursarUncheckedCreateNestedManyWithoutSchoolInput
+    bursarInvites?: BursarInviteUncheckedCreateNestedManyWithoutSchoolInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationAuditLogs?: AppNotificationAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationSettings?: AppNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    appNotificationPreferences?: AppNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutDailyCollectionSessionsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutDailyCollectionSessionsInput, SchoolUncheckedCreateWithoutDailyCollectionSessionsInput>
+  }
+
+  export type CollectorCreateWithoutCollectionSessionsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    sex: $Enums.UserSex
+    email?: string | null
+    phone?: string | null
+    address?: string | null
+    status?: $Enums.CollectorStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutCollectorsInput
+    collectionTypes?: DailyCollectionTypeCollectorCreateNestedManyWithoutCollectorInput
+    collectionEntries?: DailyCollectionEntryCreateNestedManyWithoutCollectorInput
+    auditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutCollectorInput
+  }
+
+  export type CollectorUncheckedCreateWithoutCollectionSessionsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    sex: $Enums.UserSex
+    email?: string | null
+    phone?: string | null
+    address?: string | null
+    status?: $Enums.CollectorStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    collectionTypes?: DailyCollectionTypeCollectorUncheckedCreateNestedManyWithoutCollectorInput
+    collectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutCollectorInput
+    auditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutCollectorInput
+  }
+
+  export type CollectorCreateOrConnectWithoutCollectionSessionsInput = {
+    where: CollectorWhereUniqueInput
+    create: XOR<CollectorCreateWithoutCollectionSessionsInput, CollectorUncheckedCreateWithoutCollectionSessionsInput>
+  }
+
+  export type DailyCollectionTypeCreateWithoutSessionsInput = {
+    id?: string
+    name: string
+    normalizedName: string
+    category?: $Enums.FeeCategory
+    amount: Decimal | DecimalJsLike | number | string
+    description?: string | null
+    isActive?: boolean
+    requiresBursarConfirmation?: boolean
+    createdBy: string
+    updatedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutDailyCollectionTypesInput
+    collectors?: DailyCollectionTypeCollectorCreateNestedManyWithoutCollectionTypeInput
+    auditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutCollectionTypeInput
+  }
+
+  export type DailyCollectionTypeUncheckedCreateWithoutSessionsInput = {
+    id?: string
+    name: string
+    normalizedName: string
+    category?: $Enums.FeeCategory
+    amount: Decimal | DecimalJsLike | number | string
+    description?: string | null
+    isActive?: boolean
+    requiresBursarConfirmation?: boolean
+    createdBy: string
+    updatedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    collectors?: DailyCollectionTypeCollectorUncheckedCreateNestedManyWithoutCollectionTypeInput
+    auditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutCollectionTypeInput
+  }
+
+  export type DailyCollectionTypeCreateOrConnectWithoutSessionsInput = {
+    where: DailyCollectionTypeWhereUniqueInput
+    create: XOR<DailyCollectionTypeCreateWithoutSessionsInput, DailyCollectionTypeUncheckedCreateWithoutSessionsInput>
+  }
+
+  export type DailyCollectionEntryCreateWithoutSessionInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutDailyCollectionEntriesInput
+    student: StudentCreateNestedOneWithoutDailyCollectionEntriesInput
+    collector: CollectorCreateNestedOneWithoutCollectionEntriesInput
+  }
+
+  export type DailyCollectionEntryUncheckedCreateWithoutSessionInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    studentId: string
+    collectorId: string
+  }
+
+  export type DailyCollectionEntryCreateOrConnectWithoutSessionInput = {
+    where: DailyCollectionEntryWhereUniqueInput
+    create: XOR<DailyCollectionEntryCreateWithoutSessionInput, DailyCollectionEntryUncheckedCreateWithoutSessionInput>
+  }
+
+  export type DailyCollectionEntryCreateManySessionInputEnvelope = {
+    data: DailyCollectionEntryCreateManySessionInput | DailyCollectionEntryCreateManySessionInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SchoolUpsertWithoutDailyCollectionSessionsInput = {
+    update: XOR<SchoolUpdateWithoutDailyCollectionSessionsInput, SchoolUncheckedUpdateWithoutDailyCollectionSessionsInput>
+    create: XOR<SchoolCreateWithoutDailyCollectionSessionsInput, SchoolUncheckedCreateWithoutDailyCollectionSessionsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutDailyCollectionSessionsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutDailyCollectionSessionsInput, SchoolUncheckedUpdateWithoutDailyCollectionSessionsInput>
+  }
+
+  export type SchoolUpdateWithoutDailyCollectionSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    collectors?: CollectorUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
+    timetablePublications?: TimetablePublicationUpdateManyWithoutSchoolNestedInput
+    publishedTimetableLessons?: PublishedTimetableLessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentSettings?: SchoolPaymentSettingUpdateOneWithoutSchoolNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    bursars?: BursarUpdateManyWithoutSchoolNestedInput
+    bursarInvites?: BursarInviteUpdateManyWithoutSchoolNestedInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
+    dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
+    appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
+    appNotificationAuditLogs?: AppNotificationAuditLogUpdateManyWithoutSchoolNestedInput
+    appNotificationSettings?: AppNotificationSettingUpdateOneWithoutSchoolNestedInput
+    appNotificationPreferences?: AppNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutDailyCollectionSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    collectors?: CollectorUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
+    timetablePublications?: TimetablePublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    publishedTimetableLessons?: PublishedTimetableLessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentSettings?: SchoolPaymentSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    bursars?: BursarUncheckedUpdateManyWithoutSchoolNestedInput
+    bursarInvites?: BursarInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationAuditLogs?: AppNotificationAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationSettings?: AppNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    appNotificationPreferences?: AppNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type CollectorUpsertWithoutCollectionSessionsInput = {
+    update: XOR<CollectorUpdateWithoutCollectionSessionsInput, CollectorUncheckedUpdateWithoutCollectionSessionsInput>
+    create: XOR<CollectorCreateWithoutCollectionSessionsInput, CollectorUncheckedCreateWithoutCollectionSessionsInput>
+    where?: CollectorWhereInput
+  }
+
+  export type CollectorUpdateToOneWithWhereWithoutCollectionSessionsInput = {
+    where?: CollectorWhereInput
+    data: XOR<CollectorUpdateWithoutCollectionSessionsInput, CollectorUncheckedUpdateWithoutCollectionSessionsInput>
+  }
+
+  export type CollectorUpdateWithoutCollectionSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCollectorStatusFieldUpdateOperationsInput | $Enums.CollectorStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutCollectorsNestedInput
+    collectionTypes?: DailyCollectionTypeCollectorUpdateManyWithoutCollectorNestedInput
+    collectionEntries?: DailyCollectionEntryUpdateManyWithoutCollectorNestedInput
+    auditLogs?: DailyCollectionAuditLogUpdateManyWithoutCollectorNestedInput
+  }
+
+  export type CollectorUncheckedUpdateWithoutCollectionSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCollectorStatusFieldUpdateOperationsInput | $Enums.CollectorStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    collectionTypes?: DailyCollectionTypeCollectorUncheckedUpdateManyWithoutCollectorNestedInput
+    collectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutCollectorNestedInput
+    auditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutCollectorNestedInput
+  }
+
+  export type DailyCollectionTypeUpsertWithoutSessionsInput = {
+    update: XOR<DailyCollectionTypeUpdateWithoutSessionsInput, DailyCollectionTypeUncheckedUpdateWithoutSessionsInput>
+    create: XOR<DailyCollectionTypeCreateWithoutSessionsInput, DailyCollectionTypeUncheckedCreateWithoutSessionsInput>
+    where?: DailyCollectionTypeWhereInput
+  }
+
+  export type DailyCollectionTypeUpdateToOneWithWhereWithoutSessionsInput = {
+    where?: DailyCollectionTypeWhereInput
+    data: XOR<DailyCollectionTypeUpdateWithoutSessionsInput, DailyCollectionTypeUncheckedUpdateWithoutSessionsInput>
+  }
+
+  export type DailyCollectionTypeUpdateWithoutSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
+    category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    requiresBursarConfirmation?: BoolFieldUpdateOperationsInput | boolean
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutDailyCollectionTypesNestedInput
+    collectors?: DailyCollectionTypeCollectorUpdateManyWithoutCollectionTypeNestedInput
+    auditLogs?: DailyCollectionAuditLogUpdateManyWithoutCollectionTypeNestedInput
+  }
+
+  export type DailyCollectionTypeUncheckedUpdateWithoutSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
+    category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    requiresBursarConfirmation?: BoolFieldUpdateOperationsInput | boolean
+    createdBy?: StringFieldUpdateOperationsInput | string
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    collectors?: DailyCollectionTypeCollectorUncheckedUpdateManyWithoutCollectionTypeNestedInput
+    auditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutCollectionTypeNestedInput
+  }
+
+  export type DailyCollectionEntryUpsertWithWhereUniqueWithoutSessionInput = {
+    where: DailyCollectionEntryWhereUniqueInput
+    update: XOR<DailyCollectionEntryUpdateWithoutSessionInput, DailyCollectionEntryUncheckedUpdateWithoutSessionInput>
+    create: XOR<DailyCollectionEntryCreateWithoutSessionInput, DailyCollectionEntryUncheckedCreateWithoutSessionInput>
+  }
+
+  export type DailyCollectionEntryUpdateWithWhereUniqueWithoutSessionInput = {
+    where: DailyCollectionEntryWhereUniqueInput
+    data: XOR<DailyCollectionEntryUpdateWithoutSessionInput, DailyCollectionEntryUncheckedUpdateWithoutSessionInput>
+  }
+
+  export type DailyCollectionEntryUpdateManyWithWhereWithoutSessionInput = {
+    where: DailyCollectionEntryScalarWhereInput
+    data: XOR<DailyCollectionEntryUpdateManyMutationInput, DailyCollectionEntryUncheckedUpdateManyWithoutSessionInput>
+  }
+
+  export type SchoolCreateWithoutDailyCollectionEntriesInput = {
+    id: string
+    name: string
+    slug: string
+    code?: string | null
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    collectors?: CollectorCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
+    timetablePublications?: TimetablePublicationCreateNestedManyWithoutSchoolInput
+    publishedTimetableLessons?: PublishedTimetableLessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentSettings?: SchoolPaymentSettingCreateNestedOneWithoutSchoolInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    bursars?: BursarCreateNestedManyWithoutSchoolInput
+    bursarInvites?: BursarInviteCreateNestedManyWithoutSchoolInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
+    dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
+    appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
+    appNotificationAuditLogs?: AppNotificationAuditLogCreateNestedManyWithoutSchoolInput
+    appNotificationSettings?: AppNotificationSettingCreateNestedOneWithoutSchoolInput
+    appNotificationPreferences?: AppNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutDailyCollectionEntriesInput = {
+    id: string
+    name: string
+    slug: string
+    code?: string | null
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    collectors?: CollectorUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
+    timetablePublications?: TimetablePublicationUncheckedCreateNestedManyWithoutSchoolInput
+    publishedTimetableLessons?: PublishedTimetableLessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentSettings?: SchoolPaymentSettingUncheckedCreateNestedOneWithoutSchoolInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    bursars?: BursarUncheckedCreateNestedManyWithoutSchoolInput
+    bursarInvites?: BursarInviteUncheckedCreateNestedManyWithoutSchoolInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationAuditLogs?: AppNotificationAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationSettings?: AppNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    appNotificationPreferences?: AppNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutDailyCollectionEntriesInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutDailyCollectionEntriesInput, SchoolUncheckedCreateWithoutDailyCollectionEntriesInput>
+  }
+
+  export type DailyCollectionSessionCreateWithoutEntriesInput = {
+    id?: string
+    collectionDate: Date | string
+    status?: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal | DecimalJsLike | number | string
+    reportedAmount?: Decimal | DecimalJsLike | number | string
+    confirmedAmount?: Decimal | DecimalJsLike | number | string | null
+    submittedAt?: Date | string | null
+    confirmedAt?: Date | string | null
+    confirmedBy?: string | null
+    mismatchReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutDailyCollectionSessionsInput
+    collector: CollectorCreateNestedOneWithoutCollectionSessionsInput
+    collectionType: DailyCollectionTypeCreateNestedOneWithoutSessionsInput
+  }
+
+  export type DailyCollectionSessionUncheckedCreateWithoutEntriesInput = {
+    id?: string
+    collectionDate: Date | string
+    status?: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal | DecimalJsLike | number | string
+    reportedAmount?: Decimal | DecimalJsLike | number | string
+    confirmedAmount?: Decimal | DecimalJsLike | number | string | null
+    submittedAt?: Date | string | null
+    confirmedAt?: Date | string | null
+    confirmedBy?: string | null
+    mismatchReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    collectorId: string
+    collectionTypeId: string
+  }
+
+  export type DailyCollectionSessionCreateOrConnectWithoutEntriesInput = {
+    where: DailyCollectionSessionWhereUniqueInput
+    create: XOR<DailyCollectionSessionCreateWithoutEntriesInput, DailyCollectionSessionUncheckedCreateWithoutEntriesInput>
+  }
+
+  export type StudentCreateWithoutDailyCollectionEntriesInput = {
+    id: string
+    username: string
+    admissionNumber?: string | null
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    status?: $Enums.StudentStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutStudentsInput
+    parent: ParentCreateNestedOneWithoutStudentsInput
+    class: ClassCreateNestedOneWithoutStudentsInput
+    grade: GradeCreateNestedOneWithoutStudentsInput
+    attendances?: AttendanceCreateNestedManyWithoutStudentInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutStudentInput
+    results?: ResultCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
+    bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
+    teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
+    teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
+    parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentUncheckedCreateWithoutDailyCollectionEntriesInput = {
+    id: string
+    username: string
+    admissionNumber?: string | null
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    status?: $Enums.StudentStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    parentId: string
+    classId: number
+    gradeId: number
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutStudentInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    results?: ResultUncheckedCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
+    bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
+    teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
+    teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentCreateOrConnectWithoutDailyCollectionEntriesInput = {
+    where: StudentWhereUniqueInput
+    create: XOR<StudentCreateWithoutDailyCollectionEntriesInput, StudentUncheckedCreateWithoutDailyCollectionEntriesInput>
+  }
+
+  export type CollectorCreateWithoutCollectionEntriesInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    sex: $Enums.UserSex
+    email?: string | null
+    phone?: string | null
+    address?: string | null
+    status?: $Enums.CollectorStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutCollectorsInput
+    collectionTypes?: DailyCollectionTypeCollectorCreateNestedManyWithoutCollectorInput
+    collectionSessions?: DailyCollectionSessionCreateNestedManyWithoutCollectorInput
+    auditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutCollectorInput
+  }
+
+  export type CollectorUncheckedCreateWithoutCollectionEntriesInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    sex: $Enums.UserSex
+    email?: string | null
+    phone?: string | null
+    address?: string | null
+    status?: $Enums.CollectorStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    collectionTypes?: DailyCollectionTypeCollectorUncheckedCreateNestedManyWithoutCollectorInput
+    collectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutCollectorInput
+    auditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutCollectorInput
+  }
+
+  export type CollectorCreateOrConnectWithoutCollectionEntriesInput = {
+    where: CollectorWhereUniqueInput
+    create: XOR<CollectorCreateWithoutCollectionEntriesInput, CollectorUncheckedCreateWithoutCollectionEntriesInput>
+  }
+
+  export type SchoolUpsertWithoutDailyCollectionEntriesInput = {
+    update: XOR<SchoolUpdateWithoutDailyCollectionEntriesInput, SchoolUncheckedUpdateWithoutDailyCollectionEntriesInput>
+    create: XOR<SchoolCreateWithoutDailyCollectionEntriesInput, SchoolUncheckedCreateWithoutDailyCollectionEntriesInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutDailyCollectionEntriesInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutDailyCollectionEntriesInput, SchoolUncheckedUpdateWithoutDailyCollectionEntriesInput>
+  }
+
+  export type SchoolUpdateWithoutDailyCollectionEntriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    collectors?: CollectorUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
+    timetablePublications?: TimetablePublicationUpdateManyWithoutSchoolNestedInput
+    publishedTimetableLessons?: PublishedTimetableLessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentSettings?: SchoolPaymentSettingUpdateOneWithoutSchoolNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    bursars?: BursarUpdateManyWithoutSchoolNestedInput
+    bursarInvites?: BursarInviteUpdateManyWithoutSchoolNestedInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
+    dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
+    appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
+    appNotificationAuditLogs?: AppNotificationAuditLogUpdateManyWithoutSchoolNestedInput
+    appNotificationSettings?: AppNotificationSettingUpdateOneWithoutSchoolNestedInput
+    appNotificationPreferences?: AppNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutDailyCollectionEntriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    collectors?: CollectorUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
+    timetablePublications?: TimetablePublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    publishedTimetableLessons?: PublishedTimetableLessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentSettings?: SchoolPaymentSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    bursars?: BursarUncheckedUpdateManyWithoutSchoolNestedInput
+    bursarInvites?: BursarInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationAuditLogs?: AppNotificationAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationSettings?: AppNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    appNotificationPreferences?: AppNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type DailyCollectionSessionUpsertWithoutEntriesInput = {
+    update: XOR<DailyCollectionSessionUpdateWithoutEntriesInput, DailyCollectionSessionUncheckedUpdateWithoutEntriesInput>
+    create: XOR<DailyCollectionSessionCreateWithoutEntriesInput, DailyCollectionSessionUncheckedCreateWithoutEntriesInput>
+    where?: DailyCollectionSessionWhereInput
+  }
+
+  export type DailyCollectionSessionUpdateToOneWithWhereWithoutEntriesInput = {
+    where?: DailyCollectionSessionWhereInput
+    data: XOR<DailyCollectionSessionUpdateWithoutEntriesInput, DailyCollectionSessionUncheckedUpdateWithoutEntriesInput>
+  }
+
+  export type DailyCollectionSessionUpdateWithoutEntriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutDailyCollectionSessionsNestedInput
+    collector?: CollectorUpdateOneRequiredWithoutCollectionSessionsNestedInput
+    collectionType?: DailyCollectionTypeUpdateOneRequiredWithoutSessionsNestedInput
+  }
+
+  export type DailyCollectionSessionUncheckedUpdateWithoutEntriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    collectorId?: StringFieldUpdateOperationsInput | string
+    collectionTypeId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type StudentUpsertWithoutDailyCollectionEntriesInput = {
+    update: XOR<StudentUpdateWithoutDailyCollectionEntriesInput, StudentUncheckedUpdateWithoutDailyCollectionEntriesInput>
+    create: XOR<StudentCreateWithoutDailyCollectionEntriesInput, StudentUncheckedCreateWithoutDailyCollectionEntriesInput>
+    where?: StudentWhereInput
+  }
+
+  export type StudentUpdateToOneWithWhereWithoutDailyCollectionEntriesInput = {
+    where?: StudentWhereInput
+    data: XOR<StudentUpdateWithoutDailyCollectionEntriesInput, StudentUncheckedUpdateWithoutDailyCollectionEntriesInput>
+  }
+
+  export type StudentUpdateWithoutDailyCollectionEntriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    admissionNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
+    parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
+    class?: ClassUpdateOneRequiredWithoutStudentsNestedInput
+    grade?: GradeUpdateOneRequiredWithoutStudentsNestedInput
+    attendances?: AttendanceUpdateManyWithoutStudentNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutStudentNestedInput
+    results?: ResultUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
+    bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
+    teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
+    teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+  }
+
+  export type StudentUncheckedUpdateWithoutDailyCollectionEntriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    admissionNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    classId?: IntFieldUpdateOperationsInput | number
+    gradeId?: IntFieldUpdateOperationsInput | number
+    attendances?: AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
+    bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
+    teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
+    teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+  }
+
+  export type CollectorUpsertWithoutCollectionEntriesInput = {
+    update: XOR<CollectorUpdateWithoutCollectionEntriesInput, CollectorUncheckedUpdateWithoutCollectionEntriesInput>
+    create: XOR<CollectorCreateWithoutCollectionEntriesInput, CollectorUncheckedCreateWithoutCollectionEntriesInput>
+    where?: CollectorWhereInput
+  }
+
+  export type CollectorUpdateToOneWithWhereWithoutCollectionEntriesInput = {
+    where?: CollectorWhereInput
+    data: XOR<CollectorUpdateWithoutCollectionEntriesInput, CollectorUncheckedUpdateWithoutCollectionEntriesInput>
+  }
+
+  export type CollectorUpdateWithoutCollectionEntriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCollectorStatusFieldUpdateOperationsInput | $Enums.CollectorStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutCollectorsNestedInput
+    collectionTypes?: DailyCollectionTypeCollectorUpdateManyWithoutCollectorNestedInput
+    collectionSessions?: DailyCollectionSessionUpdateManyWithoutCollectorNestedInput
+    auditLogs?: DailyCollectionAuditLogUpdateManyWithoutCollectorNestedInput
+  }
+
+  export type CollectorUncheckedUpdateWithoutCollectionEntriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCollectorStatusFieldUpdateOperationsInput | $Enums.CollectorStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    collectionTypes?: DailyCollectionTypeCollectorUncheckedUpdateManyWithoutCollectorNestedInput
+    collectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutCollectorNestedInput
+    auditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutCollectorNestedInput
   }
 
   export type SchoolCreateWithoutDailyCollectionAuditLogsInput = {
@@ -203724,6 +210240,8 @@ export namespace Prisma {
     bursarInvites?: BursarInviteCreateNestedManyWithoutSchoolInput
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -203821,6 +210339,8 @@ export namespace Prisma {
     bursarInvites?: BursarInviteUncheckedCreateNestedManyWithoutSchoolInput
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -203873,6 +210393,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutCollectorsInput
     collectionTypes?: DailyCollectionTypeCollectorCreateNestedManyWithoutCollectorInput
+    collectionSessions?: DailyCollectionSessionCreateNestedManyWithoutCollectorInput
+    collectionEntries?: DailyCollectionEntryCreateNestedManyWithoutCollectorInput
   }
 
   export type CollectorUncheckedCreateWithoutAuditLogsInput = {
@@ -203889,6 +210411,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     schoolId?: string
     collectionTypes?: DailyCollectionTypeCollectorUncheckedCreateNestedManyWithoutCollectorInput
+    collectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutCollectorInput
+    collectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutCollectorInput
   }
 
   export type CollectorCreateOrConnectWithoutAuditLogsInput = {
@@ -203911,6 +210435,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutDailyCollectionTypesInput
     collectors?: DailyCollectionTypeCollectorCreateNestedManyWithoutCollectionTypeInput
+    sessions?: DailyCollectionSessionCreateNestedManyWithoutCollectionTypeInput
   }
 
   export type DailyCollectionTypeUncheckedCreateWithoutAuditLogsInput = {
@@ -203928,6 +210453,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     schoolId?: string
     collectors?: DailyCollectionTypeCollectorUncheckedCreateNestedManyWithoutCollectionTypeInput
+    sessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutCollectionTypeInput
   }
 
   export type DailyCollectionTypeCreateOrConnectWithoutAuditLogsInput = {
@@ -204010,6 +210536,8 @@ export namespace Prisma {
     bursarInvites?: BursarInviteUpdateManyWithoutSchoolNestedInput
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -204107,6 +210635,8 @@ export namespace Prisma {
     bursarInvites?: BursarInviteUncheckedUpdateManyWithoutSchoolNestedInput
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -204165,6 +210695,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutCollectorsNestedInput
     collectionTypes?: DailyCollectionTypeCollectorUpdateManyWithoutCollectorNestedInput
+    collectionSessions?: DailyCollectionSessionUpdateManyWithoutCollectorNestedInput
+    collectionEntries?: DailyCollectionEntryUpdateManyWithoutCollectorNestedInput
   }
 
   export type CollectorUncheckedUpdateWithoutAuditLogsInput = {
@@ -204181,6 +210713,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     collectionTypes?: DailyCollectionTypeCollectorUncheckedUpdateManyWithoutCollectorNestedInput
+    collectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutCollectorNestedInput
+    collectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutCollectorNestedInput
   }
 
   export type DailyCollectionTypeUpsertWithoutAuditLogsInput = {
@@ -204209,6 +210743,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutDailyCollectionTypesNestedInput
     collectors?: DailyCollectionTypeCollectorUpdateManyWithoutCollectionTypeNestedInput
+    sessions?: DailyCollectionSessionUpdateManyWithoutCollectionTypeNestedInput
   }
 
   export type DailyCollectionTypeUncheckedUpdateWithoutAuditLogsInput = {
@@ -204226,6 +210761,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     collectors?: DailyCollectionTypeCollectorUncheckedUpdateManyWithoutCollectionTypeNestedInput
+    sessions?: DailyCollectionSessionUncheckedUpdateManyWithoutCollectionTypeNestedInput
   }
 
   export type SchoolCreateWithoutStudentBillsInput = {
@@ -204292,6 +210828,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -204389,6 +210927,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -204461,6 +211001,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutBillsInput = {
@@ -204497,6 +211038,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutBillsInput = {
@@ -204860,6 +211402,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -204957,6 +211501,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -205035,6 +211581,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutBillsInput = {
@@ -205071,6 +211618,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type FeeStructureUpsertWithoutBillsInput = {
@@ -205452,6 +212000,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -205549,6 +212099,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -205674,6 +212226,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutPaymentIntentsInput = {
@@ -205710,6 +212263,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutPaymentIntentsInput = {
@@ -205816,6 +212370,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -205913,6 +212469,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -206050,6 +212608,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutPaymentIntentsInput = {
@@ -206086,6 +212645,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type PaymentIntentLineUpsertWithWhereUniqueWithoutPaymentIntentInput = {
@@ -206374,6 +212934,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -206471,6 +213033,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -206837,6 +213401,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -206934,6 +213500,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -207175,6 +213743,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -207272,6 +213842,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -207533,6 +214105,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -207630,6 +214204,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -207893,6 +214469,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -207990,6 +214568,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -208153,6 +214733,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -208250,6 +214832,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -208403,6 +214987,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -208500,6 +215086,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -208661,6 +215249,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -208758,6 +215348,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -208909,6 +215501,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -209006,6 +215600,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -209119,6 +215715,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -209216,6 +215814,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -209313,6 +215913,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -209410,6 +216012,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -209523,6 +216127,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -209620,6 +216226,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -209717,6 +216325,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -209814,6 +216424,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -209939,6 +216551,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutFinanceQueriesInput = {
@@ -209975,6 +216588,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutFinanceQueriesInput = {
@@ -210155,6 +216769,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -210252,6 +216868,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -210389,6 +217007,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutFinanceQueriesInput = {
@@ -210425,6 +217044,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentBillUpsertWithoutFinanceQueriesInput = {
@@ -210602,6 +217222,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -210699,6 +217321,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -210812,6 +217436,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -210909,6 +217535,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -211006,6 +217634,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -211103,6 +217733,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -211266,6 +217898,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -211363,6 +217997,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -211516,6 +218152,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
@@ -211613,6 +218251,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
@@ -211726,6 +218366,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
@@ -211823,6 +218465,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
@@ -211920,6 +218564,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
@@ -212017,6 +218663,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
@@ -212130,6 +218778,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
@@ -212227,6 +218877,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
@@ -212324,6 +218976,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -212421,6 +219075,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -212639,6 +219295,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -212736,6 +219394,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -212932,6 +219592,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -213029,6 +219691,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -213281,6 +219945,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -213378,6 +220044,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -213604,6 +220272,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentInviteLinksInput = {
@@ -213640,6 +220309,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentInviteLinksInput = {
@@ -213751,6 +220421,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentInviteLinksInput = {
@@ -213787,6 +220458,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type SchoolCreateWithoutParentInviteAuditLogsInput = {
@@ -213854,6 +220526,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -213951,6 +220625,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -214117,6 +220793,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -214214,6 +220892,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -214369,6 +221049,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -214466,6 +221148,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -214642,6 +221326,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -214739,6 +221425,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -214893,6 +221581,8 @@ export namespace Prisma {
     bursarInvites?: BursarInviteCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -214990,6 +221680,8 @@ export namespace Prisma {
     bursarInvites?: BursarInviteUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -215154,6 +221846,8 @@ export namespace Prisma {
     bursarInvites?: BursarInviteUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -215251,6 +221945,8 @@ export namespace Prisma {
     bursarInvites?: BursarInviteUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -215406,6 +222102,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -215503,6 +222201,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -215627,6 +222327,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentAccessAuditLogsInput = {
@@ -215663,6 +222364,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
     paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutStudentInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentAccessAuditLogsInput = {
@@ -215842,6 +222544,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -215939,6 +222643,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -216075,6 +222781,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentAccessAuditLogsInput = {
@@ -216111,6 +222818,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type ParentInviteUpsertWithoutAccessAuditLogsInput = {
@@ -216286,6 +222994,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
@@ -216383,6 +223093,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -216551,6 +223263,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
@@ -216648,6 +223362,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -216806,6 +223522,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
@@ -216903,6 +223621,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
@@ -217016,6 +223736,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
@@ -217113,6 +223835,8 @@ export namespace Prisma {
     bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
     dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
@@ -217751,6 +224475,39 @@ export namespace Prisma {
     collectionTypeId?: string | null
   }
 
+  export type DailyCollectionSessionCreateManySchoolInput = {
+    id?: string
+    collectionDate: Date | string
+    status?: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal | DecimalJsLike | number | string
+    reportedAmount?: Decimal | DecimalJsLike | number | string
+    confirmedAmount?: Decimal | DecimalJsLike | number | string | null
+    submittedAt?: Date | string | null
+    confirmedAt?: Date | string | null
+    confirmedBy?: string | null
+    mismatchReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    collectorId: string
+    collectionTypeId: string
+  }
+
+  export type DailyCollectionEntryCreateManySchoolInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessionId: string
+    studentId: string
+    collectorId: string
+  }
+
   export type SchoolInviteCreateManySchoolInput = {
     id?: string
     email: string
@@ -218224,6 +224981,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutSchoolInput = {
@@ -218260,6 +225018,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutSchoolInput = {
@@ -218444,6 +225203,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     collectionTypes?: DailyCollectionTypeCollectorUpdateManyWithoutCollectorNestedInput
+    collectionSessions?: DailyCollectionSessionUpdateManyWithoutCollectorNestedInput
+    collectionEntries?: DailyCollectionEntryUpdateManyWithoutCollectorNestedInput
     auditLogs?: DailyCollectionAuditLogUpdateManyWithoutCollectorNestedInput
   }
 
@@ -218460,6 +225221,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     collectionTypes?: DailyCollectionTypeCollectorUncheckedUpdateManyWithoutCollectorNestedInput
+    collectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutCollectorNestedInput
+    collectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutCollectorNestedInput
     auditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutCollectorNestedInput
   }
 
@@ -220093,6 +226856,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     collectors?: DailyCollectionTypeCollectorUpdateManyWithoutCollectionTypeNestedInput
     auditLogs?: DailyCollectionAuditLogUpdateManyWithoutCollectionTypeNestedInput
+    sessions?: DailyCollectionSessionUpdateManyWithoutCollectionTypeNestedInput
   }
 
   export type DailyCollectionTypeUncheckedUpdateWithoutSchoolInput = {
@@ -220110,6 +226874,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     collectors?: DailyCollectionTypeCollectorUncheckedUpdateManyWithoutCollectionTypeNestedInput
     auditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutCollectionTypeNestedInput
+    sessions?: DailyCollectionSessionUncheckedUpdateManyWithoutCollectionTypeNestedInput
   }
 
   export type DailyCollectionTypeUncheckedUpdateManyWithoutSchoolInput = {
@@ -220161,6 +226926,107 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     collectorId?: NullableStringFieldUpdateOperationsInput | string | null
     collectionTypeId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type DailyCollectionSessionUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    collector?: CollectorUpdateOneRequiredWithoutCollectionSessionsNestedInput
+    collectionType?: DailyCollectionTypeUpdateOneRequiredWithoutSessionsNestedInput
+    entries?: DailyCollectionEntryUpdateManyWithoutSessionNestedInput
+  }
+
+  export type DailyCollectionSessionUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    collectorId?: StringFieldUpdateOperationsInput | string
+    collectionTypeId?: StringFieldUpdateOperationsInput | string
+    entries?: DailyCollectionEntryUncheckedUpdateManyWithoutSessionNestedInput
+  }
+
+  export type DailyCollectionSessionUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    collectorId?: StringFieldUpdateOperationsInput | string
+    collectionTypeId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DailyCollectionEntryUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    session?: DailyCollectionSessionUpdateOneRequiredWithoutEntriesNestedInput
+    student?: StudentUpdateOneRequiredWithoutDailyCollectionEntriesNestedInput
+    collector?: CollectorUpdateOneRequiredWithoutCollectionEntriesNestedInput
+  }
+
+  export type DailyCollectionEntryUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    collectorId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DailyCollectionEntryUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    collectorId?: StringFieldUpdateOperationsInput | string
   }
 
   export type SchoolInviteUpdateWithoutSchoolInput = {
@@ -221556,6 +228422,39 @@ export namespace Prisma {
     collectionTypeId: string
   }
 
+  export type DailyCollectionSessionCreateManyCollectorInput = {
+    id?: string
+    collectionDate: Date | string
+    status?: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal | DecimalJsLike | number | string
+    reportedAmount?: Decimal | DecimalJsLike | number | string
+    confirmedAmount?: Decimal | DecimalJsLike | number | string | null
+    submittedAt?: Date | string | null
+    confirmedAt?: Date | string | null
+    confirmedBy?: string | null
+    mismatchReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    collectionTypeId: string
+  }
+
+  export type DailyCollectionEntryCreateManyCollectorInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    sessionId: string
+    studentId: string
+  }
+
   export type DailyCollectionAuditLogCreateManyCollectorInput = {
     id?: string
     action: $Enums.DailyCollectionAuditAction
@@ -221590,6 +228489,107 @@ export namespace Prisma {
     assignedBy?: StringFieldUpdateOperationsInput | string
     schoolId?: StringFieldUpdateOperationsInput | string
     collectionTypeId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DailyCollectionSessionUpdateWithoutCollectorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutDailyCollectionSessionsNestedInput
+    collectionType?: DailyCollectionTypeUpdateOneRequiredWithoutSessionsNestedInput
+    entries?: DailyCollectionEntryUpdateManyWithoutSessionNestedInput
+  }
+
+  export type DailyCollectionSessionUncheckedUpdateWithoutCollectorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    collectionTypeId?: StringFieldUpdateOperationsInput | string
+    entries?: DailyCollectionEntryUncheckedUpdateManyWithoutSessionNestedInput
+  }
+
+  export type DailyCollectionSessionUncheckedUpdateManyWithoutCollectorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    collectionTypeId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DailyCollectionEntryUpdateWithoutCollectorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutDailyCollectionEntriesNestedInput
+    session?: DailyCollectionSessionUpdateOneRequiredWithoutEntriesNestedInput
+    student?: StudentUpdateOneRequiredWithoutDailyCollectionEntriesNestedInput
+  }
+
+  export type DailyCollectionEntryUncheckedUpdateWithoutCollectorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DailyCollectionEntryUncheckedUpdateManyWithoutCollectorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
   }
 
   export type DailyCollectionAuditLogUpdateWithoutCollectorInput = {
@@ -221878,6 +228878,21 @@ export namespace Prisma {
     updatedAt?: Date | string
     schoolId: string
     parentId: string
+  }
+
+  export type DailyCollectionEntryCreateManyStudentInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    sessionId: string
+    collectorId: string
   }
 
   export type AttendanceUpdateWithoutStudentInput = {
@@ -222649,6 +229664,51 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DailyCollectionEntryUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutDailyCollectionEntriesNestedInput
+    session?: DailyCollectionSessionUpdateOneRequiredWithoutEntriesNestedInput
+    collector?: CollectorUpdateOneRequiredWithoutCollectionEntriesNestedInput
+  }
+
+  export type DailyCollectionEntryUncheckedUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    collectorId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DailyCollectionEntryUncheckedUpdateManyWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    collectorId?: StringFieldUpdateOperationsInput | string
   }
 
   export type LessonCreateManyTeacherInput = {
@@ -224043,6 +231103,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentInput = {
@@ -224079,6 +231140,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutParentInput = {
@@ -225356,6 +232418,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutGradeInput = {
@@ -225392,6 +232455,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutGradeInput = {
@@ -225771,6 +232835,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutClassInput = {
@@ -225807,6 +232872,7 @@ export namespace Prisma {
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutStudentNestedInput
     paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutStudentNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutClassInput = {
@@ -227400,6 +234466,24 @@ export namespace Prisma {
     collectorId?: string | null
   }
 
+  export type DailyCollectionSessionCreateManyCollectionTypeInput = {
+    id?: string
+    collectionDate: Date | string
+    status?: $Enums.DailyCollectionSessionStatus
+    expectedAmount: Decimal | DecimalJsLike | number | string
+    reportedAmount?: Decimal | DecimalJsLike | number | string
+    confirmedAmount?: Decimal | DecimalJsLike | number | string | null
+    submittedAt?: Date | string | null
+    confirmedAt?: Date | string | null
+    confirmedBy?: string | null
+    mismatchReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    collectorId: string
+  }
+
   export type DailyCollectionTypeCollectorUpdateWithoutCollectionTypeInput = {
     id?: StringFieldUpdateOperationsInput | string
     assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -227458,6 +234542,122 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     collectorId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type DailyCollectionSessionUpdateWithoutCollectionTypeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutDailyCollectionSessionsNestedInput
+    collector?: CollectorUpdateOneRequiredWithoutCollectionSessionsNestedInput
+    entries?: DailyCollectionEntryUpdateManyWithoutSessionNestedInput
+  }
+
+  export type DailyCollectionSessionUncheckedUpdateWithoutCollectionTypeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    collectorId?: StringFieldUpdateOperationsInput | string
+    entries?: DailyCollectionEntryUncheckedUpdateManyWithoutSessionNestedInput
+  }
+
+  export type DailyCollectionSessionUncheckedUpdateManyWithoutCollectionTypeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    collectionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumDailyCollectionSessionStatusFieldUpdateOperationsInput | $Enums.DailyCollectionSessionStatus
+    expectedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reportedAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    confirmedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    mismatchReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    collectorId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DailyCollectionEntryCreateManySessionInput = {
+    id?: string
+    status?: $Enums.DailyCollectionEntryStatus
+    amountExpected: Decimal | DecimalJsLike | number | string
+    amountCollected?: Decimal | DecimalJsLike | number | string
+    note?: string | null
+    markedAt?: Date | string | null
+    markedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId?: string
+    studentId: string
+    collectorId: string
+  }
+
+  export type DailyCollectionEntryUpdateWithoutSessionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutDailyCollectionEntriesNestedInput
+    student?: StudentUpdateOneRequiredWithoutDailyCollectionEntriesNestedInput
+    collector?: CollectorUpdateOneRequiredWithoutCollectionEntriesNestedInput
+  }
+
+  export type DailyCollectionEntryUncheckedUpdateWithoutSessionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    collectorId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DailyCollectionEntryUncheckedUpdateManyWithoutSessionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDailyCollectionEntryStatusFieldUpdateOperationsInput | $Enums.DailyCollectionEntryStatus
+    amountExpected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountCollected?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    markedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    markedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    collectorId?: StringFieldUpdateOperationsInput | string
   }
 
   export type BillLineItemCreateManyStudentBillInput = {

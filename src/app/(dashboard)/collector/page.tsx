@@ -1,7 +1,7 @@
-import { Banknote, ClipboardCheck, ShieldCheck } from "lucide-react";
+import { ClipboardCheck, ShieldCheck } from "lucide-react";
 import WelcomeBanner from "@/src/components/WelcomeBanner";
+import DailyCollectionCollectorPanel from "@/src/components/DailyCollectionCollectorPanel";
 import { requirePageSession } from "@/src/lib/authz";
-import { formatGHS } from "@/src/lib/constants/finance";
 import prisma from "@/src/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +13,7 @@ function titledName(collector: { name: string; sex: "MALE" | "FEMALE" }) {
 
 export default async function CollectorDashboardPage() {
   const { userId, schoolId } = await requirePageSession(["collector"]);
+  const today = new Date(`${new Date().toISOString().slice(0, 10)}T12:00:00.000Z`);
 
   const collector = await prisma.collector.findFirst({
     where: { id: userId, schoolId, status: "ACTIVE" },
@@ -38,6 +39,27 @@ export default async function CollectorDashboardPage() {
     );
   }
 
+  const sessions = await prisma.dailyCollectionSession.findMany({
+    where: { schoolId, collectorId: collector.id, collectionDate: today },
+    include: {
+      entries: {
+        include: {
+          student: {
+            select: {
+              id: true,
+              name: true,
+              surname: true,
+              admissionNumber: true,
+              class: { select: { name: true } },
+            },
+          },
+        },
+        orderBy: { createdAt: "asc" },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
   return (
     <main className="flex-1 m-4 mt-0 flex flex-col gap-4">
       <WelcomeBanner
@@ -51,9 +73,9 @@ export default async function CollectorDashboardPage() {
         <div className="flex gap-3">
           <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-blue-700" />
           <div>
-            <p className="text-sm font-black text-blue-900">Collector workspace is being prepared</p>
+            <p className="text-sm font-black text-blue-900">Daily collection workflow</p>
             <p className="mt-1 text-sm font-semibold leading-6 text-blue-800">
-              Edujay can now recognize collector accounts and assigned daily collection setup. Opening today&apos;s session and marking students paid begins in the next step.
+              Open today&apos;s assigned session, mark each active student paid, unpaid, or excused, then submit the total for bursar confirmation.
             </p>
           </div>
         </div>
@@ -67,39 +89,38 @@ export default async function CollectorDashboardPage() {
           </div>
           <div className="inline-flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-500">
             <ClipboardCheck size={14} />
-            Setup only
+            Today
           </div>
         </div>
-
-        <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {collector.collectionTypes.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-gray-200 p-8 text-center md:col-span-2 xl:col-span-3">
-              <p className="text-sm font-black text-gray-800">No assigned daily collection setup yet.</p>
-              <p className="mt-1 text-sm font-semibold text-gray-400">
-                When the bursar assigns feeding or another daily collection type to you, it will appear here.
-              </p>
-            </div>
-          ) : (
-            collector.collectionTypes.map(({ collectionType }) => (
-              <article key={collectionType.id} className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-black text-gray-900">{collectionType.name}</p>
-                    <p className="mt-1 text-xs font-semibold text-gray-400">{collectionType.category}</p>
-                  </div>
-                  <Banknote className="h-5 w-5 shrink-0 text-blue-600" />
-                </div>
-                <p className="mt-3 text-xl font-black text-gray-900">{formatGHS(collectionType.amount)}</p>
-                <p className="mt-2 text-xs font-semibold leading-5 text-gray-500">
-                  {collectionType.requiresBursarConfirmation
-                    ? "Bursar confirmation required after collection."
-                    : "Bursar confirmation not required for this setup."}
-                </p>
-              </article>
-            ))
-          )}
-        </div>
       </section>
+
+      <DailyCollectionCollectorPanel
+        collectionTypes={collector.collectionTypes.map(({ collectionType }) => ({
+          id: collectionType.id,
+          name: collectionType.name,
+          category: collectionType.category,
+          amount: Number(collectionType.amount),
+          requiresBursarConfirmation: collectionType.requiresBursarConfirmation,
+        }))}
+        sessions={sessions.map((session) => ({
+          id: session.id,
+          collectionDate: session.collectionDate.toISOString(),
+          status: session.status,
+          expectedAmount: Number(session.expectedAmount),
+          reportedAmount: Number(session.reportedAmount),
+          confirmedAmount: session.confirmedAmount === null ? null : Number(session.confirmedAmount),
+          mismatchReason: session.mismatchReason,
+          collectionTypeId: session.collectionTypeId,
+          entries: session.entries.map((entry) => ({
+            id: entry.id,
+            status: entry.status,
+            amountExpected: Number(entry.amountExpected),
+            amountCollected: Number(entry.amountCollected),
+            note: entry.note,
+            student: entry.student,
+          })),
+        }))}
+      />
     </main>
   );
 }

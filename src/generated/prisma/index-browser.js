@@ -1045,6 +1045,41 @@ exports.Prisma.DailyCollectionTypeCollectorScalarFieldEnum = {
   collectionTypeId: 'collectionTypeId'
 };
 
+exports.Prisma.DailyCollectionSessionScalarFieldEnum = {
+  id: 'id',
+  collectionDate: 'collectionDate',
+  status: 'status',
+  expectedAmount: 'expectedAmount',
+  reportedAmount: 'reportedAmount',
+  confirmedAmount: 'confirmedAmount',
+  submittedAt: 'submittedAt',
+  confirmedAt: 'confirmedAt',
+  confirmedBy: 'confirmedBy',
+  mismatchReason: 'mismatchReason',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId',
+  collectorId: 'collectorId',
+  collectionTypeId: 'collectionTypeId'
+};
+
+exports.Prisma.DailyCollectionEntryScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  amountExpected: 'amountExpected',
+  amountCollected: 'amountCollected',
+  note: 'note',
+  markedAt: 'markedAt',
+  markedBy: 'markedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId',
+  sessionId: 'sessionId',
+  studentId: 'studentId',
+  collectorId: 'collectorId'
+};
+
 exports.Prisma.DailyCollectionAuditLogScalarFieldEnum = {
   id: 'id',
   action: 'action',
@@ -1864,6 +1899,20 @@ exports.FeeBillingFrequency = exports.$Enums.FeeBillingFrequency = {
   ONE_TIME: 'ONE_TIME'
 };
 
+exports.DailyCollectionSessionStatus = exports.$Enums.DailyCollectionSessionStatus = {
+  OPEN: 'OPEN',
+  SUBMITTED: 'SUBMITTED',
+  CONFIRMED: 'CONFIRMED',
+  FLAGGED: 'FLAGGED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.DailyCollectionEntryStatus = exports.$Enums.DailyCollectionEntryStatus = {
+  UNPAID: 'UNPAID',
+  PAID: 'PAID',
+  EXCUSED: 'EXCUSED'
+};
+
 exports.DailyCollectionAuditAction = exports.$Enums.DailyCollectionAuditAction = {
   COLLECTOR_CREATED: 'COLLECTOR_CREATED',
   COLLECTOR_UPDATED: 'COLLECTOR_UPDATED',
@@ -1875,7 +1924,12 @@ exports.DailyCollectionAuditAction = exports.$Enums.DailyCollectionAuditAction =
   COLLECTION_TYPE_DEACTIVATED: 'COLLECTION_TYPE_DEACTIVATED',
   COLLECTION_TYPE_REACTIVATED: 'COLLECTION_TYPE_REACTIVATED',
   COLLECTOR_ASSIGNED: 'COLLECTOR_ASSIGNED',
-  COLLECTOR_UNASSIGNED: 'COLLECTOR_UNASSIGNED'
+  COLLECTOR_UNASSIGNED: 'COLLECTOR_UNASSIGNED',
+  SESSION_OPENED: 'SESSION_OPENED',
+  ENTRY_MARKED: 'ENTRY_MARKED',
+  SESSION_SUBMITTED: 'SESSION_SUBMITTED',
+  SESSION_CONFIRMED: 'SESSION_CONFIRMED',
+  SESSION_FLAGGED: 'SESSION_FLAGGED'
 };
 
 exports.BillStatus = exports.$Enums.BillStatus = {
@@ -2164,6 +2218,8 @@ exports.Prisma.ModelName = {
   FeeItem: 'FeeItem',
   DailyCollectionType: 'DailyCollectionType',
   DailyCollectionTypeCollector: 'DailyCollectionTypeCollector',
+  DailyCollectionSession: 'DailyCollectionSession',
+  DailyCollectionEntry: 'DailyCollectionEntry',
   DailyCollectionAuditLog: 'DailyCollectionAuditLog',
   StudentBill: 'StudentBill',
   BillLineItem: 'BillLineItem',

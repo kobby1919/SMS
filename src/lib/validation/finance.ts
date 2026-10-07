@@ -7,6 +7,7 @@ import {
   paymentMethodSchema,
   paymentStatusSchema,
   positiveIntSchema,
+  stringIdSchema,
   termSchema,
 } from "./common";
 
@@ -183,6 +184,46 @@ export const dailyCollectionTypeUpdateSchema = dailyCollectionTypeSchema.partial
   (value) => Object.keys(value).length > 0,
   "Provide a daily collection setup field to update.",
 );
+
+const dailyCollectionReviewAmountSchema = z.coerce
+  .number()
+  .nonnegative("Amount received cannot be negative.")
+  .max(1_000_000, "Amount received is too high.")
+  .refine((value) => Number.isFinite(value), "Amount received must be a valid number.")
+  .refine(
+    (value) => Math.abs(value * 100 - Math.round(value * 100)) < 0.000001,
+    "Amount received can only have two decimal places.",
+  );
+
+export const dailyCollectionOpenSessionSchema = z.object({
+  collectionTypeId: stringIdSchema,
+  collectionDate: z
+    .string()
+    .trim()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD date format.")
+    .optional(),
+});
+
+export const dailyCollectionMarkEntrySchema = z.object({
+  entryId: stringIdSchema,
+  status: z.enum(["PAID", "UNPAID", "EXCUSED"]),
+  note: z.string().trim().max(500).optional().nullable(),
+});
+
+export const dailyCollectionSubmitSessionSchema = z.object({
+  sessionId: stringIdSchema,
+});
+
+export const dailyCollectionConfirmSessionSchema = z.object({
+  sessionId: stringIdSchema,
+  amountReceived: dailyCollectionReviewAmountSchema,
+});
+
+export const dailyCollectionFlagSessionSchema = z.object({
+  sessionId: stringIdSchema,
+  amountReceived: dailyCollectionReviewAmountSchema,
+  reason: nonEmptyStringSchema.min(5).max(500),
+});
 
 export const waiveBillSchema = z.object({
   billId: positiveIntSchema,

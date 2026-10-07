@@ -53,6 +53,11 @@ const requiredDelegates = [
   "appNotificationSetting",
   "appNotificationPreference",
   "schoolPaymentSetting",
+  "dailyCollectionType",
+  "dailyCollectionTypeCollector",
+  "dailyCollectionSession",
+  "dailyCollectionEntry",
+  "dailyCollectionAuditLog",
 ] as const;
 
 function hasRequiredDelegates(client: ReturnType<typeof prismaClientSingleton>) {
