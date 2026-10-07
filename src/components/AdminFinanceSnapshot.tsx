@@ -235,7 +235,7 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
                   <div className="min-w-0">
                     <p className="truncate text-sm font-black text-gray-950">{item.name}</p>
                     <p className="mt-1 text-[11px] font-semibold text-gray-400">
-                      {item.category.toLowerCase().replaceAll("_", " ")} · {item.billingFrequency.toLowerCase().replaceAll("_", " ")} · {item.studentCount} student{item.studentCount === 1 ? "" : "s"}
+                      {item.category.toLowerCase().replaceAll("_", " ")} · {item.billingFrequency.toLowerCase().replaceAll("_", " ")} · {item.studentCount} student{item.studentCount === 1 ? "" : "s"} · {item.lineItemCount} line item{item.lineItemCount === 1 ? "" : "s"}
                     </p>
                   </div>
                   <MiniMoney label="Expected" value={formatGHS(item.expected)} />

@@ -204,11 +204,10 @@ function buildBillMoneyPosition(
         collected: item.collected,
         outstanding: item.outstanding,
         collectionRate: percentage(item.collected, item.expected),
-        billCount: item.lineItemIds.size,
+        lineItemCount: item.lineItemIds.size,
         studentCount: item.studentIds.size,
       }))
-      .sort((a, b) => b.outstanding - a.outstanding || b.expected - a.expected || a.name.localeCompare(b.name))
-      .slice(0, 8),
+      .sort((a, b) => b.outstanding - a.outstanding || b.expected - a.expected || a.name.localeCompare(b.name)),
   };
 }
 
