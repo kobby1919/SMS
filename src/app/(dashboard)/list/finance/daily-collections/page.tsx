@@ -115,9 +115,9 @@ export default async function DailyCollectionsSetupPage() {
           />
           <ReportTile
             icon={<Users size={16} />}
-            label="Unpaid entries"
+            label="Unpaid follow-up"
             value={report.summary.unpaidEntries}
-            detail={formatGHS(report.summary.unpaidAmount)}
+            detail={`${formatGHS(report.summary.unpaidAmount)} after submission`}
             tone="bg-rose-50 text-rose-700"
           />
           <ReportTile
@@ -142,7 +142,7 @@ export default async function DailyCollectionsSetupPage() {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <h3 className="text-sm font-black text-gray-900">Collection types today</h3>
-                  <p className="text-xs font-semibold text-gray-400">Confirmed, reported, and unpaid by setup.</p>
+                  <p className="text-xs font-semibold text-gray-400">Confirmed, submitted, and in-progress totals by setup.</p>
                 </div>
                 <Banknote size={17} className="text-emerald-600" />
               </div>
@@ -160,10 +160,11 @@ export default async function DailyCollectionsSetupPage() {
                         {formatGHS(item.confirmedAmount)}
                       </span>
                     </div>
-                    <div className="mt-3 grid grid-cols-2 gap-2 min-[520px]:grid-cols-4">
+                    <div className="mt-3 grid grid-cols-2 gap-2 min-[520px]:grid-cols-5">
                       <MiniReportStat label="Reported" value={formatGHS(item.reportedAmount)} />
                       <MiniReportStat label="Paid" value={item.paidEntries} />
-                      <MiniReportStat label="Unpaid" value={item.unpaidEntries} />
+                      <MiniReportStat label="Follow-up" value={item.unpaidEntries} />
+                      <MiniReportStat label="In progress" value={item.inProgressUnpaidEntries} />
                       <MiniReportStat label="Review" value={item.sessionsNeedingReview} />
                     </div>
                   </div>
@@ -174,15 +175,15 @@ export default async function DailyCollectionsSetupPage() {
             <div className="rounded-2xl border border-gray-100 p-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-sm font-black text-gray-900">Unpaid daily entries</h3>
-                  <p className="text-xs font-semibold text-gray-400">Highest attention list for today.</p>
+                  <h3 className="text-sm font-black text-gray-900">Unpaid daily follow-up</h3>
+                  <p className="text-xs font-semibold text-gray-400">Only submitted, confirmed, or flagged sessions appear here.</p>
                 </div>
                 <AlertTriangle size={17} className="text-rose-500" />
               </div>
               <div className="mt-3 space-y-2">
                 {report.unpaidList.length === 0 ? (
                   <p className="rounded-xl bg-gray-50 p-4 text-sm font-semibold text-gray-400">
-                    No unpaid daily collection entries for today.
+                    No unpaid submitted daily collection entries for today.
                   </p>
                 ) : (
                   report.unpaidList.map((entry) => (

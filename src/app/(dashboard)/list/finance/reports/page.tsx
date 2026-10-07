@@ -90,7 +90,7 @@ const FinanceReportsPage = async ({
     {
       label: "Daily collections",
       value: formatGHS(report.dailyCollections.summary.confirmedAmount),
-      sub: `${report.dailyCollections.summary.unpaidEntries} unpaid daily entr${report.dailyCollections.summary.unpaidEntries === 1 ? "y" : "ies"}`,
+      sub: `${report.dailyCollections.summary.unpaidEntries} submitted unpaid entr${report.dailyCollections.summary.unpaidEntries === 1 ? "y" : "ies"}`,
       icon: <ShieldCheck size={18} />,
       tone: "bg-violet-50 text-violet-700",
     },

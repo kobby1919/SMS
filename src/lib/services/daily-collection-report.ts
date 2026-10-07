@@ -26,7 +26,7 @@ function latestSessionFirst<T extends { collectionDate: Date; updatedAt: Date }>
   return b.collectionDate.getTime() - a.collectionDate.getTime() || b.updatedAt.getTime() - a.updatedAt.getTime();
 }
 
-const TRACKED_ENTRY_STATUSES: DailyCollectionSessionStatus[] = ["OPEN", "SUBMITTED", "CONFIRMED", "FLAGGED"];
+const FOLLOW_UP_ENTRY_STATUSES: DailyCollectionSessionStatus[] = ["SUBMITTED", "CONFIRMED", "FLAGGED"];
 
 export async function getDailyCollectionReport(schoolId: string, date = new Date()) {
   const { start, end } = dayBounds(date);
@@ -55,6 +55,7 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
           select: { id: true, name: true, surname: true },
         },
         entries: {
+          where: { student: { status: "ACTIVE" } },
           select: {
             id: true,
             status: true,
@@ -71,8 +72,9 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
         status: "UNPAID",
         session: {
           collectionDate: { gte: start, lte: end },
-          status: { in: TRACKED_ENTRY_STATUSES },
+          status: { in: FOLLOW_UP_ENTRY_STATUSES },
         },
+        student: { status: "ACTIVE" },
       },
       select: {
         id: true,
@@ -132,6 +134,7 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
     unpaidEntries: 0,
     excusedEntries: 0,
     unpaidAmount: 0,
+    inProgressUnpaidEntries: 0,
   };
 
   const byType = new Map<
@@ -147,6 +150,7 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
       paidEntries: number;
       unpaidEntries: number;
       excusedEntries: number;
+      inProgressUnpaidEntries: number;
       sessionCount: number;
       sessionsNeedingReview: number;
     }
@@ -177,6 +181,7 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
       paidEntries: 0,
       unpaidEntries: 0,
       excusedEntries: 0,
+      inProgressUnpaidEntries: 0,
       sessionCount: 0,
       sessionsNeedingReview: 0,
     };
@@ -198,6 +203,9 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
       } else if (entry.status === "EXCUSED") {
         summary.excusedEntries += 1;
         type.excusedEntries += 1;
+      } else if (session.status === "OPEN") {
+        summary.inProgressUnpaidEntries += 1;
+        type.inProgressUnpaidEntries += 1;
       } else {
         summary.unpaidEntries += 1;
         summary.unpaidAmount += amountExpected;
@@ -262,6 +270,6 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
     byType: Array.from(byType.values()).sort((a, b) => b.confirmedAmount - a.confirmedAmount || a.name.localeCompare(b.name)),
     sessionsNeedingReview,
     unpaidList,
-    hasActivity: sessions.length > 0,
+    hasActivity: sessions.some((session) => session.status !== "CANCELLED"),
   };
 }

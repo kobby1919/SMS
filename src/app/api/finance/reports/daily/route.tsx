@@ -250,7 +250,7 @@ export async function GET(req: NextRequest) {
         ? `${report.dailyCollections.byStatus.SUBMITTED + report.dailyCollections.byStatus.FLAGGED} daily collection session${report.dailyCollections.byStatus.SUBMITTED + report.dailyCollections.byStatus.FLAGGED === 1 ? "" : "s"} need bursar review before gate collections are trusted.`
         : null,
       report.dailyCollections.summary.unpaidEntries > 0
-        ? `${report.dailyCollections.summary.unpaidEntries} unpaid daily collection entr${report.dailyCollections.summary.unpaidEntries === 1 ? "y" : "ies"} worth ${formatGHS(report.dailyCollections.summary.unpaidAmount)} need follow-up.`
+        ? `${report.dailyCollections.summary.unpaidEntries} submitted unpaid daily collection entr${report.dailyCollections.summary.unpaidEntries === 1 ? "y" : "ies"} worth ${formatGHS(report.dailyCollections.summary.unpaidAmount)} need follow-up.`
         : null,
       correctionReversalReport.pendingReview > 0 ? `${correctionReversalReport.pendingReview} correction request${correctionReversalReport.pendingReview === 1 ? "" : "s"} need school head decision.` : null,
       correctionReversalReport.approvedWaitingApplication > 0 ? `${correctionReversalReport.approvedWaitingApplication} approved correction${correctionReversalReport.approvedWaitingApplication === 1 ? "" : "s"} still need to be applied.` : null,
@@ -302,7 +302,7 @@ export async function GET(req: NextRequest) {
               <SummaryBox label="Corrections needing action" value={controlExceptionCount.toLocaleString("en-GH")} sub={`${correctionReversalReport.pendingReview} pending correction review, ${correctionReversalReport.approvedWaitingApplication} approved not applied.`} color="#1d4ed8" borderColor="#bfdbfe" />
             </View>
             <View style={S.statGrid}>
-              <SummaryBox label="Daily gate collections" value={formatGHS(report.dailyCollections.summary.confirmedAmount)} sub={`${report.dailyCollections.summary.unpaidEntries} unpaid daily entr${report.dailyCollections.summary.unpaidEntries === 1 ? "y" : "ies"}. ${report.dailyCollections.byStatus.SUBMITTED + report.dailyCollections.byStatus.FLAGGED} session${report.dailyCollections.byStatus.SUBMITTED + report.dailyCollections.byStatus.FLAGGED === 1 ? "" : "s"} need review.`} color="#6d28d9" borderColor="#ddd6fe" />
+              <SummaryBox label="Daily gate collections" value={formatGHS(report.dailyCollections.summary.confirmedAmount)} sub={`${report.dailyCollections.summary.unpaidEntries} submitted unpaid entr${report.dailyCollections.summary.unpaidEntries === 1 ? "y" : "ies"}. ${report.dailyCollections.summary.inProgressUnpaidEntries} open entr${report.dailyCollections.summary.inProgressUnpaidEntries === 1 ? "y" : "ies"} still in progress.`} color="#6d28d9" borderColor="#ddd6fe" />
               <SummaryBox label="Collector reported total" value={formatGHS(report.dailyCollections.summary.reportedAmount)} sub="Reported collections are not treated as confirmed revenue until reviewed." color="#92400e" borderColor="#fde68a" />
             </View>
 

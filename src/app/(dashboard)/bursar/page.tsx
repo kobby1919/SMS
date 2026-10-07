@@ -276,10 +276,14 @@ const BursarPage = async ({
                 Review daily collections <ChevronRight size={15} />
               </Link>
             </div>
-            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
               <div className="rounded-xl bg-white px-3 py-2">
-                <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Unpaid entries</p>
+                <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Unpaid follow-up</p>
                 <p className="mt-1 text-sm font-black text-rose-700">{dailyCollections.summary.unpaidEntries}</p>
+              </div>
+              <div className="rounded-xl bg-white px-3 py-2">
+                <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Open in progress</p>
+                <p className="mt-1 text-sm font-black text-blue-700">{dailyCollections.summary.inProgressUnpaidEntries}</p>
               </div>
               <div className="rounded-xl bg-white px-3 py-2">
                 <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Reported, unchecked</p>
