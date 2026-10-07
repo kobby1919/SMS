@@ -6,6 +6,7 @@ import {
   createDailyCollectionType,
   setDailyCollectionTypeActive,
 } from "@/src/lib/actions/dailyCollectionSetupActions";
+import DailyCollectionCollectorAssignments from "@/src/components/DailyCollectionCollectorAssignments";
 import {
   FEE_CATEGORY_LABELS,
   formatGHS,
@@ -25,14 +26,23 @@ type DailyCollectionTypeRow = {
       id: string;
       name: string;
       surname: string;
+      email: string | null;
       status: string;
     };
   }>;
 };
 
+type CollectorOption = {
+  id: string;
+  name: string;
+  surname: string;
+  email: string | null;
+};
+
 type Props = {
   collectionTypes: DailyCollectionTypeRow[];
   activeCollectorCount: number;
+  collectorOptions: CollectorOption[];
 };
 
 const feeCategories = Object.entries(FEE_CATEGORY_LABELS).filter(([key]) =>
@@ -47,7 +57,7 @@ const initialForm = {
   requiresBursarConfirmation: true,
 };
 
-export default function DailyCollectionSetupPanel({ collectionTypes, activeCollectorCount }: Props) {
+export default function DailyCollectionSetupPanel({ collectionTypes, activeCollectorCount, collectorOptions }: Props) {
   const [form, setForm] = useState(initialForm);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -130,14 +140,26 @@ export default function DailyCollectionSetupPanel({ collectionTypes, activeColle
           ) : (
             <>
               {activeTypes.map((item) => (
-                <CollectionTypeCard key={item.id} item={item} onToggle={() => handleToggle(item.id, false)} busy={isPending} />
+                <CollectionTypeCard
+                  key={item.id}
+                  item={item}
+                  collectorOptions={collectorOptions}
+                  onToggle={() => handleToggle(item.id, false)}
+                  busy={isPending}
+                />
               ))}
               {inactiveTypes.length > 0 && (
                 <div className="pt-2">
                   <p className="mb-2 text-xs font-black uppercase tracking-wider text-gray-400">Inactive setup</p>
                   <div className="grid gap-3">
                     {inactiveTypes.map((item) => (
-                      <CollectionTypeCard key={item.id} item={item} onToggle={() => handleToggle(item.id, true)} busy={isPending} />
+                      <CollectionTypeCard
+                        key={item.id}
+                        item={item}
+                        collectorOptions={collectorOptions}
+                        onToggle={() => handleToggle(item.id, true)}
+                        busy={isPending}
+                      />
                     ))}
                   </div>
                 </div>
@@ -250,10 +272,12 @@ function CollectionTypeCard({
   item,
   busy,
   onToggle,
+  collectorOptions,
 }: {
   item: DailyCollectionTypeRow;
   busy: boolean;
   onToggle: () => void;
+  collectorOptions: CollectorOption[];
 }) {
   const assignedCollectors = item.collectors.filter((entry) => entry.collector.status === "ACTIVE");
 
@@ -284,6 +308,13 @@ function CollectionTypeCard({
           <p className="mt-1 text-xs font-semibold text-gray-400">
             {assignedCollectors.length} assigned collector{assignedCollectors.length === 1 ? "" : "s"}
           </p>
+          {item.isActive && (
+            <DailyCollectionCollectorAssignments
+              collectionTypeId={item.id}
+              assignedCollectors={assignedCollectors.map((entry) => entry.collector)}
+              collectorOptions={collectorOptions}
+            />
+          )}
         </div>
 
         <button

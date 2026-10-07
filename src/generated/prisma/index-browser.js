@@ -1423,6 +1423,39 @@ exports.Prisma.BursarInviteAuditLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.CollectorInviteScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  name: 'name',
+  surname: 'surname',
+  sex: 'sex',
+  email: 'email',
+  phone: 'phone',
+  staffId: 'staffId',
+  tokenHash: 'tokenHash',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  acceptedAt: 'acceptedAt',
+  acceptedBy: 'acceptedBy',
+  acceptedCollectorId: 'acceptedCollectorId',
+  revokedAt: 'revokedAt',
+  revokedBy: 'revokedBy',
+  lastSentAt: 'lastSentAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CollectorInviteAuditLogScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  inviteId: 'inviteId',
+  action: 'action',
+  performedBy: 'performedBy',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.ParentAccessAuditLogScalarFieldEnum = {
   id: 'id',
   schoolId: 'schoolId',
@@ -2122,6 +2155,22 @@ exports.BursarInviteAuditAction = exports.$Enums.BursarInviteAuditAction = {
   INVITE_ACCEPTED: 'INVITE_ACCEPTED'
 };
 
+exports.CollectorInviteStatus = exports.$Enums.CollectorInviteStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  EXPIRED: 'EXPIRED',
+  REVOKED: 'REVOKED'
+};
+
+exports.CollectorInviteAuditAction = exports.$Enums.CollectorInviteAuditAction = {
+  INVITE_CREATED: 'INVITE_CREATED',
+  INVITE_SENT: 'INVITE_SENT',
+  INVITE_RESENT: 'INVITE_RESENT',
+  INVITE_REVOKED: 'INVITE_REVOKED',
+  INVITE_EXPIRED: 'INVITE_EXPIRED',
+  INVITE_ACCEPTED: 'INVITE_ACCEPTED'
+};
+
 exports.ParentAccessAuditAction = exports.$Enums.ParentAccessAuditAction = {
   PARENT_INVITED: 'PARENT_INVITED',
   PARENT_ACCOUNT_ACTIVATED: 'PARENT_ACCOUNT_ACTIVATED',
@@ -2243,6 +2292,8 @@ exports.Prisma.ModelName = {
   ParentInviteAuditLog: 'ParentInviteAuditLog',
   BursarInvite: 'BursarInvite',
   BursarInviteAuditLog: 'BursarInviteAuditLog',
+  CollectorInvite: 'CollectorInvite',
+  CollectorInviteAuditLog: 'CollectorInviteAuditLog',
   ParentAccessAuditLog: 'ParentAccessAuditLog',
   TeacherInviteAuditLog: 'TeacherInviteAuditLog',
   OnboardingAuditLog: 'OnboardingAuditLog'

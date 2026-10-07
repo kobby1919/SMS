@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import SignUpView from "./SignUpView";
 import { getBursarInvitePreview } from "@/src/lib/services/bursar-invites";
+import { getCollectorInvitePreview } from "@/src/lib/services/collector-invites";
 import { getParentInvitePreview } from "@/src/lib/services/parent-invites";
 import { getTeacherInvitePreview } from "@/src/lib/services/teacher-invites";
 import { getInvitePreview } from "@/src/lib/services/onboarding";
-import { AUTH_CALLBACK_PATH } from "@/src/lib/auth/constants";
 
 type SignUpPageProps = {
   searchParams: Promise<{
@@ -12,11 +12,12 @@ type SignUpPageProps = {
     teacherInvite?: string;
     parentInvite?: string;
     bursarInvite?: string;
+    collectorInvite?: string;
   }>;
 };
 
 export default async function SignUpPage({ searchParams }: SignUpPageProps) {
-  const { invite, teacherInvite, parentInvite, bursarInvite } = await searchParams;
+  const { invite, teacherInvite, parentInvite, bursarInvite, collectorInvite } = await searchParams;
   const teacherInvitePreview = teacherInvite
     ? await getTeacherInvitePreview(teacherInvite)
     : null;
@@ -25,6 +26,9 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
     : null;
   const bursarInvitePreview = bursarInvite
     ? await getBursarInvitePreview(bursarInvite)
+    : null;
+  const collectorInvitePreview = collectorInvite
+    ? await getCollectorInvitePreview(collectorInvite)
     : null;
   const schoolAdminInvitePreview = invite ? await getInvitePreview(invite) : null;
   const schoolAdminInviteUsable = Boolean(
@@ -59,14 +63,21 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
                     schoolName: bursarInvitePreview.schoolName,
                     callbackUrl: `/onboarding/bursar/accept?token=${encodeURIComponent(bursarInvite ?? "")}`,
                   }
-                : schoolAdminInviteUsable
+                : collectorInvitePreview?.usable
                   ? {
-                      role: "school_admin",
-                      email: schoolAdminInvitePreview?.email,
-                      schoolName: schoolAdminInvitePreview?.schoolName,
-                      callbackUrl: `/onboarding/accept?token=${encodeURIComponent(invite ?? "")}`,
+                      role: "collector",
+                      email: collectorInvitePreview.email,
+                      schoolName: collectorInvitePreview.schoolName,
+                      callbackUrl: `/onboarding/collector/accept?token=${encodeURIComponent(collectorInvite ?? "")}`,
                     }
-                  : undefined
+                  : schoolAdminInviteUsable
+                    ? {
+                        role: "school_admin",
+                        email: schoolAdminInvitePreview?.email,
+                        schoolName: schoolAdminInvitePreview?.schoolName,
+                        callbackUrl: `/onboarding/accept?token=${encodeURIComponent(invite ?? "")}`,
+                      }
+                    : undefined
         }
       />
     </Suspense>

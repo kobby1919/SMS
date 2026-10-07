@@ -309,7 +309,23 @@ enum BursarInviteStatus {
   REVOKED
 }
 
+enum CollectorInviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
 enum BursarInviteAuditAction {
+  INVITE_CREATED
+  INVITE_SENT
+  INVITE_RESENT
+  INVITE_REVOKED
+  INVITE_EXPIRED
+  INVITE_ACCEPTED
+}
+
+enum CollectorInviteAuditAction {
   INVITE_CREATED
   INVITE_SENT
   INVITE_RESENT
@@ -747,6 +763,8 @@ model School {
   bursars                        Bursar[]
   bursarInvites                  BursarInvite[]
   bursarInviteAuditLogs          BursarInviteAuditLog[]
+  collectorInvites               CollectorInvite[]
+  collectorInviteAuditLogs       CollectorInviteAuditLog[]
   dailyCollectionTypes           DailyCollectionType[]
   dailyCollectionAuditLogs       DailyCollectionAuditLog[]
   dailyCollectionSessions        DailyCollectionSession[]
@@ -838,6 +856,7 @@ model Collector {
   collectionSessions DailyCollectionSession[]
   collectionEntries  DailyCollectionEntry[]
   auditLogs          DailyCollectionAuditLog[]
+  acceptedInvites    CollectorInvite[]              @relation("AcceptedCollectorInvite")
 
   @@unique([schoolId, email])
   @@index([schoolId])
@@ -3004,6 +3023,55 @@ model BursarInviteAuditLog {
 
   school School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   invite BursarInvite @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, createdAt])
+  @@index([inviteId, createdAt])
+  @@index([schoolId, action, createdAt])
+}
+
+model CollectorInvite {
+  id                  String                @id @default(cuid())
+  schoolId            String
+  name                String
+  surname             String
+  sex                 UserSex
+  email               String
+  phone               String?
+  staffId             String?
+  tokenHash           String                @unique
+  status              CollectorInviteStatus @default(PENDING)
+  expiresAt           DateTime
+  acceptedAt          DateTime?
+  acceptedBy          String?
+  acceptedCollectorId String?
+  revokedAt           DateTime?
+  revokedBy           String?
+  lastSentAt          DateTime?
+  createdBy           String
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  school            School                    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  acceptedCollector Collector?                @relation("AcceptedCollectorInvite", fields: [acceptedCollectorId], references: [id], onDelete: SetNull)
+  auditLogs         CollectorInviteAuditLog[]
+
+  @@index([schoolId, email])
+  @@index([schoolId, status, expiresAt])
+  @@index([schoolId, createdAt])
+  @@index([expiresAt])
+}
+
+model CollectorInviteAuditLog {
+  id          String                     @id @default(cuid())
+  schoolId    String
+  inviteId    String
+  action      CollectorInviteAuditAction
+  performedBy String
+  metadata    Json
+  createdAt   DateTime                   @default(now())
+
+  school School          @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  invite CollectorInvite @relation(fields: [inviteId], references: [id], onDelete: Cascade)
 
   @@index([schoolId, createdAt])
   @@index([inviteId, createdAt])

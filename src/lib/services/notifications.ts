@@ -262,3 +262,48 @@ export async function sendBursarInviteEmail(input: {
   });
 }
 
+export async function sendCollectorInviteEmail(input: {
+  to: string;
+  schoolName: string;
+  collectorName: string;
+  inviteUrl: string;
+  expiresAt: Date;
+}) {
+  const expiry = input.expiresAt.toLocaleDateString("en", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  return sendEmail({
+    to: input.to,
+    subject: `${input.schoolName} invited you to Edujay daily collections`,
+    text: [
+      `Hello ${input.collectorName},`,
+      "",
+      `${input.schoolName} has invited you to join Edujay as a daily collection collector.`,
+      "",
+      "You will only see collection setups assigned to you.",
+      "",
+      `Open this secure invite link: ${input.inviteUrl}`,
+      "",
+      `This invite expires on ${expiry}.`,
+      "Sign in or sign up with this same email address to accept the invitation.",
+    ].join("\n"),
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
+        <h1 style="font-size:22px;margin:0 0 12px">Join ${input.schoolName} daily collections on Edujay</h1>
+        <p>Hello <strong>${input.collectorName}</strong>,</p>
+        <p><strong>${input.schoolName}</strong> has invited you to record assigned daily collections on Edujay.</p>
+        <p style="color:#4b5563;font-size:14px">You will only see collection setups assigned to you. Bursar/admin review is still required before submitted money counts as confirmed.</p>
+        <p>
+          <a href="${input.inviteUrl}" style="display:inline-block;background:#1d4ed8;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700">
+            Accept collector invite
+          </a>
+        </p>
+        <p style="color:#4b5563;font-size:14px">This invite expires on ${expiry}. Sign in or sign up with this same email address to accept it.</p>
+      </div>
+    `,
+  });
+}
+

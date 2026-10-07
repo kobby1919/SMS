@@ -5,6 +5,8 @@ import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import DailyCollectionSetupPanel from "@/src/components/DailyCollectionSetupPanel";
 import DailyCollectionReviewPanel from "@/src/components/DailyCollectionReviewPanel";
+import CollectorInviteActions from "@/src/components/CollectorInviteActions";
+import CollectorInviteModal from "@/src/components/CollectorInviteModal";
 import { FEE_CATEGORY_LABELS, formatGHS } from "@/src/lib/constants/finance";
 import { getDailyCollectionReport } from "@/src/lib/services/daily-collection-report";
 
@@ -13,21 +15,52 @@ export const dynamic = "force-dynamic";
 export default async function DailyCollectionsSetupPage() {
   const { schoolId } = await requirePageSession(["admin", "bursar"]);
 
-  const [collectionTypes, activeCollectorCount, auditCount, reviewSessions, report] = await Promise.all([
+  const [collectionTypes, collectors, collectorInvites, auditCount, reviewSessions, report] = await Promise.all([
     prisma.dailyCollectionType.findMany({
       where: { schoolId },
       include: {
         collectors: {
           select: {
             collector: {
-              select: { id: true, name: true, surname: true, status: true },
+              select: { id: true, name: true, surname: true, email: true, status: true },
             },
           },
         },
       },
       orderBy: [{ isActive: "desc" }, { createdAt: "desc" }],
     }),
-    prisma.collector.count({ where: { schoolId, status: "ACTIVE" } }),
+    prisma.collector.findMany({
+      where: { schoolId },
+      select: {
+        id: true,
+        name: true,
+        surname: true,
+        email: true,
+        status: true,
+        createdAt: true,
+      },
+      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+    }),
+    prisma.collectorInvite.findMany({
+      where: {
+        schoolId,
+        status: "PENDING",
+        acceptedAt: null,
+        revokedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      select: {
+        id: true,
+        name: true,
+        surname: true,
+        email: true,
+        expiresAt: true,
+        lastSentAt: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 8,
+    }),
     prisma.dailyCollectionAuditLog.count({ where: { schoolId } }),
     prisma.dailyCollectionSession.findMany({
       where: { schoolId },
@@ -41,6 +74,7 @@ export default async function DailyCollectionsSetupPage() {
     }),
     getDailyCollectionReport(schoolId),
   ]);
+  const activeCollectors = collectors.filter((collector) => collector.status === "ACTIVE");
 
   return (
     <main className="flex-1 m-4 mt-0 flex flex-col gap-4">
@@ -66,7 +100,7 @@ export default async function DailyCollectionsSetupPage() {
 
           <div className="grid grid-cols-3 gap-2 sm:min-w-[420px]">
             <SummaryTile icon={<Banknote size={15} />} label="Setups" value={collectionTypes.length} />
-            <SummaryTile icon={<Users size={15} />} label="Collectors" value={activeCollectorCount} />
+            <SummaryTile icon={<Users size={15} />} label="Collectors" value={activeCollectors.length} />
             <SummaryTile icon={<ShieldCheck size={15} />} label="Audit logs" value={auditCount} />
           </div>
         </div>
@@ -77,6 +111,66 @@ export default async function DailyCollectionsSetupPage() {
         <p className="mt-1 text-sm font-semibold leading-6 text-blue-800">
           Setup defines what can be collected. Collector sessions record what was collected. Bursar confirmation locks the session only after the received amount is checked.
         </p>
+      </section>
+
+      <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-wider text-blue-500">Collector Access</p>
+            <h2 className="mt-1 text-lg font-black text-gray-900">Invite and assign daily collectors</h2>
+            <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-gray-500">
+              Collectors must accept a secure invite before they can log in. After that, assign them only to the daily collection setups they are allowed to operate.
+            </p>
+          </div>
+          <CollectorInviteModal />
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2">
+          <div className="rounded-2xl border border-gray-100 bg-gray-50/70 p-4">
+            <p className="text-xs font-black uppercase tracking-wider text-gray-400">Active collectors</p>
+            <div className="mt-3 space-y-2">
+              {activeCollectors.length === 0 ? (
+                <p className="rounded-xl bg-white p-4 text-sm font-semibold text-gray-400">
+                  No active collector account yet. Invite a collector, then assign them to a setup below.
+                </p>
+              ) : (
+                activeCollectors.map((collector) => (
+                  <div key={collector.id} className="rounded-xl bg-white p-3 ring-1 ring-gray-100">
+                    <p className="text-sm font-black text-gray-900">{collector.name} {collector.surname}</p>
+                    <p className="mt-0.5 text-xs font-semibold text-gray-400">{collector.email ?? "No email saved"}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-gray-100 bg-gray-50/70 p-4">
+            <p className="text-xs font-black uppercase tracking-wider text-gray-400">Pending collector invites</p>
+            <div className="mt-3 space-y-2">
+              {collectorInvites.length === 0 ? (
+                <p className="rounded-xl bg-white p-4 text-sm font-semibold text-gray-400">
+                  No pending collector invite.
+                </p>
+              ) : (
+                collectorInvites.map((invite) => (
+                  <div key={invite.id} className="rounded-xl bg-white p-3 ring-1 ring-gray-100">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-black text-gray-900">{invite.name} {invite.surname}</p>
+                        <p className="mt-0.5 text-xs font-semibold text-gray-400">{invite.email}</p>
+                        <p className="mt-0.5 text-[11px] font-semibold text-gray-400">
+                          Expires {invite.expiresAt.toLocaleDateString("en-GH")}
+                          {invite.lastSentAt ? ` - last sent ${invite.lastSentAt.toLocaleDateString("en-GH")}` : ""}
+                        </p>
+                      </div>
+                      <CollectorInviteActions inviteId={invite.id} />
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
@@ -374,7 +468,13 @@ export default async function DailyCollectionsSetupPage() {
           requiresBursarConfirmation: item.requiresBursarConfirmation,
           collectors: item.collectors,
         }))}
-        activeCollectorCount={activeCollectorCount}
+        activeCollectorCount={activeCollectors.length}
+        collectorOptions={activeCollectors.map((collector) => ({
+          id: collector.id,
+          name: collector.name,
+          surname: collector.surname,
+          email: collector.email,
+        }))}
       />
     </main>
   );

@@ -58,6 +58,8 @@ const requiredDelegates = [
   "dailyCollectionSession",
   "dailyCollectionEntry",
   "dailyCollectionAuditLog",
+  "collectorInvite",
+  "collectorInviteAuditLog",
 ] as const;
 
 function hasRequiredDelegates(client: ReturnType<typeof prismaClientSingleton>) {

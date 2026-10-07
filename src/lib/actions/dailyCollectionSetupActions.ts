@@ -237,3 +237,145 @@ export async function setDailyCollectionTypeActive(id: string, isActive: boolean
   revalidatePath(DAILY_COLLECTION_SETUP_PATH);
   return updated;
 }
+
+export async function assignCollectorToDailyCollectionType(input: {
+  collectorId: string;
+  collectionTypeId: string;
+}) {
+  const collectorId = parseActionInput(stringIdSchema, input.collectorId);
+  const collectionTypeId = parseActionInput(stringIdSchema, input.collectionTypeId);
+  const context = await requireDailyCollectionSetupAccess();
+  const { userId, schoolId } = context;
+
+  const [collector, collectionType] = await Promise.all([
+    prisma.collector.findFirst({
+      where: { id: collectorId, schoolId, status: "ACTIVE" },
+      select: { id: true, name: true, surname: true, email: true, schoolId: true },
+    }),
+    prisma.dailyCollectionType.findFirst({
+      where: { id: collectionTypeId, schoolId, isActive: true },
+      select: { id: true, name: true, schoolId: true },
+    }),
+  ]);
+
+  const safeCollector = requireResourceAccess(collector, context, "Active collector not found.");
+  const safeCollectionType = requireResourceAccess(collectionType, context, "Active daily collection setup not found.");
+
+  const existingAssignment = await prisma.dailyCollectionTypeCollector.findFirst({
+    where: { schoolId, collectorId, collectionTypeId },
+    select: { id: true },
+  });
+
+  if (existingAssignment) {
+    return existingAssignment;
+  }
+
+  let assignment;
+  try {
+    assignment = await prisma.$transaction(async (tx) => {
+      const created = await tx.dailyCollectionTypeCollector.create({
+        data: {
+          schoolId,
+          collectorId,
+          collectionTypeId,
+          assignedBy: userId,
+        },
+      });
+
+      await tx.dailyCollectionAuditLog.create({
+        data: {
+          schoolId,
+          action: "COLLECTOR_UPDATED",
+          performedBy: userId,
+          entityType: "DailyCollectionTypeCollector",
+          entityId: created.id,
+          collectorId,
+          collectionTypeId,
+          metadata: {
+            action: "ASSIGNED_TO_COLLECTION_TYPE",
+            collectorName: `${safeCollector.name} ${safeCollector.surname}`.trim(),
+            collectorEmail: safeCollector.email,
+            collectionTypeName: safeCollectionType.name,
+          },
+        },
+      });
+
+      return created;
+    });
+  } catch (error) {
+    if (!isUniqueConstraintError(error)) throw error;
+    assignment = await prisma.dailyCollectionTypeCollector.findFirst({
+      where: { schoolId, collectorId, collectionTypeId },
+      select: { id: true },
+    });
+    if (!assignment) throw error;
+  }
+
+  revalidatePath(DAILY_COLLECTION_SETUP_PATH);
+  revalidatePath("/collector");
+  return assignment;
+}
+
+export async function unassignCollectorFromDailyCollectionType(input: {
+  collectorId: string;
+  collectionTypeId: string;
+}) {
+  const collectorId = parseActionInput(stringIdSchema, input.collectorId);
+  const collectionTypeId = parseActionInput(stringIdSchema, input.collectionTypeId);
+  const context = await requireDailyCollectionSetupAccess();
+  const { userId, schoolId } = context;
+
+  const assignment = requireResourceAccess(
+    await prisma.dailyCollectionTypeCollector.findFirst({
+      where: { collectorId, collectionTypeId, schoolId },
+      include: {
+        collector: { select: { name: true, surname: true, email: true } },
+        collectionType: { select: { name: true } },
+      },
+    }),
+    context,
+    "Collector assignment not found.",
+  );
+
+  const hasOpenOrSubmittedSession = await prisma.dailyCollectionSession.findFirst({
+    where: {
+      schoolId,
+      collectorId,
+      collectionTypeId,
+      status: { in: ["OPEN", "SUBMITTED"] },
+    },
+    select: { id: true },
+  });
+
+  if (hasOpenOrSubmittedSession) {
+    throw new Error("Resolve open or submitted sessions before removing this collector assignment.");
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.dailyCollectionTypeCollector.delete({
+      where: { id: assignment.id },
+    });
+
+    await tx.dailyCollectionAuditLog.create({
+      data: {
+        schoolId,
+        action: "COLLECTOR_UPDATED",
+        performedBy: userId,
+        entityType: "DailyCollectionTypeCollector",
+        entityId: assignment.id,
+        collectorId,
+        collectionTypeId,
+        metadata: {
+          action: "UNASSIGNED_FROM_COLLECTION_TYPE",
+          collectorName: `${assignment.collector.name} ${assignment.collector.surname}`.trim(),
+          collectorEmail: assignment.collector.email,
+          collectionTypeName: assignment.collectionType.name,
+        },
+      },
+    });
+  });
+
+  revalidatePath(DAILY_COLLECTION_SETUP_PATH);
+  revalidatePath("/collector");
+  return { ok: true };
+}

@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import SignInView from "./SignInView";
 import { getBursarInvitePreview } from "@/src/lib/services/bursar-invites";
+import { getCollectorInvitePreview } from "@/src/lib/services/collector-invites";
 import { getParentInvitePreview } from "@/src/lib/services/parent-invites";
 import { getTeacherInvitePreview } from "@/src/lib/services/teacher-invites";
 import { getInvitePreview } from "@/src/lib/services/onboarding";
@@ -12,11 +13,12 @@ type SignInPageProps = {
     teacherInvite?: string;
     parentInvite?: string;
     bursarInvite?: string;
+    collectorInvite?: string;
   }>;
 };
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
-  const { invite, teacherInvite, parentInvite, bursarInvite } = await searchParams;
+  const { invite, teacherInvite, parentInvite, bursarInvite, collectorInvite } = await searchParams;
   const teacherInvitePreview = teacherInvite
     ? await getTeacherInvitePreview(teacherInvite)
     : null;
@@ -25,6 +27,9 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     : null;
   const bursarInvitePreview = bursarInvite
     ? await getBursarInvitePreview(bursarInvite)
+    : null;
+  const collectorInvitePreview = collectorInvite
+    ? await getCollectorInvitePreview(collectorInvite)
     : null;
   const schoolAdminInvitePreview = invite ? await getInvitePreview(invite) : null;
   const schoolAdminInviteUsable = Boolean(
@@ -59,14 +64,21 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
                     schoolName: bursarInvitePreview.schoolName,
                     callbackUrl: `${AUTH_CALLBACK_PATH}?bursarInvite=${encodeURIComponent(bursarInvite ?? "")}`,
                   }
-                : schoolAdminInviteUsable
+                : collectorInvitePreview?.usable
                   ? {
-                      role: "school_admin",
-                      email: schoolAdminInvitePreview?.email,
-                      schoolName: schoolAdminInvitePreview?.schoolName,
-                      callbackUrl: `${AUTH_CALLBACK_PATH}?invite=${encodeURIComponent(invite ?? "")}`,
+                      role: "collector",
+                      email: collectorInvitePreview.email,
+                      schoolName: collectorInvitePreview.schoolName,
+                      callbackUrl: `${AUTH_CALLBACK_PATH}?collectorInvite=${encodeURIComponent(collectorInvite ?? "")}`,
                     }
-                  : undefined
+                  : schoolAdminInviteUsable
+                    ? {
+                        role: "school_admin",
+                        email: schoolAdminInvitePreview?.email,
+                        schoolName: schoolAdminInvitePreview?.schoolName,
+                        callbackUrl: `${AUTH_CALLBACK_PATH}?invite=${encodeURIComponent(invite ?? "")}`,
+                      }
+                    : undefined
         }
       />
     </Suspense>

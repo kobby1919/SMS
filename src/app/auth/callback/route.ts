@@ -6,6 +6,7 @@ import { createHash } from "crypto";
 import { checkRateLimit, rateLimitKey } from "@/src/lib/rate-limit";
 import {
   AUTH_BURSAR_INVITE_COOKIE,
+  AUTH_COLLECTOR_INVITE_COOKIE,
   AUTH_PARENT_INVITE_COOKIE,
   AUTH_RATE_LIMITED_QUERY,
   AUTH_SCHOOL_INVITE_COOKIE,
@@ -54,10 +55,12 @@ export async function GET(req: NextRequest) {
       req.nextUrl.searchParams.get("teacherInvite") ||
       req.nextUrl.searchParams.get("parentInvite") ||
       req.nextUrl.searchParams.get("bursarInvite") ||
+      req.nextUrl.searchParams.get("collectorInvite") ||
       cookieStore.get(AUTH_SCHOOL_INVITE_COOKIE)?.value ||
       cookieStore.get(AUTH_TEACHER_INVITE_COOKIE)?.value ||
       cookieStore.get(AUTH_PARENT_INVITE_COOKIE)?.value ||
-      cookieStore.get(AUTH_BURSAR_INVITE_COOKIE)?.value,
+      cookieStore.get(AUTH_BURSAR_INVITE_COOKIE)?.value ||
+      cookieStore.get(AUTH_COLLECTOR_INVITE_COOKIE)?.value,
   );
 
   const limitResult = await checkRateLimit({
@@ -87,16 +90,22 @@ export async function GET(req: NextRequest) {
     req.nextUrl.searchParams.get("bursarInvite") ??
     cookieStore.get(AUTH_BURSAR_INVITE_COOKIE)?.value ??
     null;
+  const collectorInviteToken =
+    req.nextUrl.searchParams.get("collectorInvite") ??
+    cookieStore.get(AUTH_COLLECTOR_INVITE_COOKIE)?.value ??
+    null;
 
   if (inviteToken) cookieStore.delete(AUTH_SCHOOL_INVITE_COOKIE);
   if (teacherInviteToken) cookieStore.delete(AUTH_TEACHER_INVITE_COOKIE);
   if (parentInviteToken) cookieStore.delete(AUTH_PARENT_INVITE_COOKIE);
   if (bursarInviteToken) cookieStore.delete(AUTH_BURSAR_INVITE_COOKIE);
+  if (collectorInviteToken) cookieStore.delete(AUTH_COLLECTOR_INVITE_COOKIE);
 
   return completePostSignIn(
     inviteToken,
     teacherInviteToken,
     parentInviteToken,
     bursarInviteToken,
+    collectorInviteToken,
   );
 }

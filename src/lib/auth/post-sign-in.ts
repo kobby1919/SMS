@@ -49,6 +49,7 @@ export async function completePostSignIn(
   teacherInviteToken?: string | null,
   parentInviteToken?: string | null,
   bursarInviteToken?: string | null,
+  collectorInviteToken?: string | null,
 ): Promise<never> {
   const { userId, sessionClaims } = await auth();
 
@@ -61,6 +62,7 @@ export async function completePostSignIn(
     teacherInviteToken,
     parentInviteToken,
     bursarInviteToken,
+    collectorInviteToken,
   ].filter(Boolean).length;
 
   if (inviteCount > 1) {
@@ -92,6 +94,10 @@ export async function completePostSignIn(
 
   if (bursarInviteToken) {
     redirect(`/onboarding/bursar/accept?token=${encodeURIComponent(bursarInviteToken)}`);
+  }
+
+  if (collectorInviteToken) {
+    redirect(`/onboarding/collector/accept?token=${encodeURIComponent(collectorInviteToken)}`);
   }
 
   const { role, schoolId } = await resolveSessionIdentity(userId, sessionClaims);
