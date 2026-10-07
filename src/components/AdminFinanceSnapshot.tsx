@@ -117,16 +117,16 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
         </div>
       </div>
 
-      {!snapshot.hasFeeRecords ? (
+      {!snapshot.hasBillPositionRecords ? (
         <div className="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-4">
           <div className="flex items-start gap-3">
             <AlertTriangle size={18} className="mt-0.5 shrink-0 text-amber-600" />
             <div>
-              <p className="text-sm font-black text-amber-950">No fee records yet</p>
+              <p className="text-sm font-black text-amber-950">No bill position records yet</p>
               <p className="mt-1 text-sm font-semibold leading-6 text-amber-800">
-                Edujay cannot show expected fees, collection rates, weak classes,
-                or debtors until bills are generated. Start from fee setup, then
-                generate student bills.
+                Edujay cannot show bill expected, bill collected, bill outstanding,
+                or bill collection rate until non-daily student bills are generated.
+                Daily collections are handled separately.
               </p>
               <Link
                 href="/list/finance/fee-structures"
@@ -151,9 +151,11 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
           label="Bill collected"
           value={formatGHS(money.collectedFees)}
           helper={
-            money.importedOrOpeningPaidAmount > 0
+            typeof money.importedOrOpeningPaidAmount === "number" && money.importedOrOpeningPaidAmount > 0
               ? `${formatGHS(money.importedOrOpeningPaidAmount)} came from imported opening balances.`
-              : `${money.confirmedPaymentCount} confirmed payment records.`
+              : money.dailyLineItemCountExcluded > 0
+                ? "From bill line paid amounts. Confirmed payments are tracked separately for receipts."
+                : `${money.confirmedPaymentCount} confirmed payment records.`
           }
           icon={<Banknote size={14} />}
         />

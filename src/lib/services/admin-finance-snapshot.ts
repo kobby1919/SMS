@@ -368,7 +368,8 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
 
   return {
     generatedAt: now,
-    hasFeeRecords: billPosition.billCount > 0,
+    hasFeeRecords: billMoneyRows.length > 0,
+    hasBillPositionRecords: billPosition.billCount > 0,
     sourceOfTruth: {
       billPosition: "StudentBill line items with TERM, MONTHLY, WEEKLY, or ONE_TIME billing frequency.",
       dailyCollections: "DailyCollectionSession confirmedAmount records. Kept separate from bill position.",
@@ -388,7 +389,9 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
       studentCountWithBills: billPosition.studentCountWithBills,
       confirmedPaymentCount: confirmedPaymentTotals._count._all,
       confirmedPaymentAmount,
-      importedOrOpeningPaidAmount: Math.max(0, billPosition.collectedFees - confirmedPaymentAmount),
+      importedOrOpeningPaidAmount: billPosition.dailyLineItemCountExcluded > 0
+        ? null
+        : Math.max(0, billPosition.collectedFees - confirmedPaymentAmount),
       dailyLineItemCountExcluded: billPosition.dailyLineItemCountExcluded,
     },
     todayActivity: {
