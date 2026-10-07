@@ -21,6 +21,7 @@ import { FEE_CATEGORY_LABELS, PAYMENT_METHOD_LABELS, formatGHS } from "@/src/lib
 import WelcomeBanner from "@/src/components/WelcomeBanner";
 import { formatTitledFirstName } from "@/src/lib/format-role-name";
 import { getBursarMoneyPulse } from "@/src/lib/services/bursar-money-pulse";
+import { getDailyCollectionReport } from "@/src/lib/services/daily-collection-report";
 import {
   type ArrearsBillStatusFilter,
   type ArrearsPriority,
@@ -96,7 +97,7 @@ const BursarPage = async ({
   const arrearsMinBalance = parseMinimumBalance(searchParams.arrearsMinBalance);
   const arrearsFeeCategory = parseFeeCategory(searchParams.arrearsFeeCategory);
 
-  const [moneyPulse, arrears] = await Promise.all([
+  const [moneyPulse, arrears, dailyCollections] = await Promise.all([
     getBursarMoneyPulse(schoolId),
     getBursarArrearsFollowUp(schoolId, {
       limit: 12,
@@ -105,6 +106,7 @@ const BursarPage = async ({
       minBalance: arrearsMinBalance,
       feeCategory: arrearsFeeCategory,
     }),
+    getDailyCollectionReport(schoolId),
   ]);
 
   const todayLabel = moneyPulse.date.toLocaleDateString("en-GH", {
@@ -148,6 +150,14 @@ const BursarPage = async ({
       href: "/list/finance/corrections",
       icon: <RotateCcw size={18} />,
       color: "bg-rose-50 text-rose-700",
+    },
+    {
+      label: "Daily collections",
+      value: formatGHS(dailyCollections.summary.confirmedAmount),
+      sub: `${dailyCollections.byStatus.SUBMITTED + dailyCollections.byStatus.FLAGGED} session${dailyCollections.byStatus.SUBMITTED + dailyCollections.byStatus.FLAGGED === 1 ? "" : "s"} need review`,
+      href: "/list/finance/daily-collections",
+      icon: <Wallet size={18} />,
+      color: "bg-violet-50 text-violet-700",
     },
   ];
   const arrearsCards = [
@@ -219,7 +229,7 @@ const BursarPage = async ({
           </div>
         )}
 
-        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
           {moneyPulseCards.map((card) => (
             <Link
               key={card.label}
@@ -247,6 +257,39 @@ const BursarPage = async ({
                 {PAYMENT_METHOD_LABELS[method.method] ?? method.method}: {formatGHS(method.amount)} - {method.count}
               </span>
             ))}
+          </div>
+        )}
+
+        {dailyCollections.hasActivity && (
+          <div className="mt-4 rounded-2xl border border-violet-100 bg-violet-50/70 p-4">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-wide text-violet-600">Daily gate collections</p>
+                <p className="mt-1 text-sm font-semibold text-violet-900">
+                  Confirmed daily collection today is {formatGHS(dailyCollections.summary.confirmedAmount)}. Submitted or flagged collector sessions stay separate until bursar review.
+                </p>
+              </div>
+              <Link
+                href="/list/finance/daily-collections"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-700 px-4 py-2.5 text-sm font-black text-white transition hover:bg-violet-800"
+              >
+                Review daily collections <ChevronRight size={15} />
+              </Link>
+            </div>
+            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+              <div className="rounded-xl bg-white px-3 py-2">
+                <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Unpaid entries</p>
+                <p className="mt-1 text-sm font-black text-rose-700">{dailyCollections.summary.unpaidEntries}</p>
+              </div>
+              <div className="rounded-xl bg-white px-3 py-2">
+                <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Reported, unchecked</p>
+                <p className="mt-1 text-sm font-black text-amber-700">{formatGHS(Math.max(0, dailyCollections.summary.reportedAmount - dailyCollections.summary.confirmedAmount))}</p>
+              </div>
+              <div className="rounded-xl bg-white px-3 py-2">
+                <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Flagged mismatch</p>
+                <p className="mt-1 text-sm font-black text-violet-700">{formatGHS(dailyCollections.summary.flaggedAmount)}</p>
+              </div>
+            </div>
           </div>
         )}
 

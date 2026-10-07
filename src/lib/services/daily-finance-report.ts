@@ -1,6 +1,7 @@
 import prisma from "@/src/lib/prisma";
 import { Prisma } from "@/src/generated/prisma";
 import { PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
+import { getDailyCollectionReport, type DailyCollectionReport } from "@/src/lib/services/daily-collection-report";
 
 export type DailyFinanceReportPayment = {
   id: number;
@@ -55,6 +56,7 @@ export type DailyFinanceReport = {
   methodBreakdown: DailyFinanceReportMethod[];
   recentPayments: DailyFinanceReportPayment[];
   ownerUpdates: DailyFinanceReportIssue[];
+  dailyCollections: DailyCollectionReport;
 };
 
 function asNumber(value: Prisma.Decimal | number | string | null | undefined) {
@@ -125,6 +127,7 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
     openQueryCount,
     openQueries,
     highOutstandingBills,
+    dailyCollections,
   ] = await Promise.all([
     prisma.payment.findMany({
       where: {
@@ -282,6 +285,7 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
       orderBy: { balance: "desc" },
       take: 5,
     }),
+    getDailyCollectionReport(schoolId, date),
   ]);
 
   const totalReceived = paymentsForTotals.reduce((sum, payment) => sum + asNumber(payment.amount), 0);
@@ -370,6 +374,16 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
       href: `/list/finance/bills/${bill.id}`,
       tone: "rose" as const,
     })),
+    ...(dailyCollections.byStatus.SUBMITTED + dailyCollections.byStatus.FLAGGED > 0
+      ? [{
+          id: "daily-collections-review",
+          title: "Daily collection review needed",
+          detail: `${dailyCollections.byStatus.SUBMITTED} submitted and ${dailyCollections.byStatus.FLAGGED} flagged collector session${dailyCollections.byStatus.SUBMITTED + dailyCollections.byStatus.FLAGGED === 1 ? "" : "s"} need bursar review.`,
+          amount: Math.max(0, dailyCollections.summary.reportedAmount - dailyCollections.summary.confirmedAmount),
+          href: "/list/finance/daily-collections",
+          tone: "amber" as const,
+        }]
+      : []),
   ].slice(0, 10);
 
   return {
@@ -392,5 +406,6 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
     methodBreakdown,
     recentPayments,
     ownerUpdates,
+    dailyCollections,
   };
 }

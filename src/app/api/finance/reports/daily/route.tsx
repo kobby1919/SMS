@@ -246,6 +246,12 @@ export async function GET(req: NextRequest) {
       + receiptFlagCount;
     const actionPoints = [
       report.pendingConfirmationCount > 0 ? `${report.pendingConfirmationCount} pending payment confirmation${report.pendingConfirmationCount === 1 ? "" : "s"} must be reviewed before today is closed.` : null,
+      report.dailyCollections.byStatus.SUBMITTED + report.dailyCollections.byStatus.FLAGGED > 0
+        ? `${report.dailyCollections.byStatus.SUBMITTED + report.dailyCollections.byStatus.FLAGGED} daily collection session${report.dailyCollections.byStatus.SUBMITTED + report.dailyCollections.byStatus.FLAGGED === 1 ? "" : "s"} need bursar review before gate collections are trusted.`
+        : null,
+      report.dailyCollections.summary.unpaidEntries > 0
+        ? `${report.dailyCollections.summary.unpaidEntries} unpaid daily collection entr${report.dailyCollections.summary.unpaidEntries === 1 ? "y" : "ies"} worth ${formatGHS(report.dailyCollections.summary.unpaidAmount)} need follow-up.`
+        : null,
       correctionReversalReport.pendingReview > 0 ? `${correctionReversalReport.pendingReview} correction request${correctionReversalReport.pendingReview === 1 ? "" : "s"} need school head decision.` : null,
       correctionReversalReport.approvedWaitingApplication > 0 ? `${correctionReversalReport.approvedWaitingApplication} approved correction${correctionReversalReport.approvedWaitingApplication === 1 ? "" : "s"} still need to be applied.` : null,
       arrearsReport.summary.byPriority.Critical > 0 ? `${arrearsReport.summary.byPriority.Critical} critical arrears bill${arrearsReport.summary.byPriority.Critical === 1 ? "" : "s"} worth ${formatGHS(arrearsReport.summary.criticalAmount)} need follow-up.` : null,
@@ -294,6 +300,10 @@ export async function GET(req: NextRequest) {
               <SummaryBox label="Arrears pressure" value={formatGHS(arrearsReport.summary.totalOwed)} sub={`${arrearsReport.summary.overdueStudents} overdue student${arrearsReport.summary.overdueStudents === 1 ? "" : "s"}. ${arrearsReport.summary.byPriority.Critical} critical bill${arrearsReport.summary.byPriority.Critical === 1 ? "" : "s"}.`} color="#be123c" borderColor="#fecdd3" />
               <SummaryBox label="Receipts needing review" value={receiptFlagCount.toLocaleString("en-GH")} sub={`${receiptIntegrityReport.voidedReceipts} voided, ${receiptIntegrityReport.pendingReceipts} pending, ${receiptIntegrityReport.failedReceipts} failed, ${receiptIntegrityReport.receiptGapCount} gap${receiptIntegrityReport.receiptGapCount === 1 ? "" : "s"}.`} color="#b45309" borderColor="#fde68a" />
               <SummaryBox label="Corrections needing action" value={controlExceptionCount.toLocaleString("en-GH")} sub={`${correctionReversalReport.pendingReview} pending correction review, ${correctionReversalReport.approvedWaitingApplication} approved not applied.`} color="#1d4ed8" borderColor="#bfdbfe" />
+            </View>
+            <View style={S.statGrid}>
+              <SummaryBox label="Daily gate collections" value={formatGHS(report.dailyCollections.summary.confirmedAmount)} sub={`${report.dailyCollections.summary.unpaidEntries} unpaid daily entr${report.dailyCollections.summary.unpaidEntries === 1 ? "y" : "ies"}. ${report.dailyCollections.byStatus.SUBMITTED + report.dailyCollections.byStatus.FLAGGED} session${report.dailyCollections.byStatus.SUBMITTED + report.dailyCollections.byStatus.FLAGGED === 1 ? "" : "s"} need review.`} color="#6d28d9" borderColor="#ddd6fe" />
+              <SummaryBox label="Collector reported total" value={formatGHS(report.dailyCollections.summary.reportedAmount)} sub="Reported collections are not treated as confirmed revenue until reviewed." color="#92400e" borderColor="#fde68a" />
             </View>
 
             <View style={S.twoCol}>

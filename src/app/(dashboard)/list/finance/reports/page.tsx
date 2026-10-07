@@ -88,6 +88,13 @@ const FinanceReportsPage = async ({
       tone: "bg-blue-50 text-blue-700",
     },
     {
+      label: "Daily collections",
+      value: formatGHS(report.dailyCollections.summary.confirmedAmount),
+      sub: `${report.dailyCollections.summary.unpaidEntries} unpaid daily entr${report.dailyCollections.summary.unpaidEntries === 1 ? "y" : "ies"}`,
+      icon: <ShieldCheck size={18} />,
+      tone: "bg-violet-50 text-violet-700",
+    },
+    {
       label: "Pending confirmations",
       value: report.pendingConfirmationCount,
       sub: "Needs bursar/admin review",
@@ -182,7 +189,7 @@ const FinanceReportsPage = async ({
         </div>
       </section>
 
-      <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {cards.map((card) => {
           const isPositive = card.sub.startsWith("+");
           const isNegative = card.sub.startsWith("-");
