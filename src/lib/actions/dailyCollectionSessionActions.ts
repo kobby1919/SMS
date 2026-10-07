@@ -5,7 +5,7 @@ import { Prisma, type DailyCollectionEntryStatus } from "@/src/generated/prisma"
 import prisma from "@/src/lib/prisma";
 import {
   requireDailyCollectionAccess,
-  requireDailyCollectionSetupAccess,
+  requireFinanceOperationAccess,
   requireResourceAccess,
 } from "@/src/lib/authz";
 import { parseActionInput } from "@/src/lib/validation/parse";
@@ -375,7 +375,7 @@ export async function confirmDailyCollectionSession(input: {
   amountReceived: number;
 }) {
   const data = parseActionInput(dailyCollectionConfirmSessionSchema, input);
-  const context = await requireDailyCollectionSetupAccess();
+  const context = await requireFinanceOperationAccess();
   const { userId, schoolId } = context;
   await enforceActionRateLimit({
     key: `daily-collection:confirm:${schoolId}:${userId}`,
@@ -447,7 +447,7 @@ export async function flagDailyCollectionSession(input: {
   reason: string;
 }) {
   const data = parseActionInput(dailyCollectionFlagSessionSchema, input);
-  const context = await requireDailyCollectionSetupAccess();
+  const context = await requireFinanceOperationAccess();
   const { userId, schoolId } = context;
   await enforceActionRateLimit({
     key: `daily-collection:flag:${schoolId}:${userId}`,

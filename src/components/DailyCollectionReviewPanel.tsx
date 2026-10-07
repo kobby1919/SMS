@@ -24,6 +24,7 @@ type ReviewSession = {
 
 type Props = {
   sessions: ReviewSession[];
+  canConfirmSessions: boolean;
 };
 
 const sessionStatusStyle: Record<string, string> = {
@@ -34,7 +35,7 @@ const sessionStatusStyle: Record<string, string> = {
   CANCELLED: "bg-gray-50 text-gray-600 border-gray-100",
 };
 
-export default function DailyCollectionReviewPanel({ sessions }: Props) {
+export default function DailyCollectionReviewPanel({ sessions, canConfirmSessions }: Props) {
   const [amounts, setAmounts] = useState<Record<string, string>>({});
   const [reasons, setReasons] = useState<Record<string, string>>({});
   const [message, setMessage] = useState<string | null>(null);
@@ -69,7 +70,9 @@ export default function DailyCollectionReviewPanel({ sessions }: Props) {
           <p className="text-xs font-black uppercase tracking-wider text-gray-400">Bursar Confirmation</p>
           <h2 className="mt-1 text-lg font-black text-gray-900">Daily collection sessions</h2>
           <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-gray-500">
-            Confirm submitted collector totals only when the physical cash/mobile-money settlement matches the reported amount. Flag mismatches instead of editing them silently.
+            {canConfirmSessions
+              ? "Confirm submitted collector totals only when the physical cash/mobile-money settlement matches the reported amount. Flag mismatches instead of editing them silently."
+              : "Review submitted collector totals, confirmation status, and mismatch history. Bursars confirm or flag the physical settlement."}
           </p>
         </div>
         <div className="inline-flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-500">
@@ -99,7 +102,7 @@ export default function DailyCollectionReviewPanel({ sessions }: Props) {
           </div>
         ) : (
           sessions.map((session) => {
-            const canReview = session.status === "SUBMITTED";
+            const canReview = canConfirmSessions && session.status === "SUBMITTED";
             return (
               <article key={session.id} className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
@@ -186,6 +189,11 @@ export default function DailyCollectionReviewPanel({ sessions }: Props) {
                       {busyKey === `flag:${session.id}` ? <Loader2 size={13} className="animate-spin" /> : <AlertTriangle size={13} />}
                       Flag
                     </button>
+                  </div>
+                )}
+                {!canConfirmSessions && session.status === "SUBMITTED" && (
+                  <div className="mt-4 rounded-xl border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-bold text-amber-800">
+                    Submitted for bursar confirmation. Admin view is review-only here.
                   </div>
                 )}
               </article>

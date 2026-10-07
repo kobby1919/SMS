@@ -13,7 +13,8 @@ import { getDailyCollectionReport } from "@/src/lib/services/daily-collection-re
 export const dynamic = "force-dynamic";
 
 export default async function DailyCollectionsSetupPage() {
-  const { schoolId } = await requirePageSession(["admin", "bursar"]);
+  const { schoolId, role } = await requirePageSession(["admin", "bursar"]);
+  const canConfirmDailyCollections = role === "bursar";
 
   const [collectionTypes, collectors, collectorInvites, auditCount, reviewSessions, report] = await Promise.all([
     prisma.dailyCollectionType.findMany({
@@ -443,6 +444,7 @@ export default async function DailyCollectionsSetupPage() {
       </section>
 
       <DailyCollectionReviewPanel
+        canConfirmSessions={canConfirmDailyCollections}
         sessions={reviewSessions.map((session) => ({
           id: session.id,
           collectionDate: session.collectionDate.toISOString(),
