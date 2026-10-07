@@ -2286,6 +2286,7 @@ model FeeItem {
 model DailyCollectionType {
   id                         String      @id @default(cuid())
   name                       String
+  normalizedName             String
   category                   FeeCategory @default(FEEDING)
   amount                     Decimal     @db.Decimal(10, 2)
   description                String?
@@ -2303,6 +2304,7 @@ model DailyCollectionType {
   auditLogs  DailyCollectionAuditLog[]
 
   @@unique([schoolId, name])
+  @@unique([schoolId, normalizedName])
   @@index([schoolId, isActive])
   @@index([schoolId, category])
   @@index([schoolId, createdAt])

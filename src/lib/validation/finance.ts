@@ -161,10 +161,20 @@ export const feeItemUpdateSchema = feeItemSchema.partial().refine(
   "Provide a fee item field to update.",
 );
 
+const dailyCollectionAmountSchema = z.coerce
+  .number()
+  .positive("Amount must be greater than zero.")
+  .max(5_000, "Daily collection amount is too high. Use formal fee billing for large charges.")
+  .refine((value) => Number.isFinite(value), "Amount must be a valid number.")
+  .refine(
+    (value) => Math.abs(value * 100 - Math.round(value * 100)) < 0.000001,
+    "Amount can only have two decimal places.",
+  );
+
 export const dailyCollectionTypeSchema = z.object({
   name: nonEmptyStringSchema.max(120),
-  amount: z.coerce.number().positive(),
-  category: z.enum(["TUITION", "LEVY", "EXAM", "FEEDING", "TRANSPORT", "UNIFORM", "LIBRARY", "SPORTS", "OTHER"]).default("FEEDING"),
+  amount: dailyCollectionAmountSchema,
+  category: z.enum(["FEEDING", "TRANSPORT", "LEVY", "OTHER"]).default("FEEDING"),
   description: z.string().trim().max(1000).optional().nullable(),
   requiresBursarConfirmation: z.boolean().default(true),
 });

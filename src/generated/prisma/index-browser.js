@@ -1023,6 +1023,7 @@ exports.Prisma.FeeItemScalarFieldEnum = {
 exports.Prisma.DailyCollectionTypeScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  normalizedName: 'normalizedName',
   category: 'category',
   amount: 'amount',
   description: 'description',

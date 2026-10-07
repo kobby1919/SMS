@@ -85657,6 +85657,7 @@ export namespace Prisma {
   export type DailyCollectionTypeMinAggregateOutputType = {
     id: string | null
     name: string | null
+    normalizedName: string | null
     category: $Enums.FeeCategory | null
     amount: Decimal | null
     description: string | null
@@ -85672,6 +85673,7 @@ export namespace Prisma {
   export type DailyCollectionTypeMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    normalizedName: string | null
     category: $Enums.FeeCategory | null
     amount: Decimal | null
     description: string | null
@@ -85687,6 +85689,7 @@ export namespace Prisma {
   export type DailyCollectionTypeCountAggregateOutputType = {
     id: number
     name: number
+    normalizedName: number
     category: number
     amount: number
     description: number
@@ -85712,6 +85715,7 @@ export namespace Prisma {
   export type DailyCollectionTypeMinAggregateInputType = {
     id?: true
     name?: true
+    normalizedName?: true
     category?: true
     amount?: true
     description?: true
@@ -85727,6 +85731,7 @@ export namespace Prisma {
   export type DailyCollectionTypeMaxAggregateInputType = {
     id?: true
     name?: true
+    normalizedName?: true
     category?: true
     amount?: true
     description?: true
@@ -85742,6 +85747,7 @@ export namespace Prisma {
   export type DailyCollectionTypeCountAggregateInputType = {
     id?: true
     name?: true
+    normalizedName?: true
     category?: true
     amount?: true
     description?: true
@@ -85844,6 +85850,7 @@ export namespace Prisma {
   export type DailyCollectionTypeGroupByOutputType = {
     id: string
     name: string
+    normalizedName: string
     category: $Enums.FeeCategory
     amount: Decimal
     description: string | null
@@ -85878,6 +85885,7 @@ export namespace Prisma {
   export type DailyCollectionTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    normalizedName?: boolean
     category?: boolean
     amount?: boolean
     description?: boolean
@@ -85897,6 +85905,7 @@ export namespace Prisma {
   export type DailyCollectionTypeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    normalizedName?: boolean
     category?: boolean
     amount?: boolean
     description?: boolean
@@ -85913,6 +85922,7 @@ export namespace Prisma {
   export type DailyCollectionTypeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    normalizedName?: boolean
     category?: boolean
     amount?: boolean
     description?: boolean
@@ -85929,6 +85939,7 @@ export namespace Prisma {
   export type DailyCollectionTypeSelectScalar = {
     id?: boolean
     name?: boolean
+    normalizedName?: boolean
     category?: boolean
     amount?: boolean
     description?: boolean
@@ -85941,7 +85952,7 @@ export namespace Prisma {
     schoolId?: boolean
   }
 
-  export type DailyCollectionTypeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "category" | "amount" | "description" | "isActive" | "requiresBursarConfirmation" | "createdBy" | "updatedBy" | "createdAt" | "updatedAt" | "schoolId", ExtArgs["result"]["dailyCollectionType"]>
+  export type DailyCollectionTypeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "normalizedName" | "category" | "amount" | "description" | "isActive" | "requiresBursarConfirmation" | "createdBy" | "updatedBy" | "createdAt" | "updatedAt" | "schoolId", ExtArgs["result"]["dailyCollectionType"]>
   export type DailyCollectionTypeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     collectors?: boolean | DailyCollectionType$collectorsArgs<ExtArgs>
@@ -85965,6 +85976,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
+      normalizedName: string
       category: $Enums.FeeCategory
       amount: Prisma.Decimal
       description: string | null
@@ -86403,6 +86415,7 @@ export namespace Prisma {
   interface DailyCollectionTypeFieldRefs {
     readonly id: FieldRef<"DailyCollectionType", 'String'>
     readonly name: FieldRef<"DailyCollectionType", 'String'>
+    readonly normalizedName: FieldRef<"DailyCollectionType", 'String'>
     readonly category: FieldRef<"DailyCollectionType", 'FeeCategory'>
     readonly amount: FieldRef<"DailyCollectionType", 'Decimal'>
     readonly description: FieldRef<"DailyCollectionType", 'String'>
@@ -120406,6 +120419,7 @@ export namespace Prisma {
   export const DailyCollectionTypeScalarFieldEnum: {
     id: 'id',
     name: 'name',
+    normalizedName: 'normalizedName',
     category: 'category',
     amount: 'amount',
     description: 'description',
@@ -128328,6 +128342,7 @@ export namespace Prisma {
     NOT?: DailyCollectionTypeWhereInput | DailyCollectionTypeWhereInput[]
     id?: StringFilter<"DailyCollectionType"> | string
     name?: StringFilter<"DailyCollectionType"> | string
+    normalizedName?: StringFilter<"DailyCollectionType"> | string
     category?: EnumFeeCategoryFilter<"DailyCollectionType"> | $Enums.FeeCategory
     amount?: DecimalFilter<"DailyCollectionType"> | Decimal | DecimalJsLike | number | string
     description?: StringNullableFilter<"DailyCollectionType"> | string | null
@@ -128346,6 +128361,7 @@ export namespace Prisma {
   export type DailyCollectionTypeOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    normalizedName?: SortOrder
     category?: SortOrder
     amount?: SortOrder
     description?: SortOrderInput | SortOrder
@@ -128364,10 +128380,12 @@ export namespace Prisma {
   export type DailyCollectionTypeWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     schoolId_name?: DailyCollectionTypeSchoolIdNameCompoundUniqueInput
+    schoolId_normalizedName?: DailyCollectionTypeSchoolIdNormalizedNameCompoundUniqueInput
     AND?: DailyCollectionTypeWhereInput | DailyCollectionTypeWhereInput[]
     OR?: DailyCollectionTypeWhereInput[]
     NOT?: DailyCollectionTypeWhereInput | DailyCollectionTypeWhereInput[]
     name?: StringFilter<"DailyCollectionType"> | string
+    normalizedName?: StringFilter<"DailyCollectionType"> | string
     category?: EnumFeeCategoryFilter<"DailyCollectionType"> | $Enums.FeeCategory
     amount?: DecimalFilter<"DailyCollectionType"> | Decimal | DecimalJsLike | number | string
     description?: StringNullableFilter<"DailyCollectionType"> | string | null
@@ -128381,11 +128399,12 @@ export namespace Prisma {
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     collectors?: DailyCollectionTypeCollectorListRelationFilter
     auditLogs?: DailyCollectionAuditLogListRelationFilter
-  }, "id" | "schoolId_name">
+  }, "id" | "schoolId_name" | "schoolId_normalizedName">
 
   export type DailyCollectionTypeOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    normalizedName?: SortOrder
     category?: SortOrder
     amount?: SortOrder
     description?: SortOrderInput | SortOrder
@@ -128409,6 +128428,7 @@ export namespace Prisma {
     NOT?: DailyCollectionTypeScalarWhereWithAggregatesInput | DailyCollectionTypeScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"DailyCollectionType"> | string
     name?: StringWithAggregatesFilter<"DailyCollectionType"> | string
+    normalizedName?: StringWithAggregatesFilter<"DailyCollectionType"> | string
     category?: EnumFeeCategoryWithAggregatesFilter<"DailyCollectionType"> | $Enums.FeeCategory
     amount?: DecimalWithAggregatesFilter<"DailyCollectionType"> | Decimal | DecimalJsLike | number | string
     description?: StringNullableWithAggregatesFilter<"DailyCollectionType"> | string | null
@@ -137726,6 +137746,7 @@ export namespace Prisma {
   export type DailyCollectionTypeCreateInput = {
     id?: string
     name: string
+    normalizedName: string
     category?: $Enums.FeeCategory
     amount: Decimal | DecimalJsLike | number | string
     description?: string | null
@@ -137743,6 +137764,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUncheckedCreateInput = {
     id?: string
     name: string
+    normalizedName: string
     category?: $Enums.FeeCategory
     amount: Decimal | DecimalJsLike | number | string
     description?: string | null
@@ -137760,6 +137782,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -137777,6 +137800,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -137794,6 +137818,7 @@ export namespace Prisma {
   export type DailyCollectionTypeCreateManyInput = {
     id?: string
     name: string
+    normalizedName: string
     category?: $Enums.FeeCategory
     amount: Decimal | DecimalJsLike | number | string
     description?: string | null
@@ -137809,6 +137834,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -137823,6 +137849,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -146025,9 +146052,15 @@ export namespace Prisma {
     name: string
   }
 
+  export type DailyCollectionTypeSchoolIdNormalizedNameCompoundUniqueInput = {
+    schoolId: string
+    normalizedName: string
+  }
+
   export type DailyCollectionTypeCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    normalizedName?: SortOrder
     category?: SortOrder
     amount?: SortOrder
     description?: SortOrder
@@ -146047,6 +146080,7 @@ export namespace Prisma {
   export type DailyCollectionTypeMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    normalizedName?: SortOrder
     category?: SortOrder
     amount?: SortOrder
     description?: SortOrder
@@ -146062,6 +146096,7 @@ export namespace Prisma {
   export type DailyCollectionTypeMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    normalizedName?: SortOrder
     category?: SortOrder
     amount?: SortOrder
     description?: SortOrder
@@ -162745,6 +162780,7 @@ export namespace Prisma {
   export type DailyCollectionTypeCreateWithoutSchoolInput = {
     id?: string
     name: string
+    normalizedName: string
     category?: $Enums.FeeCategory
     amount: Decimal | DecimalJsLike | number | string
     description?: string | null
@@ -162761,6 +162797,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUncheckedCreateWithoutSchoolInput = {
     id?: string
     name: string
+    normalizedName: string
     category?: $Enums.FeeCategory
     amount: Decimal | DecimalJsLike | number | string
     description?: string | null
@@ -165657,6 +165694,7 @@ export namespace Prisma {
     NOT?: DailyCollectionTypeScalarWhereInput | DailyCollectionTypeScalarWhereInput[]
     id?: StringFilter<"DailyCollectionType"> | string
     name?: StringFilter<"DailyCollectionType"> | string
+    normalizedName?: StringFilter<"DailyCollectionType"> | string
     category?: EnumFeeCategoryFilter<"DailyCollectionType"> | $Enums.FeeCategory
     amount?: DecimalFilter<"DailyCollectionType"> | Decimal | DecimalJsLike | number | string
     description?: StringNullableFilter<"DailyCollectionType"> | string | null
@@ -203498,6 +203536,7 @@ export namespace Prisma {
   export type DailyCollectionTypeCreateWithoutCollectorsInput = {
     id?: string
     name: string
+    normalizedName: string
     category?: $Enums.FeeCategory
     amount: Decimal | DecimalJsLike | number | string
     description?: string | null
@@ -203514,6 +203553,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUncheckedCreateWithoutCollectorsInput = {
     id?: string
     name: string
+    normalizedName: string
     category?: $Enums.FeeCategory
     amount: Decimal | DecimalJsLike | number | string
     description?: string | null
@@ -203589,6 +203629,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUpdateWithoutCollectorsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -203605,6 +203646,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUncheckedUpdateWithoutCollectorsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -203857,6 +203899,7 @@ export namespace Prisma {
   export type DailyCollectionTypeCreateWithoutAuditLogsInput = {
     id?: string
     name: string
+    normalizedName: string
     category?: $Enums.FeeCategory
     amount: Decimal | DecimalJsLike | number | string
     description?: string | null
@@ -203873,6 +203916,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUncheckedCreateWithoutAuditLogsInput = {
     id?: string
     name: string
+    normalizedName: string
     category?: $Enums.FeeCategory
     amount: Decimal | DecimalJsLike | number | string
     description?: string | null
@@ -204153,6 +204197,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUpdateWithoutAuditLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -204169,6 +204214,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUncheckedUpdateWithoutAuditLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -217681,6 +217727,7 @@ export namespace Prisma {
   export type DailyCollectionTypeCreateManySchoolInput = {
     id?: string
     name: string
+    normalizedName: string
     category?: $Enums.FeeCategory
     amount: Decimal | DecimalJsLike | number | string
     description?: string | null
@@ -220034,6 +220081,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUpdateWithoutSchoolInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -220050,6 +220098,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUncheckedUpdateWithoutSchoolInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -220066,6 +220115,7 @@ export namespace Prisma {
   export type DailyCollectionTypeUncheckedUpdateManyWithoutSchoolInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
     category?: EnumFeeCategoryFieldUpdateOperationsInput | $Enums.FeeCategory
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
