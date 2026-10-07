@@ -17,6 +17,7 @@ import {
   dailyCollectionSubmitSessionSchema,
 } from "@/src/lib/validation/finance";
 import { revalidateDashboard } from "@/src/lib/cacheTags";
+import { enforceActionRateLimit } from "@/src/lib/rate-limit";
 
 const COLLECTOR_PATH = "/collector";
 const DAILY_COLLECTIONS_PATH = "/list/finance/daily-collections";
@@ -72,6 +73,11 @@ export async function openDailyCollectionSession(input: {
   const data = parseActionInput(dailyCollectionOpenSessionSchema, input);
   const context = await requireDailyCollectionAccess();
   const { userId, schoolId, role } = context;
+  await enforceActionRateLimit({
+    key: `daily-collection:open:${schoolId}:${userId}`,
+    limit: 20,
+    windowMs: 60_000,
+  });
 
   if (role !== "collector") {
     throw new Error("Only the assigned collector can open a daily collection session.");
@@ -196,6 +202,11 @@ export async function markDailyCollectionEntry(input: {
   const data = parseActionInput(dailyCollectionMarkEntrySchema, input);
   const context = await requireDailyCollectionAccess();
   const { userId, schoolId, role } = context;
+  await enforceActionRateLimit({
+    key: `daily-collection:mark:${schoolId}:${userId}`,
+    limit: 240,
+    windowMs: 60_000,
+  });
 
   if (role !== "collector") {
     throw new Error("Only the assigned collector can mark daily collection entries.");
@@ -230,6 +241,18 @@ export async function markDailyCollectionEntry(input: {
   const note = data.note?.trim() || null;
 
   await prisma.$transaction(async (tx) => {
+    const currentEntry = await tx.dailyCollectionEntry.findFirst({
+      where: { id: entry.id, schoolId, collectorId: collector.id },
+      include: { session: { select: { status: true } } },
+    });
+    const safeCurrentEntry = requireResourceAccess(currentEntry, context, "Daily collection entry not found.");
+    if (safeCurrentEntry.session.status !== "OPEN") {
+      throw new Error("This session is locked. Entries can only be marked while the session is open.");
+    }
+    if (safeCurrentEntry.status === data.status && (safeCurrentEntry.note ?? null) === note) {
+      return;
+    }
+
     const updated = await tx.dailyCollectionEntry.update({
       where: { id: entry.id },
       data: {
@@ -272,6 +295,11 @@ export async function submitDailyCollectionSession(input: { sessionId: string })
   const data = parseActionInput(dailyCollectionSubmitSessionSchema, input);
   const context = await requireDailyCollectionAccess();
   const { userId, schoolId, role } = context;
+  await enforceActionRateLimit({
+    key: `daily-collection:submit:${schoolId}:${userId}`,
+    limit: 30,
+    windowMs: 60_000,
+  });
 
   if (role !== "collector") {
     throw new Error("Only the assigned collector can submit a daily collection session.");
@@ -303,14 +331,17 @@ export async function submitDailyCollectionSession(input: { sessionId: string })
     const unpaidCount = safeSession.entries.filter((entry) => entry.status === "UNPAID").length;
     const excusedCount = safeSession.entries.filter((entry) => entry.status === "EXCUSED").length;
 
-    const submitted = await tx.dailyCollectionSession.update({
-      where: { id: safeSession.id },
+    const submittedUpdate = await tx.dailyCollectionSession.updateMany({
+      where: { id: safeSession.id, schoolId, collectorId: collector.id, status: "OPEN" },
       data: {
         status: "SUBMITTED",
         reportedAmount,
         submittedAt: new Date(),
       },
     });
+    if (submittedUpdate.count !== 1) {
+      throw new Error("This session was changed while submitting. Refresh and review the latest status.");
+    }
 
     await tx.dailyCollectionAuditLog.create({
       data: {
@@ -318,7 +349,7 @@ export async function submitDailyCollectionSession(input: { sessionId: string })
         action: "SESSION_SUBMITTED",
         performedBy: userId,
         entityType: "DailyCollectionSession",
-        entityId: submitted.id,
+        entityId: safeSession.id,
         collectorId: collector.id,
         collectionTypeId: safeSession.collectionTypeId,
         metadata: {
@@ -346,6 +377,11 @@ export async function confirmDailyCollectionSession(input: {
   const data = parseActionInput(dailyCollectionConfirmSessionSchema, input);
   const context = await requireDailyCollectionSetupAccess();
   const { userId, schoolId } = context;
+  await enforceActionRateLimit({
+    key: `daily-collection:confirm:${schoolId}:${userId}`,
+    limit: 40,
+    windowMs: 60_000,
+  });
   const amountReceived = new Prisma.Decimal(roundMoney(data.amountReceived));
 
   await prisma.$transaction(async (tx) => {
@@ -366,8 +402,8 @@ export async function confirmDailyCollectionSession(input: {
       throw new Error("Amount received does not match the collector's submitted total. Flag the session as a mismatch instead.");
     }
 
-    const confirmed = await tx.dailyCollectionSession.update({
-      where: { id: session.id },
+    const confirmedUpdate = await tx.dailyCollectionSession.updateMany({
+      where: { id: session.id, schoolId, status: "SUBMITTED" },
       data: {
         status: "CONFIRMED",
         confirmedAmount: amountReceived,
@@ -375,6 +411,9 @@ export async function confirmDailyCollectionSession(input: {
         confirmedBy: userId,
       },
     });
+    if (confirmedUpdate.count !== 1) {
+      throw new Error("This session was already reviewed. Refresh and check the latest status.");
+    }
 
     await tx.dailyCollectionAuditLog.create({
       data: {
@@ -382,7 +421,7 @@ export async function confirmDailyCollectionSession(input: {
         action: "SESSION_CONFIRMED",
         performedBy: userId,
         entityType: "DailyCollectionSession",
-        entityId: confirmed.id,
+        entityId: session.id,
         collectorId: session.collectorId,
         collectionTypeId: session.collectionTypeId,
         metadata: {
@@ -410,6 +449,11 @@ export async function flagDailyCollectionSession(input: {
   const data = parseActionInput(dailyCollectionFlagSessionSchema, input);
   const context = await requireDailyCollectionSetupAccess();
   const { userId, schoolId } = context;
+  await enforceActionRateLimit({
+    key: `daily-collection:flag:${schoolId}:${userId}`,
+    limit: 40,
+    windowMs: 60_000,
+  });
   const amountReceived = new Prisma.Decimal(roundMoney(data.amountReceived));
 
   await prisma.$transaction(async (tx) => {
@@ -426,8 +470,8 @@ export async function flagDailyCollectionSession(input: {
       throw new Error("Only submitted sessions can be flagged for mismatch.");
     }
 
-    const flagged = await tx.dailyCollectionSession.update({
-      where: { id: session.id },
+    const flaggedUpdate = await tx.dailyCollectionSession.updateMany({
+      where: { id: session.id, schoolId, status: "SUBMITTED" },
       data: {
         status: "FLAGGED",
         confirmedAmount: amountReceived,
@@ -436,6 +480,9 @@ export async function flagDailyCollectionSession(input: {
         mismatchReason: data.reason.trim(),
       },
     });
+    if (flaggedUpdate.count !== 1) {
+      throw new Error("This session was already reviewed. Refresh and check the latest status.");
+    }
 
     await tx.dailyCollectionAuditLog.create({
       data: {
@@ -443,7 +490,7 @@ export async function flagDailyCollectionSession(input: {
         action: "SESSION_FLAGGED",
         performedBy: userId,
         entityType: "DailyCollectionSession",
-        entityId: flagged.id,
+        entityId: session.id,
         collectorId: session.collectorId,
         collectionTypeId: session.collectionTypeId,
         metadata: {
