@@ -34,12 +34,6 @@ function formatTime(value: Date | null) {
   }).format(new Date(value));
 }
 
-function compactAmount(amount: number) {
-  return amount >= 100_000
-    ? `GHS ${(amount / 1000).toFixed(0)}k`
-    : formatGHS(amount);
-}
-
 function alertTone(tone: "ok" | "warning" | "risk") {
   if (tone === "risk") return "border-rose-200 bg-rose-50 text-rose-800";
   if (tone === "warning") return "border-amber-200 bg-amber-50 text-amber-800";
@@ -76,6 +70,25 @@ function MoneyCard({
       <p className="mt-1 text-xs font-semibold leading-5 text-gray-500">
         {helper}
       </p>
+    </div>
+  );
+}
+
+function MiniMoney({
+  label,
+  value,
+  tone = "text-gray-700",
+}: {
+  label: string;
+  value: string;
+  tone?: string;
+}) {
+  return (
+    <div>
+      <p className="text-[10px] font-black uppercase tracking-wide text-gray-400 md:hidden">
+        {label}
+      </p>
+      <p className={`text-sm font-black ${tone}`}>{value}</p>
     </div>
   );
 }
@@ -192,22 +205,73 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
         </div>
       ) : null}
 
+      <div className="mt-5 rounded-lg border border-gray-200 bg-white p-4">
+        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-sm font-black text-gray-950">Fee Item Breakdown</p>
+            <p className="mt-1 text-xs font-semibold leading-5 text-gray-500">
+              Shows which non-daily bill items make up the bill expected, collected, and outstanding figures.
+            </p>
+          </div>
+          <Link href="/list/finance/bills" className="text-xs font-black text-blue-700 hover:underline">
+            Review bills
+          </Link>
+        </div>
+        {snapshot.feeItemBreakdown.length > 0 ? (
+          <div className="overflow-hidden rounded-lg border border-gray-100">
+            <div className="hidden grid-cols-[1.4fr_1fr_1fr_1fr_80px] gap-3 bg-gray-50 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-gray-400 md:grid">
+              <span>Fee item</span>
+              <span>Expected</span>
+              <span>Collected</span>
+              <span>Outstanding</span>
+              <span>Rate</span>
+            </div>
+            <div className="divide-y divide-gray-100">
+              {snapshot.feeItemBreakdown.map((item) => (
+                <div
+                  key={`${item.category}:${item.name}:${item.billingFrequency}`}
+                  className="grid gap-2 px-3 py-3 md:grid-cols-[1.4fr_1fr_1fr_1fr_80px] md:items-center"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-black text-gray-950">{item.name}</p>
+                    <p className="mt-1 text-[11px] font-semibold text-gray-400">
+                      {item.category.toLowerCase().replaceAll("_", " ")} · {item.billingFrequency.toLowerCase().replaceAll("_", " ")} · {item.studentCount} student{item.studentCount === 1 ? "" : "s"}
+                    </p>
+                  </div>
+                  <MiniMoney label="Expected" value={formatGHS(item.expected)} />
+                  <MiniMoney label="Collected" value={formatGHS(item.collected)} tone="text-emerald-700" />
+                  <MiniMoney label="Outstanding" value={formatGHS(item.outstanding)} tone={item.outstanding > 0 ? "text-rose-700" : "text-gray-700"} />
+                  <p className="text-sm font-black text-gray-950">{item.collectionRate}%</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="rounded-lg bg-gray-50 p-3 text-sm font-semibold text-gray-500">
+            No non-daily fee item breakdown yet. Generate student bills from term, monthly, weekly, or one-time fee items.
+          </p>
+        )}
+      </div>
+
       <div className="mt-5 grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-sm font-black text-gray-950">Today&apos;s Collection Activity</p>
               <p className="mt-1 text-xs font-semibold leading-5 text-gray-500">
-                Shows whether money is actually moving today.
+                Trusted money today combines confirmed bill payments and confirmed daily collections.
               </p>
             </div>
             <Clock3 size={18} className="shrink-0 text-gray-400" />
           </div>
           <p className="mt-4 text-2xl font-black text-gray-950">
-            {formatGHS(today.amountCollectedToday)}
+            {formatGHS(today.trustedMoneyToday)}
           </p>
           <p className="mt-1 text-sm font-semibold leading-6 text-gray-600">
-            {today.paymentsRecordedToday} payment{today.paymentsRecordedToday === 1 ? "" : "s"} recorded today.
+            {formatGHS(today.billPaymentAmountToday)} from bill payments and {formatGHS(today.dailyCollectionsConfirmedToday)} from confirmed daily collections.
+          </p>
+          <p className="mt-1 text-xs font-semibold leading-5 text-gray-500">
+            {today.billPaymentsRecordedToday} bill payment{today.billPaymentsRecordedToday === 1 ? "" : "s"} recorded today.
             Last payment: {formatTime(today.lastPaymentRecordedAt)}
             {today.lastPaymentReceiptNumber ? ` · ${today.lastPaymentReceiptNumber}` : ""}.
           </p>
@@ -225,10 +289,23 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
               <p className="mt-1 text-lg font-black text-gray-900">{today.pendingOnlinePayments}</p>
             </div>
             <div className="rounded-lg bg-white p-3">
-              <p className="text-[10px] font-black uppercase tracking-wide text-gray-400">Last amount</p>
-              <p className="mt-1 text-lg font-black text-gray-900">{compactAmount(today.lastPaymentAmount)}</p>
+              <p className="text-[10px] font-black uppercase tracking-wide text-gray-400">Daily confirmed</p>
+              <p className="mt-1 text-lg font-black text-gray-900">{today.dailyCollectionConfirmedSessions}</p>
+            </div>
+            <div className="rounded-lg bg-white p-3">
+              <p className="text-[10px] font-black uppercase tracking-wide text-gray-400">Daily pending</p>
+              <p className="mt-1 text-lg font-black text-gray-900">{today.dailyCollectionPendingReviewSessions}</p>
+            </div>
+            <div className="rounded-lg bg-white p-3">
+              <p className="text-[10px] font-black uppercase tracking-wide text-gray-400">Daily flagged</p>
+              <p className="mt-1 text-lg font-black text-gray-900">{today.dailyCollectionFlaggedSessions}</p>
             </div>
           </div>
+          {(today.dailyCollectionPendingReviewSessions > 0 || today.dailyCollectionFlaggedSessions > 0) && (
+            <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold leading-5 text-amber-800">
+              {formatGHS(today.dailyCollectionPendingReviewAmount + today.dailyCollectionFlaggedAmount)} in submitted or flagged daily collections is not counted as trusted money yet.
+            </div>
+          )}
         </div>
 
         <div className="rounded-lg border border-gray-200 bg-white p-4">

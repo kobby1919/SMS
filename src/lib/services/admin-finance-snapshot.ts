@@ -2,6 +2,7 @@ import type { PaymentIntentStatus, Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { getBursarArrearsFollowUp } from "@/src/lib/services/bursar-arrears";
 import { getClassCollectionReport } from "@/src/lib/services/class-collection-report";
+import { getDailyCollectionReport } from "@/src/lib/services/daily-collection-report";
 import { getReceiptIntegrityReport } from "@/src/lib/services/receipt-integrity-report";
 
 const OPEN_BILL_STATUSES = ["UNPAID", "PARTIAL"] as const;
@@ -87,10 +88,11 @@ function buildBillMoneyPosition(
     status: string;
     discountAmount: Prisma.Decimal;
     lineItems: {
+      id: number;
       amount: Prisma.Decimal;
       amountPaid: Prisma.Decimal;
       balance: Prisma.Decimal;
-      feeItem: { billingFrequency: string };
+      feeItem: { name: string; category: string; billingFrequency: string };
     }[];
   }[],
 ) {
@@ -101,6 +103,19 @@ function buildBillMoneyPosition(
   let dailyLineItemCountExcluded = 0;
   const studentsWithBills = new Set<string>();
   const owingStudentIds = new Set<string>();
+  const feeItemMap = new Map<
+    string,
+    {
+      name: string;
+      category: string;
+      billingFrequency: string;
+      expected: number;
+      collected: number;
+      outstanding: number;
+      lineItemIds: Set<number>;
+      studentIds: Set<string>;
+    }
+  >();
 
   for (const bill of bills) {
     const includedLines = bill.lineItems.filter((line) =>
@@ -131,6 +146,37 @@ function buildBillMoneyPosition(
     outstandingBalance += outstanding;
     billCount += 1;
     studentsWithBills.add(bill.studentId);
+
+    for (const line of includedLines) {
+      const lineAmount = Math.max(0, asNumber(line.amount));
+      const linePaid = Math.max(0, asNumber(line.amountPaid));
+      const lineDiscount = includedLineTotal > 0
+        ? Math.min(lineAmount, (includedDiscount * lineAmount) / includedLineTotal)
+        : 0;
+      const lineExpected = Math.max(0, lineAmount - lineDiscount);
+      const lineOutstanding = bill.status === "WAIVED"
+        ? 0
+        : Math.max(0, lineExpected - linePaid, Math.max(0, asNumber(line.balance)) - lineDiscount);
+      const key = `${line.feeItem.category}:${line.feeItem.name}:${line.feeItem.billingFrequency}`;
+      const current = feeItemMap.get(key) ?? {
+        name: line.feeItem.name,
+        category: line.feeItem.category,
+        billingFrequency: line.feeItem.billingFrequency,
+        expected: 0,
+        collected: 0,
+        outstanding: 0,
+        lineItemIds: new Set<number>(),
+        studentIds: new Set<string>(),
+      };
+
+      current.expected += lineExpected;
+      current.collected += linePaid;
+      current.outstanding += lineOutstanding;
+      current.lineItemIds.add(line.id);
+      current.studentIds.add(bill.studentId);
+      feeItemMap.set(key, current);
+    }
+
     if (
       outstanding > 0 &&
       OPEN_BILL_STATUSES.includes(bill.status as (typeof OPEN_BILL_STATUSES)[number])
@@ -149,6 +195,20 @@ function buildBillMoneyPosition(
     studentCountWithBills: studentsWithBills.size,
     billCount,
     dailyLineItemCountExcluded,
+    feeItemBreakdown: Array.from(feeItemMap.values())
+      .map((item) => ({
+        name: item.name,
+        category: item.category,
+        billingFrequency: item.billingFrequency,
+        expected: item.expected,
+        collected: item.collected,
+        outstanding: item.outstanding,
+        collectionRate: percentage(item.collected, item.expected),
+        billCount: item.lineItemIds.size,
+        studentCount: item.studentIds.size,
+      }))
+      .sort((a, b) => b.outstanding - a.outstanding || b.expected - a.expected || a.name.localeCompare(b.name))
+      .slice(0, 8),
   };
 }
 
@@ -159,6 +219,7 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
   const [
     classReport,
     arrears,
+    dailyCollections,
     receiptIntegrity,
     confirmedPaymentTotals,
     todayPaymentTotals,
@@ -175,6 +236,7 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
   ] = await Promise.all([
     getClassCollectionReport(schoolId),
     getBursarArrearsFollowUp(schoolId, { asOf: now, limit: 5 }),
+    getDailyCollectionReport(schoolId, now),
     getReceiptIntegrityReport(schoolId),
     prisma.payment.aggregate({
       where: {
@@ -282,10 +344,11 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
         discountAmount: true,
         lineItems: {
           select: {
+            id: true,
             amount: true,
             amountPaid: true,
             balance: true,
-            feeItem: { select: { billingFrequency: true } },
+            feeItem: { select: { name: true, category: true, billingFrequency: true } },
           },
         },
       },
@@ -394,15 +457,25 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
         : Math.max(0, billPosition.collectedFees - confirmedPaymentAmount),
       dailyLineItemCountExcluded: billPosition.dailyLineItemCountExcluded,
     },
+    feeItemBreakdown: billPosition.feeItemBreakdown,
     todayActivity: {
       paymentsRecordedToday: todayPaymentTotals._count._all,
+      billPaymentsRecordedToday: todayPaymentTotals._count._all,
+      billPaymentAmountToday: asNumber(todayPaymentTotals._sum.amount),
       amountCollectedToday: asNumber(todayPaymentTotals._sum.amount),
+      trustedMoneyToday: asNumber(todayPaymentTotals._sum.amount) + dailyCollections.summary.confirmedAmount,
       receiptsIssuedToday,
       onlinePaymentsConfirmedToday,
       pendingOnlinePayments,
       lastPaymentRecordedAt: lastPayment?.paymentDate ?? null,
       lastPaymentReceiptNumber: lastPayment?.receiptNumber ?? null,
       lastPaymentAmount: asNumber(lastPayment?.amount),
+      dailyCollectionsConfirmedToday: dailyCollections.summary.confirmedAmount,
+      dailyCollectionConfirmedSessions: dailyCollections.confirmationStatus.confirmedSessions,
+      dailyCollectionPendingReviewSessions: dailyCollections.confirmationStatus.pendingReviewSessions,
+      dailyCollectionPendingReviewAmount: dailyCollections.confirmationStatus.pendingReviewAmount,
+      dailyCollectionFlaggedSessions: dailyCollections.confirmationStatus.flaggedSessions,
+      dailyCollectionFlaggedAmount: dailyCollections.confirmationStatus.flaggedAmount,
     },
     weakClasses,
     highRiskOwingStudents,
