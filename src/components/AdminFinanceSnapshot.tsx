@@ -95,8 +95,8 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
             </span>
           </div>
           <p className="mt-2 max-w-3xl text-sm font-medium leading-6 text-gray-600">
-            Real fee position from student bills, confirmed payments, online payment attempts,
-            receipts, corrections, and reversals.
+            Real bill position from non-daily student bill items, confirmed payments, online payment attempts,
+            receipts, corrections, and reversals. Daily collections are tracked separately.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row lg:justify-end">
@@ -142,13 +142,13 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         <MoneyCard
-          label="Expected fees"
+          label="Bill expected"
           value={formatGHS(money.expectedFees)}
-          helper="From generated active student bills."
+          helper={`${money.billCount} generated bill${money.billCount === 1 ? "" : "s"} excluding daily collection lines.`}
           icon={<WalletCards size={14} />}
         />
         <MoneyCard
-          label="Collected"
+          label="Bill collected"
           value={formatGHS(money.collectedFees)}
           helper={
             money.importedOrOpeningPaidAmount > 0
@@ -158,7 +158,7 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
           icon={<Banknote size={14} />}
         />
         <MoneyCard
-          label="Outstanding"
+          label="Bill outstanding"
           value={formatGHS(money.outstandingBalance)}
           helper={`${money.owingStudents} student${money.owingStudents === 1 ? "" : "s"} still owing.`}
           icon={<TrendingDown size={14} />}
@@ -166,22 +166,29 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
         <MoneyCard
           label="Collection rate"
           value={`${money.collectionRate}%`}
-          helper="Confirmed collections against expected fees."
+          helper="Collected bill line amounts against expected bill line amounts."
           icon={<CheckCircle2 size={14} />}
         />
         <MoneyCard
           label="Paid students"
           value={money.paidStudents}
-          helper="Students with generated bills and no open balance."
+          helper="Students with non-daily bills and no open bill balance."
           icon={<Users size={14} />}
         />
         <MoneyCard
           label="Owing students"
           value={money.owingStudents}
-          helper="Students with unpaid or part-paid balances."
+          helper="Students with unpaid or part-paid non-daily bill balances."
           icon={<ShieldAlert size={14} />}
         />
       </div>
+
+      {money.dailyLineItemCountExcluded > 0 ? (
+        <div className="mt-3 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-semibold leading-5 text-blue-800">
+          {money.dailyLineItemCountExcluded} daily bill line{money.dailyLineItemCountExcluded === 1 ? "" : "s"} excluded from these cards.
+          Daily collections will appear in their own collection section.
+        </div>
+      ) : null}
 
       <div className="mt-5 grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
