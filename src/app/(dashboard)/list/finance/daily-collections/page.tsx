@@ -341,7 +341,7 @@ export default async function DailyCollectionsSetupPage() {
                     {log.createdAt.toLocaleTimeString("en-GH", { hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
-                <p className="mt-2 text-[11px] font-semibold text-gray-400">Actor: {log.performedBy}</p>
+                <p className="mt-2 text-[11px] font-semibold text-gray-400">Actor: {log.performedByLabel}</p>
               </div>
             ))
           )}

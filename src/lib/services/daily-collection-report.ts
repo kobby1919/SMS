@@ -134,6 +134,33 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
       take: 10,
     }),
   ]);
+  const actorIds = Array.from(new Set(recentAuditLogs.map((log) => log.performedBy).filter(Boolean)));
+  const [adminActors, bursarActors, collectorActors] = actorIds.length > 0
+    ? await Promise.all([
+        prisma.admin.findMany({
+          where: { schoolId, id: { in: actorIds } },
+          select: { id: true, username: true },
+        }),
+        prisma.bursar.findMany({
+          where: { schoolId, id: { in: actorIds } },
+          select: { id: true, name: true, surname: true, email: true },
+        }),
+        prisma.collector.findMany({
+          where: { schoolId, id: { in: actorIds } },
+          select: { id: true, name: true, surname: true, email: true },
+        }),
+      ])
+    : [[], [], []] as const;
+  const actorLabels = new Map<string, string>();
+  for (const admin of adminActors) {
+    actorLabels.set(admin.id, `Admin: ${admin.username}`);
+  }
+  for (const bursar of bursarActors) {
+    actorLabels.set(bursar.id, `Bursar: ${fullName(bursar)}${bursar.email ? ` (${bursar.email})` : ""}`);
+  }
+  for (const collector of collectorActors) {
+    actorLabels.set(collector.id, `Collector: ${fullName(collector)}${collector.email ? ` (${collector.email})` : ""}`);
+  }
 
   const byStatus = {
     OPEN: 0,
@@ -378,6 +405,7 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
       entityType: log.entityType,
       entityId: log.entityId,
       performedBy: log.performedBy,
+      performedByLabel: actorLabels.get(log.performedBy) ?? log.performedBy,
       createdAt: log.createdAt,
       collectorName: log.collector ? fullName(log.collector) : null,
       collectionTypeName: log.collectionType?.name ?? null,
