@@ -1,7 +1,5 @@
 import type { PaymentIntentStatus, Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
-import { getBursarArrearsFollowUp } from "@/src/lib/services/bursar-arrears";
-import { getClassCollectionReport } from "@/src/lib/services/class-collection-report";
 import { getDailyCollectionReport } from "@/src/lib/services/daily-collection-report";
 import { getReceiptIntegrityReport } from "@/src/lib/services/receipt-integrity-report";
 
@@ -37,6 +35,74 @@ function endOfDay(date: Date) {
 function percentage(numerator: number, denominator: number) {
   if (denominator <= 0) return 0;
   return Math.min(100, Math.round((numerator / denominator) * 1000) / 10);
+}
+
+function classSortKey(name: string) {
+  const normalized = name.trim().toLowerCase();
+  if (normalized.includes("nursery")) return 10;
+  if (normalized.includes("kg") || normalized.includes("kindergarten")) {
+    const match = normalized.match(/\d+/);
+    return 20 + Number(match?.[0] ?? 0);
+  }
+  if (normalized.includes("class")) {
+    const match = normalized.match(/\d+/);
+    return 40 + Number(match?.[0] ?? 0);
+  }
+  if (normalized.includes("jhs")) {
+    const match = normalized.match(/\d+/);
+    return 70 + Number(match?.[0] ?? 0);
+  }
+  return 999;
+}
+
+function startOfDate(date: Date) {
+  const value = new Date(date);
+  value.setHours(0, 0, 0, 0);
+  return value;
+}
+
+function daysOverdue(dueDate: Date | null, asOf: Date) {
+  if (!dueDate) return 0;
+  const diff = Math.floor((startOfDate(asOf).getTime() - startOfDate(dueDate).getTime()) / 86_400_000);
+  return Math.max(0, diff);
+}
+
+function priorityForOwing(amountOwed: number, overdueDays: number) {
+  if (overdueDays > 30 || amountOwed >= 2_000) return "Critical";
+  if (overdueDays >= 14 || amountOwed >= 1_000) return "High";
+  if (overdueDays > 0) return "Medium";
+  return "Low";
+}
+
+function comparePriority(a: string, b: string) {
+  const order: Record<string, number> = {
+    Critical: 0,
+    High: 1,
+    Medium: 2,
+    Low: 3,
+  };
+  return (order[a] ?? 99) - (order[b] ?? 99);
+}
+
+function contactStatus(input: {
+  relationship?: { parent: { email: string | null; phone: string | null } } | null;
+  legacyParent?: { email: string | null; phone: string | null; schoolId: string | null } | null;
+  schoolId: string;
+}) {
+  const relationshipParent = input.relationship?.parent;
+  if (relationshipParent) {
+    return relationshipParent.email || relationshipParent.phone
+      ? "Contact saved"
+      : "Parent profile missing phone/email";
+  }
+
+  if (input.legacyParent?.schoolId === input.schoolId) {
+    return input.legacyParent.email || input.legacyParent.phone
+      ? "Legacy contact saved"
+      : "Legacy parent missing phone/email";
+  }
+
+  return "No contact saved";
 }
 
 function buildDuplicateReferenceCount(
@@ -84,9 +150,21 @@ function discountShare({
 
 function buildBillMoneyPosition(
   bills: {
+    id: number;
+    schoolId: string;
     studentId: string;
     status: string;
+    dueDate: Date | null;
     discountAmount: Prisma.Decimal;
+    student: {
+      name: string;
+      surname: string;
+      class: { id: number; name: string } | null;
+      parent: { email: string | null; phone: string | null; schoolId: string | null } | null;
+      parentRelationships: {
+        parent: { email: string | null; phone: string | null };
+      }[];
+    };
     lineItems: {
       id: number;
       amount: Prisma.Decimal;
@@ -95,6 +173,7 @@ function buildBillMoneyPosition(
       feeItem: { name: string; category: string; billingFrequency: string };
     }[];
   }[],
+  asOf: Date,
 ) {
   let expectedFees = 0;
   let collectedFees = 0;
@@ -103,6 +182,32 @@ function buildBillMoneyPosition(
   let dailyLineItemCountExcluded = 0;
   const studentsWithBills = new Set<string>();
   const owingStudentIds = new Set<string>();
+  const classMap = new Map<
+    number,
+    {
+      classId: number;
+      className: string;
+      expected: number;
+      collected: number;
+      outstanding: number;
+      billCount: number;
+      paidBills: number;
+      partialBills: number;
+      unpaidBills: number;
+      waivedBills: number;
+      studentIds: Set<string>;
+    }
+  >();
+  const owingItems: {
+    billId: number;
+    studentName: string;
+    className: string;
+    amountOwed: number;
+    daysOverdue: number;
+    priority: string;
+    parentContactStatus: string;
+    href: string;
+  }[] = [];
   const feeItemMap = new Map<
     string,
     {
@@ -147,6 +252,37 @@ function buildBillMoneyPosition(
     billCount += 1;
     studentsWithBills.add(bill.studentId);
 
+    if (bill.student.class) {
+      const currentClass = classMap.get(bill.student.class.id) ?? {
+        classId: bill.student.class.id,
+        className: bill.student.class.name,
+        expected: 0,
+        collected: 0,
+        outstanding: 0,
+        billCount: 0,
+        paidBills: 0,
+        partialBills: 0,
+        unpaidBills: 0,
+        waivedBills: 0,
+        studentIds: new Set<string>(),
+      };
+      currentClass.expected += expected;
+      currentClass.collected += includedPaid;
+      currentClass.outstanding += outstanding;
+      currentClass.billCount += 1;
+      currentClass.studentIds.add(bill.studentId);
+      if (bill.status === "WAIVED") {
+        currentClass.waivedBills += 1;
+      } else if (outstanding <= 0) {
+        currentClass.paidBills += 1;
+      } else if (includedPaid > 0) {
+        currentClass.partialBills += 1;
+      } else {
+        currentClass.unpaidBills += 1;
+      }
+      classMap.set(bill.student.class.id, currentClass);
+    }
+
     for (const line of includedLines) {
       const lineAmount = Math.max(0, asNumber(line.amount));
       const linePaid = Math.max(0, asNumber(line.amountPaid));
@@ -182,6 +318,21 @@ function buildBillMoneyPosition(
       OPEN_BILL_STATUSES.includes(bill.status as (typeof OPEN_BILL_STATUSES)[number])
     ) {
       owingStudentIds.add(bill.studentId);
+      const overdueDays = daysOverdue(bill.dueDate, asOf);
+      owingItems.push({
+        billId: bill.id,
+        studentName: `${bill.student.name} ${bill.student.surname}`.trim(),
+        className: bill.student.class?.name ?? "No class",
+        amountOwed: outstanding,
+        daysOverdue: overdueDays,
+        priority: priorityForOwing(outstanding, overdueDays),
+        parentContactStatus: contactStatus({
+          relationship: bill.student.parentRelationships[0] ?? null,
+          legacyParent: bill.student.parent,
+          schoolId: bill.schoolId,
+        }),
+        href: `/list/finance/bills/${bill.id}`,
+      });
     }
   }
 
@@ -195,6 +346,27 @@ function buildBillMoneyPosition(
     studentCountWithBills: studentsWithBills.size,
     billCount,
     dailyLineItemCountExcluded,
+    weakClasses: Array.from(classMap.values())
+      .map((item) => ({
+        classId: item.classId,
+        className: item.className,
+        expected: item.expected,
+        collected: item.collected,
+        outstanding: item.outstanding,
+        billCount: item.billCount,
+        paidBills: item.paidBills,
+        partialBills: item.partialBills,
+        unpaidBills: item.unpaidBills,
+        waivedBills: item.waivedBills,
+        studentCount: item.studentIds.size,
+        collectionRate: percentage(item.collected, item.expected),
+      }))
+      .filter((row) => row.outstanding > 0)
+      .sort((a, b) => a.collectionRate - b.collectionRate || b.outstanding - a.outstanding || classSortKey(a.className) - classSortKey(b.className))
+      .slice(0, 5),
+    highRiskOwingStudents: owingItems
+      .sort((a, b) => comparePriority(a.priority, b.priority) || b.amountOwed - a.amountOwed || b.daysOverdue - a.daysOverdue)
+      .slice(0, 5),
     feeItemBreakdown: Array.from(feeItemMap.values())
       .map((item) => ({
         name: item.name,
@@ -216,8 +388,6 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
   const todayEnd = endOfDay(now);
 
   const [
-    classReport,
-    arrears,
     dailyCollections,
     receiptIntegrity,
     confirmedPaymentTotals,
@@ -233,8 +403,6 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
     billMoneyRows,
     activeStudentsWithoutBills,
   ] = await Promise.all([
-    getClassCollectionReport(schoolId),
-    getBursarArrearsFollowUp(schoolId, { asOf: now, limit: 5 }),
     getDailyCollectionReport(schoolId, now),
     getReceiptIntegrityReport(schoolId),
     prisma.payment.aggregate({
@@ -338,9 +506,33 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
         feeStructure: { schoolId },
       },
       select: {
+        id: true,
+        schoolId: true,
         studentId: true,
         status: true,
+        dueDate: true,
         discountAmount: true,
+        student: {
+          select: {
+            name: true,
+            surname: true,
+            class: { select: { id: true, name: true } },
+            parent: { select: { email: true, phone: true, schoolId: true } },
+            parentRelationships: {
+              where: {
+                schoolId,
+                status: "ACTIVE",
+                canViewFees: true,
+                parent: { schoolId },
+              },
+              select: {
+                parent: { select: { email: true, phone: true } },
+              },
+              orderBy: [{ role: "asc" }, { updatedAt: "desc" }],
+              take: 1,
+            },
+          },
+        },
         lineItems: {
           select: {
             id: true,
@@ -362,25 +554,7 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
   ]);
 
   const confirmedPaymentAmount = asNumber(confirmedPaymentTotals._sum.amount);
-  const billPosition = buildBillMoneyPosition(billMoneyRows);
-  const weakClasses = [...classReport.rows]
-    .filter((row) => row.outstanding > 0)
-    .sort((a, b) => a.collectionRate - b.collectionRate || b.outstanding - a.outstanding)
-    .slice(0, 5);
-  const highRiskOwingStudents = arrears.items.slice(0, 5).map((item) => ({
-    billId: item.billId,
-    studentName: item.studentName,
-    className: item.className ?? "No class",
-    amountOwed: item.amountOwed,
-    daysOverdue: item.daysOverdue,
-    priority: item.priority,
-    parentContactStatus: item.parentContact
-      ? item.parentContact.phone || item.parentContact.email
-        ? "Contact saved"
-        : "Parent profile missing phone/email"
-      : "No contact saved",
-    href: item.href,
-  }));
+  const billPosition = buildBillMoneyPosition(billMoneyRows, now);
 
   const duplicateReferenceWarnings = buildDuplicateReferenceCount(activeReferenceRows);
   const integrityAlerts = [
@@ -434,6 +608,7 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
     hasBillPositionRecords: billPosition.billCount > 0,
     sourceOfTruth: {
       billPosition: "StudentBill line items with TERM, MONTHLY, WEEKLY, or ONE_TIME billing frequency.",
+      weakClassesAndTopOwing: "Derived from the same non-daily StudentBill line-item calculation as the bill position cards.",
       dailyCollections: "DailyCollectionSession confirmedAmount records. Kept separate from bill position.",
       confirmedPayments: "Payment records with CONFIRMED status. Used for activity and receipt trust.",
       excludedFromBillPosition: {
@@ -476,8 +651,8 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
       dailyCollectionFlaggedSessions: dailyCollections.confirmationStatus.flaggedSessions,
       dailyCollectionFlaggedAmount: dailyCollections.confirmationStatus.flaggedAmount,
     },
-    weakClasses,
-    highRiskOwingStudents,
+    weakClasses: billPosition.weakClasses,
+    highRiskOwingStudents: billPosition.highRiskOwingStudents,
     integrityAlerts,
     receiptIntegrity,
   };
