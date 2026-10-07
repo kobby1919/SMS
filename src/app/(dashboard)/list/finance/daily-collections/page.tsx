@@ -213,6 +213,100 @@ export default async function DailyCollectionsSetupPage() {
         )}
       </section>
 
+      <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+        <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-wider text-violet-600">Collector Accountability</p>
+              <h2 className="mt-1 text-lg font-black text-gray-900">Who collected what today</h2>
+              <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-gray-500">
+                Edujay separates collector reported totals from confirmed money, so the school can see work done without treating unchecked cash as final.
+              </p>
+            </div>
+            <span className="inline-flex w-fit rounded-full bg-violet-50 px-3 py-1.5 text-xs font-black text-violet-700">
+              {report.byCollector.length} active collector{report.byCollector.length === 1 ? "" : "s"} today
+            </span>
+          </div>
+
+          <div className="mt-4 space-y-3">
+            {report.byCollector.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center">
+                <p className="text-sm font-black text-gray-800">No collector activity for this date.</p>
+                <p className="mt-1 text-sm font-semibold text-gray-400">Collector accountability appears once a collector opens a daily collection session.</p>
+              </div>
+            ) : (
+              report.byCollector.map((collector) => (
+                <div key={collector.id} className="rounded-2xl border border-gray-100 bg-gray-50/70 p-4">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <p className="text-sm font-black text-gray-900">{collector.name}</p>
+                      <p className="mt-0.5 text-xs font-semibold text-gray-400">
+                        {collector.sessionCount} session{collector.sessionCount === 1 ? "" : "s"} - {collector.openSessions} open - {collector.submittedSessions} submitted - {collector.confirmedSessions} confirmed - {collector.flaggedSessions} flagged
+                      </p>
+                    </div>
+                    <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700">
+                      {formatGHS(collector.confirmedAmount)}
+                    </span>
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-2 min-[520px]:grid-cols-5">
+                    <MiniReportStat label="Reported" value={formatGHS(collector.reportedAmount)} />
+                    <MiniReportStat label="Confirmed" value={formatGHS(collector.confirmedAmount)} />
+                    <MiniReportStat label="Paid" value={collector.paidEntries} />
+                    <MiniReportStat label="Follow-up" value={collector.unpaidEntries} />
+                    <MiniReportStat label="Flagged" value={collector.flaggedSessions} />
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+          <div>
+            <p className="text-xs font-black uppercase tracking-wider text-amber-600">Bursar Confirmation Status</p>
+            <h2 className="mt-1 text-lg font-black text-gray-900">What still needs checking</h2>
+            <p className="mt-1 text-sm font-semibold leading-6 text-gray-500">
+              Submitted sessions must be confirmed or flagged. Flagged sessions stay visible until management resolves the mismatch later.
+            </p>
+          </div>
+
+          <div className="mt-4 grid grid-cols-1 gap-2">
+            <MiniReportStat label="Pending review sessions" value={report.confirmationStatus.pendingReviewSessions} />
+            <MiniReportStat label="Pending review amount" value={formatGHS(report.confirmationStatus.pendingReviewAmount)} />
+            <MiniReportStat label="Flagged mismatch sessions" value={report.confirmationStatus.flaggedSessions} />
+            <MiniReportStat label="Flagged amount received" value={formatGHS(report.confirmationStatus.flaggedAmount)} />
+          </div>
+
+          <div className="mt-4 rounded-2xl border border-amber-100 bg-amber-50 p-4">
+            <p className="text-sm font-black text-amber-900">Oldest submitted session</p>
+            <p className="mt-1 text-sm font-semibold text-amber-800">
+              {report.confirmationStatus.oldestSubmittedAt
+                ? report.confirmationStatus.oldestSubmittedAt.toLocaleString("en-GH", { dateStyle: "medium", timeStyle: "short" })
+                : "No submitted session is waiting."}
+            </p>
+          </div>
+
+          {report.sessionsNeedingReview.length > 0 && (
+            <div className="mt-4 space-y-2">
+              {report.sessionsNeedingReview.slice(0, 4).map((session) => (
+                <div key={session.id} className="rounded-xl border border-gray-100 p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-black text-gray-900">{session.collectionTypeName}</p>
+                      <p className="mt-0.5 text-xs font-semibold text-gray-400">{session.collectorName} - {session.status.toLowerCase()}</p>
+                    </div>
+                    <span className="shrink-0 text-xs font-black text-amber-700">{formatGHS(session.reportedAmount)}</span>
+                  </div>
+                  {session.mismatchReason && (
+                    <p className="mt-2 rounded-lg bg-rose-50 px-2 py-1 text-xs font-bold text-rose-700">{session.mismatchReason}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
       <DailyCollectionReviewPanel
         sessions={reviewSessions.map((session) => ({
           id: session.id,

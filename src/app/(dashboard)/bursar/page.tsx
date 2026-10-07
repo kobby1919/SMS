@@ -294,6 +294,22 @@ const BursarPage = async ({
                 <p className="mt-1 text-sm font-black text-violet-700">{formatGHS(dailyCollections.summary.flaggedAmount)}</p>
               </div>
             </div>
+            <div className="mt-3 grid grid-cols-1 gap-2 lg:grid-cols-2">
+              <div className="rounded-xl bg-white px-3 py-2">
+                <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Collector accountability</p>
+                <p className="mt-1 text-sm font-black text-gray-900">
+                  {dailyCollections.byCollector.length} collector{dailyCollections.byCollector.length === 1 ? "" : "s"} active today
+                </p>
+              </div>
+              <div className="rounded-xl bg-white px-3 py-2">
+                <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Oldest review wait</p>
+                <p className="mt-1 text-sm font-black text-gray-900">
+                  {dailyCollections.confirmationStatus.oldestSubmittedAt
+                    ? dailyCollections.confirmationStatus.oldestSubmittedAt.toLocaleString("en-GH", { dateStyle: "medium", timeStyle: "short" })
+                    : "No submitted session waiting"}
+                </p>
+              </div>
+            </div>
           </div>
         )}
 

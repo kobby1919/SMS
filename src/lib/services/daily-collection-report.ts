@@ -136,6 +136,15 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
     unpaidAmount: 0,
     inProgressUnpaidEntries: 0,
   };
+  const confirmationStatus = {
+    pendingReviewSessions: 0,
+    pendingReviewAmount: 0,
+    flaggedSessions: 0,
+    flaggedAmount: 0,
+    confirmedSessions: 0,
+    confirmedAmount: 0,
+    oldestSubmittedAt: null as Date | null,
+  };
 
   const byType = new Map<
     string,
@@ -155,6 +164,26 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
       sessionsNeedingReview: number;
     }
   >();
+  const byCollector = new Map<
+    string,
+    {
+      id: string;
+      name: string;
+      sessionCount: number;
+      openSessions: number;
+      submittedSessions: number;
+      confirmedSessions: number;
+      flaggedSessions: number;
+      expectedAmount: number;
+      reportedAmount: number;
+      confirmedAmount: number;
+      flaggedAmount: number;
+      paidEntries: number;
+      unpaidEntries: number;
+      excusedEntries: number;
+      inProgressUnpaidEntries: number;
+    }
+  >();
 
   for (const session of sessions) {
     byStatus[session.status] += 1;
@@ -169,6 +198,24 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
     summary.reportedAmount += sessionReported;
     summary.confirmedAmount += sessionConfirmed;
     summary.flaggedAmount += sessionFlagged;
+    if (session.status === "SUBMITTED") {
+      confirmationStatus.pendingReviewSessions += 1;
+      confirmationStatus.pendingReviewAmount += sessionReported;
+      if (
+        session.submittedAt &&
+        (!confirmationStatus.oldestSubmittedAt || session.submittedAt < confirmationStatus.oldestSubmittedAt)
+      ) {
+        confirmationStatus.oldestSubmittedAt = session.submittedAt;
+      }
+    }
+    if (session.status === "FLAGGED") {
+      confirmationStatus.flaggedSessions += 1;
+      confirmationStatus.flaggedAmount += sessionFlagged;
+    }
+    if (session.status === "CONFIRMED") {
+      confirmationStatus.confirmedSessions += 1;
+      confirmationStatus.confirmedAmount += sessionConfirmed;
+    }
 
     const type = byType.get(session.collectionType.id) ?? {
       id: session.collectionType.id,
@@ -185,12 +232,38 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
       sessionCount: 0,
       sessionsNeedingReview: 0,
     };
+    const collector = byCollector.get(session.collector.id) ?? {
+      id: session.collector.id,
+      name: fullName(session.collector),
+      sessionCount: 0,
+      openSessions: 0,
+      submittedSessions: 0,
+      confirmedSessions: 0,
+      flaggedSessions: 0,
+      expectedAmount: 0,
+      reportedAmount: 0,
+      confirmedAmount: 0,
+      flaggedAmount: 0,
+      paidEntries: 0,
+      unpaidEntries: 0,
+      excusedEntries: 0,
+      inProgressUnpaidEntries: 0,
+    };
 
     type.expectedAmount += sessionExpected;
     type.reportedAmount += sessionReported;
     type.confirmedAmount += sessionConfirmed;
     type.flaggedAmount += sessionFlagged;
     type.sessionCount += 1;
+    collector.expectedAmount += sessionExpected;
+    collector.reportedAmount += sessionReported;
+    collector.confirmedAmount += sessionConfirmed;
+    collector.flaggedAmount += sessionFlagged;
+    collector.sessionCount += 1;
+    if (session.status === "OPEN") collector.openSessions += 1;
+    if (session.status === "SUBMITTED") collector.submittedSessions += 1;
+    if (session.status === "CONFIRMED") collector.confirmedSessions += 1;
+    if (session.status === "FLAGGED") collector.flaggedSessions += 1;
     if (session.status === "SUBMITTED" || session.status === "FLAGGED") {
       type.sessionsNeedingReview += 1;
     }
@@ -200,20 +273,25 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
       if (entry.status === "PAID") {
         summary.paidEntries += 1;
         type.paidEntries += 1;
+        collector.paidEntries += 1;
       } else if (entry.status === "EXCUSED") {
         summary.excusedEntries += 1;
         type.excusedEntries += 1;
+        collector.excusedEntries += 1;
       } else if (session.status === "OPEN") {
         summary.inProgressUnpaidEntries += 1;
         type.inProgressUnpaidEntries += 1;
+        collector.inProgressUnpaidEntries += 1;
       } else {
         summary.unpaidEntries += 1;
         summary.unpaidAmount += amountExpected;
         type.unpaidEntries += 1;
+        collector.unpaidEntries += 1;
       }
     }
 
     byType.set(session.collectionType.id, type);
+    byCollector.set(session.collector.id, collector);
   }
 
   const sessionsNeedingReview = sessions
@@ -267,7 +345,13 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
     sessionCount: sessions.length,
     byStatus,
     summary,
+    confirmationStatus,
     byType: Array.from(byType.values()).sort((a, b) => b.confirmedAmount - a.confirmedAmount || a.name.localeCompare(b.name)),
+    byCollector: Array.from(byCollector.values()).sort((a, b) => {
+      const aRisk = a.flaggedSessions + a.submittedSessions;
+      const bRisk = b.flaggedSessions + b.submittedSessions;
+      return bRisk - aRisk || b.confirmedAmount - a.confirmedAmount || a.name.localeCompare(b.name);
+    }),
     sessionsNeedingReview,
     unpaidList,
     hasActivity: sessions.some((session) => session.status !== "CANCELLED"),
