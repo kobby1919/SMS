@@ -286,8 +286,8 @@ const BursarPage = async ({
                 <p className="mt-1 text-sm font-black text-blue-700">{dailyCollections.summary.inProgressUnpaidEntries}</p>
               </div>
               <div className="rounded-xl bg-white px-3 py-2">
-                <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Reported, unchecked</p>
-                <p className="mt-1 text-sm font-black text-amber-700">{formatGHS(Math.max(0, dailyCollections.summary.reportedAmount - dailyCollections.summary.confirmedAmount))}</p>
+                <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Pending review amount</p>
+                <p className="mt-1 text-sm font-black text-amber-700">{formatGHS(dailyCollections.confirmationStatus.pendingReviewAmount)}</p>
               </div>
               <div className="rounded-xl bg-white px-3 py-2">
                 <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Flagged mismatch</p>
@@ -298,7 +298,7 @@ const BursarPage = async ({
               <div className="rounded-xl bg-white px-3 py-2">
                 <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Collector accountability</p>
                 <p className="mt-1 text-sm font-black text-gray-900">
-                  {dailyCollections.byCollector.length} collector{dailyCollections.byCollector.length === 1 ? "" : "s"} active today
+                  {dailyCollections.byCollector.length} collector{dailyCollections.byCollector.length === 1 ? "" : "s"} with activity today
                 </p>
               </div>
               <div className="rounded-xl bg-white px-3 py-2">

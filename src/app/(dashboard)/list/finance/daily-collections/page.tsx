@@ -224,7 +224,7 @@ export default async function DailyCollectionsSetupPage() {
               </p>
             </div>
             <span className="inline-flex w-fit rounded-full bg-violet-50 px-3 py-1.5 text-xs font-black text-violet-700">
-              {report.byCollector.length} active collector{report.byCollector.length === 1 ? "" : "s"} today
+              {report.byCollector.length} collector{report.byCollector.length === 1 ? "" : "s"} with activity today
             </span>
           </div>
 
@@ -249,7 +249,7 @@ export default async function DailyCollectionsSetupPage() {
                     </span>
                   </div>
                   <div className="mt-3 grid grid-cols-2 gap-2 min-[520px]:grid-cols-5">
-                    <MiniReportStat label="Reported" value={formatGHS(collector.reportedAmount)} />
+                    <MiniReportStat label="Reported by collector" value={formatGHS(collector.reportedAmount)} />
                     <MiniReportStat label="Confirmed" value={formatGHS(collector.confirmedAmount)} />
                     <MiniReportStat label="Paid" value={collector.paidEntries} />
                     <MiniReportStat label="Follow-up" value={collector.unpaidEntries} />
