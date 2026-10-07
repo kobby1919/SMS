@@ -47,6 +47,18 @@ export type WeeklyParentPaymentIssues = {
   billsWithUnresolvedIssues: number;
 };
 
+export type WeeklyDailyCollectionControl = {
+  confirmedAmount: number;
+  reportedAmount: number;
+  pendingReviewSessions: number;
+  pendingReviewAmount: number;
+  flaggedSessions: number;
+  flaggedAmount: number;
+  unpaidFollowUpEntries: number;
+  inProgressEntries: number;
+  collectorCount: number;
+};
+
 export type WeeklyFinanceSummary = {
   weekStart: Date;
   weekEnd: Date;
@@ -69,6 +81,7 @@ export type WeeklyFinanceSummary = {
   receiptTrust: WeeklyReceiptTrust;
   correctionControl: WeeklyCorrectionControl;
   parentPaymentIssues: WeeklyParentPaymentIssues;
+  dailyCollectionControl: WeeklyDailyCollectionControl;
 };
 
 function asNumber(value: Prisma.Decimal | number | string | null | undefined) {
@@ -190,6 +203,7 @@ export async function getWeeklyFinanceSummary(schoolId: string, date = new Date(
     weeklyFinanceQueries,
     resolvedFinanceQueries,
     activeFinanceQueries,
+    dailyCollectionSessions,
   ] = await Promise.all([
     prisma.payment.findMany({
       where: {
@@ -323,6 +337,23 @@ export async function getWeeklyFinanceSummary(schoolId: string, date = new Date(
       },
       select: { id: true, studentBillId: true },
     }),
+    prisma.dailyCollectionSession.findMany({
+      where: {
+        schoolId,
+        collectionDate: { gte: currentWeek.start, lte: currentWeek.end },
+        status: { not: "CANCELLED" },
+      },
+      select: {
+        status: true,
+        reportedAmount: true,
+        confirmedAmount: true,
+        collectorId: true,
+        entries: {
+          where: { student: { status: "ACTIVE" } },
+          select: { status: true },
+        },
+      },
+    }),
   ]);
 
   const dailyMap = new Map(sevenDayRows(currentWeek.start).map((row) => [dayKey(row.date), row]));
@@ -406,6 +437,45 @@ export async function getWeeklyFinanceSummary(schoolId: string, date = new Date(
   for (const query of weeklyFinanceQueries) {
     weeklyQueryBillCounts.set(query.studentBillId, (weeklyQueryBillCounts.get(query.studentBillId) ?? 0) + 1);
   }
+  const dailyCollectionCollectors = new Set<string>();
+  const dailyCollectionControl = dailyCollectionSessions.reduce<WeeklyDailyCollectionControl>((summary, session) => {
+    dailyCollectionCollectors.add(session.collectorId);
+    const reportedAmount = asNumber(session.reportedAmount);
+    const confirmedAmount = session.status === "CONFIRMED" ? asNumber(session.confirmedAmount) : 0;
+    const flaggedAmount = session.status === "FLAGGED" ? asNumber(session.confirmedAmount) : 0;
+
+    summary.reportedAmount += reportedAmount;
+    summary.confirmedAmount += confirmedAmount;
+    if (session.status === "SUBMITTED") {
+      summary.pendingReviewSessions += 1;
+      summary.pendingReviewAmount += reportedAmount;
+    }
+    if (session.status === "FLAGGED") {
+      summary.flaggedSessions += 1;
+      summary.flaggedAmount += flaggedAmount;
+    }
+
+    for (const entry of session.entries) {
+      if (entry.status !== "UNPAID") continue;
+      if (session.status === "OPEN") summary.inProgressEntries += 1;
+      if (session.status === "SUBMITTED" || session.status === "CONFIRMED" || session.status === "FLAGGED") {
+        summary.unpaidFollowUpEntries += 1;
+      }
+    }
+
+    return summary;
+  }, {
+    confirmedAmount: 0,
+    reportedAmount: 0,
+    pendingReviewSessions: 0,
+    pendingReviewAmount: 0,
+    flaggedSessions: 0,
+    flaggedAmount: 0,
+    unpaidFollowUpEntries: 0,
+    inProgressEntries: 0,
+    collectorCount: 0,
+  });
+  dailyCollectionControl.collectorCount = dailyCollectionCollectors.size;
 
   return {
     weekStart: currentWeek.start,
@@ -448,5 +518,6 @@ export async function getWeeklyFinanceSummary(schoolId: string, date = new Date(
       repeatedPaymentDisputes: Array.from(weeklyQueryBillCounts.values()).filter((count) => count > 1).length,
       billsWithUnresolvedIssues: unresolvedBillIds.size,
     },
+    dailyCollectionControl,
   };
 }

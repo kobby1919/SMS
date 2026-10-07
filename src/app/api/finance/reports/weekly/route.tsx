@@ -22,7 +22,7 @@ import {
   weeklyReportDateInputValue,
 } from "@/src/lib/services/weekly-finance-report";
 
-const WEEKLY_OWNER_SUMMARY_TEMPLATE_VERSION = "receipt-corrections-issues-v2";
+const WEEKLY_OWNER_SUMMARY_TEMPLATE_VERSION = "daily-collections-v3";
 
 const S = StyleSheet.create({
   page: {
@@ -179,6 +179,10 @@ export async function GET(req: NextRequest) {
               <SummaryBox label="Last week" value={formatGHS(report.previousTotalCollected)} sub={`${report.previousPaymentCount} confirmed payment${report.previousPaymentCount === 1 ? "" : "s"}.`} color="#1f2937" />
               <SummaryBox label="Strongest day" value={report.strongestCollectionDay ? formatGHS(report.strongestCollectionDay.amount) : "None"} sub={report.strongestCollectionDay ? `${report.strongestCollectionDay.label} - ${report.strongestCollectionDay.paymentCount} payment${report.strongestCollectionDay.paymentCount === 1 ? "" : "s"}` : "No confirmed payment this week"} color="#1d4ed8" borderColor="#bfdbfe" />
               <SummaryBox label="Weakest active day" value={report.weakestCollectionDay ? formatGHS(report.weakestCollectionDay.amount) : "None"} sub={report.weakestCollectionDay ? `${report.weakestCollectionDay.label} - ${report.weakestCollectionDay.paymentCount} payment${report.weakestCollectionDay.paymentCount === 1 ? "" : "s"}` : "No confirmed payment this week"} color="#b45309" borderColor="#fde68a" />
+            </View>
+            <View style={S.statGrid}>
+              <SummaryBox label="Daily gate collections" value={formatGHS(report.dailyCollectionControl.confirmedAmount)} sub={`${report.dailyCollectionControl.collectorCount} collector${report.dailyCollectionControl.collectorCount === 1 ? "" : "s"} with activity. ${report.dailyCollectionControl.unpaidFollowUpEntries} submitted unpaid entr${report.dailyCollectionControl.unpaidFollowUpEntries === 1 ? "y" : "ies"}.`} color="#6d28d9" borderColor="#ddd6fe" />
+              <SummaryBox label="Gate review queue" value={formatGHS(report.dailyCollectionControl.pendingReviewAmount)} sub={`${report.dailyCollectionControl.pendingReviewSessions} submitted session${report.dailyCollectionControl.pendingReviewSessions === 1 ? "" : "s"} waiting. ${report.dailyCollectionControl.flaggedSessions} flagged mismatch${report.dailyCollectionControl.flaggedSessions === 1 ? "" : "es"}.`} color="#b45309" borderColor="#fde68a" />
             </View>
 
             <View style={S.section}>

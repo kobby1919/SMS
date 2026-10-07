@@ -307,6 +307,47 @@ export default async function DailyCollectionsSetupPage() {
         </div>
       </section>
 
+      <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-wider text-slate-500">Daily Collection Audit Trail</p>
+            <h2 className="mt-1 text-lg font-black text-gray-900">What changed today</h2>
+            <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-gray-500">
+              Every session open, entry mark, submission, confirmation, and mismatch flag is logged. This protects the school when money records are questioned.
+            </p>
+          </div>
+          <span className="inline-flex w-fit rounded-full bg-slate-50 px-3 py-1.5 text-xs font-black text-slate-700">
+            {report.recentAuditLogs.length} recent audit item{report.recentAuditLogs.length === 1 ? "" : "s"}
+          </span>
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-2 lg:grid-cols-2">
+          {report.recentAuditLogs.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center lg:col-span-2">
+              <p className="text-sm font-black text-gray-800">No daily collection audit activity for this date.</p>
+              <p className="mt-1 text-sm font-semibold text-gray-400">Audit items appear automatically when collectors and bursars use the workflow.</p>
+            </div>
+          ) : (
+            report.recentAuditLogs.map((log) => (
+              <div key={log.id} className="rounded-2xl border border-gray-100 bg-gray-50/70 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-black text-gray-900">{log.action.replaceAll("_", " ").toLowerCase()}</p>
+                    <p className="mt-1 text-xs font-semibold text-gray-500">
+                      {log.collectionTypeName ?? log.entityType} {log.collectorName ? `- ${log.collectorName}` : ""}
+                    </p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-white px-2.5 py-1 text-[10px] font-black uppercase text-gray-500">
+                    {log.createdAt.toLocaleTimeString("en-GH", { hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                </div>
+                <p className="mt-2 text-[11px] font-semibold text-gray-400">Actor: {log.performedBy}</p>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
+
       <DailyCollectionReviewPanel
         sessions={reviewSessions.map((session) => ({
           id: session.id,

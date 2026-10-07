@@ -31,7 +31,7 @@ const FOLLOW_UP_ENTRY_STATUSES: DailyCollectionSessionStatus[] = ["SUBMITTED", "
 export async function getDailyCollectionReport(schoolId: string, date = new Date()) {
   const { start, end } = dayBounds(date);
 
-  const [sessions, unpaidEntries] = await Promise.all([
+  const [sessions, unpaidEntries, recentAuditLogs] = await Promise.all([
     prisma.dailyCollectionSession.findMany({
       where: {
         schoolId,
@@ -114,6 +114,24 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
       },
       orderBy: [{ session: { collectionDate: "desc" } }, { updatedAt: "desc" }],
       take: 12,
+    }),
+    prisma.dailyCollectionAuditLog.findMany({
+      where: {
+        schoolId,
+        createdAt: { gte: start, lte: end },
+      },
+      select: {
+        id: true,
+        action: true,
+        entityType: true,
+        entityId: true,
+        performedBy: true,
+        createdAt: true,
+        collector: { select: { name: true, surname: true } },
+        collectionType: { select: { name: true, category: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 10,
     }),
   ]);
 
@@ -354,6 +372,17 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
     }),
     sessionsNeedingReview,
     unpaidList,
+    recentAuditLogs: recentAuditLogs.map((log) => ({
+      id: log.id,
+      action: log.action,
+      entityType: log.entityType,
+      entityId: log.entityId,
+      performedBy: log.performedBy,
+      createdAt: log.createdAt,
+      collectorName: log.collector ? fullName(log.collector) : null,
+      collectionTypeName: log.collectionType?.name ?? null,
+      collectionCategory: log.collectionType?.category ?? null,
+    })),
     hasActivity: sessions.some((session) => session.status !== "CANCELLED"),
   };
 }
