@@ -6,6 +6,7 @@ import { normalizeAppRole, type AppRole } from "@/src/lib/roles";
 import { appBaseUrl, sendFirstAdminInviteEmail, sendSchoolAdminInviteEmail } from "@/src/lib/services/notifications";
 import { getSchoolAdminInviteAccountSafety } from "@/src/lib/services/onboarding-policy";
 import type { OnboardingAuditAction, Prisma } from "@/src/generated/prisma";
+import { withApprovedMigration } from "@/src/lib/services/migration-reconciliation";
 
 const INVITE_TOKEN_BYTES = 32;
 
@@ -377,13 +378,13 @@ export async function advanceSchoolSetupToReview(context: AuthzContext) {
     throw new Error("Create at least one grade, class, and subject before readiness review.");
   }
 
-  return prisma.school.update({
+  return withApprovedMigration(context.schoolId, (tx) => tx.school.update({
     where: { id: context.schoolId },
     data: {
       onboardingStatus: school.onboardingStatus === "PROFILE_DONE" ? "ACADEMIC_DONE" : school.onboardingStatus,
       setupStep: "review",
     },
-  });
+  }), school.setupStep === "migration");
 }
 
 export async function advanceSchoolSetupToCompletion(context: AuthzContext) {
@@ -409,16 +410,17 @@ export async function advanceSchoolSetupToCompletion(context: AuthzContext) {
     throw new Error("Complete the required academic foundation before finishing setup.");
   }
 
-  return prisma.school.update({
+  return withApprovedMigration(context.schoolId, (tx) => tx.school.update({
     where: { id: context.schoolId },
     data: {
       onboardingStatus: "USERS_DONE",
       setupStep: "complete",
     },
-  });
+  }));
 }
 
 export async function completeSchoolOnboarding(context: AuthzContext) {
+  if (context.role !== "admin") throw new Error("Only a school admin can complete setup.");
   const school = await getSchoolOnboardingState(context.schoolId);
 
   if (!school) {
@@ -433,14 +435,14 @@ export async function completeSchoolOnboarding(context: AuthzContext) {
     throw new Error("Add at least one grade, class, and subject before finishing setup.");
   }
 
-  const updated = await prisma.school.update({
+  const updated = await withApprovedMigration(context.schoolId, (tx) => tx.school.update({
     where: { id: context.schoolId },
     data: {
       onboardingStatus: "COMPLETED",
       setupStep: null,
       setupCompletedAt: new Date(),
     },
-  });
+  }));
 
   await writeOnboardingAudit({
     action: "ONBOARDING_COMPLETED",

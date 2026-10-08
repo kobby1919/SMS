@@ -42,6 +42,9 @@ export default function MigrationInventoryPanel({ initial }: { initial: Migratio
         return <div key={row.key} className="min-w-0 border-b border-gray-200 pb-4">
           <h3 className="text-sm font-semibold">{definition[1]}</h3>
           {row.key === "students" && <p className="text-xs text-gray-600">Student files also create or link guardians. Include parents and guardians and list this file as their source where applicable.</p>}
+          {row.key === "parents" && <p className="text-xs text-gray-600">Count unique guardian profiles across student and guardian files, not one row per child.</p>}
+          {row.key === "feeStructures" && <p className="text-xs text-gray-600">Count fee items in the supplied structures, not class/term structure headers.</p>}
+          {row.key === "fees" && <p className="text-xs text-gray-600">Count opening bill line items. A student with tuition and transport has two records.</p>}
           {!definition[2] && <p className="text-xs text-gray-600">Requires a separate migration process; not supported by this importer.</p>}
           <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <label className="text-xs">Scope<select className={inputClass} value={row.disposition} onChange={(e) => change({ disposition: e.target.value as typeof row.disposition })}>{definition[2] && <option value="INCLUDE">Include</option>}<option value="DEFER">Defer</option><option value="EXCLUDE">Exclude</option></select></label>

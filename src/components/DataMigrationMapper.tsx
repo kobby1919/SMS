@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { parse as parseCsv } from "csv-parse/browser/esm/sync";
 import MigrationUploadsPanel from "@/src/components/MigrationUploadsPanel";
 import MigrationFinanceReview from "@/src/components/MigrationFinanceReview";
@@ -106,6 +107,7 @@ function displayHeader(header: string, index: number) {
 }
 
 export default function DataMigrationMapper() {
+  const router = useRouter();
   const fileVersion = useRef(0);
   const [csvSource, setCsvSource] = useState("");
   const [isReadingFile, setIsReadingFile] = useState(false);
@@ -239,6 +241,7 @@ export default function DataMigrationMapper() {
         return;
       }
       setValidation(payload as ValidationResult);
+      router.refresh();
     } catch {
       setError("Validation could not be completed. Check your connection and try again.");
     } finally {
@@ -266,6 +269,7 @@ export default function DataMigrationMapper() {
       }
       setImportResult(payload as ImportResult);
       setValidation(null);
+      router.refresh();
     } catch {
       setError("Import could not be completed. Check your connection and try again.");
     } finally {

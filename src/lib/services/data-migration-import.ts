@@ -27,6 +27,7 @@ import { getMigrationInventory } from "@/src/lib/services/migration-inventory";
 import { inventorySchema } from "@/src/lib/migration/inventory";
 import { loadStagedMigration, readStagedImportResult } from "@/src/lib/services/migration-staging";
 import { migrationStagingStorage } from "@/src/lib/services/migration-staging-storage";
+import { newMigrationEvidence, moneyMinor, type MigrationEvidence } from "@/src/lib/migration/reconciliation";
 
 export type MigrationImportResult = {
   batchId: string | null;
@@ -265,10 +266,11 @@ async function importClasses(
   schoolId: string,
   rows: MigrationValidationRow[],
   counters: ImportCounters,
+  evidence: MigrationEvidence,
 ) {
   for (const row of rows) {
     const gradeId = await resolveGrade(tx, schoolId, row.values.gradeName);
-    await tx.class.create({
+    const record = await tx.class.create({
       data: {
         schoolId,
         name: row.values.className.trim(),
@@ -276,6 +278,7 @@ async function importClasses(
         gradeId,
       },
     });
+    evidence.records.classes.push(String(record.id));
     counters.classes += 1;
   }
 }
@@ -285,14 +288,16 @@ async function importSubjects(
   schoolId: string,
   rows: MigrationValidationRow[],
   counters: ImportCounters,
+  evidence: MigrationEvidence,
 ) {
   for (const row of rows) {
-    await tx.subject.create({
+    const record = await tx.subject.create({
       data: {
         schoolId,
         name: row.values.subjectName.trim(),
       },
     });
+    evidence.records.subjects.push(String(record.id));
     counters.subjects += 1;
   }
 }
@@ -303,6 +308,7 @@ async function importStudents(
   actorId: string,
   rows: MigrationValidationRow[],
   counters: ImportCounters,
+  evidence: MigrationEvidence,
 ) {
   for (const row of rows) {
     const klass = await tx.class.findFirstOrThrow({
@@ -332,7 +338,7 @@ async function importStudents(
       select: { id: true },
     });
 
-    await tx.parentStudentRelationship.upsert({
+    const relationship = await tx.parentStudentRelationship.upsert({
       where: {
         schoolId_parentId_studentId: { schoolId, parentId, studentId: student.id },
       },
@@ -351,6 +357,9 @@ async function importStudents(
         note: `Linked during migration import by ${actorId}.`,
       },
     });
+    evidence.records.students.push(student.id);
+    evidence.records.parents.push(parentId);
+    evidence.records.parentLinks.push(String(relationship.id));
     counters.students += 1;
     counters.parentLinks += 1;
   }
@@ -361,6 +370,7 @@ async function importParents(
   schoolId: string,
   rows: MigrationValidationRow[],
   counters: ImportCounters,
+  evidence: MigrationEvidence,
 ) {
   for (const row of rows) {
     const parentId = await resolveParent(tx, schoolId, row.values, counters);
@@ -374,7 +384,7 @@ async function importParents(
     const role = activeRelationshipCount > 0
       ? ParentStudentRelationshipRole.GUARDIAN
       : ParentStudentRelationshipRole.PRIMARY_GUARDIAN;
-    await tx.parentStudentRelationship.upsert({
+    const relationship = await tx.parentStudentRelationship.upsert({
       where: {
         schoolId_parentId_studentId: { schoolId, parentId, studentId: student.id },
       },
@@ -394,6 +404,8 @@ async function importParents(
           : "Additional guardian link created during parent migration import.",
       },
     });
+    evidence.records.parents.push(parentId);
+    evidence.records.parentLinks.push(String(relationship.id));
     counters.parentLinks += 1;
   }
 }
@@ -403,11 +415,12 @@ async function importTeachers(
   schoolId: string,
   rows: MigrationValidationRow[],
   counters: ImportCounters,
+  evidence: MigrationEvidence,
 ) {
   for (const row of rows) {
     const email = normalizeEmail(row.values.email);
     if (!email) throw new MigrationImportError("Teacher email was not validated.");
-    await tx.teacher.create({
+    const record = await tx.teacher.create({
       data: {
         id: `tch_${randomUUID()}`,
         schoolId,
@@ -421,6 +434,7 @@ async function importTeachers(
         status: TeacherStatus.INCOMPLETE_SETUP,
       },
     });
+    evidence.records.teachers.push(record.id);
     counters.teachers += 1;
   }
 }
@@ -430,11 +444,12 @@ async function importBursars(
   schoolId: string,
   rows: MigrationValidationRow[],
   counters: ImportCounters,
+  evidence: MigrationEvidence,
 ) {
   for (const row of rows) {
     const email = normalizeEmail(row.values.email);
     if (!email) throw new MigrationImportError("Bursar email was not validated.");
-    await tx.bursar.create({
+    const record = await tx.bursar.create({
       data: {
         id: `bur_${randomUUID()}`,
         schoolId,
@@ -447,6 +462,7 @@ async function importBursars(
         status: BursarStatus.ACTIVE,
       },
     });
+    evidence.records.bursars.push(record.id);
     counters.bursars += 1;
   }
 }
@@ -457,6 +473,7 @@ async function importFees(
   actorId: string,
   rows: MigrationValidationRow[],
   counters: ImportCounters,
+  evidence: MigrationEvidence,
 ) {
   const affectedBillIds = new Set<number>();
 
@@ -583,7 +600,7 @@ async function importFees(
     });
     affectedBillIds.add(bill.id);
 
-    await tx.billLineItem.create({
+    const line = await tx.billLineItem.create({
       data: {
         studentBillId: bill.id,
         feeItemId: feeItem.id,
@@ -593,13 +610,16 @@ async function importFees(
         isPaid: lineBalance.lte(0),
       },
     });
+    evidence.records.fees.push(String(line.id));
+    evidence.finance.gross = (BigInt(evidence.finance.gross) + moneyMinor(feeItem.amount.toFixed(2))).toString();
+    evidence.finance.paid = (BigInt(evidence.finance.paid) + moneyMinor(amountPaid.toFixed(2))).toString();
     counters.feeLineItems += 1;
     await tx.financeAuditLog.create({ data: { schoolId, action: "BILL_GENERATED", performedBy: actorId, entityType: "StudentBill", entityId: String(bill.id), metadata: { source: "MIGRATION_OPENING_BALANCE", feeItemId: feeItem.id, charge: feeItem.amount.toFixed(2), openingAmountPaid: amountPaid.toFixed(2), admissionNumber: row.values.admissionNumber } } });
   }
   counters.feeBills = affectedBillIds.size;
 }
 
-async function importFeeStructures(tx: Prisma.TransactionClient, schoolId: string, actorId: string, rows: MigrationValidationRow[], counters: ImportCounters) {
+async function importFeeStructures(tx: Prisma.TransactionClient, schoolId: string, actorId: string, rows: MigrationValidationRow[], counters: ImportCounters, evidence: MigrationEvidence) {
   const structureIds = new Set<number>();
   for (const { values } of rows) {
     const grade = await tx.grade.findFirst({ where: { schoolId, level: { equals: values.gradeName.trim(), mode: "insensitive" } } });
@@ -612,14 +632,15 @@ async function importFeeStructures(tx: Prisma.TransactionClient, schoolId: strin
     if (structure.feeItems.some((item) => item.name.trim().toLowerCase() === values.feeName.trim().toLowerCase())) throw new MigrationImportError("Fee item already exists. Validate again.");
     const frequency = normalizeFeeFrequency(values.feeFrequency);
     if (!frequency || frequency === "DAILY") throw new MigrationImportError("Daily collections require separate setup.");
-    await tx.feeItem.create({ data: { feeStructureId: structure.id, name: values.feeName.trim(), category: values.category.trim().toUpperCase() as FeeCategory, amount: parseMoney(values.amount), billingFrequency: frequency, isOptional: values.isOptional.trim().toUpperCase() === "TRUE" } });
+    const item = await tx.feeItem.create({ data: { feeStructureId: structure.id, name: values.feeName.trim(), category: values.category.trim().toUpperCase() as FeeCategory, amount: parseMoney(values.amount), billingFrequency: frequency, isOptional: values.isOptional.trim().toUpperCase() === "TRUE" } });
+    evidence.records.feeStructures.push(String(item.id));
     await tx.financeAuditLog.create({ data: { schoolId, action: "FEE_STRUCTURE_CREATED", performedBy: actorId, entityType: "FeeStructure", entityId: String(structure.id), metadata: { source: "MIGRATION", feeName: values.feeName, category: values.category, dueDate: values.dueDate } } });
     structureIds.add(structure.id);
   }
   counters.feeStructures = structureIds.size;
 }
 
-async function importDiscounts(tx: Prisma.TransactionClient, schoolId: string, actorId: string, rows: MigrationValidationRow[], counters: ImportCounters) {
+async function importDiscounts(tx: Prisma.TransactionClient, schoolId: string, actorId: string, rows: MigrationValidationRow[], counters: ImportCounters, evidence: MigrationEvidence) {
   for (const { values } of rows) {
     const reference = values.approvalReference.trim().toLowerCase();
     const duplicate = await tx.financeAuditLog.findFirst({ where: { schoolId, action: "DISCOUNT_APPLIED", metadata: { path: ["approvalReference"], equals: reference } } });
@@ -627,7 +648,9 @@ async function importDiscounts(tx: Prisma.TransactionClient, schoolId: string, a
     const bills = await tx.studentBill.findMany({ where: { schoolId, student: { schoolId, admissionNumber: values.admissionNumber.trim().toUpperCase() }, feeStructure: { schoolId, term: normalizeTerm(values.term), academicYear: values.academicYear.trim() } }, take: 2 });
     if (bills.length !== 1) throw new MigrationImportError("Exactly one bill must match this student and term. Review ambiguous bills manually.");
     const bill = bills[0];
-    await applyDiscountInTransaction(tx, { schoolId, actorId, billId: bill.id, type: values.discountType.trim().toUpperCase() as DiscountType, description: values.reason.trim(), amount: values.amount ? parseMoney(values.amount).toString() : undefined, percentage: values.percentage ? parseMoney(values.percentage).toString() : undefined, approvalReference: reference });
+    const applied = await applyDiscountInTransaction(tx, { schoolId, actorId, billId: bill.id, type: values.discountType.trim().toUpperCase() as DiscountType, description: values.reason.trim(), amount: values.amount ? parseMoney(values.amount).toString() : undefined, percentage: values.percentage ? parseMoney(values.percentage).toString() : undefined, approvalReference: reference });
+    evidence.records.discounts.push(String(applied.discount.id));
+    evidence.finance.discounts = (BigInt(evidence.finance.discounts) + moneyMinor(applied.value.toFixed(2))).toString();
     counters.discounts += 1;
   }
 }
@@ -642,6 +665,7 @@ export async function importValidatedMigrationRows(
   const context = { ...staged.payload, schoolId: request.schoolId, actorId: request.actorId, uploadId: request.uploadId };
   let validation: Awaited<ReturnType<typeof validateMigrationRows>>;
   const batchId = `mig_${randomUUID()}`;
+  const evidence = newMigrationEvidence();
   let cleanRows: MigrationValidationRow[] = [];
   let dirtyRows: MigrationImportResult["dirtyRows"] = [];
   const counters: ImportCounters = {
@@ -674,15 +698,15 @@ export async function importValidatedMigrationRows(
       cleanRows = validation.rows.filter((row) => row.status === "READY" && row.issues.length === 0);
       dirtyRows = validation.rows.filter((row) => row.status !== "READY" || row.issues.length > 0).map((row) => ({ rowNumber: row.rowNumber, status: row.status, issues: row.issues }));
       if (cleanRows.length === 0) return;
-      if (context.areaKey === "classes") await importClasses(tx, context.schoolId, cleanRows, counters);
-      if (context.areaKey === "subjects") await importSubjects(tx, context.schoolId, cleanRows, counters);
-      if (context.areaKey === "students") await importStudents(tx, context.schoolId, context.actorId, cleanRows, counters);
-      if (context.areaKey === "parents") await importParents(tx, context.schoolId, cleanRows, counters);
-      if (context.areaKey === "teachers") await importTeachers(tx, context.schoolId, cleanRows, counters);
-      if (context.areaKey === "bursars") await importBursars(tx, context.schoolId, cleanRows, counters);
-      if (context.areaKey === "fees") await importFees(tx, context.schoolId, context.actorId, cleanRows, counters);
-      if (context.areaKey === "feeStructures") await importFeeStructures(tx, context.schoolId, context.actorId, cleanRows, counters);
-      if (context.areaKey === "discounts") await importDiscounts(tx, context.schoolId, context.actorId, cleanRows, counters);
+      if (context.areaKey === "classes") await importClasses(tx, context.schoolId, cleanRows, counters, evidence);
+      if (context.areaKey === "subjects") await importSubjects(tx, context.schoolId, cleanRows, counters, evidence);
+      if (context.areaKey === "students") await importStudents(tx, context.schoolId, context.actorId, cleanRows, counters, evidence);
+      if (context.areaKey === "parents") await importParents(tx, context.schoolId, cleanRows, counters, evidence);
+      if (context.areaKey === "teachers") await importTeachers(tx, context.schoolId, cleanRows, counters, evidence);
+      if (context.areaKey === "bursars") await importBursars(tx, context.schoolId, cleanRows, counters, evidence);
+      if (context.areaKey === "fees") await importFees(tx, context.schoolId, context.actorId, cleanRows, counters, evidence);
+      if (context.areaKey === "feeStructures") await importFeeStructures(tx, context.schoolId, context.actorId, cleanRows, counters, evidence);
+      if (context.areaKey === "discounts") await importDiscounts(tx, context.schoolId, context.actorId, cleanRows, counters, evidence);
 
       await tx.onboardingAuditLog.create({
         data: {
@@ -708,6 +732,7 @@ export async function importValidatedMigrationRows(
             errorCount: dirtyRows.reduce((count, row) => count + row.issues.length, 0),
             errors: buildDirtyRowReport(dirtyRows),
             created: counters,
+            evidence,
           },
         },
       });

@@ -56,7 +56,7 @@ function importFixture() {
   let inventoryVersion = 3;
   let inTransaction = false;
   let dirty = false;
-  const tx = { $queryRaw: async () => [{ id: uploadId }], migrationStagedUpload: { findFirst: async () => ({ ...upload }), update: async ({ data }) => Object.assign(upload, data) }, subject: { create: async ({ data }) => { writes.push(data); return data; } }, onboardingAuditLog: { create: async ({ data }) => { audits.push(data); return data; } } };
+  const tx = { $queryRaw: async () => [{ id: uploadId }], migrationStagedUpload: { findFirst: async () => ({ ...upload }), update: async ({ data }) => Object.assign(upload, data) }, subject: { create: async ({ data }) => { writes.push(data); return { ...data, id: 1 }; } }, onboardingAuditLog: { create: async ({ data }) => { audits.push(data); return data; } } };
   const importer = load("src/lib/services/data-migration-import.ts", {
     crypto, "@/src/generated/prisma": { Prisma: { TransactionIsolationLevel: { Serializable: "Serializable" } } },
     "@/src/lib/prisma": { $transaction: async (work) => { inTransaction = true; try { return await work(tx); } finally { inTransaction = false; } } },
@@ -67,6 +67,7 @@ function importFixture() {
     "@/src/lib/migration/inventory": { inventorySchema: { safeParse: () => ({ success: true }) } },
     "@/src/lib/services/migration-staging": { loadStagedMigration: async (schoolId) => { if (schoolId !== upload.schoolId) throw new Error("Upload not found"); return { payload, upload: { ...upload } }; }, readStagedImportResult: async (_schoolId, _uploadId, saved) => JSON.parse(saved) },
     "@/src/lib/services/migration-staging-storage": { migrationStagingStorage: { seal: async (text) => text } },
+    "@/src/lib/migration/reconciliation": load("src/lib/migration/reconciliation.ts", { zod: { z } }),
   });
   return { importer, request: { schoolId: "a", actorId: "admin", uploadId }, upload, writes, audits, revise: () => { inventoryVersion += 1; }, markDirty: () => { dirty = true; } };
 }

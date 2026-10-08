@@ -19,6 +19,8 @@ import { requirePageSession } from "@/src/lib/authz";
 import DataMigrationMapper from "@/src/components/DataMigrationMapper";
 import MigrationInventoryPanel from "@/src/components/MigrationInventoryPanel";
 import { getMigrationInventory } from "@/src/lib/services/migration-inventory";
+import { getMigrationReconciliation } from "@/src/lib/services/migration-reconciliation";
+import MigrationReconciliationPanel from "@/src/components/MigrationReconciliationPanel";
 import MigrationAuditActions from "@/src/components/MigrationAuditActions";
 import PostImportInvitePanel from "@/src/components/PostImportInvitePanel";
 import SetupAdvanceButton from "@/src/components/SetupAdvanceButton";
@@ -77,10 +79,11 @@ export async function DataMigrationWorkspace({
   schoolId: string;
   setupContext?: "dashboard" | "onboarding";
 }) {
-  const [dashboard, inviteSummary, inventory] = await Promise.all([
+  const [dashboard, inviteSummary, inventory, reconciliation] = await Promise.all([
     getDataMigrationDashboard(schoolId),
     getPostImportInviteSummary(schoolId),
     getMigrationInventory(schoolId),
+    getMigrationReconciliation(schoolId),
   ]);
 
   const isFreshSchool = dashboard.isFreshSchool;
@@ -277,6 +280,8 @@ export async function DataMigrationWorkspace({
 
       <MigrationInventoryPanel initial={inventory} />
       <DataMigrationMapper />
+
+      <MigrationReconciliationPanel key={reconciliation.fingerprint} report={reconciliation} />
 
       <PostImportInvitePanel summary={inviteSummary} />
 
