@@ -260,12 +260,13 @@ function toObligationRow(obligation: {
 export async function getTeacherAccountabilityOverview(
   schoolId: string,
   now = new Date(),
-  options: { focusedEscalationId?: string } = {},
+  options: { focusedEscalationId?: string; focusedCorrectionId?: string } = {},
 ): Promise<TeacherAccountabilityOverview> {
   const todayStart = startOfDay(now);
   const todayEnd = endOfDay(now);
   const weekStart = startOfWeek(now);
   const focusedEscalationId = options.focusedEscalationId?.trim();
+  const focusedCorrectionId = options.focusedCorrectionId?.trim();
 
   const [
     todayObligations,
@@ -323,15 +324,14 @@ export async function getTeacherAccountabilityOverview(
     prisma.teacherEscalation.findMany({
       where: {
         schoolId,
-        OR: [
+        ...(focusedEscalationId ? { id: focusedEscalationId } : { OR: [
           {
             status: { in: ["OPEN", "ACKNOWLEDGED"] },
             obligation: {
               expectedAt: { gte: weekStart, lte: todayEnd },
             },
           },
-          ...(focusedEscalationId ? [{ id: focusedEscalationId }] : []),
-        ],
+        ] }),
       },
       include: {
         teacher: { select: { id: true, name: true, surname: true } },
@@ -350,6 +350,7 @@ export async function getTeacherAccountabilityOverview(
       where: {
         schoolId,
         sourceModel: "Attendance",
+        ...(focusedCorrectionId ? { id: focusedCorrectionId } : {}),
         fieldName: "attendanceStatus",
         status: "PENDING",
       },
@@ -363,6 +364,7 @@ export async function getTeacherAccountabilityOverview(
       where: {
         schoolId,
         sourceModel: "HomeworkSubmission",
+        ...(focusedCorrectionId ? { id: focusedCorrectionId } : {}),
         fieldName: "homeworkSubmissionStatus",
         status: "PENDING",
       },
@@ -376,6 +378,7 @@ export async function getTeacherAccountabilityOverview(
       where: {
         schoolId,
         status: "PENDING",
+        ...(focusedCorrectionId ? { id: focusedCorrectionId } : {}),
         OR: [
           { sourceModel: "CAActivityScore", fieldName: "rawScore" },
           { sourceModel: "ContinuousAssessment", fieldName: "examScore" },

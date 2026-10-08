@@ -64,6 +64,10 @@ function caActivitySourceKey(activityId: number) {
   return `ca-score-publishing:activity:${activityId}`;
 }
 
+export function caPublishingDeadline(activityDate: Date, days: number, closeoutTime: string) {
+  return applyTime(addSchoolDays(activityDate, days), closeoutTime);
+}
+
 async function getCAActivityForObligation(schoolId: string, activityId: number) {
   return prisma.cAActivity.findFirst({
     where: { id: activityId, schoolId },
@@ -107,10 +111,7 @@ function buildCAObligationState({
     (latest, score) => (!latest || score.updatedAt > latest ? score.updatedAt : latest),
     null,
   );
-  const expectedAt = applyTime(
-    addSchoolDays(activity.activityDate, publishWindowDays),
-    closeoutTime,
-  );
+  const expectedAt = caPublishingDeadline(activity.activityDate, publishWindowDays, closeoutTime);
   const reminderAt = applyTime(
     addSchoolDays(activity.activityDate, reminderAfterDays),
     closeoutTime,

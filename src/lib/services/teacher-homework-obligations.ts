@@ -74,6 +74,10 @@ function homeworkSourceKey(assignmentId: number) {
   return `homework-checking:assignment:${assignmentId}`;
 }
 
+export function homeworkCheckingDeadline(dueDate: Date, days: number, closeoutTime: string) {
+  return applyTime(addSchoolDays(dueDate, days), closeoutTime);
+}
+
 async function getAssignmentForHomeworkObligation(schoolId: string, assignmentId: number) {
   return prisma.assignment.findFirst({
     where: { id: assignmentId, schoolId },
@@ -134,7 +138,7 @@ function buildHomeworkObligationState({
     null,
   );
   const dueAt = endOfDay(assignment.dueDate);
-  const expectedAt = applyTime(addSchoolDays(dueAt, checkWindowDays), closeoutTime);
+  const expectedAt = homeworkCheckingDeadline(dueAt, checkWindowDays, closeoutTime);
   const missedAt = applyTime(addSchoolDays(dueAt, escalateAfterDays), closeoutTime);
   const completed = studentCount > 0 && pendingCount === 0 && Boolean(latestCheckedAt);
   const status: TeacherObligationStatus =

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { z } from "zod";
 import type { ReactNode } from "react";
 import {
   AlertTriangle,
@@ -8,7 +10,7 @@ import {
   ShieldCheck,
   TimerReset,
 } from "lucide-react";
-import { requirePageSession } from "@/src/lib/authz";
+import { requireCompletedAdminSchoolSetup, requirePageSession } from "@/src/lib/authz";
 import {
   getTeacherAccountabilityOverview,
   type AcademicCorrectionRequestRow,
@@ -25,6 +27,10 @@ import AttendanceCorrectionReviewActions from "@/src/components/AttendanceCorrec
 import HomeworkCorrectionReviewActions from "@/src/components/HomeworkCorrectionReviewActions";
 
 export const dynamic = "force-dynamic";
+const reviewParamsSchema = z.object({
+  escalationId: z.string().trim().min(1).max(128).optional(),
+  correctionId: z.string().trim().min(1).max(128).optional(),
+});
 
 function formatDateTime(date: Date) {
   return new Intl.DateTimeFormat("en-GH", {
@@ -512,12 +518,17 @@ function AuditList({ rows }: { rows: AccountabilityAuditRow[] }) {
 const AdminAccountabilityPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ escalationId?: string }>;
+  searchParams: Promise<{ escalationId?: string; correctionId?: string }>;
 }) => {
-  const { escalationId: focusedEscalationId } = await searchParams;
-  const { schoolId } = await requirePageSession(["admin"]);
+  const session = await requirePageSession(["admin"]);
+  await requireCompletedAdminSchoolSetup(session);
+  const parsed = reviewParamsSchema.safeParse(await searchParams);
+  if (!parsed.success) notFound();
+  const { escalationId: focusedEscalationId, correctionId: focusedCorrectionId } = parsed.data;
+  const { schoolId } = session;
   const overview = await getTeacherAccountabilityOverview(schoolId, new Date(), {
     focusedEscalationId,
+    focusedCorrectionId,
   });
 
   return (
