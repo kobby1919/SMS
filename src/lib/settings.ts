@@ -73,7 +73,7 @@ export const routeAccessMap: RouteAccessMap = {
   "/list/finance/daily-collections/(.*)":   ["admin", "bursar"],
 
   // Reports — both can view and export
-  "/list/finance/reports":                  ["admin", "bursar"],
+  "/list/finance/reports":                  ["bursar"],
 
   // Audit log — admin only (bursar cannot see who did what)
   "/list/finance/audit":                    ["admin"],

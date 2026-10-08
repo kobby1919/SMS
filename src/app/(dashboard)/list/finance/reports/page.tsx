@@ -60,7 +60,7 @@ const FinanceReportsPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { schoolId } = await requirePageSession(["admin", "bursar"]);
+  const { schoolId } = await requirePageSession(["bursar"]);
   const params = await searchParams;
   const selectedDate = parseDailyReportDate(params.date);
   const selectedDateValue = dailyReportDateInputValue(selectedDate);

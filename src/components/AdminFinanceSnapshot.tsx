@@ -114,13 +114,6 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
         </div>
         <div className="flex flex-col gap-2 sm:flex-row lg:justify-end">
           <Link
-            href="/list/finance/reports"
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-700 px-4 py-2.5 text-xs font-black text-white transition hover:bg-blue-800"
-          >
-            Open finance report
-            <ArrowRight size={14} />
-          </Link>
-          <Link
             href="/list/finance/bills"
             className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 py-2.5 text-xs font-black text-gray-700 transition hover:bg-gray-50"
           >
@@ -213,9 +206,6 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
               Shows which non-daily bill items make up the bill expected, collected, and outstanding figures.
             </p>
           </div>
-          <Link href="/list/finance/bills" className="text-xs font-black text-blue-700 hover:underline">
-            Review bills
-          </Link>
         </div>
         {snapshot.feeItemBreakdown.length > 0 ? (
           <div className="overflow-hidden rounded-lg border border-gray-100">
@@ -316,9 +306,6 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
                 Lowest collection rates with open balances.
               </p>
             </div>
-            <Link href="/list/finance/bills" className="text-xs font-black text-blue-700 hover:underline">
-              View all
-            </Link>
           </div>
           {snapshot.weakClasses.length > 0 ? (
             <div className="space-y-2">

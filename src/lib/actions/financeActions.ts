@@ -154,7 +154,7 @@ export type WeeklyFinanceSummaryPushResult = WeeklyFinanceSummaryPushPreview & {
 export async function pushWeeklyFinanceSummaryToAdmins(input?: {
   date?: string | null;
 }): Promise<WeeklyFinanceSummaryPushResult> {
-  const ctx = await requireFinanceAccess();
+  const ctx = await requireFinanceOperationAccess();
   await enforceActionRateLimit({
     key: `finance:weekly-summary-push:${ctx.schoolId}:${ctx.userId}`,
     limit: 5,

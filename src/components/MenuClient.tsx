@@ -325,7 +325,7 @@ const menuItems = [
         icon: ScrollText,
         label: "Finance Reports",
         href: "/list/finance/reports",
-        visible: ["admin"],
+        visible: ["bursar"],
       },
       {
         icon: Wallet,
