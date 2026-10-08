@@ -16,6 +16,8 @@ export type AdminTeacherAccountabilitySnapshot = Omit<Awaited<ReturnType<typeof 
 export async function getAdminTeacherAccountability(schoolId: string, now = new Date(), teacherId?: string, includeDetails = false) {
   return prisma.$transaction(async (tx) => {
     const policy = await tx.teacherAccountabilitySetting.findUnique({ where: { schoolId } });
+    const operating = await tx.schoolNotificationSetting.findUnique({ where: { schoolId }, select: { activeDays: true } });
+    const activeDays = operating?.activeDays.length ? operating.activeDays : ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
     const publication = await tx.timetablePublication.findFirst({ where: { schoolId, status: "ACTIVE" }, orderBy: [{ publishedAt: "desc" }, { id: "desc" }], select: { id: true, publishedAt: true } });
     const config = await tx.cAConfig.findFirst({ where: { schoolId, isActive: true }, orderBy: [{ updatedAt: "desc" }, { id: "desc" }], select: { academicYear: true, currentTerm: true } });
     const teachers = await tx.teacher.findMany({ where: { schoolId, status: "ACTIVE" }, select: { id: true, name: true, surname: true, sex: true } });
@@ -45,10 +47,8 @@ export async function getAdminTeacherAccountability(schoolId: string, now = new 
     const obligations = await tx.teacherObligation.findMany({ where: { schoolId, teacher: { schoolId }, teacherId: { in: teachers.map((teacher) => teacher.id) }, type: { in: ["ATTENDANCE", "HOMEWORK_CHECKING", "CA_SCORE_PUBLISHING"] } }, select: { id: true, teacherId: true, type: true, sourceModel: true, sourceId: true, sourceKey: true, status: true, completedAt: true, expectedAt: true, metadata: true, escalations: { where: { schoolId }, select: { id: true, status: true, escalatedAt: true, reason: true } } } });
     const obligationMap = new Map(obligations.map((row) => [`${row.teacherId}:${row.sourceKey}`, row]));
     const items: TeacherFollowUpItem[] = [];
-    const validObligationIds = new Set<string>();
     const addDuty = (input: { teacherId: string; key: string; kind: "ATTENDANCE" | "HOMEWORK_CHECKING" | "CA_SCORE_PUBLISHING"; title: string; detail: string; deadline: Date; complete: boolean }) => {
       const row = obligationMap.get(`${input.teacherId}:${input.key}`);
-      if (row) validObligationIds.add(row.id);
       const exception = row?.escalations.some((escalation) => ["RESOLVED", "DISMISSED"].includes(escalation.status));
       if (!isOutstandingDuty({ deadline: input.deadline, complete: input.complete, status: row?.status, completedAt: row?.completedAt, exception }, now)) return;
       items.push({ id: `duty:${input.teacherId}:${input.key}`, teacherId: input.teacherId, teacherName: names.get(input.teacherId)!, kind: input.kind, title: input.title, detail: input.detail, at: input.deadline.toISOString(), reviewId: row?.id ?? null, correctionKind: null });
@@ -63,13 +63,13 @@ export async function getAdminTeacherAccountability(schoolId: string, now = new 
       for (const row of obligations.filter((row) => row.type === "ATTENDANCE" && row.sourceModel === "Lesson")) {
         const lesson = lessonMap.get(numericId(row.sourceId));
         const meta = metadata(row.metadata);
-        if (!lesson || row.teacherId !== lesson.teacherId || meta.classId !== lesson.classId || meta.subjectId !== lesson.subjectId || typeof meta.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(meta.date)) continue;
+        if (!lesson || !activeDays.includes(lesson.day) || row.teacherId !== lesson.teacherId || meta.classId !== lesson.classId || meta.subjectId !== lesson.subjectId || typeof meta.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(meta.date)) continue;
         const date = new Date(`${meta.date}T00:00:00Z`);
         if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== meta.date || days[date.getDay()] !== lesson.day || date > now || row.sourceKey !== `attendance:${meta.date}:lesson:${lesson.sourceId}`) continue;
         const end = dayStart(date); end.setHours(lesson.endTime.getHours(), lesson.endTime.getMinutes(), 0, 0);
         attendanceDuties.set(row.sourceKey, { lesson, date, deadline: new Date(end.getTime() + policy.attendanceEscalateMinutesAfterLesson * 60000), key: row.sourceKey });
       }
-      for (const lesson of lessons.filter((lesson) => lesson.day === days[now.getDay()])) {
+      for (const lesson of lessons.filter((lesson) => activeDays.includes(lesson.day) && lesson.day === days[now.getDay()])) {
         const start = dayStart(now); start.setHours(lesson.startTime.getHours(), lesson.startTime.getMinutes(), 0, 0);
         const end = dayStart(now); end.setHours(lesson.endTime.getHours(), lesson.endTime.getMinutes(), 0, 0);
         const key = `attendance:${now.toISOString().slice(0, 10)}:lesson:${lesson.sourceId}`;
@@ -101,9 +101,9 @@ export async function getAdminTeacherAccountability(schoolId: string, now = new 
         const checked = new Set(assignment.homeworkSubmissions.filter((row) => expected.has(row.studentId) && row.status !== "PENDING" && row.checkedAt).map((row) => row.studentId));
         addDuty({ teacherId: lesson.teacherId, key: `homework-checking:assignment:${assignment.id}`, kind: "HOMEWORK_CHECKING", title: `${lesson.className}: ${assignment.title}`, detail: `${lesson.subjectName}; ${checked.size} of ${expected.size} homework records checked`, deadline: homeworkCheckingDeadline(assignment.dueDate, policy.homeworkCheckWindowSchoolDays, policy.teacherCloseoutTime), complete: checked.size === expected.size });
       }
-      const activities = config ? await tx.cAActivity.findMany({ where: { schoolId, activityDate: { lte: now }, class: { schoolId }, subject: { schoolId }, teacher: { schoolId }, bucket: { schoolId, term: config.currentTerm, academicYear: config.academicYear } }, select: { id: true, title: true, activityDate: true, teacherId: true, classId: true, subjectId: true, scores: { where: { schoolId, student: { schoolId, status: "ACTIVE" } }, select: { studentId: true } } } }) : [];
+      const activities = config ? await tx.cAActivity.findMany({ where: { schoolId, activityDate: { lte: now }, class: { schoolId }, subject: { schoolId }, teacher: { schoolId }, bucket: { schoolId, term: config.currentTerm, academicYear: config.academicYear } }, select: { id: true, title: true, activityDate: true, teacherId: true, classId: true, subjectId: true, bucket: { select: { classId: true, subjectId: true } }, scores: { where: { schoolId, student: { schoolId, status: "ACTIVE" } }, select: { studentId: true } } } }) : [];
       for (const activity of activities) {
-        if (!scopes.has(scopeKey(activity.teacherId, activity.classId, activity.subjectId))) continue;
+        if (activity.bucket.classId !== activity.classId || activity.bucket.subjectId !== activity.subjectId || !scopes.has(scopeKey(activity.teacherId, activity.classId, activity.subjectId))) continue;
         const expected = roster(activity.classId, activity.activityDate);
         if (!expected.size) continue;
         const scored = new Set(activity.scores.filter((row) => expected.has(row.studentId)).map((row) => row.studentId));
@@ -111,8 +111,14 @@ export async function getAdminTeacherAccountability(schoolId: string, now = new 
         addDuty({ teacherId: activity.teacherId, key: `ca-score-publishing:activity:${activity.id}`, kind: "CA_SCORE_PUBLISHING", title: `${lesson.className}: ${activity.title}`, detail: `${lesson.subjectName}; ${scored.size} of ${expected.size} student scores saved`, deadline: caPublishingDeadline(activity.activityDate, policy.caScorePublishWindowSchoolDays, policy.teacherCloseoutTime), complete: scored.size === expected.size });
       }
     }
-    for (const row of obligations.filter((row) => validObligationIds.has(row.id) && row.status !== "CANCELLED")) {
-      for (const escalation of row.escalations.filter((row) => ["OPEN", "ACKNOWLEDGED"].includes(row.status))) items.push({ id: `escalation:${escalation.id}`, teacherId: row.teacherId, teacherName: names.get(row.teacherId)!, kind: "ESCALATION", title: "Escalation awaiting review", detail: escalation.reason, at: escalation.escalatedAt.toISOString(), reviewId: escalation.id, correctionKind: null });
+    // Review queues retain history even when the timetable, roster or setup changes.
+    const escalations = await tx.teacherEscalation.findMany({
+      where: { schoolId, status: { in: ["OPEN", "ACKNOWLEDGED"] }, teacher: { schoolId }, obligation: { schoolId, status: { not: "CANCELLED" } } },
+      select: { id: true, teacherId: true, reason: true, escalatedAt: true, teacher: { select: { name: true, surname: true, sex: true } }, obligation: { select: { title: true, teacherId: true } } },
+    });
+    for (const row of escalations) {
+      if (row.teacherId !== row.obligation.teacherId) continue;
+      items.push({ id: `escalation:${row.id}`, teacherId: row.teacherId, teacherName: teacherFollowUpName(row.teacher), kind: "ESCALATION", title: `Escalation review: ${row.obligation.title}`, detail: row.reason, at: row.escalatedAt.toISOString(), reviewId: row.id, correctionKind: null });
     }
 
     const corrections = await tx.teacherCorrectionRequest.findMany({ where: { schoolId, teacher: { schoolId }, status: "PENDING", OR: [{ sourceModel: "Attendance", fieldName: "attendanceStatus" }, { sourceModel: "HomeworkSubmission", fieldName: "homeworkSubmissionStatus" }, { sourceModel: "CAActivityScore", fieldName: "rawScore" }, { sourceModel: "ContinuousAssessment", fieldName: "examScore" }] }, select: { id: true, teacherId: true, sourceModel: true, sourceId: true, reason: true, createdAt: true, teacher: { select: { name: true, surname: true, sex: true } } } });

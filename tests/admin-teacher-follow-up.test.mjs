@@ -6,12 +6,12 @@ import ts from "typescript";
 
 const nodeRequire = createRequire(import.meta.url);
 function load(path, mocks = {}) {
-  const module = { exports: {} };
+  const loadedModule = { exports: {} };
   const source = readFileSync(path, "utf8");
   const code = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, esModuleInterop: true } }).outputText;
   const require = (id) => Object.hasOwn(mocks, id) ? mocks[id] : id === "server-only" ? {} : id.startsWith("@/") ? load(`${id.slice(2)}.ts`, mocks) : nodeRequire(id);
-  new Function("require", "module", "exports", code)(require, module, module.exports);
-  return module.exports;
+  new Function("require", "module", "exports", code)(require, loadedModule, loadedModule.exports);
+  return loadedModule.exports;
 }
 const pure = load("src/lib/queries/admin-teacher-follow-up.ts");
 const now = new Date("2026-10-08T12:00:00Z");
@@ -27,15 +27,17 @@ async function snapshot(overrides = {}, teacherId, at = now) {
   const model = (name, method, get) => ({ [method]: async (query) => { queries.push({ name, query }); return get(query); } });
   const tx = {
     teacherAccountabilitySetting: model("policy", "findUnique", () => data.policy),
+    schoolNotificationSetting: model("operating", "findUnique", () => data.operating ?? null),
     timetablePublication: model("publication", "findFirst", () => data.publication),
     cAConfig: model("config", "findFirst", () => data.config),
     teacher: model("teacher", "findMany", () => data.teachers),
     publishedTimetableLesson: model("lessons", "findMany", () => data.lessons),
     student: model("student", "findMany", () => data.students),
     teacherObligation: model("obligation", "findMany", () => data.obligations),
+    teacherEscalation: model("escalation", "findMany", () => data.escalations ?? data.obligations.filter((row) => row.status !== "CANCELLED").flatMap((row) => row.escalations.filter((esc) => ["OPEN", "ACKNOWLEDGED"].includes(esc.status)).map((esc) => ({ ...esc, teacherId: row.teacherId, teacher, obligation: { title: "Attendance", teacherId: row.teacherId } })))),
     attendance: model("attendance", "findMany", (q) => q.select.studentId ? data.attendance : data.attendanceSources ?? []),
     assignment: model("assignment", "findMany", () => data.assignments),
-    cAActivity: model("activity", "findMany", () => data.activities),
+    cAActivity: model("activity", "findMany", () => data.activities.map((row) => ({ bucket: { classId: row.classId, subjectId: row.subjectId }, ...row }))),
     teacherCorrectionRequest: model("correction", "findMany", () => data.corrections),
     homeworkSubmission: model("homeworkSource", "findMany", () => []),
     cAActivityScore: model("caSource", "findMany", () => []),
@@ -156,4 +158,97 @@ test("main dashboard removes legacy blocks and follow-up routes are admin-only",
   assert.match(route, /requireCompletedAdminSchoolSetup\(session\)/);
   assert.match(route, /paramsSchema.safeParse/);
   assert.doesNotMatch(route, /CorrectionReviewActions|recordPayment|CAEntry/);
+});
+
+test("closed school days cannot create overdue attendance", async () => {
+  const { result } = await snapshot({ operating: { activeDays: ["MONDAY"] }, obligations: [obligation] });
+  assert.equal(result.totals.overdue, 0);
+});
+
+test("open escalations survive missing setup, roster changes and timetable replacement", async () => {
+  const row = { id: "historical-escalation", teacherId: teacher.id, teacher, reason: "Review previous delay", escalatedAt: now, obligation: { title: "Previous published lesson", teacherId: teacher.id } };
+  for (const change of [{ policy: null }, { publication: null, lessons: [] }, { students: [] }, { teachers: [] }]) {
+    const { result } = await snapshot({ ...change, escalations: [row] });
+    assert.equal(result.totals.escalations, 1);
+    assert.equal(result.details.find((item) => item.kind === "ESCALATION").reviewId, row.id);
+  }
+  assert.equal((await snapshot({ escalations: [{ ...row, obligation: { ...row.obligation, teacherId: "different-teacher" } }] })).result.totals.escalations, 0);
+});
+
+test("CA buckets must match the activity class and subject", async () => {
+  const activity = { id: 3, title: "Reading", activityDate: new Date("2026-10-02T00:00:00Z"), teacherId: teacher.id, classId: 1, subjectId: 1, bucket: { classId: 999, subjectId: 1 }, scores: [] };
+  assert.equal((await snapshot({ activities: [activity] })).result.followUps[0].ca, 0);
+});
+
+function escalationReviewFixture({ wrongTeacher = false, role = "admin", completed = false } = {}) {
+  let status = "OPEN";
+  const audits = [];
+  const paths = [];
+  const checks = [];
+  const tx = {
+    teacherEscalation: { updateMany: async ({ where, data }) => {
+      checks.push(where);
+      if (where.status !== status) return { count: 0 };
+      status = data.status;
+      return { count: 1 };
+    } },
+    teacherObligation: { updateMany: async ({ where }) => { checks.push(where); return { count: 1 }; } },
+    teacherCorrectionRequest: { updateMany: async ({ where }) => { checks.push(where); return { count: 0 }; } },
+    teacherAccountabilityAuditLog: { create: async ({ data }) => { audits.push(data); } },
+  };
+  const prisma = {
+    teacherEscalation: { findFirst: async ({ where }) => {
+      checks.push(where);
+      return { id: "escalation-1", status, schoolId: "school-a", teacherId: teacher.id, obligationId: "obligation-1", obligation: { id: "obligation-1", teacherId: wrongTeacher ? "other-teacher" : teacher.id, status: completed ? "COMPLETED_LATE" : "ESCALATED", completedAt: completed ? now : null, priority: "HIGH", title: "Attendance" } };
+    } },
+    $transaction: async (fn) => fn(tx),
+  };
+  const actions = load("src/lib/actions/teacherEscalationActions.ts", {
+    "@/src/lib/prisma": prisma,
+    "@/src/lib/authz": { requireRole: async (roles) => { if (!roles.includes(role)) throw new Error("Forbidden"); return { schoolId: "school-a", userId: "admin-1", role }; } },
+    "next/cache": { revalidatePath: (path) => paths.push(path) },
+    "@/src/lib/services/school-operating-hours": {},
+    "@/src/lib/validation/parse": { parseActionInput: (schema, input) => schema.parse(input) },
+  });
+  return { actions, audits, paths, checks, get status() { return status; } };
+}
+
+test("competing escalation reviewers cannot overwrite decisions or double-log approval", async () => {
+  const fixture = escalationReviewFixture();
+  const reviews = await Promise.allSettled([
+    fixture.actions.reviewTeacherEscalation({ escalationId: "escalation-1", action: "RESOLVE", note: "Reviewed and resolved" }),
+    fixture.actions.reviewTeacherEscalation({ escalationId: "escalation-1", action: "DISMISS", note: "Approved exception" }),
+  ]);
+  assert.equal(reviews.filter((result) => result.status === "fulfilled").length, 1);
+  assert.equal(fixture.audits.length, 1);
+  assert.equal(fixture.status, "RESOLVED");
+  for (const where of fixture.checks) assert.equal(where.schoolId, "school-a");
+  assert.ok(fixture.paths.includes("/admin/accountability/follow-up"));
+  assert.ok(fixture.paths.includes("/admin"));
+});
+
+test("escalation review rejects non-admins and mismatched duty ownership before writes", async () => {
+  for (const options of [{ role: "teacher" }, { role: "bursar" }, { wrongTeacher: true }]) {
+    const fixture = escalationReviewFixture(options);
+    await assert.rejects(fixture.actions.reviewTeacherEscalation({ escalationId: "escalation-1", action: "RESOLVE", note: "Reviewed and resolved" }));
+    assert.equal(fixture.status, "OPEN");
+    assert.equal(fixture.audits.length, 0);
+  }
+});
+
+test("dismissing an escalation preserves already completed teaching work", async () => {
+  const fixture = escalationReviewFixture({ completed: true });
+  await fixture.actions.reviewTeacherEscalation({ escalationId: "escalation-1", action: "DISMISS", note: "Completed work reviewed" });
+  assert.equal(fixture.status, "DISMISSED");
+  assert.equal(fixture.audits[0].after.obligationStatus, "COMPLETED_LATE");
+  assert.ok(!fixture.checks.some((where) => where.id === "obligation-1"));
+});
+
+test("Section 3 typography matches the established dashboard without crowded mobile grids", () => {
+  const ui = readFileSync("src/components/AdminTeacherAccountability.tsx", "utf8");
+  assert.match(ui, /text-xl font-black text-gray-950/);
+  assert.match(ui, /bg-gray-50 p-3/);
+  assert.match(ui, /grid-cols-1 gap-3 sm:grid-cols-3/);
+  assert.match(ui, /min-w-0 flex-1 basis-48/);
+  assert.match(ui, /flex-wrap items-center justify-between/);
 });

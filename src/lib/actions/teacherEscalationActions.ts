@@ -66,12 +66,16 @@ export async function reviewTeacherEscalation(data: unknown) {
     where: {
       id: input.escalationId,
       schoolId: context.schoolId,
+      teacher: { schoolId: context.schoolId },
+      obligation: { schoolId: context.schoolId },
     },
     include: {
       obligation: {
         select: {
           id: true,
+          teacherId: true,
           status: true,
+          completedAt: true,
           priority: true,
           title: true,
         },
@@ -79,7 +83,7 @@ export async function reviewTeacherEscalation(data: unknown) {
     },
   });
 
-  if (!escalation) {
+  if (!escalation || escalation.teacherId !== escalation.obligation.teacherId) {
     throw new Error("Escalation not found.");
   }
 
@@ -92,7 +96,9 @@ export async function reviewTeacherEscalation(data: unknown) {
   }
 
   const nextStatus = initialStatusByAction[input.action];
-  const nextObligationStatus = obligationStatusForAction(input.action);
+  const nextObligationStatus = escalation.obligation.completedAt || ["COMPLETED", "COMPLETED_LATE", "CANCELLED"].includes(escalation.obligation.status)
+    ? null
+    : obligationStatusForAction(input.action);
   const now = new Date();
   const correctionRequestStatus =
     input.action === "RESOLVE"
@@ -101,48 +107,43 @@ export async function reviewTeacherEscalation(data: unknown) {
         ? "REJECTED"
         : null;
 
-  await prisma.$transaction([
-    prisma.teacherEscalation.update({
-      where: { id: escalation.id },
+  await prisma.$transaction(async (tx) => {
+    const claimed = await tx.teacherEscalation.updateMany({
+      where: { id: escalation.id, schoolId: context.schoolId, teacherId: escalation.teacherId, obligationId: escalation.obligationId, status: escalation.status },
       data: {
         status: nextStatus,
         reviewedBy: context.userId,
         reviewNote: input.note,
         resolvedAt: input.action === "ACKNOWLEDGE" ? null : now,
       },
-    }),
-    ...(nextObligationStatus
-      ? [
-          prisma.teacherObligation.update({
-            where: { id: escalation.obligationId },
-            data: {
-              status: nextObligationStatus,
-              priority: "LOW",
-            },
-          }),
-        ]
-      : []),
-    ...(correctionRequestStatus
-      ? [
-          prisma.teacherCorrectionRequest.updateMany({
-            where: {
-              schoolId: context.schoolId,
-              teacherId: escalation.teacherId,
-              sourceModel: "TeacherObligation",
-              sourceId: escalation.obligationId,
-              fieldName: ESCALATION_RESPONSE_FIELD,
-              status: "PENDING",
-            },
-            data: {
-              status: correctionRequestStatus,
-              reviewedBy: context.userId,
-              reviewedAt: now,
-              reviewNote: input.note,
-            },
-          }),
-        ]
-      : []),
-    prisma.teacherAccountabilityAuditLog.create({
+    });
+    if (claimed.count !== 1) throw new Error("This escalation changed during review. Refresh before trying again.");
+    if (nextObligationStatus) {
+      const updated = await tx.teacherObligation.updateMany({
+        where: { id: escalation.obligationId, schoolId: context.schoolId, teacherId: escalation.teacherId, status: escalation.obligation.status, completedAt: escalation.obligation.completedAt },
+        data: { status: nextObligationStatus, priority: "LOW" },
+      });
+      if (updated.count !== 1) throw new Error("The escalation duty is no longer available for review.");
+    }
+    if (correctionRequestStatus) {
+      await tx.teacherCorrectionRequest.updateMany({
+        where: {
+          schoolId: context.schoolId,
+          teacherId: escalation.teacherId,
+          sourceModel: "TeacherObligation",
+          sourceId: escalation.obligationId,
+          fieldName: ESCALATION_RESPONSE_FIELD,
+          status: "PENDING",
+        },
+        data: {
+          status: correctionRequestStatus,
+          reviewedBy: context.userId,
+          reviewedAt: now,
+          reviewNote: input.note,
+        },
+      });
+    }
+    await tx.teacherAccountabilityAuditLog.create({
       data: {
         schoolId: context.schoolId,
         teacherId: escalation.teacherId,
@@ -165,10 +166,12 @@ export async function reviewTeacherEscalation(data: unknown) {
         },
         message: `${successMessage(input.action)} ${escalation.obligation.title}`,
       },
-    }),
-  ]);
+    });
+  });
 
   revalidatePath("/admin/accountability");
+  revalidatePath("/admin/accountability/follow-up");
+  revalidatePath("/admin");
   revalidatePath("/teacher/accountability");
   revalidatePath("/teacher");
 

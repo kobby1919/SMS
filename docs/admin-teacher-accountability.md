@@ -13,6 +13,7 @@ or payment-recording controls.
 
 - Teaching scope comes from the latest active published timetable, not draft lessons.
 - Attendance becomes overdue after the final marking window, not when a lesson starts.
+- Attendance is not expected on days outside the school's configured active days.
 - Homework and CA use the same school-day deadline helpers as obligation generation.
 - Only active students in the relevant class are counted; later enrolments do not
   create missing work against an earlier activity or attendance day.
@@ -20,6 +21,10 @@ or payment-recording controls.
 - Actual completed work, saved completion, cancelled duties and resolved/dismissed
   escalation exceptions are excluded from overdue totals.
 - An open escalation remains management review work even after the duty is complete.
+- Escalation review survives timetable changes, empty rosters, inactive teachers and
+  missing setup. History is not a new teaching duty; cancelled duties remain excluded.
+- Escalation decisions claim the current status atomically; competing reviewers cannot
+  overwrite a closed decision or create misleading duplicate audit entries.
 - Corrections are separate review work, not evidence of teacher misconduct.
 - Missing policy, timetable or active academic period is shown as incomplete evaluation,
   not an assurance that all teaching work is healthy.

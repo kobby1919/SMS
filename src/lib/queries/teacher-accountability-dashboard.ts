@@ -332,6 +332,8 @@ export async function getTeacherAccountabilityOverview(
             },
           },
         ] }),
+        teacher: { schoolId },
+        obligation: { schoolId },
       },
       include: {
         teacher: { select: { id: true, name: true, surname: true } },
@@ -351,6 +353,7 @@ export async function getTeacherAccountabilityOverview(
         schoolId,
         sourceModel: "Attendance",
         ...(focusedCorrectionId ? { id: focusedCorrectionId } : {}),
+        teacher: { schoolId },
         fieldName: "attendanceStatus",
         status: "PENDING",
       },
@@ -365,6 +368,7 @@ export async function getTeacherAccountabilityOverview(
         schoolId,
         sourceModel: "HomeworkSubmission",
         ...(focusedCorrectionId ? { id: focusedCorrectionId } : {}),
+        teacher: { schoolId },
         fieldName: "homeworkSubmissionStatus",
         status: "PENDING",
       },
@@ -379,6 +383,7 @@ export async function getTeacherAccountabilityOverview(
         schoolId,
         status: "PENDING",
         ...(focusedCorrectionId ? { id: focusedCorrectionId } : {}),
+        teacher: { schoolId },
         OR: [
           { sourceModel: "CAActivityScore", fieldName: "rawScore" },
           { sourceModel: "ContinuousAssessment", fieldName: "examScore" },
@@ -513,7 +518,7 @@ export async function getTeacherAccountabilityOverview(
     .filter((id) => Number.isFinite(id));
   const homeworkSubmissions = homeworkSubmissionIds.length > 0
     ? await prisma.homeworkSubmission.findMany({
-        where: { schoolId, id: { in: homeworkSubmissionIds } },
+        where: { schoolId, id: { in: homeworkSubmissionIds }, student: { schoolId }, assignment: { schoolId, lesson: { schoolId, class: { schoolId }, subject: { schoolId } } } },
         include: {
           student: { select: { name: true, surname: true } },
           assignment: {
@@ -537,7 +542,7 @@ export async function getTeacherAccountabilityOverview(
     .filter((id) => Number.isFinite(id));
   const attendanceRows = attendanceIds.length > 0
     ? await prisma.attendance.findMany({
-        where: { schoolId, id: { in: attendanceIds } },
+        where: { schoolId, id: { in: attendanceIds }, student: { schoolId }, lesson: { schoolId, class: { schoolId }, subject: { schoolId } } },
         include: {
           student: { select: { name: true, surname: true } },
           lesson: {
@@ -558,7 +563,7 @@ export async function getTeacherAccountabilityOverview(
     .filter((id) => Number.isFinite(id));
   const caScoreRows = caScoreIds.length > 0
     ? await prisma.cAActivityScore.findMany({
-        where: { schoolId, id: { in: caScoreIds } },
+        where: { schoolId, id: { in: caScoreIds }, student: { schoolId }, activity: { schoolId, class: { schoolId }, subject: { schoolId }, bucket: { schoolId } } },
         include: {
           student: { select: { name: true, surname: true } },
           activity: {
@@ -577,7 +582,7 @@ export async function getTeacherAccountabilityOverview(
     .filter((id) => Number.isFinite(id));
   const examRows = examRecordIds.length > 0
     ? await prisma.continuousAssessment.findMany({
-        where: { schoolId, id: { in: examRecordIds } },
+        where: { schoolId, id: { in: examRecordIds }, student: { schoolId }, class: { schoolId }, subject: { schoolId } },
         include: {
           student: { select: { name: true, surname: true } },
           class: { select: { name: true } },
