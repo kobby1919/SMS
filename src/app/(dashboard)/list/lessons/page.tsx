@@ -1,7 +1,7 @@
 import Pagination from "@/src/components/pagination";
 import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
-import { Filter, ArrowUpDown, BookOpen } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import {
   getActiveTimetablePublication,
@@ -14,9 +14,9 @@ const LessonListPage = async ({
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
   // 1. Fetch Auth and Role
-  const { role, schoolId, userId } = await requirePageSession();
+  const { role, schoolId, userId } = await requirePageSession(["admin", "teacher"]);
   const { page, ...queryParams } = await searchParams;
-  const p = page ? parseInt(page) : 1;
+  const p = page && /^[1-9]\d*$/.test(page) && Number.isSafeInteger(Number(page)) ? Math.min(Number(page), 100000) : 1;
 
   const [publication, liveLessons] = await Promise.all([
     getActiveTimetablePublication(schoolId),
@@ -71,16 +71,6 @@ const LessonListPage = async ({
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
             <TableSearch />
-            <div className="flex items-center gap-2">
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <Filter size={14} />
-                <span className="hidden sm:inline">Filter</span>
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <ArrowUpDown size={14} />
-                <span className="hidden sm:inline">Sort</span>
-              </button>
-            </div>
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@
 // Server actions for Continuous Assessment feature
 
 import prisma from "@/src/lib/prisma";
+import { claimTeacherCorrectionReview } from "@/src/lib/services/teacher-obligation-store";
 import { requireRole } from "@/src/lib/authz";
 import { revalidatePath } from "next/cache";
 import { revalidateDashboard, revalidateDocument } from "@/src/lib/cacheTags";
@@ -70,24 +71,29 @@ export async function getGradeLabel(grade: string): Promise<string> {
   return labels[grade] ?? "—";
 }
 
-// ─── Auth: only class supervisor / admin may write CA records ─────────────────
+// Score entry is teacher work; admins review corrections and configure windows.
 async function requireCAAccess(classId: number): Promise<{ userId: string; role: string; schoolId: string }> {
-  const { userId, role, schoolId } = await requireRole(["admin", "teacher"]);
-
-  if (role === "admin") return { userId, role, schoolId };
+  const { userId, role, schoolId } = await requireRole(["teacher"]);
 
   if (role === "teacher") {
-    const cls = await prisma.class.findFirst({
-      where: { id: classId, schoolId },
-      select: { supervisorId: true },
-    });
-    if (cls?.supervisorId !== userId) {
-      throw new Error("Only the class supervisor can manage CA records for this class.");
+    const scope = await getTeacherScope({ schoolId, teacherId: userId });
+    if (!scope.accessibleClassIds.includes(classId)) {
+      throw new Error("This class is outside your published teaching or class-teacher scope.");
     }
     return { userId, role, schoolId };
   }
 
   throw new Error("Unauthorized");
+}
+
+async function assertCAStudents(schoolId: string, classId: number, studentIds: string[]) {
+  const uniqueIds = [...new Set(studentIds)];
+  const count = await prisma.student.count({
+    where: { schoolId, classId, status: "ACTIVE", id: { in: uniqueIds } },
+  });
+  if (count !== uniqueIds.length) {
+    throw new Error("Every assessment student must be active in this school and class.");
+  }
 }
 
 async function assertTeacherUsesActivePeriod({
@@ -234,6 +240,7 @@ async function computeCA(
 export async function createCA(data: CAInput) {
   const parsed = parseActionInput(caRecordSchema, data);
   const { userId: teacherId, role, schoolId } = await requireCAAccess(parsed.classId);
+  await assertCAStudents(schoolId, parsed.classId, [parsed.studentId]);
   await assertClassSubjectInPublishedTimetable({ schoolId, classId: parsed.classId, subjectId: parsed.subjectId });
   await assertTeacherUsesActivePeriod({ schoolId, role, term: parsed.term, academicYear: parsed.academicYear });
   if (role === "teacher") {
@@ -301,6 +308,19 @@ export async function updateCA(data: CAInput) {
   if (!data.id) throw new Error("CA ID required for update.");
   const parsed = parseActionInput(caRecordUpdateSchema, data);
   const { userId: teacherId, role, schoolId } = await requireCAAccess(parsed.classId);
+  await assertCAStudents(schoolId, parsed.classId, [parsed.studentId]);
+  const existing = await prisma.continuousAssessment.findFirst({
+    where: {
+      id: parsed.id, schoolId, teacherId, studentId: parsed.studentId,
+      classId: parsed.classId, subjectId: parsed.subjectId,
+      term: parsed.term, academicYear: parsed.academicYear,
+    },
+    select: { id: true, examScore: true },
+  });
+  if (!existing) throw new Error("Assessment record does not match your authorized student and subject.");
+  if (existing.examScore > 0 && existing.examScore !== parsed.examScore) {
+    throw new Error("Saved exam scores require an approved correction request.");
+  }
   await assertClassSubjectInPublishedTimetable({ schoolId, classId: parsed.classId, subjectId: parsed.subjectId });
   await assertTeacherUsesActivePeriod({ schoolId, role, term: parsed.term, academicYear: parsed.academicYear });
   if (role === "teacher") {
@@ -334,7 +354,7 @@ export async function updateCA(data: CAInput) {
   );
 
   await prisma.continuousAssessment.update({
-    where: { id: data.id, schoolId },
+    where: { id: existing.id, schoolId, teacherId },
     data: {
       classworkScore: parsed.classworkScore,
       examScore:      parsed.examScore,
@@ -354,18 +374,9 @@ export async function updateCA(data: CAInput) {
 }
 
 export async function deleteCA(id: number) {
-  id = parseActionInput(positiveIntSchema, id);
-  const ca = await prisma.continuousAssessment.findUnique({
-    where: { id },
-    select: { classId: true, studentId: true },
-  });
-  if (!ca) throw new Error("CA record not found.");
-  const { schoolId } = await requireCAAccess(ca.classId);
-
-  await prisma.continuousAssessment.delete({ where: { id, schoolId } });
-  revalidatePath("/list/ca");
-  revalidateDashboard(schoolId);
-  revalidateDocument(schoolId, "report-card", ca.studentId);
+  parseActionInput(positiveIntSchema, id);
+  await requireRole(["teacher"]);
+  throw new Error("Assessment history cannot be deleted. Use the correction request workflow.");
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -410,6 +421,7 @@ export async function bulkUpsertCA(
   term = parsed.term;
   academicYear = parsed.academicYear;
   const { userId: teacherId, role, schoolId } = await requireCAAccess(classId);
+  await assertCAStudents(schoolId, classId, rows.map((row) => row.studentId));
   await assertClassSubjectInPublishedTimetable({ schoolId, classId, subjectId });
   await assertTeacherUsesActivePeriod({ schoolId, role, term, academicYear });
   if (role === "teacher") {
@@ -1099,6 +1111,7 @@ export async function reviewAcademicCorrectionRequest(data: {
   action: "APPROVE" | "REJECT";
   note?: string | null;
 }) {
+  if (data.action !== "APPROVE" && data.action !== "REJECT") throw new Error("Choose approve or reject.");
   const { userId, schoolId } = await requireRole(["admin"]);
   const requestId = parseActionInput(nonEmptyStringSchema, data.requestId);
   const reviewNote = data.note?.trim() || null;
@@ -1127,7 +1140,7 @@ export async function reviewAcademicCorrectionRequest(data: {
     const newRawScore = readNumberPayload(request.newValue, "rawScore");
     if (newRawScore === null) throw new Error("Correction request is missing a valid CA score.");
     const score = await prisma.cAActivityScore.findFirst({
-      where: { id: Number.parseInt(request.sourceId, 10), schoolId },
+      where: { id: Number.parseInt(request.sourceId, 10), schoolId, student: { schoolId }, activity: { schoolId, teacherId: request.teacherId, teacher: { schoolId }, class: { schoolId }, subject: { schoolId }, bucket: { schoolId } } },
       include: {
         student: { select: { id: true, name: true, surname: true } },
         activity: {
@@ -1154,23 +1167,16 @@ export async function reviewAcademicCorrectionRequest(data: {
 
     await prisma.$transaction(async (tx) => {
       if (data.action === "APPROVE") {
-        await tx.cAActivityScore.update({
-          where: { id: score.id },
+        const changed = await tx.cAActivityScore.updateMany({
+          where: { id: score.id, schoolId, updatedAt: score.updatedAt },
           data: {
             rawScore: newRawScore,
             normalizedContribution,
           },
         });
+        if (changed.count !== 1) throw new Error("This score changed during review. Refresh before approving.");
       }
-      await tx.teacherCorrectionRequest.update({
-        where: { id: request.id },
-        data: {
-          status: data.action === "APPROVE" ? "APPROVED" : "REJECTED",
-          reviewedBy: userId,
-          reviewedAt: now,
-          reviewNote,
-        },
-      });
+      await claimTeacherCorrectionReview(tx, { id: request.id, schoolId, teacherId: request.teacherId, action: data.action, reviewerId: userId, at: now, note: reviewNote });
       await tx.teacherAccountabilityAuditLog.create({
         data: {
           schoolId,
@@ -1229,7 +1235,7 @@ export async function reviewAcademicCorrectionRequest(data: {
     const newExamScore = readNumberPayload(request.newValue, "examScore");
     if (newExamScore === null) throw new Error("Correction request is missing a valid exam score.");
     const record = await prisma.continuousAssessment.findFirst({
-      where: { id: Number.parseInt(request.sourceId, 10), schoolId },
+      where: { id: Number.parseInt(request.sourceId, 10), schoolId, teacherId: request.teacherId, teacher: { schoolId }, student: { schoolId }, class: { schoolId }, subject: { schoolId } },
       include: {
         student: { select: { id: true, name: true, surname: true } },
         subject: { select: { name: true } },
@@ -1243,8 +1249,8 @@ export async function reviewAcademicCorrectionRequest(data: {
 
     await prisma.$transaction(async (tx) => {
       if (data.action === "APPROVE") {
-        await tx.continuousAssessment.update({
-          where: { id: record.id },
+        const changed = await tx.continuousAssessment.updateMany({
+          where: { id: record.id, schoolId, updatedAt: record.updatedAt },
           data: {
             examScore: newExamScore,
             totalScore,
@@ -1252,16 +1258,9 @@ export async function reviewAcademicCorrectionRequest(data: {
             gradePoint,
           },
         });
+        if (changed.count !== 1) throw new Error("This assessment changed during review. Refresh before approving.");
       }
-      await tx.teacherCorrectionRequest.update({
-        where: { id: request.id },
-        data: {
-          status: data.action === "APPROVE" ? "APPROVED" : "REJECTED",
-          reviewedBy: userId,
-          reviewedAt: now,
-          reviewNote,
-        },
-      });
+      await claimTeacherCorrectionReview(tx, { id: request.id, schoolId, teacherId: request.teacherId, action: data.action, reviewerId: userId, at: now, note: reviewNote });
       await tx.teacherAccountabilityAuditLog.create({
         data: {
           schoolId,

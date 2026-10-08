@@ -287,6 +287,7 @@ export async function getTeacherAccountabilityOverview(
       },
       include: {
         teacher: { select: { id: true, name: true, surname: true } },
+        escalations: { where: { schoolId }, select: { status: true } },
         _count: { select: { reminders: true, escalations: true } },
       },
       orderBy: [{ expectedAt: "asc" }, { createdAt: "asc" }],
@@ -299,6 +300,7 @@ export async function getTeacherAccountabilityOverview(
       },
       include: {
         teacher: { select: { id: true, name: true, surname: true } },
+        escalations: { where: { schoolId }, select: { status: true } },
         _count: { select: { reminders: true, escalations: true } },
       },
       orderBy: [{ priority: "desc" }, { expectedAt: "desc" }],
@@ -317,9 +319,9 @@ export async function getTeacherAccountabilityOverview(
         expectedAt: true,
         completedAt: true,
         metadata: true,
+        escalations: { where: { schoolId }, select: { status: true } },
       },
       orderBy: [{ expectedAt: "asc" }],
-      take: 2000,
     }),
     prisma.teacherEscalation.findMany({
       where: {
@@ -438,9 +440,12 @@ export async function getTeacherAccountabilityOverview(
     teacherRows.map((teacher) => [teacher.id, fullName(teacher)]),
   );
   const summaryByTeacher = new Map<string, TeacherAccountabilitySummaryRow>();
+  const evaluatedByTeacher = new Map<string, number>();
 
   for (const row of weeklyStatusGroups) {
     const status = effectiveObligationStatus(row, now);
+    if (status === "CANCELLED") continue;
+    if (status !== "PENDING") evaluatedByTeacher.set(row.teacherId, (evaluatedByTeacher.get(row.teacherId) ?? 0) + 1);
     const summary =
       summaryByTeacher.get(row.teacherId) ??
       {
@@ -468,11 +473,12 @@ export async function getTeacherAccountabilityOverview(
   const teacherSummaries = [...summaryByTeacher.values()]
     .map((summary) => {
       const earned =
-        summary.completed + summary.completedLate * 0.7 + summary.pending * 0.4;
+        summary.completed + summary.completedLate * 0.7;
+      const evaluated = evaluatedByTeacher.get(summary.teacherId) ?? 0;
       return {
         ...summary,
         reliabilityScore:
-          summary.total > 0 ? Math.round((earned / summary.total) * 100) : 0,
+          evaluated > 0 ? Math.round((earned / evaluated) * 100) : 100,
       };
     })
     .sort((a, b) => a.reliabilityScore - b.reliabilityScore || b.total - a.total)

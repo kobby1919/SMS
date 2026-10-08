@@ -26,13 +26,13 @@ export function effectiveObligationStatus(
     expectedAt: Date;
     completedAt: Date | null;
     metadata: unknown;
+    escalations?: { status: string }[];
   },
   now: Date,
 ): TeacherObligationStatus {
   if (
     obligation.status === "COMPLETED" ||
     obligation.status === "COMPLETED_LATE" ||
-    obligation.status === "ESCALATED" ||
     obligation.status === "CANCELLED"
   ) {
     return obligation.status;
@@ -43,12 +43,14 @@ export function effectiveObligationStatus(
       ? "COMPLETED_LATE"
       : "COMPLETED";
   }
+  if (obligation.escalations?.some((row) => row.status === "RESOLVED" || row.status === "DISMISSED")) return "CANCELLED";
+  if (obligation.status === "ESCALATED") return "ESCALATED";
 
   const missedAt =
     parseMetadataDate(readMetadata(obligation.metadata).missedAt) ??
     obligation.expectedAt;
 
-  return missedAt <= now ? "MISSED" : obligation.status;
+  return missedAt < now ? "MISSED" : obligation.status;
 }
 
 export function effectiveObligationPriority(

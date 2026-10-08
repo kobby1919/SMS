@@ -1,10 +1,11 @@
 import prisma from "@/src/lib/prisma";
 import type {
-  TeacherAccountabilityAuditAction,
   TeacherObligationPriority,
   TeacherObligationStatus,
 } from "@/src/generated/prisma";
 import { getTeacherAccountabilitySettings } from "@/src/lib/services/teacher-accountability-settings";
+import { saveTeacherObligation } from "@/src/lib/services/teacher-obligation-store";
+import { getLiveTimetableLessonBySourceId } from "@/src/lib/services/timetable";
 
 type HomeworkObligationSnapshot = {
   assignmentId: number;
@@ -59,17 +60,6 @@ function priorityForStatus(status: TeacherObligationStatus): TeacherObligationPr
   return "NORMAL";
 }
 
-function auditActionForStatus(
-  status: TeacherObligationStatus,
-): TeacherAccountabilityAuditAction | null {
-  if (status === "COMPLETED") return "OBLIGATION_COMPLETED";
-  if (status === "COMPLETED_LATE") return "OBLIGATION_COMPLETED_LATE";
-  if (status === "MISSED") return "OBLIGATION_MISSED";
-  if (status === "ESCALATED") return "OBLIGATION_ESCALATED";
-  if (status === "CANCELLED") return "OBLIGATION_CANCELLED";
-  return null;
-}
-
 function homeworkSourceKey(assignmentId: number) {
   return `homework-checking:assignment:${assignmentId}`;
 }
@@ -80,24 +70,26 @@ export function homeworkCheckingDeadline(dueDate: Date, days: number, closeoutTi
 
 async function getAssignmentForHomeworkObligation(schoolId: string, assignmentId: number) {
   return prisma.assignment.findFirst({
-    where: { id: assignmentId, schoolId },
+    where: { id: assignmentId, schoolId, lesson: { schoolId, teacher: { schoolId, status: "ACTIVE" }, class: { schoolId }, subject: { schoolId } } },
     include: {
       lesson: {
         select: {
           teacherId: true,
+          classId: true,
+          subjectId: true,
           subject: { select: { id: true, name: true } },
           class: {
             select: {
               id: true,
               name: true,
-              students: { select: { id: true } },
-              _count: { select: { students: true } },
+              students: { where: { schoolId, status: "ACTIVE" }, select: { id: true, createdAt: true } },
             },
           },
           teacher: { select: { name: true, surname: true } },
         },
       },
       homeworkSubmissions: {
+        where: { schoolId, student: { schoolId, status: "ACTIVE" } },
         select: {
           id: true,
           studentId: true,
@@ -123,13 +115,14 @@ function buildHomeworkObligationState({
   closeoutTime: string;
   now: Date;
 }) {
-  const classStudentIds = new Set(assignment.lesson.class.students.map((student) => student.id));
+  const classStudentIds = new Set(assignment.lesson.class.students.filter((student) => student.createdAt <= endOfDay(assignment.dueDate)).map((student) => student.id));
   const validSubmissions = assignment.homeworkSubmissions.filter((submission) =>
     classStudentIds.has(submission.studentId),
   );
-  const studentCount = assignment.lesson.class._count.students;
+  const studentCount = classStudentIds.size;
   const checkedRows = validSubmissions.filter((submission) => submission.status !== "PENDING" && submission.checkedAt);
-  const pendingCount = Math.max(studentCount - checkedRows.length, 0);
+  const checkedCount = new Set(checkedRows.map((row) => row.studentId)).size;
+  const pendingCount = Math.max(studentCount - checkedCount, 0);
   const latestCheckedAt = checkedRows.reduce<Date | null>(
     (latest, submission) =>
       submission.checkedAt && (!latest || submission.checkedAt > latest)
@@ -161,7 +154,7 @@ function buildHomeworkObligationState({
     status,
     priority: priorityForStatus(status),
     studentCount,
-    checkedCount: checkedRows.length,
+    checkedCount,
     pendingCount,
   };
 }
@@ -180,6 +173,8 @@ export async function syncHomeworkCheckingObligation({
     getAssignmentForHomeworkObligation(schoolId, assignmentId),
   ]);
   if (!assignment) return null;
+  const published = await getLiveTimetableLessonBySourceId(schoolId, assignment.lessonId);
+  if (!published || published.teacherId !== assignment.lesson.teacherId || published.classId !== assignment.lesson.classId || published.subjectId !== assignment.lesson.subjectId) return null;
 
   const state = buildHomeworkObligationState({
     assignment,
@@ -209,170 +204,47 @@ export async function syncHomeworkCheckingObligation({
     pendingCount: state.pendingCount,
   };
 
-  const existing = await prisma.teacherObligation.findUnique({
-    where: {
-      schoolId_teacherId_sourceKey: {
-        schoolId,
-        teacherId: assignment.lesson.teacherId,
-        sourceKey,
-      },
-    },
-    select: {
-      id: true,
-      status: true,
-      priority: true,
-      expectedAt: true,
-    },
+  const obligation = await saveTeacherObligation({
+    schoolId, teacherId: assignment.lesson.teacherId, type: "HOMEWORK_CHECKING",
+    status: state.status, priority: state.priority, sourceModel: "Assignment",
+    sourceId: String(assignment.id), sourceKey, title, description,
+    expectedAt: state.expectedAt, completedAt: state.completedAt, metadata,
   });
-
-  if (!existing) {
-    const obligation = await prisma.teacherObligation.create({
-      data: {
-        schoolId,
-        teacherId: assignment.lesson.teacherId,
-        type: "HOMEWORK_CHECKING",
-        status: state.status,
-        priority: state.priority,
-        sourceModel: "Assignment",
-        sourceId: String(assignment.id),
-        sourceKey,
-        title,
-        description,
-        expectedAt: state.expectedAt,
-        completedAt: state.completedAt,
-        metadata,
-      },
-      select: { id: true },
-    });
-
-    await prisma.teacherAccountabilityAuditLog.create({
-      data: {
-        schoolId,
-        teacherId: assignment.lesson.teacherId,
-        action: "OBLIGATION_CREATED",
-        actorRole: "SYSTEM",
-        sourceModel: "TeacherObligation",
-        sourceId: obligation.id,
-        after: {
-          status: state.status,
-          priority: state.priority,
-          sourceModel: "Assignment",
-          sourceId: String(assignment.id),
-        },
-        message: `${title} accountability obligation created.`,
-      },
-    });
-
-    return {
-      assignmentId: assignment.id,
-      obligationId: obligation.id,
-      status: state.status,
-      expectedAt: state.expectedAt,
-      completedAt: state.completedAt,
-      studentCount: state.studentCount,
-      checkedCount: state.checkedCount,
-      pendingCount: state.pendingCount,
-    };
-  }
-
-  const nextStatus =
-    existing.status === "ESCALATED" &&
-    state.status !== "COMPLETED" &&
-    state.status !== "COMPLETED_LATE" &&
-    state.status !== "CANCELLED"
-      ? "ESCALATED"
-      : state.status;
-  const nextPriority = priorityForStatus(nextStatus);
-  const statusChanged = existing.status !== nextStatus;
-  const scheduleChanged = existing.expectedAt.getTime() !== state.expectedAt.getTime();
-  const shouldSkipPendingReminders = nextStatus !== "PENDING" || scheduleChanged;
-  const action = auditActionForStatus(nextStatus);
-
-  await prisma.$transaction([
-    prisma.teacherObligation.update({
-      where: { id: existing.id },
-      data: {
-        status: nextStatus,
-        priority: nextPriority,
-        title,
-        description,
-        expectedAt: state.expectedAt,
-        completedAt: state.completedAt,
-        metadata,
-      },
-    }),
-    ...(shouldSkipPendingReminders
-      ? [
-          prisma.teacherReminder.updateMany({
-            where: {
-              schoolId,
-              obligationId: existing.id,
-              status: "PENDING",
-            },
-            data: {
-              status: "SKIPPED",
-              errorMessage:
-                nextStatus === "PENDING"
-                  ? "Superseded by homework schedule update."
-                  : `Superseded by obligation status ${nextStatus}.`,
-            },
-          }),
-        ]
-      : []),
-    ...(statusChanged && action
-      ? [
-          prisma.teacherAccountabilityAuditLog.create({
-            data: {
-              schoolId,
-              teacherId: assignment.lesson.teacherId,
-              action,
-              actorRole: "SYSTEM",
-              sourceModel: "TeacherObligation",
-              sourceId: existing.id,
-              before: {
-                status: existing.status,
-                priority: existing.priority,
-              },
-              after: {
-                status: nextStatus,
-                priority: nextPriority,
-                completedAt: state.completedAt?.toISOString() ?? null,
-              },
-              message: `${title} changed from ${existing.status} to ${nextStatus}.`,
-            },
-          }),
-        ]
-      : []),
-  ]);
-
+  if (!obligation) return null;
   return {
     assignmentId: assignment.id,
-    obligationId: existing.id,
-    status: nextStatus,
-    expectedAt: state.expectedAt,
-    completedAt: state.completedAt,
+    obligationId: obligation.id, status: obligation.status,
+    expectedAt: obligation.expectedAt, completedAt: obligation.completedAt,
     studentCount: state.studentCount,
-    checkedCount: state.checkedCount,
-    pendingCount: state.pendingCount,
+    checkedCount: state.checkedCount, pendingCount: state.pendingCount,
   };
 }
 
 export async function syncHomeworkCheckingObligationsForSchool({
   schoolId,
+  teacherId,
   now = new Date(),
   limit = 200,
 }: {
   schoolId: string;
+  teacherId?: string;
   now?: Date;
   limit?: number;
 }) {
   const since = new Date(now);
   since.setDate(since.getDate() - 60);
+  const finished = await prisma.teacherObligation.findMany({ where: {
+    schoolId, sourceModel: "Assignment", ...(teacherId ? { teacherId } : {}),
+    OR: [{ status: { in: ["COMPLETED", "COMPLETED_LATE", "CANCELLED"] } }, { completedAt: { not: null } }, { escalations: { some: { schoolId, status: { in: ["RESOLVED", "DISMISSED"] } } } }],
+  }, select: { sourceId: true } });
+  const finishedIds = finished.map((row) => Number(row.sourceId)).filter((id) => Number.isSafeInteger(id) && id > 0);
 
   const assignments = await prisma.assignment.findMany({
     where: {
       schoolId,
       dueDate: { gte: since, lte: now },
+      id: { notIn: finishedIds },
+      lesson: { schoolId, teacher: { schoolId, status: "ACTIVE", ...(teacherId ? { id: teacherId } : {}) } },
     },
     select: { id: true },
     orderBy: [{ dueDate: "asc" }, { id: "asc" }],

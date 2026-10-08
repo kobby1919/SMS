@@ -146,7 +146,7 @@ const ExamListPage = async ({
               <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
                 <ArrowUpDown size={14} /><span className="hidden sm:inline">Sort</span>
               </button>
-              {role === "admin" && <FormModal table="exam" type="create" />}
+              {role === "teacher" && <FormModal table="exam" type="create" />}
             </div>
           </div>
         </div>
@@ -201,7 +201,7 @@ const ExamListPage = async ({
                 {activeTab === "past" && (
                   <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Results</th>
                 )}
-                {(role === "admin" || role === "teacher") && (
+                {role === "teacher" && (
                   <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">Actions</th>
                 )}
               </tr>
@@ -283,10 +283,10 @@ const ExamListPage = async ({
 
                       <td className="px-5 py-4 w-[100px]">
                         <div className="flex items-center justify-end gap-2">
-                          {(role === "admin" || role === "teacher") && (
+                          {role === "teacher" && (
                             <FormModal table="exam" type="update" data={item} />
                           )}
-                          {(role === "admin" || role === "teacher") && (
+                          {role === "teacher" && (
                             <FormModal table="exam" type="delete" id={item.id} />
                           )}
                         </div>

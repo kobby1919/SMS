@@ -1,5 +1,7 @@
 import { syncAttendanceObligationsForDate } from "@/src/lib/services/teacher-attendance-obligations";
 import { processTeacherWeekEscalationCatchup } from "@/src/lib/services/teacher-accountability";
+import { syncCAActivityScorePublishingObligationsForSchool } from "@/src/lib/services/teacher-ca-obligations";
+import { syncHomeworkCheckingObligationsForSchool } from "@/src/lib/services/teacher-homework-obligations";
 
 function startOfDay(date: Date) {
   const value = new Date(date);
@@ -50,6 +52,10 @@ export async function prepareTeacherAccountabilityForView({
     ),
   );
 
+  await Promise.all([
+    syncCAActivityScorePublishingObligationsForSchool({ schoolId, teacherId, now }),
+    syncHomeworkCheckingObligationsForSchool({ schoolId, teacherId, now }),
+  ]);
   await processTeacherWeekEscalationCatchup({
     schoolId,
     teacherId,

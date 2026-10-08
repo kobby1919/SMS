@@ -49,11 +49,23 @@ function deliveryStatusClass(status: string) {
   }
 }
 
-const AdminCommunicationsPage = async () => {
+const AdminCommunicationsPage = async ({ searchParams }: { searchParams: Promise<{ page?: string }> }) => {
   const { schoolId } = await requirePageSession(["admin"]);
+  const params = await searchParams;
+  const page = params.page && /^[1-9]\d*$/.test(params.page) && Number.isSafeInteger(Number(params.page)) ? Math.min(Number(params.page), 100000) : 1;
+  const scope = { schoolId, parent: { schoolId }, teacher: { schoolId }, student: { schoolId, class: { schoolId } } };
+  const pageSize = 40;
   const now = new Date();
+  const [openCount, overdueCount, escalatedCount, closedCount, totalCount] = await Promise.all([
+    prisma.parentTeacherContactRequest.count({ where: { ...scope, status: { notIn: ["CLOSED", "CANCELLED"] } } }),
+    prisma.parentTeacherContactRequest.count({ where: { ...scope, status: { notIn: ["CLOSED", "CANCELLED", "RESPONDED"] }, responseDueAt: { lt: now } } }),
+    prisma.parentTeacherContactRequest.count({ where: { ...scope, status: "ESCALATED" } }),
+    prisma.parentTeacherContactRequest.count({ where: { ...scope, status: { in: ["CLOSED", "CANCELLED"] } } }),
+    prisma.parentTeacherContactRequest.count({ where: scope }),
+  ]);
+  const currentPage = Math.min(page, Math.max(1, Math.ceil(totalCount / pageSize)));
   const requests = await prisma.parentTeacherContactRequest.findMany({
-    where: { schoolId },
+    where: scope,
     include: {
       parent: { select: { name: true, surname: true } },
       teacher: { select: { name: true, surname: true } },
@@ -65,16 +77,14 @@ const AdminCommunicationsPage = async () => {
         },
       },
       messages: {
-        orderBy: { createdAt: "asc" },
+        where: { schoolId },
+        orderBy: { createdAt: "desc" },
         take: 8,
       },
     },
-    orderBy: [
-      { status: "asc" },
-      { responseDueAt: "asc" },
-      { createdAt: "desc" },
-    ],
-    take: 120,
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    take: pageSize,
+    skip: (currentPage - 1) * pageSize,
   });
   const messageIds = requests.flatMap((request) => request.messages.map((message) => message.id));
   const contactNotifications = messageIds.length
@@ -112,10 +122,6 @@ const AdminCommunicationsPage = async () => {
   const closedRequests = requests.filter(
     (request) => request.status === "CLOSED" || request.status === "CANCELLED",
   );
-  const overdueRequests = activeRequests.filter(
-    (request) => request.responseDueAt && request.responseDueAt < now && request.status !== "RESPONDED",
-  );
-  const escalatedRequests = activeRequests.filter((request) => request.status === "ESCALATED");
 
   return (
     <div className="flex flex-col gap-5 p-4">
@@ -134,19 +140,19 @@ const AdminCommunicationsPage = async () => {
           </div>
           <div className="grid grid-cols-1 gap-2 text-center min-[420px]:grid-cols-2 xl:grid-cols-4">
             <div className="min-w-0 rounded-xl bg-white/10 px-3 py-2">
-              <p className="text-lg font-black">{activeRequests.length}</p>
+              <p className="text-lg font-black">{openCount}</p>
               <p className="break-words text-[10px] font-bold uppercase leading-snug tracking-wide text-slate-300">Open</p>
             </div>
             <div className="min-w-0 rounded-xl bg-white/10 px-3 py-2">
-              <p className="text-lg font-black">{overdueRequests.length}</p>
+              <p className="text-lg font-black">{overdueCount}</p>
               <p className="break-words text-[10px] font-bold uppercase leading-snug tracking-wide text-slate-300">Overdue</p>
             </div>
             <div className="min-w-0 rounded-xl bg-white/10 px-3 py-2">
-              <p className="text-lg font-black">{escalatedRequests.length}</p>
+              <p className="text-lg font-black">{escalatedCount}</p>
               <p className="break-words text-[10px] font-bold uppercase leading-snug tracking-wide text-slate-300">Escalated</p>
             </div>
             <div className="min-w-0 rounded-xl bg-white/10 px-3 py-2">
-              <p className="text-lg font-black">{closedRequests.length}</p>
+              <p className="text-lg font-black">{closedCount}</p>
               <p className="break-words text-[10px] font-bold uppercase leading-snug tracking-wide text-slate-300">Closed</p>
             </div>
           </div>
@@ -155,7 +161,7 @@ const AdminCommunicationsPage = async () => {
 
       {activeRequests.length === 0 ? (
         <div className="rounded-2xl border border-gray-100 bg-white p-6 text-center shadow-sm">
-          <p className="text-sm font-black text-gray-900">No active parent contact requests.</p>
+          <p className="text-sm font-black text-gray-900">{openCount ? "No active requests on this page." : "No active parent contact requests."}</p>
           <p className="mt-1 text-sm font-semibold text-gray-400">
             Requests sent by parents will appear here for school oversight.
           </p>
@@ -214,7 +220,7 @@ const AdminCommunicationsPage = async () => {
                     </p>
                     <div className="mt-3 space-y-2">
                       {request.messages.length > 0 ? (
-                        request.messages.map((message) => (
+                        [...request.messages].reverse().map((message) => (
                           <div key={message.id} className="rounded-xl bg-white px-3 py-2">
                             <div className="flex flex-wrap items-center justify-between gap-2">
                               <p className="text-xs font-black uppercase tracking-wide text-gray-500">{readable(message.senderRole)}</p>
@@ -268,7 +274,7 @@ const AdminCommunicationsPage = async () => {
             <h2 className="text-sm font-black text-gray-900">Recently closed</h2>
           </div>
           <div className="mt-3 space-y-2">
-            {closedRequests.slice(0, 8).map((request) => (
+            {closedRequests.map((request) => (
               <div key={request.id} className="flex flex-col gap-1 rounded-xl bg-slate-50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm font-black text-gray-900">{request.subject}</p>
                 <p className="text-xs font-semibold text-gray-500">
@@ -278,6 +284,13 @@ const AdminCommunicationsPage = async () => {
             ))}
           </div>
         </div>
+      )}
+      {totalCount > pageSize && (
+        <nav aria-label="Contact request pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+          {currentPage > 1 ? <a href={`/admin/communications?page=${currentPage - 1}`} className="font-semibold underline">Previous</a> : <span />}
+          <span>Page {currentPage} of {Math.ceil(totalCount / pageSize)}</span>
+          {currentPage * pageSize < totalCount ? <a href={`/admin/communications?page=${currentPage + 1}`} className="font-semibold underline">Next</a> : <span />}
+        </nav>
       )}
     </div>
   );

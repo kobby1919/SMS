@@ -428,7 +428,7 @@ export async function getTeacherSelfAccountabilityOverview({
       },
       include: {
         escalations: {
-          where: { status: { in: ["OPEN", "ACKNOWLEDGED"] } },
+          where: { schoolId, teacherId },
           select: {
             reason: true,
             status: true,
@@ -439,7 +439,6 @@ export async function getTeacherSelfAccountabilityOverview({
         },
       },
       orderBy: [{ expectedAt: "asc" }, { createdAt: "asc" }],
-      take: 40,
     }),
     prisma.teacherObligation.findMany({
       where: {
@@ -449,7 +448,7 @@ export async function getTeacherSelfAccountabilityOverview({
       },
       include: {
         escalations: {
-          where: { status: { in: ["OPEN", "ACKNOWLEDGED"] } },
+          where: { schoolId, teacherId },
           select: {
             reason: true,
             status: true,
@@ -460,7 +459,6 @@ export async function getTeacherSelfAccountabilityOverview({
         },
       },
       orderBy: [{ expectedAt: "asc" }, { createdAt: "asc" }],
-      take: 500,
     }),
     prisma.teacherEscalation.findMany({
       where: {
@@ -468,7 +466,7 @@ export async function getTeacherSelfAccountabilityOverview({
         teacherId,
         status: { in: ["OPEN", "ACKNOWLEDGED"] },
         obligation: {
-          expectedAt: { gte: weekStart, lte: todayEnd },
+          schoolId, teacherId, status: { not: "CANCELLED" },
         },
       },
       include: {
@@ -483,7 +481,7 @@ export async function getTeacherSelfAccountabilityOverview({
         teacherId,
         status: { in: ["OPEN", "ACKNOWLEDGED"] },
         obligation: {
-          expectedAt: { gte: weekStart, lte: todayEnd },
+          schoolId, teacherId, status: { not: "CANCELLED" },
         },
       },
     }),
@@ -493,6 +491,7 @@ export async function getTeacherSelfAccountabilityOverview({
         teacherId,
         status: "PENDING",
         obligation: {
+          schoolId, teacherId, status: "PENDING", completedAt: null,
           expectedAt: { gte: todayStart, lte: todayEnd },
         },
       },
@@ -503,6 +502,7 @@ export async function getTeacherSelfAccountabilityOverview({
         teacherId,
         status: { in: ["PENDING", "FAILED"] },
         obligation: {
+          schoolId, teacherId, status: "PENDING", completedAt: null,
           expectedAt: { gte: todayStart, lte: todayEnd },
         },
       },
@@ -550,6 +550,7 @@ export async function getTeacherSelfAccountabilityOverview({
     ? await prisma.teacherObligation.findMany({
         where: {
           schoolId,
+          teacherId,
           id: { in: auditObligationIds },
         },
         select: {
@@ -624,9 +625,7 @@ export async function getTeacherSelfAccountabilityOverview({
 
   for (const row of weeklyRows) {
     const status = row.status;
-    const shouldAffectReliability =
-      row.expectedAt.getTime() <= now.getTime() ||
-      ["COMPLETED", "COMPLETED_LATE", "MISSED", "ESCALATED", "CANCELLED"].includes(status);
+    const shouldAffectReliability = ["COMPLETED", "COMPLETED_LATE", "MISSED", "ESCALATED"].includes(status);
 
     if (shouldAffectReliability && status !== "CANCELLED") {
       reliabilityTotal += 1;

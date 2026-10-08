@@ -1,7 +1,6 @@
 "use client";
 
 // src/components/MenuClient.tsx
-// Updated to include Syllabus and CA links for all relevant roles.
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -241,7 +240,7 @@ const menuItems = [
       },
       {
         icon: BookMarked,
-        label: "Lessons",
+        label: "Published Lessons",
         href: "/list/lessons",
         visible: ["admin", "teacher"],
       },
@@ -255,11 +254,11 @@ const menuItems = [
         icon: GraduationCap,
         label: "Exams",
         href: "/list/exams",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["teacher", "student", "parent"],
       },
       {
         icon: ClipboardList,
-        label: "Assignments",
+        label: "Homework Review",
         href: "/list/assignments",
         visible: ["admin", "teacher", "student", "parent"],
       },
@@ -267,7 +266,7 @@ const menuItems = [
         icon: FileCheck,
         label: "Results",
         href: "/list/results",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["teacher", "student", "parent"],
       },
       {
         icon: UserCheck,
@@ -277,9 +276,9 @@ const menuItems = [
       },
       {
         icon: Star,
-        label: "Continuous Assessment",
-        href: "/list/ca",
-        visible: ["admin", "teacher"],
+        label: "Assessment Review",
+        href: "/list/ca?view=summary",
+        visible: ["admin"],
       },
       {
         icon: FileText,
@@ -306,7 +305,7 @@ const menuItems = [
       },
       {
         icon: MessageCircle,
-        label: "Policy",
+        label: "Communication Policy",
         href: "/admin/communication-policy",
         visible: ["admin"],
       },
@@ -314,6 +313,18 @@ const menuItems = [
         icon: MessageCircle,
         label: "Contact Requests",
         href: "/admin/communications",
+        visible: ["admin"],
+      },
+      {
+        icon: BellRing,
+        label: "Parent Delivery Settings",
+        href: "/admin/notification-settings",
+        visible: ["admin"],
+      },
+      {
+        icon: MonitorCheck,
+        label: "Delivery Monitor",
+        href: "/admin/notifications",
         visible: ["admin"],
       },
     ],
@@ -414,7 +425,7 @@ const menuItems = [
     ],
   },
   {
-    title: "Other",
+    title: "Settings And Follow-Up",
     items: [
       {
         icon: SlidersHorizontal,
@@ -423,21 +434,9 @@ const menuItems = [
         visible: ["admin"],
       },
       {
-        icon: BellRing,
-        label: "Parent Notifications",
-        href: "/admin/notification-settings",
-        visible: ["admin"],
-      },
-      {
-        icon: MonitorCheck,
-        label: "Notification Monitor",
-        href: "/admin/notifications",
-        visible: ["admin"],
-      },
-      {
         icon: ShieldCheck,
         label: "Teacher Accountability",
-        href: "/admin/accountability",
+        href: "/admin/accountability/follow-up",
         visible: ["admin"],
       },
       {
@@ -474,18 +473,22 @@ const MenuClient = ({ role }: { role: string }) => {
 
             {visibleItems.map((item) => {
               const Icon = item.icon;
+              const itemPath = item.href.split("?")[0];
               const isActive =
-                pathname === item.href ||
+                pathname === itemPath ||
                 (item.href !== "/admin" &&
                   item.href !== "/teacher" &&
                   item.href !== "/student" &&
                   item.href !== "/parent" &&
                   item.href !== "/bursar" &&
-                  pathname.startsWith(item.href));
+                  pathname.startsWith(`${itemPath}/`));
 
               return (
                 <Link
                   href={item.href}
+                  aria-label={item.label}
+                  title={item.label}
+                  aria-current={isActive ? "page" : undefined}
                   key={item.label + item.href}
                   className={`flex items-center justify-center md:justify-start gap-3
                     min-h-11 py-2.5 px-0 md:px-3.5 rounded-xl transition-all group

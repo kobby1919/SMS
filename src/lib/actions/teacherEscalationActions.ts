@@ -8,6 +8,7 @@ import type {
 } from "@/src/generated/prisma";
 import { requireRole } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
+import { accountabilityTransaction } from "@/src/lib/services/teacher-obligation-store";
 import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
@@ -48,7 +49,7 @@ const auditActionByAction: Record<
 };
 
 function obligationStatusForAction(action: "ACKNOWLEDGE" | "RESOLVE" | "DISMISS") {
-  if (action === "DISMISS") return "CANCELLED" satisfies TeacherObligationStatus;
+  if (action === "DISMISS" || action === "RESOLVE") return "CANCELLED" satisfies TeacherObligationStatus;
   return null;
 }
 
@@ -125,6 +126,7 @@ export async function reviewTeacherEscalation(data: unknown) {
       });
       if (updated.count !== 1) throw new Error("The escalation duty is no longer available for review.");
     }
+    if (input.action !== "ACKNOWLEDGE") await tx.teacherReminder.updateMany({ where: { schoolId: context.schoolId, teacherId: escalation.teacherId, obligationId: escalation.obligationId, status: "PENDING" }, data: { status: "SKIPPED", errorMessage: "Escalation review closed." } });
     if (correctionRequestStatus) {
       await tx.teacherCorrectionRequest.updateMany({
         where: {
@@ -209,10 +211,11 @@ export async function submitTeacherEscalationResponse(data: unknown) {
       id: input.obligationId,
       schoolId: context.schoolId,
       teacherId: context.userId,
+      teacher: { schoolId: context.schoolId },
     },
     include: {
       escalations: {
-        where: { status: { in: ["OPEN", "ACKNOWLEDGED"] } },
+        where: { schoolId: context.schoolId, teacherId: context.userId, status: { in: ["OPEN", "ACKNOWLEDGED"] } },
         select: {
           id: true,
           status: true,
@@ -230,7 +233,7 @@ export async function submitTeacherEscalationResponse(data: unknown) {
   }
 
   const activeEscalation = obligation.escalations[0] ?? null;
-  if (!activeEscalation && obligation.status !== "ESCALATED") {
+  if (!activeEscalation) {
     throw new Error("Only escalated duties can receive a teacher response.");
   }
 
@@ -266,7 +269,13 @@ export async function submitTeacherEscalationResponse(data: unknown) {
     obligationStatus: obligation.status,
   };
 
-  await prisma.$transaction(async (tx) => {
+  await accountabilityTransaction(async (tx) => {
+    const open = await tx.teacherEscalation.findFirst({ where: { id: activeEscalation.id, schoolId: context.schoolId, teacherId: context.userId, obligationId: obligation.id, status: { in: ["OPEN", "ACKNOWLEDGED"] } }, select: { id: true } });
+    if (!open) throw new Error("This escalation has been closed. Refresh before responding.");
+    if (existing) {
+      const claim = await tx.teacherCorrectionRequest.updateMany({ where: { id: existing.id, schoolId: context.schoolId, teacherId: context.userId, status: "NEEDS_MORE_INFO" }, data: { status: "PENDING" } });
+      if (!claim.count) throw new Error("This response changed. Refresh before submitting again.");
+    }
     const request = existing
       ? await tx.teacherCorrectionRequest.update({
           where: { id: existing.id },
@@ -334,6 +343,9 @@ export async function submitTeacherEscalationResponse(data: unknown) {
   revalidatePath("/teacher/accountability");
   revalidatePath("/teacher");
   revalidatePath("/admin/accountability");
+
+  revalidatePath("/admin/accountability/follow-up");
+  revalidatePath("/admin");
 
   return { message: "Response sent to management for review." };
 }

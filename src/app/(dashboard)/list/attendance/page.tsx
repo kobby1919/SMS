@@ -2,7 +2,6 @@
 
 import prisma from "@/src/lib/prisma";
 import { requirePageSession } from "@/src/lib/authz";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   CheckCircle2, XCircle, Clock, FileCheck,
@@ -13,7 +12,8 @@ import {
   getAttendanceStatusCounts,
   getFlaggedAttendanceStudents,
 } from "@/src/lib/services/attendance";
-import type { AttendanceStatus, Prisma } from "@/src/generated/prisma";
+import type { Prisma } from "@/src/generated/prisma";
+import { z } from "zod";
 
 
 const AttendanceListPage = async ({
@@ -21,7 +21,7 @@ const AttendanceListPage = async ({
 }: {
   searchParams: Promise<{ classId?: string; date?: string; status?: string }>;
 }) => {
-  const { role, schoolId } = await requirePageSession();
+  const { role, schoolId } = await requirePageSession(["admin", "teacher"]);
 
   if (role === "teacher") {
     redirect("/list/attendance/take");
@@ -33,7 +33,13 @@ const AttendanceListPage = async ({
   const todayEnd = new Date();
   todayEnd.setHours(23, 59, 59, 999);
 
-  const filterDate = params.date ? new Date(params.date) : today;
+  const dateParam = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => {
+    const date = new Date(value);
+    return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+  }).safeParse(params.date);
+  const classParam = z.coerce.number().int().positive().max(2147483647).safeParse(params.classId);
+  const statusParam = z.enum(["PRESENT", "ABSENT", "LATE", "EXCUSED"]).safeParse(params.status);
+  const filterDate = dateParam.success ? new Date(dateParam.data) : new Date(today);
   filterDate.setHours(0, 0, 0, 0);
   const filterDateEnd = new Date(filterDate);
   filterDateEnd.setHours(23, 59, 59, 999);
@@ -41,7 +47,7 @@ const AttendanceListPage = async ({
   // ── Today's school-wide stats ─────────────────────────────────────────────
   const [todayStatusCounts, totalStudents] = await Promise.all([
     getAttendanceStatusCounts({ schoolId, start: today, end: todayEnd }),
-    prisma.student.count({ where: { schoolId } }),
+    prisma.student.count({ where: { schoolId, status: "ACTIVE" } }),
   ]);
   const todayPresent = todayStatusCounts.PRESENT ?? 0;
   const todayAbsent = todayStatusCounts.ABSENT ?? 0;
@@ -61,13 +67,15 @@ const AttendanceListPage = async ({
   // ── Attendance records with filters ──────────────────────────────────────
   const whereClause: Prisma.AttendanceWhereInput = {
     schoolId,
+    student: { schoolId, status: "ACTIVE" },
+    lesson: { schoolId },
     date: { gte: filterDate, lte: filterDateEnd },
   };
-  if (params.classId) {
-    whereClause.student = { classId: parseInt(params.classId) };
+  if (classParam.success) {
+    whereClause.student = { schoolId, status: "ACTIVE", classId: classParam.data };
   }
-  if (params.status) {
-    whereClause.status = params.status as AttendanceStatus;
+  if (statusParam.success) {
+    whereClause.status = statusParam.data;
   }
 
   const records = await prisma.attendance.findMany({
@@ -89,7 +97,7 @@ const AttendanceListPage = async ({
 
   // ── Flagged students (3+ consecutive absences) ────────────────────────────
   const allStudents = await prisma.student.findMany({
-    where: { schoolId },
+    where: { schoolId, status: "ACTIVE" },
     select: {
       id: true, name: true, surname: true,
       class: { select: { name: true } },
@@ -127,15 +135,6 @@ const AttendanceListPage = async ({
               </p>
             </div>
           </div>
-          {["admin", "teacher"].includes(role) && (
-            <Link
-              href="/list/attendance/take"
-              className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all shadow-sm"
-            >
-              <CalendarDays size={15} />
-              Take Attendance
-            </Link>
-          )}
         </div>
       </div>
 

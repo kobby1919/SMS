@@ -194,6 +194,7 @@ function escalationReviewFixture({ wrongTeacher = false, role = "admin", complet
     } },
     teacherObligation: { updateMany: async ({ where }) => { checks.push(where); return { count: 1 }; } },
     teacherCorrectionRequest: { updateMany: async ({ where }) => { checks.push(where); return { count: 0 }; } },
+    teacherReminder: { updateMany: async ({ where }) => { checks.push(where); return { count: 0 }; } },
     teacherAccountabilityAuditLog: { create: async ({ data }) => { audits.push(data); } },
   };
   const prisma = {

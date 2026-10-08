@@ -3,6 +3,7 @@
 // src/lib/actions/actions.ts
 
 import prisma from "@/src/lib/prisma";
+import { claimTeacherCorrectionReview } from "@/src/lib/services/teacher-obligation-store";
 import type { AttendanceStatus, HomeworkSubmissionStatus, Prisma } from "@/src/generated/prisma";
 import { AuthorizationError, requireRole } from "@/src/lib/authz";
 import { requireResourceAccess } from "@/src/lib/authz";
@@ -716,7 +717,7 @@ export type ExamFormData = {
 
 export async function createExam(data: ExamFormData): Promise<void> {
   const parsed = parseActionInput(examFormSchema, data);
-  const ctx = await requireAdminOrTeacher();
+  const ctx = await requireRole(["teacher"]);
   await getLessonInSchool(parsed.lessonId, ctx.schoolId);
 
   const exam = await prisma.exam.create({
@@ -759,7 +760,7 @@ export async function createExam(data: ExamFormData): Promise<void> {
 export async function updateExam(data: ExamFormData): Promise<void> {
   if (!data.id) throw new Error("Exam ID required for update.");
   const parsed = parseActionInput(examFormSchema, data);
-  const ctx = await requireAdminOrTeacher();
+  const ctx = await requireRole(["teacher"]);
   const existing = await prisma.exam.findFirst({ where: { id: data.id, schoolId: ctx.schoolId } });
   requireResourceAccess(existing, ctx);
   await getLessonInSchool(parsed.lessonId, ctx.schoolId);
@@ -814,7 +815,14 @@ export async function updateExam(data: ExamFormData): Promise<void> {
 
 export async function deleteExam(id: number): Promise<void> {
   ({ id } = parseActionInput(numericIdSchema, { id }));
-  const { schoolId } = await requireAdminOrTeacher();
+  const ctx = await requireRole(["teacher"]);
+  const { schoolId } = ctx;
+  await assertTeacherActionWithinSchoolHours(ctx, "Deleting an exam");
+  const exam = await prisma.exam.findFirst({ where: { id, schoolId }, select: { lessonId: true, _count: { select: { results: true } } } });
+  if (!exam) throw new Error("Exam not found.");
+  const lesson = await getLiveTimetableLessonBySourceId(schoolId, exam.lessonId);
+  if (!lesson || lesson.teacherId !== ctx.userId) throw new AuthorizationError("This exam is outside your published teaching scope.");
+  if (exam._count.results) throw new Error("An exam with results cannot be deleted. Keep its history.");
   await prisma.exam.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/exams");
   revalidateDashboard(schoolId);
@@ -863,7 +871,7 @@ function isUniqueConstraintError(error: unknown) {
 
 export async function createAssignment(data: AssignmentFormData): Promise<{ id: number; title: string }> {
   const parsed = parseActionInput(assignmentFormSchema, data);
-  const ctx = await requireAdminOrTeacher();
+  const ctx = await requireRole(["teacher"]);
   const lesson = await getLessonInSchool(parsed.lessonId, ctx.schoolId);
   requireTeacherOwnsLesson(lesson, ctx);
   await assertTeacherActionWithinSchoolHours(ctx, "Creating homework");
@@ -947,7 +955,7 @@ export async function createAssignment(data: AssignmentFormData): Promise<{ id: 
 export async function updateAssignment(data: AssignmentFormData): Promise<{ id: number; title: string }> {
   if (!data.id) throw new Error("Assignment ID required for update.");
   const parsed = parseActionInput(assignmentFormSchema, data);
-  const ctx = await requireAdminOrTeacher();
+  const ctx = await requireRole(["teacher"]);
   const existing = await prisma.assignment.findFirst({
     where: { id: data.id, schoolId: ctx.schoolId },
     include: {
@@ -1334,6 +1342,7 @@ export async function reviewAttendanceCorrectionRequest(data: {
       sourceModel: "Attendance",
       fieldName: "attendanceStatus",
       status: "PENDING",
+      teacher: { schoolId: ctx.schoolId },
     },
     include: {
       teacher: { select: { id: true, name: true, surname: true } },
@@ -1352,6 +1361,8 @@ export async function reviewAttendanceCorrectionRequest(data: {
     where: {
       id: Number.parseInt(request.sourceId, 10),
       schoolId: ctx.schoolId,
+      student: { schoolId: ctx.schoolId },
+      lesson: { schoolId: ctx.schoolId, teacher: { schoolId: ctx.schoolId }, class: { schoolId: ctx.schoolId }, subject: { schoolId: ctx.schoolId } },
     },
     include: {
       student: { select: { id: true, name: true, surname: true } },
@@ -1371,8 +1382,8 @@ export async function reviewAttendanceCorrectionRequest(data: {
   const now = new Date();
   await prisma.$transaction(async (tx) => {
     if (parsed.action === "APPROVE") {
-      await tx.attendance.update({
-        where: { id: attendance.id },
+      const changed = await tx.attendance.updateMany({
+        where: { id: attendance.id, schoolId: ctx.schoolId, updatedAt: attendance.updatedAt },
         data: {
           status: requested.status,
           present: requested.status === "PRESENT",
@@ -1383,6 +1394,7 @@ export async function reviewAttendanceCorrectionRequest(data: {
           lastCorrectedAt: now,
         },
       });
+      if (changed.count !== 1) throw new Error("This attendance record changed during review. Refresh before approving.");
 
       await tx.attendanceAuditLog.create({
         data: {
@@ -1405,15 +1417,7 @@ export async function reviewAttendanceCorrectionRequest(data: {
       });
     }
 
-    await tx.teacherCorrectionRequest.update({
-      where: { id: request.id },
-      data: {
-        status: parsed.action === "APPROVE" ? "APPROVED" : "REJECTED",
-        reviewedBy: ctx.userId,
-        reviewedAt: now,
-        reviewNote,
-      },
-    });
+    await claimTeacherCorrectionReview(tx, { id: request.id, schoolId: ctx.schoolId, teacherId: request.teacherId, action: parsed.action, reviewerId: ctx.userId, at: now, note: reviewNote });
 
     await tx.teacherAccountabilityAuditLog.create({
       data: {
@@ -1496,7 +1500,7 @@ export async function reviewAttendanceCorrectionRequest(data: {
 
 export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData): Promise<HomeworkSubmissionActionResult> {
   const parsed = parseActionInput(homeworkSubmissionSchema, data);
-  const ctx = await requireAdminOrTeacher();
+  const ctx = await requireRole(["teacher"]);
 
   const assignment = await getAssignmentForHomeworkAccess(parsed.assignmentId, ctx.schoolId);
   const assignmentInSchool = requireResourceAccess(assignment, ctx);
@@ -1715,6 +1719,7 @@ export async function reviewHomeworkSubmissionCorrectionRequest(data: {
   action: "APPROVE" | "REJECT";
   note?: string | null;
 }): Promise<{ message: string }> {
+  if (data.action !== "APPROVE" && data.action !== "REJECT") throw new Error("Choose approve or reject.");
   const ctx = await requireRole(["admin"]);
   const requestId = data.requestId?.trim();
   const reviewNote = data.note?.trim() || null;
@@ -1731,6 +1736,7 @@ export async function reviewHomeworkSubmissionCorrectionRequest(data: {
       sourceModel: "HomeworkSubmission",
       fieldName: "homeworkSubmissionStatus",
       status: "PENDING",
+      teacher: { schoolId: ctx.schoolId },
     },
     include: {
       teacher: { select: { id: true, name: true, surname: true } },
@@ -1750,6 +1756,8 @@ export async function reviewHomeworkSubmissionCorrectionRequest(data: {
     where: {
       id: Number.parseInt(request.sourceId, 10),
       schoolId: ctx.schoolId,
+      student: { schoolId: ctx.schoolId },
+      assignment: { schoolId: ctx.schoolId, lesson: { schoolId: ctx.schoolId, teacher: { schoolId: ctx.schoolId }, class: { schoolId: ctx.schoolId }, subject: { schoolId: ctx.schoolId } } },
     },
     include: {
       student: { select: { id: true, name: true, surname: true } },
@@ -1780,8 +1788,8 @@ export async function reviewHomeworkSubmissionCorrectionRequest(data: {
 
   await prisma.$transaction(async (tx) => {
     if (data.action === "APPROVE") {
-      await tx.homeworkSubmission.update({
-        where: { id: submission.id },
+      const changed = await tx.homeworkSubmission.updateMany({
+        where: { id: submission.id, schoolId: ctx.schoolId, updatedAt: submission.updatedAt },
         data: {
           status: requestedStatus,
           submittedAt,
@@ -1790,17 +1798,10 @@ export async function reviewHomeworkSubmissionCorrectionRequest(data: {
           note: request.reason,
         },
       });
+      if (changed.count !== 1) throw new Error("This homework record changed during review. Refresh before approving.");
     }
 
-    await tx.teacherCorrectionRequest.update({
-      where: { id: request.id },
-      data: {
-        status: data.action === "APPROVE" ? "APPROVED" : "REJECTED",
-        reviewedBy: ctx.userId,
-        reviewedAt: now,
-        reviewNote,
-      },
-    });
+    await claimTeacherCorrectionReview(tx, { id: request.id, schoolId: ctx.schoolId, teacherId: request.teacherId, action: data.action, reviewerId: ctx.userId, at: now, note: reviewNote });
 
     await tx.teacherAccountabilityAuditLog.create({
       data: {
@@ -1885,7 +1886,7 @@ export type HomeworkBulkSubmissionFormData = {
 
 export async function updateHomeworkSubmissionsBulk(data: HomeworkBulkSubmissionFormData): Promise<{ updated: number }> {
   const parsed = parseActionInput(homeworkBulkSubmissionSchema, data);
-  const ctx = await requireAdminOrTeacher();
+  const ctx = await requireRole(["teacher"]);
   const assignment = await getAssignmentForHomeworkAccess(parsed.assignmentId, ctx.schoolId);
   const assignmentInSchool = requireResourceAccess(assignment, ctx);
   requireHomeworkTeacherAccess(assignmentInSchool, ctx);
@@ -1983,12 +1984,26 @@ async function requireActiveStudentForResult(
   );
 }
 
+async function requireTeacherResultSource(data: Omit<ResultFormData, "studentId"> & { studentId: string | null }, ctx: Awaited<ReturnType<typeof requireAdminOrTeacher>>) {
+  if (!data.studentId) throw new Error("This result has no linked student.");
+  if (Boolean(data.examId) === Boolean(data.assignmentId)) throw new Error("Select exactly one assessment source.");
+  const student = await requireActiveStudentForResult(data.studentId, ctx);
+  const source = data.examId
+    ? await prisma.exam.findFirst({ where: { id: data.examId, schoolId: ctx.schoolId }, select: { lessonId: true } })
+    : await prisma.assignment.findFirst({ where: { id: data.assignmentId!, schoolId: ctx.schoolId }, select: { lessonId: true } });
+  if (!source) throw new Error("Assessment source not found.");
+  const lesson = await getLiveTimetableLessonBySourceId(ctx.schoolId, source.lessonId);
+  if (!lesson || lesson.teacherId !== ctx.userId || lesson.classId !== student.classId) throw new AuthorizationError("This result is outside your published teaching scope.");
+}
+
 export async function createResult(data: ResultFormData): Promise<void> {
   const parsed = parseActionInput(resultFormSchema, data);
-  const ctx = await requireAdminOrTeacher();
+  const ctx = await requireRole(["teacher"]);
   await assertTeacherActionWithinSchoolHours(ctx, "Creating a result");
 
   await requireActiveStudentForResult(parsed.studentId, ctx);
+
+  await requireTeacherResultSource(parsed, ctx);
 
   await prisma.result.create({
     data: {
@@ -2004,13 +2019,15 @@ export async function createResult(data: ResultFormData): Promise<void> {
 }
 
 export async function updateResult(data: ResultFormData): Promise<void> {
-  const ctx = await requireAdminOrTeacher();
+  const ctx = await requireRole(["teacher"]);
   if (!data.id) throw new Error("Result ID required for update.");
   const parsed = parseActionInput(resultFormSchema, data);
   const existing = await prisma.result.findFirst({ where: { id: data.id, schoolId: ctx.schoolId } });
   requireResourceAccess(existing, ctx);
   await assertTeacherActionWithinSchoolHours(ctx, "Updating a result");
   await requireActiveStudentForResult(parsed.studentId, ctx);
+  await requireTeacherResultSource(existing!, ctx);
+  await requireTeacherResultSource(parsed, ctx);
 
   await prisma.result.update({
     where: { id: data.id },
@@ -2027,9 +2044,12 @@ export async function updateResult(data: ResultFormData): Promise<void> {
 
 export async function deleteResult(id: number): Promise<void> {
   ({ id } = parseActionInput(numericIdSchema, { id }));
-  const ctx = await requireAdminOrTeacher();
+  const ctx = await requireRole(["teacher"]);
   await assertTeacherActionWithinSchoolHours(ctx, "Deleting a result");
   const { schoolId } = ctx;
+  const existing = await prisma.result.findFirst({ where: { id, schoolId } });
+  requireResourceAccess(existing, ctx);
+  await requireTeacherResultSource(existing!, ctx);
   await prisma.result.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/results");
   revalidateDashboard(schoolId);

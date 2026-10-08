@@ -28,7 +28,7 @@ const CAPage = async ({
 
   const params = await searchParams;
   const selectedClassId = params.classId ? parseInt(params.classId) : null;
-  const viewMode = params.view ?? "entry"; // "entry" | "summary"
+  const viewMode = role === "admin" ? "summary" : params.view ?? "entry";
 
   // ── Which classes can this user access? ──────────────────────────────────
   let supervisedClasses: {
@@ -268,7 +268,7 @@ const CAPage = async ({
               { key: "entry", label: "Entry", icon: <BookOpen size={13} /> },
               { key: "activity", label: "Activity CA", icon: <Layers3 size={13} /> },
               { key: "summary", label: "Summary", icon: <Users size={13} /> },
-            ].map((tab) => (
+            ].filter((tab) => role !== "admin" || tab.key === "summary").map((tab) => (
               <a
                 key={tab.key}
                 href={`/list/ca?classId=${activeClass.id}&view=${tab.key}`}

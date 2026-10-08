@@ -1,9 +1,9 @@
 // src/app/api/attendance/route.ts
 
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
+import { AuthorizationError, requireRole, unauthorizedResponse } from "@/src/lib/authz";
+import { getLiveTimetableLessonBySourceId } from "@/src/lib/services/timetable";
 import {
-  attendanceDeleteQuerySchema,
   attendanceGetQuerySchema,
   attendanceSubmitSchema,
 } from "@/src/lib/validation/attendance";
@@ -13,14 +13,13 @@ import { revalidateDashboard } from "@/src/lib/cacheTags";
 import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
 import {
   AttendanceSubmissionLockedError,
-  deleteAttendanceRecord,
   getAttendanceRecords,
   saveAttendance,
 } from "@/src/lib/services/attendance";
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId, schoolId } = await requireRole(["admin", "teacher"]);
+    const { userId, role, schoolId } = await requireRole(["admin", "teacher"]);
     const limited = await enforceRateLimit(req, {
       scope: "attendance:read",
       actorId: userId,
@@ -31,6 +30,10 @@ export async function GET(req: NextRequest) {
 
     const parsed = parseSearchParams(attendanceGetQuerySchema, new URL(req.url).searchParams);
     if (!parsed.ok) return parsed.response;
+    if (role === "teacher") {
+      const lesson = await getLiveTimetableLessonBySourceId(schoolId, parsed.data.lessonId);
+      if (!lesson || lesson.teacherId !== userId) throw new AuthorizationError("This lesson is outside your published teaching scope.");
+    }
 
     const records = await getAttendanceRecords({
       schoolId,
@@ -46,7 +49,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, role, schoolId } = await requireRole(["admin", "teacher"]);
+    const { userId, role, schoolId } = await requireRole(["teacher"]);
     const limited = await enforceRateLimit(req, {
       scope: "attendance:submit",
       actorId: userId,
@@ -87,7 +90,7 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const { userId, schoolId } = await requireRole(["admin"]);
+    const { userId } = await requireRole(["admin"]);
     const limited = await enforceRateLimit(req, {
       scope: "attendance:delete",
       actorId: userId,
@@ -96,12 +99,7 @@ export async function DELETE(req: NextRequest) {
     });
     if (limited) return limited;
 
-    const parsed = parseSearchParams(attendanceDeleteQuerySchema, new URL(req.url).searchParams);
-    if (!parsed.ok) return parsed.response;
-
-    await deleteAttendanceRecord({ id: parsed.data.id, schoolId });
-    revalidateDashboard(schoolId);
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ error: "Attendance history cannot be deleted. Review a correction request instead." }, { status: 405 });
   } catch (error) {
     return unauthorizedResponse(error);
   }

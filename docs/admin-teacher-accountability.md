@@ -38,3 +38,70 @@ snapshots do not exist; transferred pupils are not attributed to their former cl
 Before rollout, exercise real overdue/completed duties, exact correction review and
 mobile layouts with an authenticated school admin. Code tests are not production
 certification.
+
+## End-to-end hardening
+
+- All three synchronizers use one serializable obligation store, with bounded
+  conflict retries. Creation, status transitions, reminder suppression and audit
+  writes commit together. Completed/cancelled work and closed reviews cannot reopen.
+- Attendance generation requires an active teacher, a configured school day and a
+  timetable publication preceding the lesson. CA requires a matching current-period
+  bucket and published subject/class scope; homework requires the matching published
+  lesson. Duplicate student records cannot substitute for another pupil's work.
+- Teacher views refresh their own CA and homework duties as well as attendance.
+  Finished/reviewed sources do not consume the synchronizers' pending batch limit.
+- Before reminders or escalations, the worker re-reads the duty and source records
+  inside a serializable transaction. Concurrent workers cannot double-escalate.
+  Obsolete unreviewed duties are cancelled with an audit; source-confirmed completion
+  settles stale pending duties. Open historical escalations remain review work.
+- Escalation responses require a real open same-school escalation. A review that
+  closes during submission cannot acquire a new pending response.
+- Attendance, homework and academic corrections claim a pending request once and
+  compare the source's update timestamp before applying changes. An invalid review
+  action or changed source cannot silently overwrite the current record.
+- Open marking windows and closed exceptions are excluded from reliability scoring.
+  Completed-late history retains the existing 70% weighting; it is not a new overdue duty.
+- The worker's production endpoint requires its dedicated
+  `TEACHER_ACCOUNTABILITY_WORKER_SECRET`; the parent-worker fallback is development-only.
+  Configure its scheduler and verify retries with real database contention before pilot.
+
+Teacher reminders still use the existing in-app teacher reminder/history panel.
+This audit does not claim email delivery or migrate teacher alerts to the central
+notification system. That migration and authenticated delivery tests remain separate.
+
+## Admin Navigation Responsibilities
+
+| Group | Purpose |
+| --- | --- |
+| Management | School-scoped profile, access, lifecycle, class and subject setup. |
+| Academic | Timetable publication, published lesson inspection, syllabus, homework review, attendance review, assessment summaries and report review/publication. |
+| Communication | Events/notices, communication policy, parent contact oversight, parent delivery/school-hour settings and the central delivery monitor. |
+| Finance | Bill/payment/receipt review, correction approval, daily collection results, fee setup and payment-provider settings. |
+| Settings and follow-up | Assessment/accountability policies and the complete teacher follow-up queue. |
+
+Legacy Results and Exams links are removed from the admin menu. Admins cannot use
+direct attendance-entry URLs/APIs, ordinary homework marking actions, exam/result
+writes or ordinary CA score actions. Approved correction workflows and report/window
+controls remain available. Finance recording/collection remains bursar/collector work.
+
+The contact review page has whole-school scoped counters and paginated history,
+with the latest eight messages in each thread instead of the oldest eight. Menu
+active states use path boundaries, and icon-only links have accessible names.
+
+## Required Live Checks
+
+1. Sign in as admin: every menu link opens its intended review/setup workspace;
+   direct teacher entry and bursar payment-recording URLs/actions are denied.
+2. Sign in as teacher: complete attendance, homework and CA; confirm admin and
+   teacher counts agree, including the final marking-window boundary.
+3. Run two workers together, then review/complete while a worker is running.
+   Confirm one reminder/escalation/decision and its matching audit history.
+4. Approve/reject corrections concurrently and change the source during review.
+   Confirm the losing/stale action does not change marks or send a success update.
+5. Replace the timetable, close an escalation, withdraw a pupil and add a later
+   enrolment. Confirm history remains but no obsolete duty becomes a new accusation.
+6. Test another school's IDs and another teacher's lesson/response IDs: deny access.
+7. Test actual admin/teacher layouts and contact pagination on phone, tablet and desktop.
+
+Automated coverage uses mocked transactions and interleaving simulations. It cannot
+certify PostgreSQL contention, Clerk sessions, scheduled-job operation or live email delivery.

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { timingSafeEqual } from "node:crypto";
 import { runTeacherAccountabilityWorker } from "@/src/lib/services/teacher-accountability";
 
 export const dynamic = "force-dynamic";
@@ -6,7 +7,7 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   const secret =
     process.env.TEACHER_ACCOUNTABILITY_WORKER_SECRET ??
-    process.env.PARENT_SUMMARY_WORKER_SECRET;
+    (process.env.NODE_ENV === "production" ? undefined : process.env.PARENT_SUMMARY_WORKER_SECRET);
   const authorization = req.headers.get("authorization");
   const providedSecret = authorization?.startsWith("Bearer ")
     ? authorization.slice("Bearer ".length).trim()
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (!providedSecret || providedSecret !== secret) {
+  if (!providedSecret || Buffer.byteLength(providedSecret) !== Buffer.byteLength(secret) || !timingSafeEqual(Buffer.from(providedSecret), Buffer.from(secret))) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 

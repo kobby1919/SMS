@@ -172,7 +172,7 @@ const ResultListPage = async ({
                 <option value="">All Years</option>
                 {years.map((y) => <option key={y} value={y}>{y}</option>)}
               </select>
-              {(role === "admin" || role === "teacher") && (
+              {role === "teacher" && (
                 <Link
                   href="/list/ca"
                   className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-colors shadow-sm"
@@ -315,7 +315,7 @@ const ResultListPage = async ({
                   <td colSpan={8} className="text-center py-16">
                     <ScrollText size={32} className="text-gray-200 mx-auto mb-3" />
                     <p className="text-gray-400 font-semibold text-sm">No CA records found</p>
-                    {(role === "admin" || role === "teacher") && (
+                    {role === "teacher" && (
                       <Link href="/list/ca" className="text-indigo-500 text-sm font-bold mt-2 inline-block hover:text-indigo-700">
                         → Go to CA Entry
                       </Link>

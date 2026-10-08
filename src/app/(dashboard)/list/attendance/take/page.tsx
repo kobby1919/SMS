@@ -11,7 +11,7 @@ const TakeAttendancePage = async ({
 }: {
   searchParams: Promise<{ lessonId?: string; date?: string }>;
 }) => {
-  const { userId, role, schoolId } = await requirePageSession(["admin", "teacher"]);
+  const { userId, role, schoolId } = await requirePageSession(["teacher"]);
   const params = await searchParams;
 
   const todayStr = new Date().toISOString().split("T")[0];
@@ -80,7 +80,7 @@ const TakeAttendancePage = async ({
 
     if (selectedLesson) {
       students = await prisma.student.findMany({
-        where: { schoolId, classId: selectedLesson.classId },
+        where: { schoolId, classId: selectedLesson.classId, status: "ACTIVE" },
         orderBy: { name: "asc" },
         select: { id: true, name: true, surname: true, img: true },
       });

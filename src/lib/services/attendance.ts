@@ -178,6 +178,7 @@ export async function saveAttendance({
   actorId: string;
   actorRole: string;
 }) {
+  if (actorRole !== "teacher") throw new Error("Only assigned teachers can submit attendance. Administrators review correction requests.");
   const attendanceDate = new Date(date);
   attendanceDate.setHours(12, 0, 0, 0);
   const dayStart = new Date(attendanceDate);
