@@ -519,7 +519,7 @@ const PaymentsPage = async ({
       </div>
 
       {/* Online provider attempts */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div id="online-attempts" className="scroll-mt-4 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-black text-gray-800">Online Provider Attempts</p>

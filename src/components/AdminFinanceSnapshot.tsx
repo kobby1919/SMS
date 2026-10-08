@@ -344,7 +344,7 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
             <div>
               <p className="text-sm font-black text-gray-950">High-Risk Owing Students</p>
               <p className="mt-1 text-xs font-semibold text-gray-500">
-                Top 5 students, showing each student&apos;s highest-priority outstanding bill.
+                Top 5 students by total outstanding balance. Open a student&apos;s priority bill for review.
               </p>
             </div>
             <Users size={17} className="text-gray-400" />

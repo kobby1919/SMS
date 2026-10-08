@@ -64,13 +64,13 @@ export default async function DailyCollectionsSetupPage() {
     }),
     prisma.dailyCollectionAuditLog.count({ where: { schoolId } }),
     prisma.dailyCollectionSession.findMany({
-      where: { schoolId },
+      where: { schoolId, ...(!isBursarWorkspace ? { status: { in: ["SUBMITTED", "FLAGGED"] as const } } : {}) },
       include: {
         collectionType: { select: { name: true, category: true } },
         collector: { select: { name: true, surname: true } },
         _count: { select: { entries: true } },
       },
-      orderBy: [{ status: "asc" }, { collectionDate: "desc" }, { createdAt: "desc" }],
+      orderBy: [{ collectionDate: "asc" }, { createdAt: "asc" }],
       take: 20,
     }),
     getDailyCollectionReport(schoolId),
@@ -454,6 +454,25 @@ export default async function DailyCollectionsSetupPage() {
           )}
         </div>
       </section>
+
+      {!isBursarWorkspace && (
+        <section className="min-w-0 border-t border-gray-200 pt-5">
+          <h2 className="text-lg font-bold text-gray-900">Collections needing bursar follow-up</h2>
+          <p className="mt-1 text-sm text-gray-500">Oldest 20 submitted or flagged sessions, including previous collection dates.</p>
+          <div className="mt-3 divide-y divide-gray-200">
+            {reviewSessions.length === 0 ? <p className="py-3 text-sm text-gray-500">No collections awaiting follow-up.</p> : reviewSessions.map((session) => (
+              <div key={session.id} className="flex min-w-0 flex-col gap-2 py-3 sm:flex-row sm:justify-between">
+                <div className="min-w-0 break-words">
+                  <p className="font-semibold text-gray-900">{session.collectionType.name} · {session.collector.name} {session.collector.surname}</p>
+                  <p className="text-sm text-gray-500">{session.collectionDate.toLocaleDateString("en-GH")} · {session.status === "FLAGGED" ? "Flagged mismatch" : "Awaiting confirmation"}</p>
+                  {session.mismatchReason && <p className="mt-1 text-sm text-rose-700">{session.mismatchReason}</p>}
+                </div>
+                <p className="shrink-0 text-sm font-semibold">Reported: {formatGHS(Number(session.reportedAmount))}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {isBursarWorkspace && (
         <>

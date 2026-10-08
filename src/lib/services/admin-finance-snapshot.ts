@@ -209,6 +209,7 @@ function buildBillMoneyPosition(
     parentContactStatus: string;
     href: string;
   }[] = [];
+  const studentOwingTotals = new Map<string, { amount: number; overdueDays: number }>();
   const feeItemMap = new Map<
     string,
     {
@@ -320,6 +321,10 @@ function buildBillMoneyPosition(
     ) {
       owingStudentIds.add(bill.studentId);
       const overdueDays = daysOverdue(bill.dueDate, asOf);
+      const studentTotal = studentOwingTotals.get(bill.studentId) ?? { amount: 0, overdueDays: 0 };
+      studentTotal.amount += outstanding;
+      studentTotal.overdueDays = Math.max(studentTotal.overdueDays, overdueDays);
+      studentOwingTotals.set(bill.studentId, studentTotal);
       owingItems.push({
         studentId: bill.studentId,
         billId: bill.id,
@@ -368,6 +373,11 @@ function buildBillMoneyPosition(
     highRiskOwingStudents: owingItems
       .sort((a, b) => comparePriority(a.priority, b.priority) || b.amountOwed - a.amountOwed || b.daysOverdue - a.daysOverdue)
       .filter((item, index, rows) => rows.findIndex((row) => row.studentId === item.studentId) === index)
+      .map((item) => {
+        const total = studentOwingTotals.get(item.studentId)!;
+        return { ...item, amountOwed: total.amount, daysOverdue: total.overdueDays, priority: priorityForOwing(total.amount, total.overdueDays) };
+      })
+      .sort((a, b) => comparePriority(a.priority, b.priority) || b.amountOwed - a.amountOwed || b.daysOverdue - a.daysOverdue || a.studentId.localeCompare(b.studentId))
       .slice(0, 5),
     feeItemBreakdown: Array.from(feeItemMap.values())
       .map((item) => ({
@@ -404,6 +414,7 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
     activeReferenceRows,
     billMoneyRows,
     activeStudentsWithoutBills,
+    outstandingCollectionStatuses,
   ] = await Promise.all([
     getDailyCollectionReport(schoolId, now),
     getReceiptIntegrityReport(schoolId),
@@ -449,7 +460,7 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
       where: {
         schoolId,
         status: { in: ACTIVE_ONLINE_INTENT_STATUSES },
-        student: { schoolId, status: "ACTIVE" },
+        student: { schoolId },
       },
     }),
     prisma.payment.findFirst({
@@ -465,29 +476,28 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
       where: {
         schoolId,
         status: "PENDING_REVIEW",
-        studentBill: { schoolId, student: { schoolId, status: "ACTIVE" } },
+        studentBill: { schoolId, student: { schoolId } },
       },
     }),
     prisma.paymentReversal.count({
       where: {
         schoolId,
         reversedAt: { gte: todayStart, lte: todayEnd },
-        payment: { schoolId, studentBill: { schoolId, student: { schoolId, status: "ACTIVE" } } },
+        payment: { schoolId, studentBill: { schoolId, student: { schoolId } } },
       },
     }),
     prisma.paymentIntent.count({
       where: {
         schoolId,
-        status: { in: ["FAILED", "EXPIRED", "CANCELLED"] },
-        updatedAt: { gte: todayStart, lte: todayEnd },
-        student: { schoolId, status: "ACTIVE" },
+        status: "FAILED",
+        student: { schoolId },
       },
     }),
     prisma.payment.findMany({
       where: {
         schoolId,
         status: { notIn: ["FAILED", "REVERSED"] },
-        studentBill: { schoolId, student: { schoolId, status: "ACTIVE" } },
+        studentBill: { schoolId, student: { schoolId } },
         OR: [
           { referenceNo: { not: null } },
           { externalReference: { not: null } },
@@ -552,12 +562,19 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
         bills: { none: { schoolId } },
       },
     }),
+    prisma.dailyCollectionSession.groupBy({
+      by: ["status"],
+      where: { schoolId, status: { in: ["SUBMITTED", "FLAGGED"] } },
+      _count: { _all: true },
+    }),
   ]);
 
   const confirmedPaymentAmount = asNumber(confirmedPaymentTotals._sum.amount);
   const billPosition = buildBillMoneyPosition(billMoneyRows, now);
 
   const duplicateReferenceWarnings = buildDuplicateReferenceCount(activeReferenceRows);
+  const pendingCollectionCount = outstandingCollectionStatuses.find((row) => row.status === "SUBMITTED")?._count._all ?? 0;
+  const flaggedCollectionCount = outstandingCollectionStatuses.find((row) => row.status === "FLAGGED")?._count._all ?? 0;
   const integrityAlerts = [
     {
       id: "pending-corrections",
@@ -568,7 +585,7 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
     },
     {
       id: "reversals-today",
-      label: "Approved reversals today",
+      label: "Reversals today",
       value: approvedReversalsToday,
       tone: approvedReversalsToday > 0 ? "warning" : "ok",
       href: "/list/finance/receipts",
@@ -592,20 +609,20 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
       label: "Pending/failed online payments",
       value: pendingOnlinePayments + failedOnlineAttempts,
       tone: pendingOnlinePayments + failedOnlineAttempts > 0 ? "warning" : "ok",
-      href: "/list/finance/payments?source=online",
+      href: "/list/finance/payments#online-attempts",
     },
     {
       id: "daily-awaiting-confirmation",
       label: "Daily collections awaiting confirmation",
-      value: dailyCollections.confirmationStatus.pendingReviewSessions,
-      tone: dailyCollections.confirmationStatus.pendingReviewSessions > 0 ? "warning" : "ok",
+      value: pendingCollectionCount,
+      tone: pendingCollectionCount > 0 ? "warning" : "ok",
       href: "/list/finance/daily-collections",
     },
     {
       id: "daily-mismatches",
       label: "Flagged collection mismatches",
-      value: dailyCollections.confirmationStatus.flaggedSessions,
-      tone: dailyCollections.confirmationStatus.flaggedSessions > 0 ? "risk" : "ok",
+      value: flaggedCollectionCount,
+      tone: flaggedCollectionCount > 0 ? "risk" : "ok",
       href: "/list/finance/daily-collections",
     },
     {
