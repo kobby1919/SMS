@@ -2,6 +2,7 @@ import { createHash, randomUUID } from "crypto";
 
 import {
   BillStatus,
+  DiscountType,
   BursarStatus,
   FeeBillingFrequency,
   FeeCategory,
@@ -21,6 +22,7 @@ import {
   type MigrationValidationRow,
 } from "@/src/lib/services/data-migration-validation";
 import type { MigrationValidationPayload } from "@/src/lib/validation/data-migration";
+import { applyDiscountInTransaction } from "@/src/lib/services/bill-discounts";
 
 export type MigrationImportResult = {
   batchId: string | null;
@@ -40,6 +42,8 @@ export type MigrationImportResult = {
     subjects: number;
     feeBills: number;
     feeLineItems: number;
+    feeStructures: number;
+    discounts: number;
   };
   dirtyRows: Array<{
     rowNumber: number;
@@ -457,7 +461,7 @@ async function importFees(
       select: { id: true, gradeId: true },
     });
     const term = normalizeTerm(row.values.term);
-    const feeStructure = await tx.feeStructure.upsert({
+    const feeStructure = await tx.feeStructure.findUnique({
       where: {
         schoolId_gradeId_term_academicYear: {
           schoolId,
@@ -466,18 +470,9 @@ async function importFees(
           academicYear: row.values.academicYear.trim(),
         },
       },
-      update: {},
-      create: {
-        schoolId,
-        gradeId: student.gradeId,
-        term,
-        academicYear: row.values.academicYear.trim(),
-        title: `Imported ${term.replace("_", " ")} ${row.values.academicYear.trim()} fees`,
-        status: FeeStructureStatus.DRAFT,
-        createdBy: actorId,
-      },
-      select: { id: true },
+      select: { id: true, status: true, dueDate: true },
     });
+    if (!feeStructure || feeStructure.status !== "PUBLISHED") throw new MigrationImportError("Publish the matching fee structure before importing opening bills.");
 
     const feeAmount = parseMoney(row.values.amount);
     const billingFrequency = normalizeFeeFrequency(row.values.feeFrequency);
@@ -515,20 +510,11 @@ async function importFees(
       );
     }
 
-    const feeItem =
-      existingFeeItem ??
-      (await tx.feeItem.create({
-        data: {
-          feeStructureId: feeStructure.id,
-          name: row.values.feeName.trim(),
-          amount: feeAmount,
-          category: FeeCategory.OTHER,
-          billingFrequency,
-        },
-        select: { id: true, amount: true },
-      }));
+    if (!existingFeeItem) throw new MigrationImportError("Fee item must already exist in the published structure.");
+    const feeItem = existingFeeItem;
 
     const amountPaid = parseMoney(row.values.amountPaid || "0");
+    if (amountPaid.lt(0) || amountPaid.gt(feeItem.amount)) throw new MigrationImportError("Opening paid amount must be between zero and the charge.");
     const lineBalance = feeItem.amount.minus(amountPaid);
     const existingBill = await tx.studentBill.findUnique({
       where: {
@@ -543,6 +529,8 @@ async function importFees(
         totalAmount: true,
         amountPaid: true,
         balance: true,
+        status: true,
+        discountAmount: true,
         lineItems: {
           where: { feeItemId: feeItem.id },
           select: { id: true },
@@ -557,6 +545,7 @@ async function importFees(
         409,
       );
     }
+    if (existingBill && (existingBill.status === "WAIVED" || existingBill.discountAmount.gt(0) || await tx.payment.count({ where: { schoolId, studentBillId: existingBill.id } }) > 0)) throw new MigrationImportError("Opening balances cannot extend a waived bill or a bill with discounts or live payment history.");
 
     const bill = existingBill
       ? await tx.studentBill.update({
@@ -581,6 +570,7 @@ async function importFees(
         totalAmount: feeItem.amount,
         amountPaid,
         balance: lineBalance,
+        dueDate: feeStructure.dueDate,
         status: billStatusForAmounts(feeItem.amount, amountPaid, lineBalance),
         generatedBy: actorId,
       },
@@ -599,8 +589,42 @@ async function importFees(
       },
     });
     counters.feeLineItems += 1;
+    await tx.financeAuditLog.create({ data: { schoolId, action: "BILL_GENERATED", performedBy: actorId, entityType: "StudentBill", entityId: String(bill.id), metadata: { source: "MIGRATION_OPENING_BALANCE", feeItemId: feeItem.id, charge: feeItem.amount.toFixed(2), openingAmountPaid: amountPaid.toFixed(2), admissionNumber: row.values.admissionNumber } } });
   }
   counters.feeBills = affectedBillIds.size;
+}
+
+async function importFeeStructures(tx: Prisma.TransactionClient, schoolId: string, actorId: string, rows: MigrationValidationRow[], counters: ImportCounters) {
+  const structureIds = new Set<number>();
+  for (const { values } of rows) {
+    const grade = await tx.grade.findFirst({ where: { schoolId, level: { equals: values.gradeName.trim(), mode: "insensitive" } } });
+    if (!grade) throw new MigrationImportError("Grade does not exist in this school.");
+    const dueDate = new Date(`${values.dueDate}T00:00:00.000Z`);
+    const structure = await tx.feeStructure.upsert({ where: { schoolId_gradeId_term_academicYear: { schoolId, gradeId: grade.id, term: normalizeTerm(values.term), academicYear: values.academicYear.trim() } }, update: {}, create: { schoolId, gradeId: grade.id, term: normalizeTerm(values.term), academicYear: values.academicYear.trim(), title: `${grade.level} ${values.term} ${values.academicYear}`, dueDate, createdBy: actorId }, include: { feeItems: true, _count: { select: { bills: true } } } });
+    if (structure.status !== FeeStructureStatus.DRAFT || structure._count.bills > 0) throw new MigrationImportError("Published or billed fee structures cannot be modified by import.");
+    if (structure.dueDate && structure.dueDate.getTime() !== dueDate.getTime()) throw new MigrationImportError("Due date must match other items in this structure.");
+    if (!structure.dueDate) await tx.feeStructure.update({ where: { id: structure.id }, data: { dueDate } });
+    if (structure.feeItems.some((item) => item.name.trim().toLowerCase() === values.feeName.trim().toLowerCase())) throw new MigrationImportError("Fee item already exists. Validate again.");
+    const frequency = normalizeFeeFrequency(values.feeFrequency);
+    if (!frequency || frequency === "DAILY") throw new MigrationImportError("Daily collections require separate setup.");
+    await tx.feeItem.create({ data: { feeStructureId: structure.id, name: values.feeName.trim(), category: values.category.trim().toUpperCase() as FeeCategory, amount: parseMoney(values.amount), billingFrequency: frequency, isOptional: values.isOptional.trim().toUpperCase() === "TRUE" } });
+    await tx.financeAuditLog.create({ data: { schoolId, action: "FEE_STRUCTURE_CREATED", performedBy: actorId, entityType: "FeeStructure", entityId: String(structure.id), metadata: { source: "MIGRATION", feeName: values.feeName, category: values.category, dueDate: values.dueDate } } });
+    structureIds.add(structure.id);
+  }
+  counters.feeStructures = structureIds.size;
+}
+
+async function importDiscounts(tx: Prisma.TransactionClient, schoolId: string, actorId: string, rows: MigrationValidationRow[], counters: ImportCounters) {
+  for (const { values } of rows) {
+    const reference = values.approvalReference.trim().toLowerCase();
+    const duplicate = await tx.financeAuditLog.findFirst({ where: { schoolId, action: "DISCOUNT_APPLIED", metadata: { path: ["approvalReference"], equals: reference } } });
+    if (duplicate) throw new MigrationImportError("Approval reference was already imported. Validate again.", 409);
+    const bills = await tx.studentBill.findMany({ where: { schoolId, student: { schoolId, admissionNumber: values.admissionNumber.trim().toUpperCase() }, feeStructure: { schoolId, term: normalizeTerm(values.term), academicYear: values.academicYear.trim() } }, take: 2 });
+    if (bills.length !== 1) throw new MigrationImportError("Exactly one bill must match this student and term. Review ambiguous bills manually.");
+    const bill = bills[0];
+    await applyDiscountInTransaction(tx, { schoolId, actorId, billId: bill.id, type: values.discountType.trim().toUpperCase() as DiscountType, description: values.reason.trim(), amount: values.amount ? parseMoney(values.amount).toString() : undefined, percentage: values.percentage ? parseMoney(values.percentage).toString() : undefined, approvalReference: reference });
+    counters.discounts += 1;
+  }
 }
 
 export async function importValidatedMigrationRows(
@@ -622,10 +646,13 @@ export async function importValidatedMigrationRows(
     subjects: 0,
     feeBills: 0,
     feeLineItems: 0,
+    feeStructures: 0,
+    discounts: 0,
   };
 
   if (cleanRows.length > 0) {
     await prisma.$transaction(async (tx) => {
+      if (["fees", "feeStructures", "discounts"].includes(context.areaKey)) await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${context.schoolId}), hashtext('finance-migration'))`;
       if (context.areaKey === "classes") await importClasses(tx, context.schoolId, cleanRows, counters);
       if (context.areaKey === "subjects") await importSubjects(tx, context.schoolId, cleanRows, counters);
       if (context.areaKey === "students") await importStudents(tx, context.schoolId, context.actorId, cleanRows, counters);
@@ -633,6 +660,8 @@ export async function importValidatedMigrationRows(
       if (context.areaKey === "teachers") await importTeachers(tx, context.schoolId, cleanRows, counters);
       if (context.areaKey === "bursars") await importBursars(tx, context.schoolId, cleanRows, counters);
       if (context.areaKey === "fees") await importFees(tx, context.schoolId, context.actorId, cleanRows, counters);
+      if (context.areaKey === "feeStructures") await importFeeStructures(tx, context.schoolId, context.actorId, cleanRows, counters);
+      if (context.areaKey === "discounts") await importDiscounts(tx, context.schoolId, context.actorId, cleanRows, counters);
 
       await tx.onboardingAuditLog.create({
         data: {
@@ -661,6 +690,7 @@ export async function importValidatedMigrationRows(
     }, {
       maxWait: 15_000,
       timeout: context.areaKey === "fees" ? 90_000 : 45_000,
+      isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
     });
   }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import MigrationFinanceReview from "@/src/components/MigrationFinanceReview";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -60,6 +61,8 @@ type ImportResult = {
     subjects: number;
     feeBills: number;
     feeLineItems: number;
+    feeStructures: number;
+    discounts: number;
   };
   dirtyRows: Array<{
     rowNumber: number;
@@ -376,7 +379,9 @@ export default function DataMigrationMapper() {
                 <option key={item.key} value={item.key}>{item.label}</option>
               ))}
             </select>
+            <p className="mt-2 text-xs leading-5 text-gray-500">{area.description}</p>
           </label>
+          {["feeStructures", "fees", "discounts"].includes(areaKey) && <MigrationFinanceReview key={importResult?.batchId ?? "finance-review"} />}
 
           <label className="block rounded-2xl border border-dashed border-blue-200 bg-blue-50/60 p-4">
             <span className="flex items-center gap-2 text-sm font-black text-blue-900">
@@ -384,7 +389,7 @@ export default function DataMigrationMapper() {
               CSV upload
             </span>
             <p className="mt-1 text-xs font-semibold leading-5 text-blue-700">
-              Export the school spreadsheet as CSV first. Excel `.xlsx` parsing will come after validation storage is added.
+              Export the school spreadsheet as CSV before uploading.
             </p>
             <input
               type="file"
@@ -637,6 +642,8 @@ export default function DataMigrationMapper() {
                       ["Parents", importResult.created.parents],
                       ["Parent links", importResult.created.parentLinks],
                       ["Fee lines", importResult.created.feeLineItems],
+                      ["Fee structures", importResult.created.feeStructures],
+                      ["Discounts", importResult.created.discounts],
                     ].map(([label, value]) => (
                       <div key={label} className="rounded-xl bg-gray-50 p-3">
                         <p className="text-lg font-black text-gray-950">{value}</p>

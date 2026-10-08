@@ -1,4 +1,5 @@
 import prisma from "@/src/lib/prisma";
+import { DiscountType, FeeCategory } from "@/src/generated/prisma";
 import { validateAdmissionNumberForSchool } from "@/src/lib/admission-number";
 import { getMigrationAreaDefinition, type MigrationAreaKey } from "@/src/lib/migration/column-mapping";
 
@@ -58,7 +59,7 @@ function normalizeSex(value: string) {
   return value.trim().toUpperCase();
 }
 
-function normalizeTerm(value: string) {
+function normalizeTerm(value = "") {
   const clean = value.trim().toLowerCase().replace(/[\s-]+/g, "_");
   if (["1", "term1", "term_1", "firstterm"].includes(clean)) return "TERM_1";
   if (["2", "term2", "term_2", "secondterm"].includes(clean)) return "TERM_2";
@@ -80,8 +81,10 @@ function normalizeFeeFrequency(value: string | null | undefined) {
 function parseMoney(value: string) {
   const clean = value.replace(/[,\s]/g, "");
   if (!clean) return null;
+  if (!/^\d+(\.\d{1,2})?$/.test(clean)) return null;
   const amount = Number(clean);
   if (!Number.isFinite(amount)) return null;
+  if (amount > 99_999_999.99) return null;
   return Math.round(amount * 100) / 100;
 }
 
@@ -162,6 +165,9 @@ async function existingSets(schoolId: string) {
     teachers,
     bursars,
     feeStructures,
+    grades,
+    bills,
+    discountAudits,
   ] = await Promise.all([
     prisma.school.findUnique({ where: { id: schoolId }, select: { code: true } }),
     prisma.class.findMany({ where: { schoolId }, select: { name: true } }),
@@ -170,6 +176,7 @@ async function existingSets(schoolId: string) {
       where: { schoolId },
       select: {
         admissionNumber: true,
+        gradeId: true,
         email: true,
         phone: true,
         parentRelationships: {
@@ -182,11 +189,19 @@ async function existingSets(schoolId: string) {
     prisma.parent.findMany({ where: { schoolId }, select: { email: true, phone: true } }),
     prisma.teacher.findMany({ where: { schoolId }, select: { email: true, phone: true } }),
     prisma.bursar.findMany({ where: { schoolId }, select: { email: true, phone: true } }),
-    prisma.feeStructure.findMany({ where: { schoolId }, select: { title: true, academicYear: true, term: true } }),
+    prisma.feeStructure.findMany({ where: { schoolId }, include: { grade: true, feeItems: true } }),
+    prisma.grade.findMany({ where: { schoolId }, select: { id: true, level: true } }),
+    prisma.studentBill.findMany({ where: { schoolId, student: { schoolId }, feeStructure: { schoolId } }, include: { student: true, feeStructure: true, lineItems: { include: { feeItem: true } } } }),
+    prisma.financeAuditLog.findMany({ where: { schoolId, action: "DISCOUNT_APPLIED" }, select: { metadata: true } }),
   ]);
 
   return {
     schoolCode: school?.code ?? null,
+    grades,
+    feeStructures,
+    bills,
+    discountAudits,
+    studentGrades: new Map(students.map((student) => [identity(student.admissionNumber), student.gradeId])),
     classNames: new Set(classes.map((item) => identity(item.name))),
     subjectNames: new Set(subjects.map((item) => identity(item.name))),
     admissionNumbers: new Set(compact(students.map((item) => item.admissionNumber))),
@@ -228,6 +243,8 @@ export async function validateMigrationRows(
   const duplicateStudentGuardianPhones = countDuplicates(mappedRows.map((row) => row.values.parentPhone));
   const duplicateFeeRows = countDuplicates(mappedRows.map((row) => uploadedFeeRowKey(row.values)));
   const duplicateParentWardRows = countDuplicates(mappedRows.map((row) => uploadedParentWardKey(row.values)));
+  const duplicateStructureRows = countDuplicates(mappedRows.map(({ values }) => [values.gradeName, values.term, values.academicYear, values.feeName].map(identity).join(":")));
+  const duplicateApprovals = countDuplicates(mappedRows.map(({ values }) => values.approvalReference));
 
   const rows = mappedRows.map(({ rowNumber, values }) => {
     const issues: MigrationValidationIssue[] = [];
@@ -389,7 +406,7 @@ export async function validateMigrationRows(
         issues.push({ severity: "ERROR", field: "amountPaid", message: "Amount paid must be zero or more." });
       }
       if (amount !== null && amountPaid !== null && amountPaid > amount) {
-        issues.push({ severity: "WARNING", field: "amountPaid", message: "Amount paid is higher than billed amount. This may be an overpayment." });
+        issues.push({ severity: "ERROR", field: "amountPaid", message: "Opening paid amount cannot exceed this fee charge. Import credits through a reviewed correction workflow." });
       }
       if (!VALID_FEE_FREQUENCY_VALUES.has(feeFrequency)) {
         issues.push({ severity: "ERROR", field: "feeFrequency", message: "Billing frequency must be TERM, MONTHLY, WEEKLY, DAILY, or ONE_TIME." });
@@ -405,6 +422,55 @@ export async function validateMigrationRows(
       if (values.feeName && values.term && values.academicYear && existing.feeKeys.has(feeKey)) {
         issues.push({ severity: "WARNING", field: "feeName", message: "A matching fee structure already exists. Confirm this is an opening balance import." });
       }
+      const gradeId = existing.studentGrades.get(identity(values.admissionNumber));
+      const matchingStructure = existing.feeStructures.find((item) => item.gradeId === gradeId && item.term === normalizeTerm(values.term) && identity(item.academicYear) === identity(values.academicYear));
+      const item = matchingStructure?.feeItems.find((fee) => identity(fee.name) === identity(values.feeName));
+      if (!matchingStructure || matchingStructure.status !== "PUBLISHED" || !item) issues.push({ severity: "ERROR", field: "feeName", message: "Import and publish the matching fee structure and fee item before opening bills." });
+      else if (item.amount.toNumber() !== amount || item.billingFrequency !== feeFrequency) issues.push({ severity: "ERROR", field: "amount", message: "Charge and frequency must match the published fee item. Import reductions as discounts." });
+      if (existing.bills.some((bill) => identity(bill.student.admissionNumber) === identity(values.admissionNumber) && bill.feeStructureId === matchingStructure?.id && bill.lineItems.some((line) => identity(line.feeItem.name) === identity(values.feeName)))) issues.push({ severity: "SKIP", field: "feeName", message: "This fee item already exists on the student's bill." });
+    }
+
+    if (context.areaKey === "feeStructures") {
+      const amount = parseMoney(values.amount);
+      const frequency = normalizeFeeFrequency(values.feeFrequency);
+      const grade = existing.grades.find((item) => identity(item.level) === identity(values.gradeName));
+      if (!grade) issues.push({ severity: "ERROR", field: "gradeName", message: "Grade must already exist in this school." });
+      if (!Object.values(FeeCategory).includes(values.category?.trim().toUpperCase() as FeeCategory)) issues.push({ severity: "ERROR", field: "category", message: "Choose a valid fee category." });
+      if (!VALID_FEE_FREQUENCY_VALUES.has(frequency) || frequency === "DAILY") issues.push({ severity: "ERROR", field: "feeFrequency", message: "Use TERM, MONTHLY, WEEKLY, or ONE_TIME. Daily collections use separate setup." });
+      if (amount == null || amount <= 0) issues.push({ severity: "ERROR", field: "amount", message: "Standard charge must be positive with at most two decimal places." });
+      if (!["TRUE", "FALSE"].includes(values.isOptional?.trim().toUpperCase())) issues.push({ severity: "ERROR", field: "isOptional", message: "Optional item must be TRUE or FALSE." });
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(values.dueDate ?? "") || !Number.isFinite(Date.parse(values.dueDate)) || new Date(values.dueDate).toISOString().slice(0, 10) !== values.dueDate) issues.push({ severity: "ERROR", field: "dueDate", message: "Use a valid YYYY-MM-DD due date." });
+      addDuplicateIssue({ issues, counts: duplicateStructureRows, value: [values.gradeName, values.term, values.academicYear, values.feeName].map(identity).join(":"), field: "feeName", label: "Fee structure item" });
+      const structure = existing.feeStructures.find((item) => item.gradeId === grade?.id && item.term === normalizeTerm(values.term) && identity(item.academicYear) === identity(values.academicYear));
+      if (structure && (structure.status !== "DRAFT" || existing.bills.some((bill) => bill.feeStructureId === structure.id))) issues.push({ severity: "ERROR", field: "feeName", message: "Published or billed fee structures cannot be changed by import." });
+      if (structure?.feeItems.some((item) => identity(item.name) === identity(values.feeName))) issues.push({ severity: "SKIP", field: "feeName", message: "Fee item already exists; review its settings instead of importing again." });
+      if (structure?.dueDate && structure.dueDate.toISOString().slice(0, 10) !== values.dueDate) issues.push({ severity: "ERROR", field: "dueDate", message: "Due date must match the existing structure." });
+      if (mappedRows.some((row) => identity(row.values.gradeName) === identity(values.gradeName) && normalizeTerm(row.values.term ?? "") === normalizeTerm(values.term ?? "") && identity(row.values.academicYear) === identity(values.academicYear) && row.values.dueDate !== values.dueDate)) issues.push({ severity: "ERROR", field: "dueDate", message: "All items in a grade's term structure must have the same due date." });
+    }
+
+    if (context.areaKey === "discounts") {
+      const amount = values.amount ? parseMoney(values.amount) : null;
+      const percentage = values.percentage ? parseMoney(values.percentage) : null;
+      if (!Object.values(DiscountType).includes(values.discountType?.trim().toUpperCase() as DiscountType)) issues.push({ severity: "ERROR", field: "discountType", message: "Choose a valid discount type." });
+      if (Boolean(values.amount) === Boolean(values.percentage) || (values.amount && (amount == null || amount <= 0)) || (values.percentage && (percentage == null || percentage <= 0 || percentage > 100))) issues.push({ severity: "ERROR", field: "amount", message: "Enter one positive fixed reduction or percentage up to 100." });
+      const matchingBills = existing.bills.filter((item) => identity(item.student.admissionNumber) === identity(values.admissionNumber) && item.feeStructure.term === normalizeTerm(values.term) && identity(item.feeStructure.academicYear) === identity(values.academicYear));
+      const bill = matchingBills.length === 1 ? matchingBills[0] : undefined;
+      if (matchingBills.length > 1) issues.push({ severity: "ERROR", field: "admissionNumber", message: "Multiple bills match this student and term. Review the specific bill manually before applying a reduction." });
+      if (values.reason?.length > 500) issues.push({ severity: "ERROR", field: "reason", message: "Reason must be at most 500 characters." });
+      if (values.approvalReference?.length > 120) issues.push({ severity: "ERROR", field: "approvalReference", message: "Approval reference must be at most 120 characters." });
+      const reduction = amount ?? (bill && percentage != null ? Math.round(bill.totalAmount.toNumber() * percentage) / 100 : 0);
+      if (!bill || bill.status === "WAIVED") issues.push({ severity: "ERROR", field: "admissionNumber", message: "An existing non-waived bill is required before importing a reduction." });
+      else if (reduction > bill.totalAmount.minus(bill.amountPaid).minus(bill.discountAmount).toNumber()) issues.push({ severity: "ERROR", field: "amount", message: "Reduction exceeds the unpaid bill balance." });
+      if (bill) {
+        const combined = mappedRows.filter((row) => identity(row.values.admissionNumber) === identity(values.admissionNumber) && normalizeTerm(row.values.term) === normalizeTerm(values.term) && identity(row.values.academicYear) === identity(values.academicYear)).reduce((total, row) => {
+          const fixed = row.values.amount ? parseMoney(row.values.amount) : null;
+          const percent = row.values.percentage ? parseMoney(row.values.percentage) : null;
+          return total + (fixed ?? (percent == null ? 0 : Math.round(bill.totalAmount.toNumber() * percent) / 100));
+        }, 0);
+        if (Math.round(combined * 100) > Math.round(bill.totalAmount.minus(bill.amountPaid).minus(bill.discountAmount).toNumber() * 100)) issues.push({ severity: "ERROR", field: "amount", message: "Combined reductions in this upload exceed this bill's unpaid balance." });
+      }
+      addDuplicateIssue({ issues, counts: duplicateApprovals, value: values.approvalReference, field: "approvalReference", label: "Approval reference" });
+      if (existing.discountAudits.some(({ metadata }) => metadata && typeof metadata === "object" && !Array.isArray(metadata) && identity(String(metadata.approvalReference ?? "")) === identity(values.approvalReference))) issues.push({ severity: "SKIP", field: "approvalReference", message: "This approval reference was already imported." });
     }
 
     const hasError = issues.some((issue) => issue.severity === "ERROR");

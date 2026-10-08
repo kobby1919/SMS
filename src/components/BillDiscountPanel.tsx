@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { BadgePercent, Loader2, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { applyBillDiscount, removeBillDiscount } from "@/src/lib/actions/billActions";
@@ -27,6 +27,8 @@ type Props = {
 
 export default function BillDiscountPanel({ billId, currentBalance, discounts }: Props) {
   const router = useRouter();
+  const requestId = useRef<string | null>(null);
+  const requestDetails = useRef("");
   const [type, setType] = useState<(typeof DISCOUNT_TYPES)[number]>("SIBLING");
   const [mode, setMode] = useState<"amount" | "percentage">("amount");
   const [amount, setAmount] = useState("");
@@ -39,11 +41,17 @@ export default function BillDiscountPanel({ billId, currentBalance, discounts }:
   const activeDiscounts = discounts.filter((discount) => discount.status === "ACTIVE");
 
   const handleApply = () => {
+    if (isPending) return;
+    const details = JSON.stringify({ billId, type, description, mode, amount, percentage });
+    if (requestDetails.current !== details) requestId.current = null;
+    requestDetails.current = details;
+    requestId.current ??= crypto.randomUUID();
     setMessage(null);
     setError(null);
     startTransition(async () => {
       try {
         const result = await applyBillDiscount({
+          requestId: requestId.current,
           billId,
           type,
           description,
@@ -51,6 +59,7 @@ export default function BillDiscountPanel({ billId, currentBalance, discounts }:
           percentage: mode === "percentage" ? percentage : null,
         });
         setAmount("");
+        requestId.current = null;
         setPercentage("");
         setDescription("");
         setMessage(`Discount applied: ${formatGHS(result.amount)}.`);

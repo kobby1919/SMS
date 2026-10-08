@@ -7,6 +7,7 @@ import {
   MigrationImportError,
 } from "@/src/lib/services/data-migration-import";
 import { migrationValidationPayloadSchema } from "@/src/lib/validation/data-migration";
+import { BillDiscountError } from "@/src/lib/services/bill-discounts";
 
 const MAX_IMPORT_PAYLOAD_BYTES = 1_500_000;
 
@@ -49,6 +50,10 @@ export async function POST(req: NextRequest) {
     }
     if (error instanceof MigrationImportError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    if (error instanceof BillDiscountError) return NextResponse.json({ error: error.message }, { status: 400 });
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2034") {
+      return NextResponse.json({ error: "Finance records changed during import. Nothing was saved. Validate again and retry." }, { status: 409 });
     }
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       return NextResponse.json(

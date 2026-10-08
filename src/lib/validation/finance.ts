@@ -231,6 +231,7 @@ export const waiveBillSchema = z.object({
 });
 
 export const applyDiscountSchema = z.object({
+  requestId: z.string().uuid(),
   billId: positiveIntSchema,
   type: z.enum(["SCHOLARSHIP", "SIBLING", "STAFF_CHILD", "BURSARY", "OTHER"]),
   description: nonEmptyStringSchema.max(500),

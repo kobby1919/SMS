@@ -5,7 +5,6 @@ import prisma from "@/src/lib/prisma";
 import { revalidatePath } from "next/cache";
 import {
   requireFinanceAccess,
-  recomputeBillStatus,
   writeAuditLog,
 } from "@/src/lib/actions/financeActions";
 import { requireResourceAccess } from "@/src/lib/authz";
@@ -28,6 +27,7 @@ import {
   assertCanWaiveBill,
 } from "@/src/lib/services/finance-policy";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
+import { applyDiscountInTransaction, removeDiscountInTransaction } from "@/src/lib/services/bill-discounts";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -366,76 +366,11 @@ export async function applyBillDiscount(rawInput: unknown) {
   });
   const input = parseActionInput(applyDiscountSchema, rawInput);
 
-  const bill = requireResourceAccess(
-    await prisma.studentBill.findFirst({
-      where: { id: input.billId, schoolId },
-      include: { student: { select: { id: true, name: true, surname: true } } },
-    }),
-    ctx,
-    "Bill not found.",
+  const { discount, bill, value: discountValue, replayed } = await prisma.$transaction((tx) =>
+    applyDiscountInTransaction(tx, { ...input, type: input.type as DiscountType, schoolId, actorId: userId }),
+    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
   );
-
-  if (bill.status === "WAIVED") {
-    throw new Error("Cannot apply a discount to a waived bill.");
-  }
-
-  const totalAmount = new Prisma.Decimal(bill.totalAmount);
-  const currentBalance = new Prisma.Decimal(bill.balance);
-  const discountValue = input.amount
-    ? new Prisma.Decimal(input.amount)
-    : totalAmount.mul(new Prisma.Decimal(input.percentage ?? 0)).div(100).toDecimalPlaces(2);
-
-  if (discountValue.lte(0)) {
-    throw new Error("Discount must be greater than zero.");
-  }
-
-  if (discountValue.gt(currentBalance)) {
-    throw new Error(
-      `Discount amount (GHS ${discountValue.toFixed(2)}) cannot exceed the current balance ` +
-      `(GHS ${currentBalance.toFixed(2)}).`,
-    );
-  }
-
-  const discount = await prisma.$transaction(async (tx) => {
-    const created = await tx.discount.create({
-      data: {
-        schoolId,
-        studentBillId: bill.id,
-        type: input.type as DiscountType,
-        description: input.description,
-        amount: input.amount ? discountValue : null,
-        percentage: input.percentage ? new Prisma.Decimal(input.percentage) : null,
-        approvedBy: userId,
-      },
-    });
-
-    await tx.studentBill.update({
-      where: { id: bill.id },
-      data: { discountAmount: { increment: discountValue } },
-    });
-
-    return created;
-  });
-
-  await recomputeBillStatus(bill.id, schoolId);
-
-  await writeAuditLog({
-    schoolId,
-    action: "DISCOUNT_APPLIED",
-    performedBy: userId,
-    entityType: "Discount",
-    entityId: discount.id,
-    metadata: {
-      discountId: discount.id,
-      billId: bill.id,
-      studentId: bill.studentId,
-      studentName: `${bill.student.name} ${bill.student.surname}`,
-      type: input.type,
-      amount: discountValue.toNumber(),
-      percentage: input.percentage ?? null,
-      description: input.description,
-    },
-  });
+  if (replayed) return { id: discount.id, amount: discountValue.toNumber() };
 
   await recordParentActivityEvents({
     schoolId,
@@ -477,64 +412,10 @@ export async function removeBillDiscount(rawInput: unknown) {
   });
   const input = parseActionInput(removeDiscountSchema, rawInput);
 
-  const discount = requireResourceAccess(
-    await prisma.discount.findFirst({
-      where: { id: input.discountId, schoolId },
-      include: {
-        studentBill: {
-          include: { student: { select: { id: true, name: true, surname: true } } },
-        },
-      },
-    }),
-    ctx,
-    "Discount not found.",
+  const { discount, value: discountValue } = await prisma.$transaction((tx) =>
+    removeDiscountInTransaction(tx, { ...input, schoolId, actorId: userId }),
+    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
   );
-
-  if (discount.status === "REMOVED") {
-    throw new Error("This discount has already been removed.");
-  }
-
-  const discountValue = discount.amount
-    ? new Prisma.Decimal(discount.amount)
-    : new Prisma.Decimal(discount.studentBill.totalAmount)
-      .mul(new Prisma.Decimal(discount.percentage ?? 0))
-      .div(100)
-      .toDecimalPlaces(2);
-
-  await prisma.$transaction(async (tx) => {
-    await tx.discount.update({
-      where: { id: discount.id },
-      data: {
-        status: "REMOVED",
-        removedBy: userId,
-        removeReason: input.reason,
-        removedAt: new Date(),
-      },
-    });
-
-    await tx.studentBill.update({
-      where: { id: discount.studentBillId },
-      data: { discountAmount: { decrement: discountValue } },
-    });
-  });
-
-  await recomputeBillStatus(discount.studentBillId, schoolId);
-
-  await writeAuditLog({
-    schoolId,
-    action: "DISCOUNT_REMOVED",
-    performedBy: userId,
-    entityType: "Discount",
-    entityId: discount.id,
-    metadata: {
-      discountId: discount.id,
-      billId: discount.studentBillId,
-      studentId: discount.studentBill.studentId,
-      studentName: `${discount.studentBill.student.name} ${discount.studentBill.student.surname}`,
-      amount: discountValue.toNumber(),
-      reason: input.reason,
-    },
-  });
 
   await recordParentActivityEvents({
     schoolId,

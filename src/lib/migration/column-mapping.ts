@@ -5,7 +5,9 @@ export type MigrationAreaKey =
   | "bursars"
   | "classes"
   | "subjects"
-  | "fees";
+  | "fees"
+  | "feeStructures"
+  | "discounts";
 
 export type MigrationFieldDefinition = {
   key: string;
@@ -112,19 +114,49 @@ export const MIGRATION_AREAS: MigrationAreaDefinition[] = [
     sampleRows: [["Victoria", "Mensah", "Female", "bursar@example.com", "0240000000"]],
   },
   {
-    key: "fees",
-    label: "Fees and bills",
-    description: "Prepare fee balances carefully before parents see finance records.",
+    key: "feeStructures", label: "Fee structures",
+    description: "Import standard charges first, then review and publish them before importing opening bills. Daily collections have separate setup.",
+    fields: [
+      { key: "gradeName", label: "Grade/level", required: true, aliases: ["grade", "level"], help: "An existing school grade, for example KG1." },
+      { key: "term", label: "Term", required: true, aliases: ["term"], help: "TERM_1, TERM_2, or TERM_3." },
+      { key: "academicYear", label: "Academic year", required: true, aliases: ["year", "session"], help: "Example: 2026/27." },
+      { key: "feeName", label: "Fee item", required: true, aliases: ["fee", "fee item"], help: "Example: Tuition." },
+      { key: "category", label: "Category", required: true, aliases: ["category", "fee category"], help: "TUITION, LEVY, EXAM, FEEDING, TRANSPORT, UNIFORM, LIBRARY, SPORTS, or OTHER." },
+      { key: "feeFrequency", label: "Billing frequency", required: true, aliases: ["frequency", "billing frequency"], help: "TERM, MONTHLY, WEEKLY, or ONE_TIME." },
+      { key: "amount", label: "Standard amount", required: true, aliases: ["amount", "standard amount"], help: "Gross charge before discounts." },
+      { key: "isOptional", label: "Optional item", required: true, aliases: ["optional", "optional item"], help: "TRUE or FALSE; optional items are not automatically billed to everyone." },
+      { key: "dueDate", label: "Due date", required: true, aliases: ["due date"], help: "YYYY-MM-DD. Must be consistent across a grade's term structure." },
+    ],
+    sampleRows: [["KG1", "TERM_1", "2026/27", "Tuition", "TUITION", "TERM", "1200", "FALSE", "2026-10-31"]],
+  },
+  {
+    key: "fees", label: "Student opening bills",
+    description: "Import historical charges and paid balances against published fee structures. Import discounts separately.",
     fields: [
       { key: "admissionNumber", label: "Admission number", required: true, aliases: ["adm no", "admission no", "student id", "admission number"], help: "Student the fee belongs to. Use SCHOOLCODE-YYYY-0001 format." },
-      { key: "feeName", label: "Fee item", required: true, aliases: ["fee", "fee item", "bill item", "description"], help: "Example: Tuition, Feeding, Bus." },
-      { key: "feeFrequency", label: "Billing frequency", required: false, aliases: ["frequency", "billing frequency", "fee frequency", "billing type"], help: "TERM, MONTHLY, WEEKLY, DAILY, or ONE_TIME. Missing means TERM." },
-      { key: "amount", label: "Amount", required: true, aliases: ["amount", "bill amount", "total"], help: "Amount billed." },
-      { key: "amountPaid", label: "Amount paid", required: false, aliases: ["paid", "amount paid", "collected"], help: "Existing amount paid, if any." },
+      { key: "feeName", label: "Fee item", required: true, aliases: ["fee", "fee item", "bill item", "description"], help: "Must match the published fee item." },
+      { key: "feeFrequency", label: "Billing frequency", required: true, aliases: ["frequency", "billing frequency", "fee frequency", "billing type"], help: "TERM, MONTHLY, WEEKLY, or ONE_TIME. Gate collections use daily collection setup." },
+      { key: "amount", label: "Amount", required: true, aliases: ["amount", "bill amount", "total"], help: "Original charge before any discount." },
+      { key: "amountPaid", label: "Opening amount paid", required: true, aliases: ["paid", "amount paid", "collected", "opening amount paid"], help: "Historical payments only; enter 0 if unpaid. Does not issue receipts or count as today's collections." },
       { key: "term", label: "Term", required: true, aliases: ["term", "semester"], help: "School term." },
       { key: "academicYear", label: "Academic year", required: true, aliases: ["academic year", "year", "session"], help: "Example: 2026/27." },
     ],
     sampleRows: [["EDJ-2026-0001", "Tuition", "TERM", "1200", "500", "TERM_1", "2026/27"]],
+  },
+  {
+    key: "discounts", label: "Discounts and scholarships",
+    description: "Import approved reductions after opening bills. A reduction lowers the balance and never counts as a payment.",
+    fields: [
+      { key: "admissionNumber", label: "Admission number", required: true, aliases: ["admission number", "adm no"], help: "Existing student admission number." },
+      { key: "term", label: "Term", required: true, aliases: ["term"], help: "TERM_1, TERM_2, or TERM_3." },
+      { key: "academicYear", label: "Academic year", required: true, aliases: ["year", "session"], help: "Identifies the student's bill." },
+      { key: "discountType", label: "Discount type", required: true, aliases: ["discount type", "type"], help: "SCHOLARSHIP, SIBLING, STAFF_CHILD, BURSARY, or OTHER." },
+      { key: "amount", label: "Fixed reduction", required: false, aliases: ["amount", "fixed reduction"], help: "Enter either a fixed amount or a percentage." },
+      { key: "percentage", label: "Percentage", required: false, aliases: ["percentage", "percent"], help: "Percentage of the original bill total, greater than 0 and at most 100." },
+      { key: "reason", label: "Reason", required: true, aliases: ["reason", "description"], help: "Reason for the approved reduction." },
+      { key: "approvalReference", label: "Approval reference", required: true, aliases: ["approval reference", "reference"], help: "Unique school approval reference; prevents reimporting the same reduction." },
+    ],
+    sampleRows: [["EDJ-2026-0001", "TERM_1", "2026/27", "SCHOLARSHIP", "200", "", "Approved tuition scholarship", "SCH-2026-001"]],
   },
 ];
 

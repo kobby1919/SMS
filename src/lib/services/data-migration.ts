@@ -335,8 +335,8 @@ export async function getDataMigrationDashboard(
     },
     {
       key: "fees",
-      title: "Fees and bills",
-      description: "Fee structures and existing student bills that must balance before live collection.",
+      title: "Finance records",
+      description: "Import fee structures, publish them, import opening bills, then approved discounts. Daily collections use separate setup.",
       status: totalBills > 0 || feeStructures > 0 ? "HAS_RECORDS" : "NOT_STARTED",
       primaryCount: totalBills,
       primaryLabel: "existing bills",
