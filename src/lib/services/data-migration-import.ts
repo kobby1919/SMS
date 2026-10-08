@@ -25,6 +25,7 @@ import type { MigrationValidationPayload } from "@/src/lib/validation/data-migra
 import { applyDiscountInTransaction } from "@/src/lib/services/bill-discounts";
 import { getMigrationInventory } from "@/src/lib/services/migration-inventory";
 import { inventorySchema } from "@/src/lib/migration/inventory";
+import { MigrationRecoveryError, requireMigrationRecovery } from "@/src/lib/services/migration-recovery";
 import { loadStagedMigration, readStagedImportResult } from "@/src/lib/services/migration-staging";
 import { migrationStagingStorage } from "@/src/lib/services/migration-staging-storage";
 import { newMigrationEvidence, moneyMinor, type MigrationEvidence } from "@/src/lib/migration/reconciliation";
@@ -695,6 +696,12 @@ export async function importValidatedMigrationRows(
         throw new MigrationImportError("Confirm a migration inventory that includes this dataset before importing.", 409);
       }
       if (inventory.version !== staged.upload.inventoryVersion) throw new MigrationImportError("The inventory scope changed after this upload. Stage and validate the file again.", 409);
+      let recovery: Awaited<ReturnType<typeof requireMigrationRecovery>> = null;
+      try { recovery = await requireMigrationRecovery(context.schoolId, inventory.version, tx); }
+      catch (error) {
+        if (error instanceof MigrationRecoveryError) throw new MigrationImportError(error.message, 409);
+        throw error;
+      }
       await tx.$queryRaw`SELECT "id" FROM "MigrationStagedUpload" WHERE "id" = ${request.uploadId} AND "schoolId" = ${context.schoolId} FOR UPDATE`;
       const upload = await tx.migrationStagedUpload.findFirst({ where: { id: request.uploadId, schoolId: context.schoolId } });
       if (!upload || upload.status !== "VALIDATED" || !upload.encryptedPayload || upload.expiresAt <= new Date() || upload.checksum !== staged.upload.checksum) throw new MigrationImportError("This upload changed, expired, or was already imported. Refresh the workspace.", 409);
@@ -721,6 +728,8 @@ export async function importValidatedMigrationRows(
           metadata: {
             importType: context.areaKey,
             inventoryVersion: inventory.version,
+            recoveryCheckpointId: recovery?.logId ?? null,
+            recoveryCheckpointVersion: recovery?.plan.version ?? null,
             uploadId: request.uploadId,
             sourceChecksum: upload.checksum,
             rowCount: context.rows.length,

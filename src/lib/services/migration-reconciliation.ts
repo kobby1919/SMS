@@ -4,6 +4,7 @@ import prisma from "@/src/lib/prisma";
 import { Prisma } from "@/src/generated/prisma";
 import { getMigrationInventory } from "@/src/lib/services/migration-inventory";
 import { inventorySchema } from "@/src/lib/migration/inventory";
+import { MigrationRecoveryError, requireMigrationRecovery } from "@/src/lib/services/migration-recovery";
 import { approvalSchema, evidenceKeys, evidenceSchema, moneyDisplay, moneyMinor, type MigrationEvidence } from "@/src/lib/migration/reconciliation";
 
 export class MigrationReconciliationError extends Error {}
@@ -185,6 +186,11 @@ export async function withApprovedMigration<T>(schoolId: string, work: (tx: Pris
     const inventory = await getMigrationInventory(schoolId, tx);
     if ((requireInventory || school.setupStep === "migration") && !inventory) throw new MigrationReconciliationError("Confirm and reconcile the migration inventory before readiness review.");
     if (inventory) {
+      try { await requireMigrationRecovery(schoolId, inventory.version, tx); }
+      catch (error) {
+        if (error instanceof MigrationRecoveryError) throw new MigrationReconciliationError(error.message);
+        throw error;
+      }
       const report = await buildMigrationReconciliation(schoolId, tx);
       if (!report.approval) throw new MigrationReconciliationError("Review and approve the latest migration reconciliation before continuing setup.");
     }

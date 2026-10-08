@@ -56,6 +56,8 @@ function importFixture() {
   let inventoryVersion = 3;
   let inTransaction = false;
   let dirty = false;
+  let recoveryBlocked = false;
+  class RecoveryError extends Error {}
   const tx = { $queryRaw: async () => [{ id: uploadId }], migrationStagedUpload: { findFirst: async () => ({ ...upload }), update: async ({ data }) => Object.assign(upload, data) }, subject: { create: async ({ data }) => { writes.push(data); return { ...data, id: 1 }; } }, onboardingAuditLog: { create: async ({ data }) => { audits.push(data); return data; } } };
   const importer = load("src/lib/services/data-migration-import.ts", {
     crypto, "@/src/generated/prisma": { Prisma: { TransactionIsolationLevel: { Serializable: "Serializable" } } },
@@ -64,13 +66,20 @@ function importFixture() {
     "@/src/lib/services/user-management": {}, "@/src/lib/services/bill-discounts": {},
     "@/src/lib/services/data-migration-validation": { validateMigrationRows: async (_context, database) => { assert.equal(inTransaction, true); assert.equal(database, tx); return { totalRows: 1, skippedRows: dirty ? 1 : 0, correctionRows: 0, warningRows: 0, rows: [{ rowNumber: 2, status: dirty ? "SKIPPED" : "READY", values: { subjectName: "English" }, issues: [] }] }; } },
     "@/src/lib/services/migration-inventory": { getMigrationInventory: async () => ({ version: inventoryVersion, status: "CONFIRMED", rows: [{ key: "subjects", disposition: "INCLUDE" }] }) },
+    "@/src/lib/services/migration-recovery": { requireMigrationRecovery: async (schoolId, version, database) => { assert.equal(inTransaction, true); assert.equal(database, tx); assert.equal(schoolId, "a"); assert.equal(version, inventoryVersion); if (recoveryBlocked) throw new RecoveryError("Migration is on hold."); return null; }, MigrationRecoveryError: RecoveryError },
     "@/src/lib/migration/inventory": { inventorySchema: { safeParse: () => ({ success: true }) } },
     "@/src/lib/services/migration-staging": { loadStagedMigration: async (schoolId) => { if (schoolId !== upload.schoolId) throw new Error("Upload not found"); return { payload, upload: { ...upload } }; }, readStagedImportResult: async (_schoolId, _uploadId, saved) => JSON.parse(saved) },
     "@/src/lib/services/migration-staging-storage": { migrationStagingStorage: { seal: async (text) => text } },
     "@/src/lib/migration/reconciliation": load("src/lib/migration/reconciliation.ts", { zod: { z } }),
   });
-  return { importer, request: { schoolId: "a", actorId: "admin", uploadId }, upload, writes, audits, revise: () => { inventoryVersion += 1; }, markDirty: () => { dirty = true; } };
+  return { importer, request: { schoolId: "a", actorId: "admin", uploadId }, upload, writes, audits, revise: () => { inventoryVersion += 1; }, markDirty: () => { dirty = true; }, hold: () => { recoveryBlocked = true; } };
 }
+
+test("recovery hold blocks imports before record creation and audit consumption", async () => {
+  const { importer, request, writes, audits, upload, hold } = importFixture(); hold();
+  await assert.rejects(importer.importValidatedMigrationRows(request), /on hold/);
+  assert.equal(writes.length, 0); assert.equal(audits.length, 0); assert.equal(upload.status, "VALIDATED");
+});
 test("retrying the same imported upload returns its result without a second write", async () => {
   const { importer, request, writes, audits, upload } = importFixture();
   const first = await importer.importValidatedMigrationRows(request);

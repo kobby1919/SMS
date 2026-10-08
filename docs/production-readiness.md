@@ -21,6 +21,7 @@ This is the return checklist when paying for real services, configuring producti
 - [ ] Point 3: test desktop and mobile migration/review screens, including long names, larger batches, stale browser tabs, held rows, downloads and the strict setup order.
 - [ ] Point 3: verify per-student/per-fee opening balances, discounts and guardian links against source files, not aggregate totals alone. Resolve legacy batches without complete evidence through a separately verified process; never fabricate evidence or silently remove a problematic flag.
 - [ ] Point 4: complete backup, restore drill, recovery/cutover procedure and a rollback decision owner. Restoring a backup must be tested, not merely enabled.
+- [ ] Point 4: follow `docs/migration-recovery.md`. Independently validate recovery evidence, meet the agreed data-loss/recovery targets, renew the production checkpoint and prove HOLD blocks imports/setup. A recorded attestation is not a provider-verified backup. Never restore the shared database to undo one school's migration.
 - [ ] Re-run cross-school and role authorization tests against the production-like environment. No admin can bypass bursar money-recording permissions.
 - [ ] Review dependency advisories and patch exploitable runtime findings. Run regression tests, typecheck, lint and a production build on the deployed commit.
 

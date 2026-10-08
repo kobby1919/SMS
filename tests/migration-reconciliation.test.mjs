@@ -41,6 +41,7 @@ function fixture() {
     "node:crypto": crypto, "@/src/lib/prisma": { default: { $transaction: async (work) => work(tx) } },
     "@/src/generated/prisma": { Prisma: { Decimal, TransactionIsolationLevel: { Serializable: "Serializable", RepeatableRead: "RepeatableRead" } } },
     "@/src/lib/services/migration-inventory": { getMigrationInventory: async (schoolId) => schoolId === "a" ? state.inventory : null },
+    "@/src/lib/services/migration-recovery": { requireMigrationRecovery: async () => {}, MigrationRecoveryError: class extends Error {} },
     "@/src/lib/migration/inventory": inventoryCore, "@/src/lib/migration/reconciliation": core,
   });
   return { state, service, evidence };
