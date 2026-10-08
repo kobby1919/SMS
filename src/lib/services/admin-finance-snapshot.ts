@@ -199,6 +199,7 @@ function buildBillMoneyPosition(
     }
   >();
   const owingItems: {
+    studentId: string;
     billId: number;
     studentName: string;
     className: string;
@@ -320,6 +321,7 @@ function buildBillMoneyPosition(
       owingStudentIds.add(bill.studentId);
       const overdueDays = daysOverdue(bill.dueDate, asOf);
       owingItems.push({
+        studentId: bill.studentId,
         billId: bill.id,
         studentName: `${bill.student.name} ${bill.student.surname}`.trim(),
         className: bill.student.class?.name ?? "No class",
@@ -327,8 +329,7 @@ function buildBillMoneyPosition(
         daysOverdue: overdueDays,
         priority: priorityForOwing(outstanding, overdueDays),
         parentContactStatus: contactStatus({
-          relationship: bill.student.parentRelationships[0] ?? null,
-          legacyParent: bill.student.parent,
+          relationship: bill.student.parentRelationships.find(({ parent }) => parent.email || parent.phone) ?? bill.student.parentRelationships[0] ?? null,
           schoolId: bill.schoolId,
         }),
         href: `/list/finance/bills/${bill.id}`,
@@ -366,6 +367,7 @@ function buildBillMoneyPosition(
       .slice(0, 5),
     highRiskOwingStudents: owingItems
       .sort((a, b) => comparePriority(a.priority, b.priority) || b.amountOwed - a.amountOwed || b.daysOverdue - a.daysOverdue)
+      .filter((item, index, rows) => rows.findIndex((row) => row.studentId === item.studentId) === index)
       .slice(0, 5),
     feeItemBreakdown: Array.from(feeItemMap.values())
       .map((item) => ({
@@ -529,7 +531,6 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
                 parent: { select: { email: true, phone: true } },
               },
               orderBy: [{ role: "asc" }, { updatedAt: "desc" }],
-              take: 1,
             },
           },
         },
@@ -592,6 +593,20 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
       value: pendingOnlinePayments + failedOnlineAttempts,
       tone: pendingOnlinePayments + failedOnlineAttempts > 0 ? "warning" : "ok",
       href: "/list/finance/payments?source=online",
+    },
+    {
+      id: "daily-awaiting-confirmation",
+      label: "Daily collections awaiting confirmation",
+      value: dailyCollections.confirmationStatus.pendingReviewSessions,
+      tone: dailyCollections.confirmationStatus.pendingReviewSessions > 0 ? "warning" : "ok",
+      href: "/list/finance/daily-collections",
+    },
+    {
+      id: "daily-mismatches",
+      label: "Flagged collection mismatches",
+      value: dailyCollections.confirmationStatus.flaggedSessions,
+      tone: dailyCollections.confirmationStatus.flaggedSessions > 0 ? "risk" : "ok",
+      href: "/list/finance/daily-collections",
     },
     {
       id: "students-without-bills",

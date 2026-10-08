@@ -344,7 +344,7 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
             <div>
               <p className="text-sm font-black text-gray-950">High-Risk Owing Students</p>
               <p className="mt-1 text-xs font-semibold text-gray-500">
-                Top follow-ups only. Full debtor work stays in finance.
+                Top 5 students, showing each student&apos;s highest-priority outstanding bill.
               </p>
             </div>
             <Users size={17} className="text-gray-400" />
@@ -367,7 +367,7 @@ export default function AdminFinanceSnapshot({ snapshot }: Props) {
                     <div className="shrink-0 text-left sm:text-right">
                       <p className="text-sm font-black text-gray-950">{formatGHS(student.amountOwed)}</p>
                       <span className={`mt-1 inline-flex rounded-full px-2 py-1 text-[10px] font-black ${priorityTone(student.priority)}`}>
-                        {student.priority} · {student.daysOverdue}d
+                        {student.priority} · {student.daysOverdue} days overdue
                       </span>
                     </div>
                   </div>
