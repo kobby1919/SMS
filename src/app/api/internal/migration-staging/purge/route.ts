@@ -6,7 +6,7 @@ import { purgeExpiredMigrationUploads } from "@/src/lib/services/migration-stagi
 export async function POST(req: NextRequest) {
   const secret = process.env.MIGRATION_STAGING_WORKER_SECRET;
   if (!secret || Buffer.byteLength(secret) < 32) return NextResponse.json({ error: "Migration cleanup worker is not configured." }, { status: 503 });
-  const supplied = req.headers.get("authorization")?.replace(/^Bearer /, "") ?? "";
+  const supplied = req.headers.get("authorization")?.match(/^Bearer (.+)$/)?.[1] ?? "";
   const a = Buffer.from(secret), b = Buffer.from(supplied);
   if (a.length !== b.length || !timingSafeEqual(a, b)) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   try {

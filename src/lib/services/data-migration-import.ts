@@ -639,13 +639,11 @@ export async function importValidatedMigrationRows(
   if (staged.upload.status === "IMPORTED" && staged.upload.encryptedResult) {
     return readStagedImportResult(request.schoolId, request.uploadId, staged.upload.encryptedResult);
   }
-  const context = { ...staged.payload, ...request };
-  const validation = await validateMigrationRows(context);
+  const context = { ...staged.payload, schoolId: request.schoolId, actorId: request.actorId, uploadId: request.uploadId };
+  let validation: Awaited<ReturnType<typeof validateMigrationRows>>;
   const batchId = `mig_${randomUUID()}`;
-  const cleanRows = validation.rows.filter((row) => row.status === "READY" && row.issues.length === 0);
-  const dirtyRows = validation.rows
-    .filter((row) => row.status !== "READY" || row.issues.length > 0)
-    .map((row) => ({ rowNumber: row.rowNumber, status: row.status, issues: row.issues }));
+  let cleanRows: MigrationValidationRow[] = [];
+  let dirtyRows: MigrationImportResult["dirtyRows"] = [];
   const counters: ImportCounters = {
     students: 0,
     parents: 0,
@@ -661,8 +659,7 @@ export async function importValidatedMigrationRows(
   };
   const result = (): MigrationImportResult => ({ batchId: cleanRows.length > 0 ? batchId : null, areaKey: context.areaKey, totalRows: validation.totalRows, importedRows: cleanRows.length, skippedRows: validation.skippedRows, correctionRows: validation.correctionRows, warningRows: validation.warningRows, created: counters, dirtyRows });
 
-  if (cleanRows.length > 0) {
-    await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT "id" FROM "School" WHERE "id" = ${context.schoolId} FOR SHARE`;
       const inventory = await getMigrationInventory(context.schoolId, tx);
       if (inventory?.status !== "CONFIRMED" || !inventorySchema.safeParse(inventory).success || !inventory.rows.some((row) => row.key === context.areaKey && row.disposition === "INCLUDE")) {
@@ -673,6 +670,10 @@ export async function importValidatedMigrationRows(
       const upload = await tx.migrationStagedUpload.findFirst({ where: { id: request.uploadId, schoolId: context.schoolId } });
       if (!upload || upload.status !== "VALIDATED" || !upload.encryptedPayload || upload.expiresAt <= new Date() || upload.checksum !== staged.upload.checksum) throw new MigrationImportError("This upload changed, expired, or was already imported. Refresh the workspace.", 409);
       if (["fees", "feeStructures", "discounts"].includes(context.areaKey)) await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${context.schoolId}), hashtext('finance-migration'))`;
+      validation = await validateMigrationRows(context, tx);
+      cleanRows = validation.rows.filter((row) => row.status === "READY" && row.issues.length === 0);
+      dirtyRows = validation.rows.filter((row) => row.status !== "READY" || row.issues.length > 0).map((row) => ({ rowNumber: row.rowNumber, status: row.status, issues: row.issues }));
+      if (cleanRows.length === 0) return;
       if (context.areaKey === "classes") await importClasses(tx, context.schoolId, cleanRows, counters);
       if (context.areaKey === "subjects") await importSubjects(tx, context.schoolId, cleanRows, counters);
       if (context.areaKey === "students") await importStudents(tx, context.schoolId, context.actorId, cleanRows, counters);
@@ -717,7 +718,6 @@ export async function importValidatedMigrationRows(
       timeout: context.areaKey === "fees" ? 90_000 : 45_000,
       isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
     });
-  }
 
   revalidateDashboard(context.schoolId);
   revalidateReferenceData(context.schoolId, "students");

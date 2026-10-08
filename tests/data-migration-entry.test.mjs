@@ -280,7 +280,7 @@ test("data migration point 4 imports only clean validated rows", () => {
   );
   assertContains(
     migrationImportService,
-    "validateMigrationRows(context)",
+    "validateMigrationRows(context, tx)",
     "Point 4 import must re-run server validation before writing live records.",
   );
   assertContains(

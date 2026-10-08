@@ -14,7 +14,7 @@ function load(file, dependencies = {}, extra = {}) {
     if (name === "server-only") return {};
     if (!(name in dependencies)) throw new Error(`Missing dependency: ${name}`);
     return dependencies[name];
-  }, Buffer, Date, Set, Map, console, ...extra });
+  }, Buffer, Date, Set, Map, console, TextDecoder, ...extra });
   return exports;
 }
 const columns = load("src/lib/migration/column-mapping.ts");
@@ -43,6 +43,8 @@ test("production refuses a missing or weak encryption key", async () => { for (c
 
 test("request bodies are bounded without a content-length header", async () => { const request = new Request("http://localhost/upload", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content: "x".repeat(200) }) }); await assert.rejects(body.readMigrationJson(request, 100), /too large/); });
 test("cross-site writes cannot reuse an admin session", async () => { const request = new Request("http://localhost/upload", { method: "POST", headers: { "Content-Type": "application/json", Origin: "https://other.example" }, body: "{}" }); await assert.rejects(body.readMigrationJson(request, 100), /Cross-site/); });
+test("invalid UTF-8 requests are rejected instead of replacing sensitive characters", async () => { const request = new Request("http://localhost/upload", { method: "POST", headers: { "Content-Type": "application/json" }, body: Buffer.from([0x7b, 0x22, 0x78, 0x22, 0x3a, 0x22, 0xff, 0x22, 0x7d]) }); await assert.rejects(body.readMigrationJson(request, 100), /valid UTF-8/); });
+test("valid bounded JSON remains readable", async () => { const request = new Request("http://localhost/upload", { method: "POST", headers: { "Content-Type": "application/json", Origin: "http://localhost" }, body: '{"ok":true}' }); assert.equal((await body.readMigrationJson(request, 100)).ok, true); });
 test("imports atomically consume the saved snapshot and preserve its checksum", () => { const importer = readFileSync("src/lib/services/data-migration-import.ts", "utf8"); assert.match(importer, /loadStagedMigration\(request.schoolId, request.uploadId\)/); assert.match(importer, /"schoolId" = \$\{context.schoolId\} FOR UPDATE/); assert.match(importer, /inventory.version !== staged.upload.inventoryVersion/); assert.match(importer, /status: "IMPORTED", importedAt:/); assert.match(importer, /sourceChecksum: upload.checksum/); assert.match(importer, /readStagedImportResult/); });
 
 function importFixture() {
@@ -52,19 +54,21 @@ function importFixture() {
   const writes = [];
   const audits = [];
   let inventoryVersion = 3;
+  let inTransaction = false;
+  let dirty = false;
   const tx = { $queryRaw: async () => [{ id: uploadId }], migrationStagedUpload: { findFirst: async () => ({ ...upload }), update: async ({ data }) => Object.assign(upload, data) }, subject: { create: async ({ data }) => { writes.push(data); return data; } }, onboardingAuditLog: { create: async ({ data }) => { audits.push(data); return data; } } };
   const importer = load("src/lib/services/data-migration-import.ts", {
     crypto, "@/src/generated/prisma": { Prisma: { TransactionIsolationLevel: { Serializable: "Serializable" } } },
-    "@/src/lib/prisma": { $transaction: async (work) => work(tx) },
+    "@/src/lib/prisma": { $transaction: async (work) => { inTransaction = true; try { return await work(tx); } finally { inTransaction = false; } } },
     "@/src/lib/cacheTags": { revalidateDashboard() {}, revalidateReferenceData() {} },
     "@/src/lib/services/user-management": {}, "@/src/lib/services/bill-discounts": {},
-    "@/src/lib/services/data-migration-validation": { validateMigrationRows: async () => ({ totalRows: 1, skippedRows: 0, correctionRows: 0, warningRows: 0, rows: [{ rowNumber: 2, status: "READY", values: { subjectName: "English" }, issues: [] }] }) },
+    "@/src/lib/services/data-migration-validation": { validateMigrationRows: async (_context, database) => { assert.equal(inTransaction, true); assert.equal(database, tx); return { totalRows: 1, skippedRows: dirty ? 1 : 0, correctionRows: 0, warningRows: 0, rows: [{ rowNumber: 2, status: dirty ? "SKIPPED" : "READY", values: { subjectName: "English" }, issues: [] }] }; } },
     "@/src/lib/services/migration-inventory": { getMigrationInventory: async () => ({ version: inventoryVersion, status: "CONFIRMED", rows: [{ key: "subjects", disposition: "INCLUDE" }] }) },
     "@/src/lib/migration/inventory": { inventorySchema: { safeParse: () => ({ success: true }) } },
     "@/src/lib/services/migration-staging": { loadStagedMigration: async (schoolId) => { if (schoolId !== upload.schoolId) throw new Error("Upload not found"); return { payload, upload: { ...upload } }; }, readStagedImportResult: async (_schoolId, _uploadId, saved) => JSON.parse(saved) },
     "@/src/lib/services/migration-staging-storage": { migrationStagingStorage: { seal: async (text) => text } },
   });
-  return { importer, request: { schoolId: "a", actorId: "admin", uploadId }, upload, writes, audits, revise: () => { inventoryVersion += 1; } };
+  return { importer, request: { schoolId: "a", actorId: "admin", uploadId }, upload, writes, audits, revise: () => { inventoryVersion += 1; }, markDirty: () => { dirty = true; } };
 }
 test("retrying the same imported upload returns its result without a second write", async () => {
   const { importer, request, writes, audits, upload } = importFixture();
@@ -86,4 +90,45 @@ test("cancelled and expired stages cannot create live records", async () => {
 test("another school cannot import the saved upload", async () => {
   const { importer, request, writes } = importFixture();
   await assert.rejects(importer.importValidatedMigrationRows({ ...request, schoolId: "b" }), /not found/); assert.equal(writes.length, 0);
+});
+test("new validation issues inside the transaction prevent live imports", async () => {
+  const { importer, request, writes, upload, markDirty } = importFixture(); markDirty();
+  const result = await importer.importValidatedMigrationRows(request);
+  assert.equal(result.importedRows, 0); assert.equal(result.batchId, null); assert.equal(writes.length, 0); assert.equal(upload.status, "VALIDATED");
+});
+test("caller-supplied rows cannot override the protected snapshot", async () => {
+  const { importer, request, writes } = importFixture();
+  await importer.importValidatedMigrationRows({ ...request, rows: [["Forged"]], areaKey: "students" });
+  assert.equal(writes.length, 1); assert.equal(writes[0].name, "English");
+});
+
+function stagedServiceFixture(rows) {
+  const db = { migrationStagedUpload: {
+    findFirst: async ({ where }) => rows.find((row) => row.id === where.id && row.schoolId === where.schoolId) ?? null,
+    findMany: async ({ where, select, take }) => rows.filter((row) => row.schoolId === where.schoolId && (where.status ? row.status === "VALIDATED" && row.encryptedPayload !== null : row.status !== "VALIDATED" || row.encryptedPayload === null)).slice(0, take).map((row) => Object.fromEntries(Object.keys(select).map((key) => [key, row[key]]))),
+  } };
+  const adapter = storage().migrationStagingStorage;
+  const service = load("src/lib/services/migration-staging.ts", {
+    "node:crypto": crypto, "@/src/lib/prisma": db, "@/src/lib/services/migration-staging-storage": { migrationStagingStorage: adapter },
+    "@/src/lib/services/migration-staging-parser": parser, "@/src/lib/services/data-migration-validation": {},
+    "@/src/lib/services/migration-inventory": {}, "@/src/lib/migration/inventory": {}, "@/src/lib/migration/staging": staging,
+  });
+  return { service, adapter };
+}
+const stagedRow = () => ({ id: crypto.randomUUID(), schoolId: "a", uploadedBy: "admin", areaKey: "subjects", fileName: "subjects.csv", checksum: crypto.createHash("sha256").update(input().csv).digest("hex"), rowCount: 1, byteSize: Buffer.byteLength(input().csv), inventoryVersion: 3, encryptedPayload: "private", status: "VALIDATED", storageProvider: "DATABASE_ENCRYPTED_V1", createdAt: new Date(), expiresAt: new Date(Date.now() + 60000), batchId: null });
+test("older pending uploads remain visible ahead of recent imported history", async () => {
+  const pending = stagedRow();
+  const history = Array.from({ length: 25 }, () => ({ ...stagedRow(), status: "IMPORTED" }));
+  const { service } = stagedServiceFixture([...history, pending]);
+  const listed = await service.listStagedMigrationUploads("a");
+  assert.equal(listed[0].id, pending.id); assert.equal(listed.length, 11); assert.equal("encryptedPayload" in listed[0], false);
+  assert.equal((await service.listStagedMigrationUploads("b")).length, 0);
+});
+test("stored files are loaded only within their school and verified against metadata", async () => {
+  const row = stagedRow(); const { service, adapter } = stagedServiceFixture([row]);
+  row.encryptedPayload = await adapter.seal(JSON.stringify(input()), { schoolId: "a", uploadId: row.id, purpose: "SOURCE" });
+  assert.equal((await service.loadStagedMigration("a", row.id)).payload.rows[0][0], "English");
+  await assert.rejects(service.loadStagedMigration("b", row.id), /not found/);
+  row.rowCount = 2;
+  await assert.rejects(service.loadStagedMigration("a", row.id), /row count/);
 });

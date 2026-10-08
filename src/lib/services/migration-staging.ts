@@ -24,8 +24,11 @@ export async function stageMigrationUpload(schoolId: string, actorId: string, ra
     await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${schoolId}), hashtext('migration-staging-quota'))`;
     const inventory = await getMigrationInventory(schoolId, tx);
     if (inventory?.status !== "CONFIRMED" || !inventorySchema.safeParse(inventory).success || !inventory.rows.some((r) => r.key === input.areaKey && r.disposition === "INCLUDE")) throw new MigrationStagingError("Confirm the inventory scope for this dataset before saving an upload.", 409);
-    const count = await tx.migrationStagedUpload.count({ where: { schoolId, encryptedPayload: { not: null } } });
-    if (count >= 20) throw new MigrationStagingError("The protected workspace holds up to 20 files. Cancel unused uploads or clear expired files before adding more.", 409);
+    const [pendingCount, retainedCount] = await Promise.all([
+      tx.migrationStagedUpload.count({ where: { schoolId, status: "VALIDATED", encryptedPayload: { not: null } } }),
+      tx.migrationStagedUpload.count({ where: { schoolId, encryptedPayload: { not: null } } }),
+    ]);
+    if (pendingCount >= 20 || retainedCount >= 100) throw new MigrationStagingError("The workspace holds up to 20 pending and 100 retained files. Cancel unused uploads or clear expired files before adding more.", 409);
     return tx.migrationStagedUpload.create({ data: { id, schoolId, uploadedBy: actorId, areaKey: input.areaKey, fileName: input.fileName, checksum: digest, rowCount: payload.rows.length, byteSize: Buffer.byteLength(input.csv, "utf8"), inventoryVersion: inventory.version, storageProvider: migrationStagingStorage.provider, encryptedPayload, expiresAt } }).then(async (saved) => {
       await tx.onboardingAuditLog.create({ data: { schoolId, performedBy: actorId, action: "MIGRATION_UPLOAD_STAGED", metadata: { uploadId: id, checksum: digest, areaKey: input.areaKey, rowCount: payload.rows.length, inventoryVersion: inventory.version, expiresAt: expiresAt.toISOString() } } });
       return saved;
@@ -71,6 +74,11 @@ export async function purgeExpiredMigrationUploads(schoolId: string, actorId: st
 }
 
 export async function listStagedMigrationUploads(schoolId: string) {
-  const uploads = await prisma.migrationStagedUpload.findMany({ where: { schoolId }, orderBy: { createdAt: "desc" }, take: 20, select: { id: true, fileName: true, areaKey: true, status: true, checksum: true, rowCount: true, uploadedBy: true, inventoryVersion: true, createdAt: true, expiresAt: true, batchId: true } });
+  const select = { id: true, fileName: true, areaKey: true, status: true, checksum: true, rowCount: true, uploadedBy: true, inventoryVersion: true, createdAt: true, expiresAt: true, batchId: true } as const;
+  const [pending, history] = await Promise.all([
+    prisma.migrationStagedUpload.findMany({ where: { schoolId, status: "VALIDATED", encryptedPayload: { not: null } }, orderBy: { createdAt: "desc" }, take: 20, select }),
+    prisma.migrationStagedUpload.findMany({ where: { schoolId, OR: [{ status: { not: "VALIDATED" } }, { encryptedPayload: null }] }, orderBy: { createdAt: "desc" }, take: 10, select }),
+  ]);
+  const uploads = [...pending, ...history];
   return uploads.map((row) => ({ ...row, status: row.expiresAt <= new Date() && row.status === "VALIDATED" ? "EXPIRED" : row.status, createdAt: row.createdAt.toISOString(), expiresAt: row.expiresAt.toISOString() }));
 }

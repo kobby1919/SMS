@@ -1,5 +1,5 @@
-import prisma from "@/src/lib/prisma";
-import { DiscountType, FeeCategory } from "@/src/generated/prisma";
+import defaultPrisma from "@/src/lib/prisma";
+import { DiscountType, FeeCategory, type Prisma } from "@/src/generated/prisma";
 import { validateAdmissionNumberForSchool } from "@/src/lib/admission-number";
 import { getMigrationAreaDefinition, type MigrationAreaKey } from "@/src/lib/migration/column-mapping";
 
@@ -155,7 +155,8 @@ function uploadedParentWardKey(values: Record<string, string>) {
   return identity(values.wardAdmissionNumber);
 }
 
-async function existingSets(schoolId: string) {
+async function existingSets(schoolId: string, database: Prisma.TransactionClient = defaultPrisma) {
+  const prisma = database;
   const [
     school,
     classes,
@@ -226,9 +227,10 @@ async function existingSets(schoolId: string) {
 
 export async function validateMigrationRows(
   context: ValidationContext,
+  database: Prisma.TransactionClient = defaultPrisma,
 ): Promise<MigrationValidationResult> {
   const area = getMigrationAreaDefinition(context.areaKey);
-  const existing = await existingSets(context.schoolId);
+  const existing = await existingSets(context.schoolId, database);
   const mappedRows = context.rows.map((row, index) => ({
     rowNumber: index + 2,
     values: mappedValues(context, row),

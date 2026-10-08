@@ -12,7 +12,7 @@ No raw CSV or decrypted storage object is placed in public assets or audit logs.
 
 Only authenticated school admins may list, resume or cancel their school's files.
 Resume revalidates against current school records. Import accepts only an upload ID,
-decrypts the server snapshot and validates again. Inside the live import transaction,
+decrypts the server snapshot. Validation runs inside the serializable live import transaction,
 it checks the current agreed inventory, locks the staging record, checks expiry and
 state, writes clean rows, records the source checksum and marks the upload imported.
 Successful repeats return the saved encrypted result instead of importing twice.
@@ -23,8 +23,12 @@ must be staged again after the scope is revised.
 ## Limits and retention
 
 CSV: 1 MB, 2,000 rows, 120 columns, 2,000 characters per cell. JSON request bodies
-are stream-bounded even without Content-Length. Twenty retained encrypted source
-files per school; the HTTP endpoints are rate-limited. Original source copies expire
+are stream-bounded even without Content-Length. Twenty pending and 100 retained
+encrypted source files per school; pending files are listed before recent history
+so they cannot be hidden by newer imports or cancellations. The HTTP endpoints
+are rate-limited. CSV files must use UTF-8; invalid bytes are rejected rather than
+silently replacing names or identifiers. Checksums cover that original UTF-8 text,
+including any BOM. Original source copies expire
 after seven days. Cancellation clears encrypted source/result immediately and keeps
 the metadata and audit trail. Expired files are cleared when validating another file
 or when an admin selects Clear expired files. Expiry blocks access even before purge.

@@ -186,8 +186,8 @@ export default function DataMigrationMapper() {
 
     setIsReadingFile(true);
     let text: string;
-    try { text = await file.text(); }
-    catch { setError("The file could not be read. Select it again."); return; }
+    try { text = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(await file.arrayBuffer()); }
+    catch { setError("The file could not be read. Export it as a UTF-8 CSV and select it again."); return; }
     finally { setIsReadingFile(false); }
     if (version !== fileVersion.current) return;
     const parsed = parseCsvPreview(text);

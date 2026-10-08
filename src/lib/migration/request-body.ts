@@ -17,5 +17,8 @@ export async function readMigrationJson(request: Request, limit: number) {
       chunks.push(next.value);
     }
   } finally { reader.releaseLock(); }
-  return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+  let json: string;
+  try { json = new TextDecoder("utf-8", { fatal: true }).decode(Buffer.concat(chunks)); }
+  catch { throw new MigrationStagingError("Request body must be valid UTF-8 text."); }
+  return JSON.parse(json);
 }
