@@ -166,7 +166,7 @@ test("data migration point 3 validates rows without importing", () => {
   );
   assertContains(
     migrationMapper,
-    "Validate rows",
+    "Validate and save upload",
     "Point 3 UI must expose validation before import.",
   );
   assertContains(
@@ -196,8 +196,8 @@ test("data migration point 3 validates rows without importing", () => {
   );
   assertContains(
     migrationValidationRoute,
-    "migrationValidationPayloadSchema.safeParse",
-    "Point 3 validation route must validate untrusted request payloads.",
+    "stageMigrationUpload(schoolId, userId, json)",
+    "Point 3 validation route must pass uploads through the server-side staging parser.",
   );
   for (const forbiddenWrite of [
     ".create(",
@@ -270,8 +270,8 @@ test("data migration point 4 imports only clean validated rows", () => {
   );
   assertContains(
     migrationImportRoute,
-    "migrationValidationPayloadSchema.safeParse",
-    "Point 4 import route must validate untrusted import payloads.",
+    "stagedImportSchema.safeParse",
+    "Point 4 import route must accept only a validated staging reference.",
   );
   assertContains(
     migrationImportRoute,
@@ -501,8 +501,8 @@ test("data migration point 5 bulk-invites imported profiles safely", () => {
 test("data migration point 6 records audit batches and controlled review actions", () => {
   assertContains(
     migrationImportRoute,
-    "fileName: parsed.data.fileName",
-    "Point 6 import route must pass uploaded file names into audit metadata.",
+    "uploadId: parsed.data.uploadId",
+    "Point 6 import route must use the saved source rather than a browser-supplied filename.",
   );
   assertContains(
     migrationImportService,
@@ -594,22 +594,22 @@ test("data migration point 2 supports upload and mapping without saving", () => 
   );
   assertContains(
     migrationMapper,
-    "hasUnclosedQuote",
-    "Point 2 mapper must detect unclosed CSV quotes.",
+    "csv-parse/browser/esm/sync",
+    "Point 2 mapper must use the maintained CSV parser to detect malformed quotes.",
   );
   assertContains(
     migrationMapper,
-    "Header row contains a blank column name",
+    "Headers must be non-empty and unique",
     "Point 2 mapper must reject blank CSV headers.",
   );
   assertContains(
     migrationMapper,
-    "appears more than once",
+    "new Set(normalized).size !== headers.length",
     "Point 2 mapper must reject duplicate CSV headers.",
   );
   assertContains(
     migrationMapper,
-    "value(s), expected",
+    "Check quoting and column counts",
     "Point 2 mapper must flag preview rows whose cell count does not match the header.",
   );
   assertContains(

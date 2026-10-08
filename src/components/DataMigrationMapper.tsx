@@ -1,6 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
+import { parse as parseCsv } from "csv-parse/browser/esm/sync";
+import MigrationUploadsPanel from "@/src/components/MigrationUploadsPanel";
 import MigrationFinanceReview from "@/src/components/MigrationFinanceReview";
 import {
   AlertTriangle,
@@ -36,6 +38,9 @@ type ValidationRow = {
 };
 
 type ValidationResult = {
+  uploadId: string;
+  checksum: string;
+  expiresAt: string;
   totalRows: number;
   readyRows: number;
   skippedRows: number;
@@ -77,95 +82,15 @@ type ParsedCsv = {
   issues: string[];
 };
 
-type ParsedCsvLine = {
-  values: string[];
-  hasUnclosedQuote: boolean;
-};
-
-function parseCsvLine(line: string): ParsedCsvLine {
-  const values: string[] = [];
-  let current = "";
-  let inQuotes = false;
-
-  for (let index = 0; index < line.length; index += 1) {
-    const character = line[index];
-    const nextCharacter = line[index + 1];
-
-    if (character === '"' && inQuotes && nextCharacter === '"') {
-      current += '"';
-      index += 1;
-      continue;
-    }
-
-    if (character === '"') {
-      inQuotes = !inQuotes;
-      continue;
-    }
-
-    if (character === "," && !inQuotes) {
-      values.push(current.trim());
-      current = "";
-      continue;
-    }
-
-    current += character;
-  }
-
-  values.push(current.trim());
-  return { values, hasUnclosedQuote: inQuotes };
-}
-
 function parseCsvPreview(csv: string): ParsedCsv {
-  const lines = csv
-    .replace(/^\uFEFF/, "")
-    .split(/\r?\n/)
-    .filter((line) => line.trim().length > 0);
-
-  if (lines.length === 0) {
-    return { headers: [], rows: [], issues: [] };
-  }
-
-  const issues: string[] = [];
-  const headerLine = parseCsvLine(lines[0]);
-  const headers = headerLine.values.map((header) => header.trim());
-
-  if (headerLine.hasUnclosedQuote) {
-    issues.push("Header row has an unclosed quote. Fix the CSV before validation.");
-  }
-
-  if (headers.some((header) => header.length === 0)) {
-    issues.push("Header row contains a blank column name. Rename blank columns before validation.");
-  }
-
-  const normalizedHeaderCounts = new Map<string, number>();
-  for (const header of headers) {
-    const normalized = header.trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
-    if (!normalized) continue;
-    normalizedHeaderCounts.set(normalized, (normalizedHeaderCounts.get(normalized) ?? 0) + 1);
-  }
-
-  for (const header of headers) {
-    const normalized = header.trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
-    if (normalized && (normalizedHeaderCounts.get(normalized) ?? 0) > 1) {
-      issues.push(`Header "${header}" appears more than once. Rename duplicate columns before validation.`);
-      break;
-    }
-  }
-
-  const rows = lines.slice(1).map((line, rowIndex) => {
-    const parsed = parseCsvLine(line);
-    if (parsed.hasUnclosedQuote) {
-      issues.push(`Preview row ${rowIndex + 1} has an unclosed quote. Fix the CSV before validation.`);
-    }
-    if (parsed.values.length !== headers.length) {
-      issues.push(
-        `Preview row ${rowIndex + 1} has ${parsed.values.length} value(s), expected ${headers.length}.`,
-      );
-    }
-    return parsed.values;
-  });
-
-  return { headers, rows, issues: [...new Set(issues)] };
+  try {
+    const records: string[][] = parseCsv(csv, { bom: true, trim: true, skip_empty_lines: true, max_record_size: 250000 });
+    const [headers = [], ...rows] = records;
+    const normalized = headers.map((header) => header.toLowerCase().replace(/[^a-z0-9]/g, ""));
+    const issues = normalized.some((header) => !header) || new Set(normalized).size !== headers.length ? ["Headers must be non-empty and unique."] : [];
+    if (rows.length > 2000) issues.push("Split the file into batches of at most 2,000 rows.");
+    return { headers, rows, issues };
+  } catch { return { headers: [], rows: [], issues: ["CSV format is invalid. Check quoting and column counts."] }; }
 }
 
 function duplicateMappedHeaders(mapping: Record<string, string>) {
@@ -181,6 +106,9 @@ function displayHeader(header: string, index: number) {
 }
 
 export default function DataMigrationMapper() {
+  const fileVersion = useRef(0);
+  const [csvSource, setCsvSource] = useState("");
+  const [isReadingFile, setIsReadingFile] = useState(false);
   const [areaKey, setAreaKey] = useState<MigrationAreaKey>("students");
   const [fileName, setFileName] = useState("");
   const [rowEstimate, setRowEstimate] = useState(0);
@@ -194,6 +122,7 @@ export default function DataMigrationMapper() {
   const [isValidating, setIsValidating] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const busy = isValidating || isImporting || isReadingFile;
 
   const area = useMemo(() => getMigrationAreaDefinition(areaKey), [areaKey]);
   const templateHref = useMemo(
@@ -214,6 +143,8 @@ export default function DataMigrationMapper() {
     : 0;
 
   function resetForArea(nextAreaKey: MigrationAreaKey) {
+    fileVersion.current += 1;
+    setCsvSource("");
     setAreaKey(nextAreaKey);
     setFileName("");
     setRowEstimate(0);
@@ -228,6 +159,8 @@ export default function DataMigrationMapper() {
   }
 
   async function handleFile(file: File | undefined) {
+    const version = ++fileVersion.current;
+    setCsvSource("");
     setError(null);
     setHeaders([]);
     setAllRows([]);
@@ -251,7 +184,12 @@ export default function DataMigrationMapper() {
       return;
     }
 
-    const text = await file.text();
+    setIsReadingFile(true);
+    let text: string;
+    try { text = await file.text(); }
+    catch { setError("The file could not be read. Select it again."); return; }
+    finally { setIsReadingFile(false); }
+    if (version !== fileVersion.current) return;
     const parsed = parseCsvPreview(text);
 
     if (parsed.headers.length === 0 || parsed.headers.every((header) => header.length === 0)) {
@@ -260,7 +198,7 @@ export default function DataMigrationMapper() {
     }
 
     const suggested = suggestColumnMapping(parsed.headers, area);
-
+    setCsvSource(text);
     setFileName(file.name);
     setRowEstimate(parsed.rows.length);
     setHeaders(parsed.headers);
@@ -290,9 +228,8 @@ export default function DataMigrationMapper() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           areaKey,
-          headers,
           mapping,
-          rows: allRows,
+          csv: csvSource,
           fileName,
         }),
       });
@@ -310,7 +247,7 @@ export default function DataMigrationMapper() {
   }
 
   async function importCleanRows() {
-    if (!validation || cleanValidationRows === 0 || isImporting) return;
+    if (!validation?.uploadId || cleanValidationRows === 0 || busy) return;
 
     setError(null);
     setImportResult(null);
@@ -320,13 +257,7 @@ export default function DataMigrationMapper() {
       const response = await fetch("/api/admin/data-migration/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          areaKey,
-          headers,
-          mapping,
-          rows: allRows,
-          fileName,
-        }),
+        body: JSON.stringify({ uploadId: validation.uploadId }),
       });
       const payload = await response.json();
       if (!response.ok) {
@@ -342,8 +273,26 @@ export default function DataMigrationMapper() {
     }
   }
 
+  async function resumeUpload(id: string) {
+    if (busy) return;
+    setIsValidating(true); setError(null);
+    try {
+      const response = await fetch(`/api/admin/data-migration/uploads/${id}`, { cache: "no-store" });
+      const saved = await response.json();
+      if (!response.ok) throw new Error(saved.error ?? "Unable to resume upload.");
+      fileVersion.current += 1;
+      setAreaKey(saved.payload.areaKey); setFileName(saved.payload.fileName);
+      setHeaders(saved.payload.headers); setAllRows(saved.payload.rows);
+      setPreviewRows(saved.payload.rows.slice(0, MAX_PREVIEW_ROWS)); setRowEstimate(saved.payload.rows.length);
+      setMapping(saved.payload.mapping); setCsvSource(saved.csv); setCsvIssues([]);
+      setValidation(saved.validation); setImportResult(null);
+    } catch (error) { setError(error instanceof Error ? error.message : "Unable to resume upload."); }
+    finally { setIsValidating(false); }
+  }
+
   return (
     <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+      <MigrationUploadsPanel onResume={resumeUpload} revision={importResult?.batchId ?? validation?.uploadId ?? "initial"} disabled={busy} onCancelled={(id) => { if (validation?.uploadId === id) setValidation(null); }} />
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-black uppercase tracking-wide text-blue-700">
@@ -372,6 +321,7 @@ export default function DataMigrationMapper() {
             <span className="text-xs font-black uppercase tracking-wide text-gray-400">Migration area</span>
             <select
               value={areaKey}
+              disabled={busy}
               onChange={(event) => resetForArea(event.target.value as MigrationAreaKey)}
               className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-3 py-3 text-sm font-black text-gray-700 outline-none transition focus:border-blue-400"
             >
@@ -393,6 +343,7 @@ export default function DataMigrationMapper() {
             </p>
             <input
               type="file"
+              disabled={busy}
               accept=".csv,text/csv"
               onChange={(event) => void handleFile(event.target.files?.[0])}
               className="mt-3 w-full text-xs font-semibold text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-700 file:px-3 file:py-2 file:text-xs file:font-black file:text-white"
@@ -459,7 +410,7 @@ export default function DataMigrationMapper() {
                     value={mapping[field.key] ?? ""}
                     onChange={(event) => updateMapping(field.key, event.target.value)}
                     className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-bold text-gray-700 outline-none transition focus:border-blue-400"
-                    disabled={headers.length === 0}
+                    disabled={headers.length === 0 || busy}
                   >
                     <option value="">Not mapped</option>
                     {headers.map((header, index) => (
@@ -526,16 +477,17 @@ export default function DataMigrationMapper() {
                 <button
                   type="button"
                   onClick={() => void validateRows()}
-                  disabled={!readyForValidation || isValidating || allRows.length === 0}
+                  disabled={!readyForValidation || busy || allRows.length === 0}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3 text-xs font-black text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-gray-300 sm:w-auto"
                 >
                   {isValidating ? <Loader2 size={15} className="animate-spin" /> : <ShieldCheck size={15} />}
-                  Validate rows
+                  Validate and save upload
                 </button>
               </div>
 
               {validation ? (
                 <div className="mt-4 space-y-4">
+                  <p className="break-words text-xs text-blue-900">Protected copy saved · File ID {validation.uploadId.slice(0, 8)} · Expires {validation.expiresAt.slice(0, 10)}. Import uses this saved copy.</p>
                   <div className="grid grid-cols-2 gap-2 lg:grid-cols-5">
                     {[
                       ["Rows checked", validation.totalRows, "text-gray-950"],
@@ -563,7 +515,7 @@ export default function DataMigrationMapper() {
                     <div className="divide-y divide-gray-100">
                       {validation.rows.filter((row) => row.issues.length > 0).slice(0, 12).length === 0 ? (
                         <p className="px-4 py-3 text-sm font-bold text-emerald-700">
-                          No validation issues found. These rows are ready for the future safe import step.
+                          No validation issues found. Review the saved upload before importing clean rows.
                         </p>
                       ) : (
                         validation.rows
@@ -613,7 +565,7 @@ export default function DataMigrationMapper() {
                       <button
                         type="button"
                         onClick={() => void importCleanRows()}
-                        disabled={cleanValidationRows === 0 || isImporting}
+                        disabled={cleanValidationRows === 0 || busy || !validation.uploadId}
                         className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 text-xs font-black text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-300 sm:w-auto"
                       >
                         {isImporting ? <Loader2 size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}

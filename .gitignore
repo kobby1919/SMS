@@ -21,6 +21,7 @@
 /build
 
 # misc
+/.private/
 .DS_Store
 *.pem
 

@@ -28,6 +28,7 @@ interface CustomGlobal extends Global {
 
 const customGlobal = global as unknown as CustomGlobal;
 const requiredDelegates = [
+  "migrationStagedUpload",
   "schoolCommunicationPolicy",
   "schoolCommunicationRoute",
   "parentTeacherContactRequest",

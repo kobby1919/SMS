@@ -25,6 +25,8 @@ import type { MigrationValidationPayload } from "@/src/lib/validation/data-migra
 import { applyDiscountInTransaction } from "@/src/lib/services/bill-discounts";
 import { getMigrationInventory } from "@/src/lib/services/migration-inventory";
 import { inventorySchema } from "@/src/lib/migration/inventory";
+import { loadStagedMigration, readStagedImportResult } from "@/src/lib/services/migration-staging";
+import { migrationStagingStorage } from "@/src/lib/services/migration-staging-storage";
 
 export type MigrationImportResult = {
   batchId: string | null;
@@ -64,9 +66,10 @@ export class MigrationImportError extends Error {
   }
 }
 
-type ImportContext = MigrationValidationPayload & {
+type ImportContext = {
   schoolId: string;
   actorId: string;
+  uploadId: string;
 };
 
 type ImportCounters = MigrationImportResult["created"];
@@ -630,8 +633,13 @@ async function importDiscounts(tx: Prisma.TransactionClient, schoolId: string, a
 }
 
 export async function importValidatedMigrationRows(
-  context: ImportContext,
+  request: ImportContext,
 ): Promise<MigrationImportResult> {
+  const staged = await loadStagedMigration(request.schoolId, request.uploadId);
+  if (staged.upload.status === "IMPORTED" && staged.upload.encryptedResult) {
+    return readStagedImportResult(request.schoolId, request.uploadId, staged.upload.encryptedResult);
+  }
+  const context = { ...staged.payload, ...request };
   const validation = await validateMigrationRows(context);
   const batchId = `mig_${randomUUID()}`;
   const cleanRows = validation.rows.filter((row) => row.status === "READY" && row.issues.length === 0);
@@ -651,6 +659,7 @@ export async function importValidatedMigrationRows(
     feeStructures: 0,
     discounts: 0,
   };
+  const result = (): MigrationImportResult => ({ batchId: cleanRows.length > 0 ? batchId : null, areaKey: context.areaKey, totalRows: validation.totalRows, importedRows: cleanRows.length, skippedRows: validation.skippedRows, correctionRows: validation.correctionRows, warningRows: validation.warningRows, created: counters, dirtyRows });
 
   if (cleanRows.length > 0) {
     await prisma.$transaction(async (tx) => {
@@ -659,6 +668,10 @@ export async function importValidatedMigrationRows(
       if (inventory?.status !== "CONFIRMED" || !inventorySchema.safeParse(inventory).success || !inventory.rows.some((row) => row.key === context.areaKey && row.disposition === "INCLUDE")) {
         throw new MigrationImportError("Confirm a migration inventory that includes this dataset before importing.", 409);
       }
+      if (inventory.version !== staged.upload.inventoryVersion) throw new MigrationImportError("The inventory scope changed after this upload. Stage and validate the file again.", 409);
+      await tx.$queryRaw`SELECT "id" FROM "MigrationStagedUpload" WHERE "id" = ${request.uploadId} AND "schoolId" = ${context.schoolId} FOR UPDATE`;
+      const upload = await tx.migrationStagedUpload.findFirst({ where: { id: request.uploadId, schoolId: context.schoolId } });
+      if (!upload || upload.status !== "VALIDATED" || !upload.encryptedPayload || upload.expiresAt <= new Date() || upload.checksum !== staged.upload.checksum) throw new MigrationImportError("This upload changed, expired, or was already imported. Refresh the workspace.", 409);
       if (["fees", "feeStructures", "discounts"].includes(context.areaKey)) await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${context.schoolId}), hashtext('finance-migration'))`;
       if (context.areaKey === "classes") await importClasses(tx, context.schoolId, cleanRows, counters);
       if (context.areaKey === "subjects") await importSubjects(tx, context.schoolId, cleanRows, counters);
@@ -678,6 +691,8 @@ export async function importValidatedMigrationRows(
           metadata: {
             importType: context.areaKey,
             inventoryVersion: inventory.version,
+            uploadId: request.uploadId,
+            sourceChecksum: upload.checksum,
             rowCount: context.rows.length,
             importedRows: cleanRows.length,
             skippedRows: dirtyRows.length,
@@ -695,6 +710,8 @@ export async function importValidatedMigrationRows(
           },
         },
       });
+      const encryptedResult = await migrationStagingStorage.seal(JSON.stringify(result()), { schoolId: context.schoolId, uploadId: request.uploadId, purpose: "RESULT" });
+      await tx.migrationStagedUpload.update({ where: { id: request.uploadId }, data: { status: "IMPORTED", importedAt: new Date(), batchId, encryptedResult } });
     }, {
       maxWait: 15_000,
       timeout: context.areaKey === "fees" ? 90_000 : 45_000,
@@ -709,15 +726,5 @@ export async function importValidatedMigrationRows(
   revalidateReferenceData(context.schoolId, "classes");
   revalidateReferenceData(context.schoolId, "subjects");
 
-  return {
-    batchId: cleanRows.length > 0 ? batchId : null,
-    areaKey: context.areaKey,
-    totalRows: validation.totalRows,
-    importedRows: cleanRows.length,
-    skippedRows: validation.skippedRows,
-    correctionRows: validation.correctionRows,
-    warningRows: validation.warningRows,
-    created: counters,
-    dirtyRows,
-  };
+  return result();
 }

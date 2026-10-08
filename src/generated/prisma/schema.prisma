@@ -380,6 +380,9 @@ enum OnboardingAuditAction {
   DEFAULT_ACADEMICS_CREATED
   IMPORT_RECORDED
   MIGRATION_INVENTORY_RECORDED
+  MIGRATION_UPLOAD_STAGED
+  MIGRATION_UPLOAD_CANCELLED
+  MIGRATION_UPLOAD_EXPIRED
   ONBOARDING_COMPLETED
 }
 
@@ -773,6 +776,7 @@ model School {
   invites                        SchoolInvite[]
   waitlistEntries                WaitlistEntry[]
   onboardingAuditLogs            OnboardingAuditLog[]
+  migrationUploads               MigrationStagedUpload[]
   financeJobs                    FinanceJob[]
   paymentWebhookEvents           PaymentWebhookEvent[]
   teacherInvites                 TeacherInvite[]
@@ -3136,4 +3140,35 @@ model OnboardingAuditLog {
 
   @@index([schoolId, createdAt])
   @@index([action, createdAt])
+}
+
+enum MigrationUploadStatus {
+  VALIDATED
+  IMPORTED
+  CANCELLED
+  EXPIRED
+}
+
+model MigrationStagedUpload {
+  id               String                @id
+  schoolId         String
+  uploadedBy       String
+  areaKey          String
+  fileName         String
+  checksum         String
+  rowCount         Int
+  byteSize         Int
+  inventoryVersion Int
+  storageProvider  String
+  encryptedPayload String?
+  encryptedResult  String?
+  status           MigrationUploadStatus @default(VALIDATED)
+  batchId          String?               @unique
+  createdAt        DateTime              @default(now())
+  expiresAt        DateTime
+  importedAt       DateTime?
+  school           School                @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+
+  @@index([schoolId, createdAt])
+  @@index([status, expiresAt])
 }

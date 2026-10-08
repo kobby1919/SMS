@@ -1490,6 +1490,26 @@ exports.Prisma.OnboardingAuditLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.MigrationStagedUploadScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  uploadedBy: 'uploadedBy',
+  areaKey: 'areaKey',
+  fileName: 'fileName',
+  checksum: 'checksum',
+  rowCount: 'rowCount',
+  byteSize: 'byteSize',
+  inventoryVersion: 'inventoryVersion',
+  storageProvider: 'storageProvider',
+  encryptedPayload: 'encryptedPayload',
+  encryptedResult: 'encryptedResult',
+  status: 'status',
+  batchId: 'batchId',
+  createdAt: 'createdAt',
+  expiresAt: 'expiresAt',
+  importedAt: 'importedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2205,7 +2225,17 @@ exports.OnboardingAuditAction = exports.$Enums.OnboardingAuditAction = {
   DEFAULT_ACADEMICS_CREATED: 'DEFAULT_ACADEMICS_CREATED',
   IMPORT_RECORDED: 'IMPORT_RECORDED',
   MIGRATION_INVENTORY_RECORDED: 'MIGRATION_INVENTORY_RECORDED',
+  MIGRATION_UPLOAD_STAGED: 'MIGRATION_UPLOAD_STAGED',
+  MIGRATION_UPLOAD_CANCELLED: 'MIGRATION_UPLOAD_CANCELLED',
+  MIGRATION_UPLOAD_EXPIRED: 'MIGRATION_UPLOAD_EXPIRED',
   ONBOARDING_COMPLETED: 'ONBOARDING_COMPLETED'
+};
+
+exports.MigrationUploadStatus = exports.$Enums.MigrationUploadStatus = {
+  VALIDATED: 'VALIDATED',
+  IMPORTED: 'IMPORTED',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED'
 };
 
 exports.Prisma.ModelName = {
@@ -2297,7 +2327,8 @@ exports.Prisma.ModelName = {
   CollectorInviteAuditLog: 'CollectorInviteAuditLog',
   ParentAccessAuditLog: 'ParentAccessAuditLog',
   TeacherInviteAuditLog: 'TeacherInviteAuditLog',
-  OnboardingAuditLog: 'OnboardingAuditLog'
+  OnboardingAuditLog: 'OnboardingAuditLog',
+  MigrationStagedUpload: 'MigrationStagedUpload'
 };
 
 /**

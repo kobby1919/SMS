@@ -458,6 +458,11 @@ export type TeacherInviteAuditLog = $Result.DefaultSelection<Prisma.$TeacherInvi
  * 
  */
 export type OnboardingAuditLog = $Result.DefaultSelection<Prisma.$OnboardingAuditLogPayload>
+/**
+ * Model MigrationStagedUpload
+ * 
+ */
+export type MigrationStagedUpload = $Result.DefaultSelection<Prisma.$MigrationStagedUploadPayload>
 
 /**
  * Enums
@@ -966,6 +971,9 @@ export const OnboardingAuditAction: {
   DEFAULT_ACADEMICS_CREATED: 'DEFAULT_ACADEMICS_CREATED',
   IMPORT_RECORDED: 'IMPORT_RECORDED',
   MIGRATION_INVENTORY_RECORDED: 'MIGRATION_INVENTORY_RECORDED',
+  MIGRATION_UPLOAD_STAGED: 'MIGRATION_UPLOAD_STAGED',
+  MIGRATION_UPLOAD_CANCELLED: 'MIGRATION_UPLOAD_CANCELLED',
+  MIGRATION_UPLOAD_EXPIRED: 'MIGRATION_UPLOAD_EXPIRED',
   ONBOARDING_COMPLETED: 'ONBOARDING_COMPLETED'
 };
 
@@ -1397,6 +1405,16 @@ export const TeacherAccountabilityAuditAction: {
 
 export type TeacherAccountabilityAuditAction = (typeof TeacherAccountabilityAuditAction)[keyof typeof TeacherAccountabilityAuditAction]
 
+
+export const MigrationUploadStatus: {
+  VALIDATED: 'VALIDATED',
+  IMPORTED: 'IMPORTED',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED'
+};
+
+export type MigrationUploadStatus = (typeof MigrationUploadStatus)[keyof typeof MigrationUploadStatus]
+
 }
 
 export type UserSex = $Enums.UserSex
@@ -1726,6 +1744,10 @@ export const TeacherCorrectionRequestStatus: typeof $Enums.TeacherCorrectionRequ
 export type TeacherAccountabilityAuditAction = $Enums.TeacherAccountabilityAuditAction
 
 export const TeacherAccountabilityAuditAction: typeof $Enums.TeacherAccountabilityAuditAction
+
+export type MigrationUploadStatus = $Enums.MigrationUploadStatus
+
+export const MigrationUploadStatus: typeof $Enums.MigrationUploadStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -2737,6 +2759,16 @@ export class PrismaClient<
     * ```
     */
   get onboardingAuditLog(): Prisma.OnboardingAuditLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.migrationStagedUpload`: Exposes CRUD operations for the **MigrationStagedUpload** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MigrationStagedUploads
+    * const migrationStagedUploads = await prisma.migrationStagedUpload.findMany()
+    * ```
+    */
+  get migrationStagedUpload(): Prisma.MigrationStagedUploadDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -3259,7 +3291,8 @@ export namespace Prisma {
     CollectorInviteAuditLog: 'CollectorInviteAuditLog',
     ParentAccessAuditLog: 'ParentAccessAuditLog',
     TeacherInviteAuditLog: 'TeacherInviteAuditLog',
-    OnboardingAuditLog: 'OnboardingAuditLog'
+    OnboardingAuditLog: 'OnboardingAuditLog',
+    MigrationStagedUpload: 'MigrationStagedUpload'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -3275,7 +3308,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "bursar" | "collector" | "student" | "teacher" | "parent" | "parentStudentRelationship" | "schoolPaymentSetting" | "schoolNotificationSetting" | "appNotificationSetting" | "appNotificationPreference" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "schoolPeriodTemplate" | "timetablePublication" | "publishedTimetableLesson" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "appNotification" | "appNotificationDelivery" | "appNotificationAuditLog" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentTeacherContactMessage" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "dailyCollectionType" | "dailyCollectionTypeCollector" | "dailyCollectionSession" | "dailyCollectionEntry" | "dailyCollectionAuditLog" | "studentBill" | "billLineItem" | "paymentIntent" | "paymentIntentLine" | "payment" | "paymentCorrectionRequest" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "teacherInvite" | "parentInvite" | "parentInviteStudent" | "parentInviteAuditLog" | "bursarInvite" | "bursarInviteAuditLog" | "collectorInvite" | "collectorInviteAuditLog" | "parentAccessAuditLog" | "teacherInviteAuditLog" | "onboardingAuditLog"
+      modelProps: "school" | "admin" | "bursar" | "collector" | "student" | "teacher" | "parent" | "parentStudentRelationship" | "schoolPaymentSetting" | "schoolNotificationSetting" | "appNotificationSetting" | "appNotificationPreference" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "schoolPeriodTemplate" | "timetablePublication" | "publishedTimetableLesson" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "appNotification" | "appNotificationDelivery" | "appNotificationAuditLog" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentTeacherContactMessage" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "dailyCollectionType" | "dailyCollectionTypeCollector" | "dailyCollectionSession" | "dailyCollectionEntry" | "dailyCollectionAuditLog" | "studentBill" | "billLineItem" | "paymentIntent" | "paymentIntentLine" | "payment" | "paymentCorrectionRequest" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "teacherInvite" | "parentInvite" | "parentInviteStudent" | "parentInviteAuditLog" | "bursarInvite" | "bursarInviteAuditLog" | "collectorInvite" | "collectorInviteAuditLog" | "parentAccessAuditLog" | "teacherInviteAuditLog" | "onboardingAuditLog" | "migrationStagedUpload"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -9865,6 +9898,80 @@ export namespace Prisma {
           }
         }
       }
+      MigrationStagedUpload: {
+        payload: Prisma.$MigrationStagedUploadPayload<ExtArgs>
+        fields: Prisma.MigrationStagedUploadFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MigrationStagedUploadFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MigrationStagedUploadPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MigrationStagedUploadFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MigrationStagedUploadPayload>
+          }
+          findFirst: {
+            args: Prisma.MigrationStagedUploadFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MigrationStagedUploadPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MigrationStagedUploadFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MigrationStagedUploadPayload>
+          }
+          findMany: {
+            args: Prisma.MigrationStagedUploadFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MigrationStagedUploadPayload>[]
+          }
+          create: {
+            args: Prisma.MigrationStagedUploadCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MigrationStagedUploadPayload>
+          }
+          createMany: {
+            args: Prisma.MigrationStagedUploadCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MigrationStagedUploadCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MigrationStagedUploadPayload>[]
+          }
+          delete: {
+            args: Prisma.MigrationStagedUploadDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MigrationStagedUploadPayload>
+          }
+          update: {
+            args: Prisma.MigrationStagedUploadUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MigrationStagedUploadPayload>
+          }
+          deleteMany: {
+            args: Prisma.MigrationStagedUploadDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MigrationStagedUploadUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MigrationStagedUploadUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MigrationStagedUploadPayload>[]
+          }
+          upsert: {
+            args: Prisma.MigrationStagedUploadUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MigrationStagedUploadPayload>
+          }
+          aggregate: {
+            args: Prisma.MigrationStagedUploadAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMigrationStagedUpload>
+          }
+          groupBy: {
+            args: Prisma.MigrationStagedUploadGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MigrationStagedUploadGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MigrationStagedUploadCountArgs<ExtArgs>
+            result: $Utils.Optional<MigrationStagedUploadCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -10062,6 +10169,7 @@ export namespace Prisma {
     parentAccessAuditLog?: ParentAccessAuditLogOmit
     teacherInviteAuditLog?: TeacherInviteAuditLogOmit
     onboardingAuditLog?: OnboardingAuditLogOmit
+    migrationStagedUpload?: MigrationStagedUploadOmit
   }
 
   /* Types for Logging */
@@ -10194,6 +10302,7 @@ export namespace Prisma {
     invites: number
     waitlistEntries: number
     onboardingAuditLogs: number
+    migrationUploads: number
     financeJobs: number
     paymentWebhookEvents: number
     teacherInvites: number
@@ -10273,6 +10382,7 @@ export namespace Prisma {
     invites?: boolean | SchoolCountOutputTypeCountInvitesArgs
     waitlistEntries?: boolean | SchoolCountOutputTypeCountWaitlistEntriesArgs
     onboardingAuditLogs?: boolean | SchoolCountOutputTypeCountOnboardingAuditLogsArgs
+    migrationUploads?: boolean | SchoolCountOutputTypeCountMigrationUploadsArgs
     financeJobs?: boolean | SchoolCountOutputTypeCountFinanceJobsArgs
     paymentWebhookEvents?: boolean | SchoolCountOutputTypeCountPaymentWebhookEventsArgs
     teacherInvites?: boolean | SchoolCountOutputTypeCountTeacherInvitesArgs
@@ -10672,6 +10782,13 @@ export namespace Prisma {
    */
   export type SchoolCountOutputTypeCountOnboardingAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OnboardingAuditLogWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountMigrationUploadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MigrationStagedUploadWhereInput
   }
 
   /**
@@ -13009,6 +13126,7 @@ export namespace Prisma {
     invites?: boolean | School$invitesArgs<ExtArgs>
     waitlistEntries?: boolean | School$waitlistEntriesArgs<ExtArgs>
     onboardingAuditLogs?: boolean | School$onboardingAuditLogsArgs<ExtArgs>
+    migrationUploads?: boolean | School$migrationUploadsArgs<ExtArgs>
     financeJobs?: boolean | School$financeJobsArgs<ExtArgs>
     paymentWebhookEvents?: boolean | School$paymentWebhookEventsArgs<ExtArgs>
     teacherInvites?: boolean | School$teacherInvitesArgs<ExtArgs>
@@ -13158,6 +13276,7 @@ export namespace Prisma {
     invites?: boolean | School$invitesArgs<ExtArgs>
     waitlistEntries?: boolean | School$waitlistEntriesArgs<ExtArgs>
     onboardingAuditLogs?: boolean | School$onboardingAuditLogsArgs<ExtArgs>
+    migrationUploads?: boolean | School$migrationUploadsArgs<ExtArgs>
     financeJobs?: boolean | School$financeJobsArgs<ExtArgs>
     paymentWebhookEvents?: boolean | School$paymentWebhookEventsArgs<ExtArgs>
     teacherInvites?: boolean | School$teacherInvitesArgs<ExtArgs>
@@ -13247,6 +13366,7 @@ export namespace Prisma {
       invites: Prisma.$SchoolInvitePayload<ExtArgs>[]
       waitlistEntries: Prisma.$WaitlistEntryPayload<ExtArgs>[]
       onboardingAuditLogs: Prisma.$OnboardingAuditLogPayload<ExtArgs>[]
+      migrationUploads: Prisma.$MigrationStagedUploadPayload<ExtArgs>[]
       financeJobs: Prisma.$FinanceJobPayload<ExtArgs>[]
       paymentWebhookEvents: Prisma.$PaymentWebhookEventPayload<ExtArgs>[]
       teacherInvites: Prisma.$TeacherInvitePayload<ExtArgs>[]
@@ -13742,6 +13862,7 @@ export namespace Prisma {
     invites<T extends School$invitesArgs<ExtArgs> = {}>(args?: Subset<T, School$invitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     waitlistEntries<T extends School$waitlistEntriesArgs<ExtArgs> = {}>(args?: Subset<T, School$waitlistEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WaitlistEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     onboardingAuditLogs<T extends School$onboardingAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$onboardingAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    migrationUploads<T extends School$migrationUploadsArgs<ExtArgs> = {}>(args?: Subset<T, School$migrationUploadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MigrationStagedUploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     financeJobs<T extends School$financeJobsArgs<ExtArgs> = {}>(args?: Subset<T, School$financeJobsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     paymentWebhookEvents<T extends School$paymentWebhookEventsArgs<ExtArgs> = {}>(args?: Subset<T, School$paymentWebhookEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teacherInvites<T extends School$teacherInvitesArgs<ExtArgs> = {}>(args?: Subset<T, School$teacherInvitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -15474,6 +15595,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: OnboardingAuditLogScalarFieldEnum | OnboardingAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * School.migrationUploads
+   */
+  export type School$migrationUploadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MigrationStagedUpload
+     */
+    select?: MigrationStagedUploadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MigrationStagedUpload
+     */
+    omit?: MigrationStagedUploadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MigrationStagedUploadInclude<ExtArgs> | null
+    where?: MigrationStagedUploadWhereInput
+    orderBy?: MigrationStagedUploadOrderByWithRelationInput | MigrationStagedUploadOrderByWithRelationInput[]
+    cursor?: MigrationStagedUploadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MigrationStagedUploadScalarFieldEnum | MigrationStagedUploadScalarFieldEnum[]
   }
 
   /**
@@ -125086,6 +125231,1267 @@ export namespace Prisma {
 
 
   /**
+   * Model MigrationStagedUpload
+   */
+
+  export type AggregateMigrationStagedUpload = {
+    _count: MigrationStagedUploadCountAggregateOutputType | null
+    _avg: MigrationStagedUploadAvgAggregateOutputType | null
+    _sum: MigrationStagedUploadSumAggregateOutputType | null
+    _min: MigrationStagedUploadMinAggregateOutputType | null
+    _max: MigrationStagedUploadMaxAggregateOutputType | null
+  }
+
+  export type MigrationStagedUploadAvgAggregateOutputType = {
+    rowCount: number | null
+    byteSize: number | null
+    inventoryVersion: number | null
+  }
+
+  export type MigrationStagedUploadSumAggregateOutputType = {
+    rowCount: number | null
+    byteSize: number | null
+    inventoryVersion: number | null
+  }
+
+  export type MigrationStagedUploadMinAggregateOutputType = {
+    id: string | null
+    schoolId: string | null
+    uploadedBy: string | null
+    areaKey: string | null
+    fileName: string | null
+    checksum: string | null
+    rowCount: number | null
+    byteSize: number | null
+    inventoryVersion: number | null
+    storageProvider: string | null
+    encryptedPayload: string | null
+    encryptedResult: string | null
+    status: $Enums.MigrationUploadStatus | null
+    batchId: string | null
+    createdAt: Date | null
+    expiresAt: Date | null
+    importedAt: Date | null
+  }
+
+  export type MigrationStagedUploadMaxAggregateOutputType = {
+    id: string | null
+    schoolId: string | null
+    uploadedBy: string | null
+    areaKey: string | null
+    fileName: string | null
+    checksum: string | null
+    rowCount: number | null
+    byteSize: number | null
+    inventoryVersion: number | null
+    storageProvider: string | null
+    encryptedPayload: string | null
+    encryptedResult: string | null
+    status: $Enums.MigrationUploadStatus | null
+    batchId: string | null
+    createdAt: Date | null
+    expiresAt: Date | null
+    importedAt: Date | null
+  }
+
+  export type MigrationStagedUploadCountAggregateOutputType = {
+    id: number
+    schoolId: number
+    uploadedBy: number
+    areaKey: number
+    fileName: number
+    checksum: number
+    rowCount: number
+    byteSize: number
+    inventoryVersion: number
+    storageProvider: number
+    encryptedPayload: number
+    encryptedResult: number
+    status: number
+    batchId: number
+    createdAt: number
+    expiresAt: number
+    importedAt: number
+    _all: number
+  }
+
+
+  export type MigrationStagedUploadAvgAggregateInputType = {
+    rowCount?: true
+    byteSize?: true
+    inventoryVersion?: true
+  }
+
+  export type MigrationStagedUploadSumAggregateInputType = {
+    rowCount?: true
+    byteSize?: true
+    inventoryVersion?: true
+  }
+
+  export type MigrationStagedUploadMinAggregateInputType = {
+    id?: true
+    schoolId?: true
+    uploadedBy?: true
+    areaKey?: true
+    fileName?: true
+    checksum?: true
+    rowCount?: true
+    byteSize?: true
+    inventoryVersion?: true
+    storageProvider?: true
+    encryptedPayload?: true
+    encryptedResult?: true
+    status?: true
+    batchId?: true
+    createdAt?: true
+    expiresAt?: true
+    importedAt?: true
+  }
+
+  export type MigrationStagedUploadMaxAggregateInputType = {
+    id?: true
+    schoolId?: true
+    uploadedBy?: true
+    areaKey?: true
+    fileName?: true
+    checksum?: true
+    rowCount?: true
+    byteSize?: true
+    inventoryVersion?: true
+    storageProvider?: true
+    encryptedPayload?: true
+    encryptedResult?: true
+    status?: true
+    batchId?: true
+    createdAt?: true
+    expiresAt?: true
+    importedAt?: true
+  }
+
+  export type MigrationStagedUploadCountAggregateInputType = {
+    id?: true
+    schoolId?: true
+    uploadedBy?: true
+    areaKey?: true
+    fileName?: true
+    checksum?: true
+    rowCount?: true
+    byteSize?: true
+    inventoryVersion?: true
+    storageProvider?: true
+    encryptedPayload?: true
+    encryptedResult?: true
+    status?: true
+    batchId?: true
+    createdAt?: true
+    expiresAt?: true
+    importedAt?: true
+    _all?: true
+  }
+
+  export type MigrationStagedUploadAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MigrationStagedUpload to aggregate.
+     */
+    where?: MigrationStagedUploadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MigrationStagedUploads to fetch.
+     */
+    orderBy?: MigrationStagedUploadOrderByWithRelationInput | MigrationStagedUploadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MigrationStagedUploadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MigrationStagedUploads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MigrationStagedUploads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MigrationStagedUploads
+    **/
+    _count?: true | MigrationStagedUploadCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MigrationStagedUploadAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MigrationStagedUploadSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MigrationStagedUploadMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MigrationStagedUploadMaxAggregateInputType
+  }
+
+  export type GetMigrationStagedUploadAggregateType<T extends MigrationStagedUploadAggregateArgs> = {
+        [P in keyof T & keyof AggregateMigrationStagedUpload]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMigrationStagedUpload[P]>
+      : GetScalarType<T[P], AggregateMigrationStagedUpload[P]>
+  }
+
+
+
+
+  export type MigrationStagedUploadGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MigrationStagedUploadWhereInput
+    orderBy?: MigrationStagedUploadOrderByWithAggregationInput | MigrationStagedUploadOrderByWithAggregationInput[]
+    by: MigrationStagedUploadScalarFieldEnum[] | MigrationStagedUploadScalarFieldEnum
+    having?: MigrationStagedUploadScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MigrationStagedUploadCountAggregateInputType | true
+    _avg?: MigrationStagedUploadAvgAggregateInputType
+    _sum?: MigrationStagedUploadSumAggregateInputType
+    _min?: MigrationStagedUploadMinAggregateInputType
+    _max?: MigrationStagedUploadMaxAggregateInputType
+  }
+
+  export type MigrationStagedUploadGroupByOutputType = {
+    id: string
+    schoolId: string
+    uploadedBy: string
+    areaKey: string
+    fileName: string
+    checksum: string
+    rowCount: number
+    byteSize: number
+    inventoryVersion: number
+    storageProvider: string
+    encryptedPayload: string | null
+    encryptedResult: string | null
+    status: $Enums.MigrationUploadStatus
+    batchId: string | null
+    createdAt: Date
+    expiresAt: Date
+    importedAt: Date | null
+    _count: MigrationStagedUploadCountAggregateOutputType | null
+    _avg: MigrationStagedUploadAvgAggregateOutputType | null
+    _sum: MigrationStagedUploadSumAggregateOutputType | null
+    _min: MigrationStagedUploadMinAggregateOutputType | null
+    _max: MigrationStagedUploadMaxAggregateOutputType | null
+  }
+
+  type GetMigrationStagedUploadGroupByPayload<T extends MigrationStagedUploadGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MigrationStagedUploadGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MigrationStagedUploadGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MigrationStagedUploadGroupByOutputType[P]>
+            : GetScalarType<T[P], MigrationStagedUploadGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MigrationStagedUploadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    uploadedBy?: boolean
+    areaKey?: boolean
+    fileName?: boolean
+    checksum?: boolean
+    rowCount?: boolean
+    byteSize?: boolean
+    inventoryVersion?: boolean
+    storageProvider?: boolean
+    encryptedPayload?: boolean
+    encryptedResult?: boolean
+    status?: boolean
+    batchId?: boolean
+    createdAt?: boolean
+    expiresAt?: boolean
+    importedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["migrationStagedUpload"]>
+
+  export type MigrationStagedUploadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    uploadedBy?: boolean
+    areaKey?: boolean
+    fileName?: boolean
+    checksum?: boolean
+    rowCount?: boolean
+    byteSize?: boolean
+    inventoryVersion?: boolean
+    storageProvider?: boolean
+    encryptedPayload?: boolean
+    encryptedResult?: boolean
+    status?: boolean
+    batchId?: boolean
+    createdAt?: boolean
+    expiresAt?: boolean
+    importedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["migrationStagedUpload"]>
+
+  export type MigrationStagedUploadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    uploadedBy?: boolean
+    areaKey?: boolean
+    fileName?: boolean
+    checksum?: boolean
+    rowCount?: boolean
+    byteSize?: boolean
+    inventoryVersion?: boolean
+    storageProvider?: boolean
+    encryptedPayload?: boolean
+    encryptedResult?: boolean
+    status?: boolean
+    batchId?: boolean
+    createdAt?: boolean
+    expiresAt?: boolean
+    importedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["migrationStagedUpload"]>
+
+  export type MigrationStagedUploadSelectScalar = {
+    id?: boolean
+    schoolId?: boolean
+    uploadedBy?: boolean
+    areaKey?: boolean
+    fileName?: boolean
+    checksum?: boolean
+    rowCount?: boolean
+    byteSize?: boolean
+    inventoryVersion?: boolean
+    storageProvider?: boolean
+    encryptedPayload?: boolean
+    encryptedResult?: boolean
+    status?: boolean
+    batchId?: boolean
+    createdAt?: boolean
+    expiresAt?: boolean
+    importedAt?: boolean
+  }
+
+  export type MigrationStagedUploadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "schoolId" | "uploadedBy" | "areaKey" | "fileName" | "checksum" | "rowCount" | "byteSize" | "inventoryVersion" | "storageProvider" | "encryptedPayload" | "encryptedResult" | "status" | "batchId" | "createdAt" | "expiresAt" | "importedAt", ExtArgs["result"]["migrationStagedUpload"]>
+  export type MigrationStagedUploadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }
+  export type MigrationStagedUploadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }
+  export type MigrationStagedUploadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }
+
+  export type $MigrationStagedUploadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MigrationStagedUpload"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      schoolId: string
+      uploadedBy: string
+      areaKey: string
+      fileName: string
+      checksum: string
+      rowCount: number
+      byteSize: number
+      inventoryVersion: number
+      storageProvider: string
+      encryptedPayload: string | null
+      encryptedResult: string | null
+      status: $Enums.MigrationUploadStatus
+      batchId: string | null
+      createdAt: Date
+      expiresAt: Date
+      importedAt: Date | null
+    }, ExtArgs["result"]["migrationStagedUpload"]>
+    composites: {}
+  }
+
+  type MigrationStagedUploadGetPayload<S extends boolean | null | undefined | MigrationStagedUploadDefaultArgs> = $Result.GetResult<Prisma.$MigrationStagedUploadPayload, S>
+
+  type MigrationStagedUploadCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MigrationStagedUploadFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MigrationStagedUploadCountAggregateInputType | true
+    }
+
+  export interface MigrationStagedUploadDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MigrationStagedUpload'], meta: { name: 'MigrationStagedUpload' } }
+    /**
+     * Find zero or one MigrationStagedUpload that matches the filter.
+     * @param {MigrationStagedUploadFindUniqueArgs} args - Arguments to find a MigrationStagedUpload
+     * @example
+     * // Get one MigrationStagedUpload
+     * const migrationStagedUpload = await prisma.migrationStagedUpload.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MigrationStagedUploadFindUniqueArgs>(args: SelectSubset<T, MigrationStagedUploadFindUniqueArgs<ExtArgs>>): Prisma__MigrationStagedUploadClient<$Result.GetResult<Prisma.$MigrationStagedUploadPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MigrationStagedUpload that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MigrationStagedUploadFindUniqueOrThrowArgs} args - Arguments to find a MigrationStagedUpload
+     * @example
+     * // Get one MigrationStagedUpload
+     * const migrationStagedUpload = await prisma.migrationStagedUpload.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MigrationStagedUploadFindUniqueOrThrowArgs>(args: SelectSubset<T, MigrationStagedUploadFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MigrationStagedUploadClient<$Result.GetResult<Prisma.$MigrationStagedUploadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MigrationStagedUpload that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MigrationStagedUploadFindFirstArgs} args - Arguments to find a MigrationStagedUpload
+     * @example
+     * // Get one MigrationStagedUpload
+     * const migrationStagedUpload = await prisma.migrationStagedUpload.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MigrationStagedUploadFindFirstArgs>(args?: SelectSubset<T, MigrationStagedUploadFindFirstArgs<ExtArgs>>): Prisma__MigrationStagedUploadClient<$Result.GetResult<Prisma.$MigrationStagedUploadPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MigrationStagedUpload that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MigrationStagedUploadFindFirstOrThrowArgs} args - Arguments to find a MigrationStagedUpload
+     * @example
+     * // Get one MigrationStagedUpload
+     * const migrationStagedUpload = await prisma.migrationStagedUpload.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MigrationStagedUploadFindFirstOrThrowArgs>(args?: SelectSubset<T, MigrationStagedUploadFindFirstOrThrowArgs<ExtArgs>>): Prisma__MigrationStagedUploadClient<$Result.GetResult<Prisma.$MigrationStagedUploadPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MigrationStagedUploads that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MigrationStagedUploadFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MigrationStagedUploads
+     * const migrationStagedUploads = await prisma.migrationStagedUpload.findMany()
+     * 
+     * // Get first 10 MigrationStagedUploads
+     * const migrationStagedUploads = await prisma.migrationStagedUpload.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const migrationStagedUploadWithIdOnly = await prisma.migrationStagedUpload.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MigrationStagedUploadFindManyArgs>(args?: SelectSubset<T, MigrationStagedUploadFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MigrationStagedUploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MigrationStagedUpload.
+     * @param {MigrationStagedUploadCreateArgs} args - Arguments to create a MigrationStagedUpload.
+     * @example
+     * // Create one MigrationStagedUpload
+     * const MigrationStagedUpload = await prisma.migrationStagedUpload.create({
+     *   data: {
+     *     // ... data to create a MigrationStagedUpload
+     *   }
+     * })
+     * 
+     */
+    create<T extends MigrationStagedUploadCreateArgs>(args: SelectSubset<T, MigrationStagedUploadCreateArgs<ExtArgs>>): Prisma__MigrationStagedUploadClient<$Result.GetResult<Prisma.$MigrationStagedUploadPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MigrationStagedUploads.
+     * @param {MigrationStagedUploadCreateManyArgs} args - Arguments to create many MigrationStagedUploads.
+     * @example
+     * // Create many MigrationStagedUploads
+     * const migrationStagedUpload = await prisma.migrationStagedUpload.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MigrationStagedUploadCreateManyArgs>(args?: SelectSubset<T, MigrationStagedUploadCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MigrationStagedUploads and returns the data saved in the database.
+     * @param {MigrationStagedUploadCreateManyAndReturnArgs} args - Arguments to create many MigrationStagedUploads.
+     * @example
+     * // Create many MigrationStagedUploads
+     * const migrationStagedUpload = await prisma.migrationStagedUpload.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MigrationStagedUploads and only return the `id`
+     * const migrationStagedUploadWithIdOnly = await prisma.migrationStagedUpload.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MigrationStagedUploadCreateManyAndReturnArgs>(args?: SelectSubset<T, MigrationStagedUploadCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MigrationStagedUploadPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a MigrationStagedUpload.
+     * @param {MigrationStagedUploadDeleteArgs} args - Arguments to delete one MigrationStagedUpload.
+     * @example
+     * // Delete one MigrationStagedUpload
+     * const MigrationStagedUpload = await prisma.migrationStagedUpload.delete({
+     *   where: {
+     *     // ... filter to delete one MigrationStagedUpload
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MigrationStagedUploadDeleteArgs>(args: SelectSubset<T, MigrationStagedUploadDeleteArgs<ExtArgs>>): Prisma__MigrationStagedUploadClient<$Result.GetResult<Prisma.$MigrationStagedUploadPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MigrationStagedUpload.
+     * @param {MigrationStagedUploadUpdateArgs} args - Arguments to update one MigrationStagedUpload.
+     * @example
+     * // Update one MigrationStagedUpload
+     * const migrationStagedUpload = await prisma.migrationStagedUpload.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MigrationStagedUploadUpdateArgs>(args: SelectSubset<T, MigrationStagedUploadUpdateArgs<ExtArgs>>): Prisma__MigrationStagedUploadClient<$Result.GetResult<Prisma.$MigrationStagedUploadPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MigrationStagedUploads.
+     * @param {MigrationStagedUploadDeleteManyArgs} args - Arguments to filter MigrationStagedUploads to delete.
+     * @example
+     * // Delete a few MigrationStagedUploads
+     * const { count } = await prisma.migrationStagedUpload.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MigrationStagedUploadDeleteManyArgs>(args?: SelectSubset<T, MigrationStagedUploadDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MigrationStagedUploads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MigrationStagedUploadUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MigrationStagedUploads
+     * const migrationStagedUpload = await prisma.migrationStagedUpload.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MigrationStagedUploadUpdateManyArgs>(args: SelectSubset<T, MigrationStagedUploadUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MigrationStagedUploads and returns the data updated in the database.
+     * @param {MigrationStagedUploadUpdateManyAndReturnArgs} args - Arguments to update many MigrationStagedUploads.
+     * @example
+     * // Update many MigrationStagedUploads
+     * const migrationStagedUpload = await prisma.migrationStagedUpload.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more MigrationStagedUploads and only return the `id`
+     * const migrationStagedUploadWithIdOnly = await prisma.migrationStagedUpload.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MigrationStagedUploadUpdateManyAndReturnArgs>(args: SelectSubset<T, MigrationStagedUploadUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MigrationStagedUploadPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one MigrationStagedUpload.
+     * @param {MigrationStagedUploadUpsertArgs} args - Arguments to update or create a MigrationStagedUpload.
+     * @example
+     * // Update or create a MigrationStagedUpload
+     * const migrationStagedUpload = await prisma.migrationStagedUpload.upsert({
+     *   create: {
+     *     // ... data to create a MigrationStagedUpload
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MigrationStagedUpload we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MigrationStagedUploadUpsertArgs>(args: SelectSubset<T, MigrationStagedUploadUpsertArgs<ExtArgs>>): Prisma__MigrationStagedUploadClient<$Result.GetResult<Prisma.$MigrationStagedUploadPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of MigrationStagedUploads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MigrationStagedUploadCountArgs} args - Arguments to filter MigrationStagedUploads to count.
+     * @example
+     * // Count the number of MigrationStagedUploads
+     * const count = await prisma.migrationStagedUpload.count({
+     *   where: {
+     *     // ... the filter for the MigrationStagedUploads we want to count
+     *   }
+     * })
+    **/
+    count<T extends MigrationStagedUploadCountArgs>(
+      args?: Subset<T, MigrationStagedUploadCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MigrationStagedUploadCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MigrationStagedUpload.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MigrationStagedUploadAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MigrationStagedUploadAggregateArgs>(args: Subset<T, MigrationStagedUploadAggregateArgs>): Prisma.PrismaPromise<GetMigrationStagedUploadAggregateType<T>>
+
+    /**
+     * Group by MigrationStagedUpload.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MigrationStagedUploadGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MigrationStagedUploadGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MigrationStagedUploadGroupByArgs['orderBy'] }
+        : { orderBy?: MigrationStagedUploadGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MigrationStagedUploadGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMigrationStagedUploadGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MigrationStagedUpload model
+   */
+  readonly fields: MigrationStagedUploadFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MigrationStagedUpload.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MigrationStagedUploadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MigrationStagedUpload model
+   */
+  interface MigrationStagedUploadFieldRefs {
+    readonly id: FieldRef<"MigrationStagedUpload", 'String'>
+    readonly schoolId: FieldRef<"MigrationStagedUpload", 'String'>
+    readonly uploadedBy: FieldRef<"MigrationStagedUpload", 'String'>
+    readonly areaKey: FieldRef<"MigrationStagedUpload", 'String'>
+    readonly fileName: FieldRef<"MigrationStagedUpload", 'String'>
+    readonly checksum: FieldRef<"MigrationStagedUpload", 'String'>
+    readonly rowCount: FieldRef<"MigrationStagedUpload", 'Int'>
+    readonly byteSize: FieldRef<"MigrationStagedUpload", 'Int'>
+    readonly inventoryVersion: FieldRef<"MigrationStagedUpload", 'Int'>
+    readonly storageProvider: FieldRef<"MigrationStagedUpload", 'String'>
+    readonly encryptedPayload: FieldRef<"MigrationStagedUpload", 'String'>
+    readonly encryptedResult: FieldRef<"MigrationStagedUpload", 'String'>
+    readonly status: FieldRef<"MigrationStagedUpload", 'MigrationUploadStatus'>
+    readonly batchId: FieldRef<"MigrationStagedUpload", 'String'>
+    readonly createdAt: FieldRef<"MigrationStagedUpload", 'DateTime'>
+    readonly expiresAt: FieldRef<"MigrationStagedUpload", 'DateTime'>
+    readonly importedAt: FieldRef<"MigrationStagedUpload", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MigrationStagedUpload findUnique
+   */
+  export type MigrationStagedUploadFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MigrationStagedUpload
+     */
+    select?: MigrationStagedUploadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MigrationStagedUpload
+     */
+    omit?: MigrationStagedUploadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MigrationStagedUploadInclude<ExtArgs> | null
+    /**
+     * Filter, which MigrationStagedUpload to fetch.
+     */
+    where: MigrationStagedUploadWhereUniqueInput
+  }
+
+  /**
+   * MigrationStagedUpload findUniqueOrThrow
+   */
+  export type MigrationStagedUploadFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MigrationStagedUpload
+     */
+    select?: MigrationStagedUploadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MigrationStagedUpload
+     */
+    omit?: MigrationStagedUploadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MigrationStagedUploadInclude<ExtArgs> | null
+    /**
+     * Filter, which MigrationStagedUpload to fetch.
+     */
+    where: MigrationStagedUploadWhereUniqueInput
+  }
+
+  /**
+   * MigrationStagedUpload findFirst
+   */
+  export type MigrationStagedUploadFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MigrationStagedUpload
+     */
+    select?: MigrationStagedUploadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MigrationStagedUpload
+     */
+    omit?: MigrationStagedUploadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MigrationStagedUploadInclude<ExtArgs> | null
+    /**
+     * Filter, which MigrationStagedUpload to fetch.
+     */
+    where?: MigrationStagedUploadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MigrationStagedUploads to fetch.
+     */
+    orderBy?: MigrationStagedUploadOrderByWithRelationInput | MigrationStagedUploadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MigrationStagedUploads.
+     */
+    cursor?: MigrationStagedUploadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MigrationStagedUploads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MigrationStagedUploads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MigrationStagedUploads.
+     */
+    distinct?: MigrationStagedUploadScalarFieldEnum | MigrationStagedUploadScalarFieldEnum[]
+  }
+
+  /**
+   * MigrationStagedUpload findFirstOrThrow
+   */
+  export type MigrationStagedUploadFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MigrationStagedUpload
+     */
+    select?: MigrationStagedUploadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MigrationStagedUpload
+     */
+    omit?: MigrationStagedUploadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MigrationStagedUploadInclude<ExtArgs> | null
+    /**
+     * Filter, which MigrationStagedUpload to fetch.
+     */
+    where?: MigrationStagedUploadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MigrationStagedUploads to fetch.
+     */
+    orderBy?: MigrationStagedUploadOrderByWithRelationInput | MigrationStagedUploadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MigrationStagedUploads.
+     */
+    cursor?: MigrationStagedUploadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MigrationStagedUploads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MigrationStagedUploads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MigrationStagedUploads.
+     */
+    distinct?: MigrationStagedUploadScalarFieldEnum | MigrationStagedUploadScalarFieldEnum[]
+  }
+
+  /**
+   * MigrationStagedUpload findMany
+   */
+  export type MigrationStagedUploadFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MigrationStagedUpload
+     */
+    select?: MigrationStagedUploadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MigrationStagedUpload
+     */
+    omit?: MigrationStagedUploadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MigrationStagedUploadInclude<ExtArgs> | null
+    /**
+     * Filter, which MigrationStagedUploads to fetch.
+     */
+    where?: MigrationStagedUploadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MigrationStagedUploads to fetch.
+     */
+    orderBy?: MigrationStagedUploadOrderByWithRelationInput | MigrationStagedUploadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MigrationStagedUploads.
+     */
+    cursor?: MigrationStagedUploadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MigrationStagedUploads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MigrationStagedUploads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MigrationStagedUploads.
+     */
+    distinct?: MigrationStagedUploadScalarFieldEnum | MigrationStagedUploadScalarFieldEnum[]
+  }
+
+  /**
+   * MigrationStagedUpload create
+   */
+  export type MigrationStagedUploadCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MigrationStagedUpload
+     */
+    select?: MigrationStagedUploadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MigrationStagedUpload
+     */
+    omit?: MigrationStagedUploadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MigrationStagedUploadInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MigrationStagedUpload.
+     */
+    data: XOR<MigrationStagedUploadCreateInput, MigrationStagedUploadUncheckedCreateInput>
+  }
+
+  /**
+   * MigrationStagedUpload createMany
+   */
+  export type MigrationStagedUploadCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MigrationStagedUploads.
+     */
+    data: MigrationStagedUploadCreateManyInput | MigrationStagedUploadCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MigrationStagedUpload createManyAndReturn
+   */
+  export type MigrationStagedUploadCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MigrationStagedUpload
+     */
+    select?: MigrationStagedUploadSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MigrationStagedUpload
+     */
+    omit?: MigrationStagedUploadOmit<ExtArgs> | null
+    /**
+     * The data used to create many MigrationStagedUploads.
+     */
+    data: MigrationStagedUploadCreateManyInput | MigrationStagedUploadCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MigrationStagedUploadIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MigrationStagedUpload update
+   */
+  export type MigrationStagedUploadUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MigrationStagedUpload
+     */
+    select?: MigrationStagedUploadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MigrationStagedUpload
+     */
+    omit?: MigrationStagedUploadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MigrationStagedUploadInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MigrationStagedUpload.
+     */
+    data: XOR<MigrationStagedUploadUpdateInput, MigrationStagedUploadUncheckedUpdateInput>
+    /**
+     * Choose, which MigrationStagedUpload to update.
+     */
+    where: MigrationStagedUploadWhereUniqueInput
+  }
+
+  /**
+   * MigrationStagedUpload updateMany
+   */
+  export type MigrationStagedUploadUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MigrationStagedUploads.
+     */
+    data: XOR<MigrationStagedUploadUpdateManyMutationInput, MigrationStagedUploadUncheckedUpdateManyInput>
+    /**
+     * Filter which MigrationStagedUploads to update
+     */
+    where?: MigrationStagedUploadWhereInput
+    /**
+     * Limit how many MigrationStagedUploads to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MigrationStagedUpload updateManyAndReturn
+   */
+  export type MigrationStagedUploadUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MigrationStagedUpload
+     */
+    select?: MigrationStagedUploadSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MigrationStagedUpload
+     */
+    omit?: MigrationStagedUploadOmit<ExtArgs> | null
+    /**
+     * The data used to update MigrationStagedUploads.
+     */
+    data: XOR<MigrationStagedUploadUpdateManyMutationInput, MigrationStagedUploadUncheckedUpdateManyInput>
+    /**
+     * Filter which MigrationStagedUploads to update
+     */
+    where?: MigrationStagedUploadWhereInput
+    /**
+     * Limit how many MigrationStagedUploads to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MigrationStagedUploadIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MigrationStagedUpload upsert
+   */
+  export type MigrationStagedUploadUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MigrationStagedUpload
+     */
+    select?: MigrationStagedUploadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MigrationStagedUpload
+     */
+    omit?: MigrationStagedUploadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MigrationStagedUploadInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MigrationStagedUpload to update in case it exists.
+     */
+    where: MigrationStagedUploadWhereUniqueInput
+    /**
+     * In case the MigrationStagedUpload found by the `where` argument doesn't exist, create a new MigrationStagedUpload with this data.
+     */
+    create: XOR<MigrationStagedUploadCreateInput, MigrationStagedUploadUncheckedCreateInput>
+    /**
+     * In case the MigrationStagedUpload was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MigrationStagedUploadUpdateInput, MigrationStagedUploadUncheckedUpdateInput>
+  }
+
+  /**
+   * MigrationStagedUpload delete
+   */
+  export type MigrationStagedUploadDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MigrationStagedUpload
+     */
+    select?: MigrationStagedUploadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MigrationStagedUpload
+     */
+    omit?: MigrationStagedUploadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MigrationStagedUploadInclude<ExtArgs> | null
+    /**
+     * Filter which MigrationStagedUpload to delete.
+     */
+    where: MigrationStagedUploadWhereUniqueInput
+  }
+
+  /**
+   * MigrationStagedUpload deleteMany
+   */
+  export type MigrationStagedUploadDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MigrationStagedUploads to delete
+     */
+    where?: MigrationStagedUploadWhereInput
+    /**
+     * Limit how many MigrationStagedUploads to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MigrationStagedUpload without action
+   */
+  export type MigrationStagedUploadDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MigrationStagedUpload
+     */
+    select?: MigrationStagedUploadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MigrationStagedUpload
+     */
+    omit?: MigrationStagedUploadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MigrationStagedUploadInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -126736,6 +128142,29 @@ export namespace Prisma {
   export type OnboardingAuditLogScalarFieldEnum = (typeof OnboardingAuditLogScalarFieldEnum)[keyof typeof OnboardingAuditLogScalarFieldEnum]
 
 
+  export const MigrationStagedUploadScalarFieldEnum: {
+    id: 'id',
+    schoolId: 'schoolId',
+    uploadedBy: 'uploadedBy',
+    areaKey: 'areaKey',
+    fileName: 'fileName',
+    checksum: 'checksum',
+    rowCount: 'rowCount',
+    byteSize: 'byteSize',
+    inventoryVersion: 'inventoryVersion',
+    storageProvider: 'storageProvider',
+    encryptedPayload: 'encryptedPayload',
+    encryptedResult: 'encryptedResult',
+    status: 'status',
+    batchId: 'batchId',
+    createdAt: 'createdAt',
+    expiresAt: 'expiresAt',
+    importedAt: 'importedAt'
+  };
+
+  export type MigrationStagedUploadScalarFieldEnum = (typeof MigrationStagedUploadScalarFieldEnum)[keyof typeof MigrationStagedUploadScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -128026,6 +129455,20 @@ export namespace Prisma {
    */
   export type ListEnumOnboardingAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OnboardingAuditAction[]'>
     
+
+
+  /**
+   * Reference to a field of type 'MigrationUploadStatus'
+   */
+  export type EnumMigrationUploadStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MigrationUploadStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'MigrationUploadStatus[]'
+   */
+  export type ListEnumMigrationUploadStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MigrationUploadStatus[]'>
+    
   /**
    * Deep Input Types
    */
@@ -128106,6 +129549,7 @@ export namespace Prisma {
     invites?: SchoolInviteListRelationFilter
     waitlistEntries?: WaitlistEntryListRelationFilter
     onboardingAuditLogs?: OnboardingAuditLogListRelationFilter
+    migrationUploads?: MigrationStagedUploadListRelationFilter
     financeJobs?: FinanceJobListRelationFilter
     paymentWebhookEvents?: PaymentWebhookEventListRelationFilter
     teacherInvites?: TeacherInviteListRelationFilter
@@ -128208,6 +129652,7 @@ export namespace Prisma {
     invites?: SchoolInviteOrderByRelationAggregateInput
     waitlistEntries?: WaitlistEntryOrderByRelationAggregateInput
     onboardingAuditLogs?: OnboardingAuditLogOrderByRelationAggregateInput
+    migrationUploads?: MigrationStagedUploadOrderByRelationAggregateInput
     financeJobs?: FinanceJobOrderByRelationAggregateInput
     paymentWebhookEvents?: PaymentWebhookEventOrderByRelationAggregateInput
     teacherInvites?: TeacherInviteOrderByRelationAggregateInput
@@ -128313,6 +129758,7 @@ export namespace Prisma {
     invites?: SchoolInviteListRelationFilter
     waitlistEntries?: WaitlistEntryListRelationFilter
     onboardingAuditLogs?: OnboardingAuditLogListRelationFilter
+    migrationUploads?: MigrationStagedUploadListRelationFilter
     financeJobs?: FinanceJobListRelationFilter
     paymentWebhookEvents?: PaymentWebhookEventListRelationFilter
     teacherInvites?: TeacherInviteListRelationFilter
@@ -137308,6 +138754,123 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"OnboardingAuditLog"> | Date | string
   }
 
+  export type MigrationStagedUploadWhereInput = {
+    AND?: MigrationStagedUploadWhereInput | MigrationStagedUploadWhereInput[]
+    OR?: MigrationStagedUploadWhereInput[]
+    NOT?: MigrationStagedUploadWhereInput | MigrationStagedUploadWhereInput[]
+    id?: StringFilter<"MigrationStagedUpload"> | string
+    schoolId?: StringFilter<"MigrationStagedUpload"> | string
+    uploadedBy?: StringFilter<"MigrationStagedUpload"> | string
+    areaKey?: StringFilter<"MigrationStagedUpload"> | string
+    fileName?: StringFilter<"MigrationStagedUpload"> | string
+    checksum?: StringFilter<"MigrationStagedUpload"> | string
+    rowCount?: IntFilter<"MigrationStagedUpload"> | number
+    byteSize?: IntFilter<"MigrationStagedUpload"> | number
+    inventoryVersion?: IntFilter<"MigrationStagedUpload"> | number
+    storageProvider?: StringFilter<"MigrationStagedUpload"> | string
+    encryptedPayload?: StringNullableFilter<"MigrationStagedUpload"> | string | null
+    encryptedResult?: StringNullableFilter<"MigrationStagedUpload"> | string | null
+    status?: EnumMigrationUploadStatusFilter<"MigrationStagedUpload"> | $Enums.MigrationUploadStatus
+    batchId?: StringNullableFilter<"MigrationStagedUpload"> | string | null
+    createdAt?: DateTimeFilter<"MigrationStagedUpload"> | Date | string
+    expiresAt?: DateTimeFilter<"MigrationStagedUpload"> | Date | string
+    importedAt?: DateTimeNullableFilter<"MigrationStagedUpload"> | Date | string | null
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+  }
+
+  export type MigrationStagedUploadOrderByWithRelationInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    uploadedBy?: SortOrder
+    areaKey?: SortOrder
+    fileName?: SortOrder
+    checksum?: SortOrder
+    rowCount?: SortOrder
+    byteSize?: SortOrder
+    inventoryVersion?: SortOrder
+    storageProvider?: SortOrder
+    encryptedPayload?: SortOrderInput | SortOrder
+    encryptedResult?: SortOrderInput | SortOrder
+    status?: SortOrder
+    batchId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    expiresAt?: SortOrder
+    importedAt?: SortOrderInput | SortOrder
+    school?: SchoolOrderByWithRelationInput
+  }
+
+  export type MigrationStagedUploadWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    batchId?: string
+    AND?: MigrationStagedUploadWhereInput | MigrationStagedUploadWhereInput[]
+    OR?: MigrationStagedUploadWhereInput[]
+    NOT?: MigrationStagedUploadWhereInput | MigrationStagedUploadWhereInput[]
+    schoolId?: StringFilter<"MigrationStagedUpload"> | string
+    uploadedBy?: StringFilter<"MigrationStagedUpload"> | string
+    areaKey?: StringFilter<"MigrationStagedUpload"> | string
+    fileName?: StringFilter<"MigrationStagedUpload"> | string
+    checksum?: StringFilter<"MigrationStagedUpload"> | string
+    rowCount?: IntFilter<"MigrationStagedUpload"> | number
+    byteSize?: IntFilter<"MigrationStagedUpload"> | number
+    inventoryVersion?: IntFilter<"MigrationStagedUpload"> | number
+    storageProvider?: StringFilter<"MigrationStagedUpload"> | string
+    encryptedPayload?: StringNullableFilter<"MigrationStagedUpload"> | string | null
+    encryptedResult?: StringNullableFilter<"MigrationStagedUpload"> | string | null
+    status?: EnumMigrationUploadStatusFilter<"MigrationStagedUpload"> | $Enums.MigrationUploadStatus
+    createdAt?: DateTimeFilter<"MigrationStagedUpload"> | Date | string
+    expiresAt?: DateTimeFilter<"MigrationStagedUpload"> | Date | string
+    importedAt?: DateTimeNullableFilter<"MigrationStagedUpload"> | Date | string | null
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+  }, "id" | "batchId">
+
+  export type MigrationStagedUploadOrderByWithAggregationInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    uploadedBy?: SortOrder
+    areaKey?: SortOrder
+    fileName?: SortOrder
+    checksum?: SortOrder
+    rowCount?: SortOrder
+    byteSize?: SortOrder
+    inventoryVersion?: SortOrder
+    storageProvider?: SortOrder
+    encryptedPayload?: SortOrderInput | SortOrder
+    encryptedResult?: SortOrderInput | SortOrder
+    status?: SortOrder
+    batchId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    expiresAt?: SortOrder
+    importedAt?: SortOrderInput | SortOrder
+    _count?: MigrationStagedUploadCountOrderByAggregateInput
+    _avg?: MigrationStagedUploadAvgOrderByAggregateInput
+    _max?: MigrationStagedUploadMaxOrderByAggregateInput
+    _min?: MigrationStagedUploadMinOrderByAggregateInput
+    _sum?: MigrationStagedUploadSumOrderByAggregateInput
+  }
+
+  export type MigrationStagedUploadScalarWhereWithAggregatesInput = {
+    AND?: MigrationStagedUploadScalarWhereWithAggregatesInput | MigrationStagedUploadScalarWhereWithAggregatesInput[]
+    OR?: MigrationStagedUploadScalarWhereWithAggregatesInput[]
+    NOT?: MigrationStagedUploadScalarWhereWithAggregatesInput | MigrationStagedUploadScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MigrationStagedUpload"> | string
+    schoolId?: StringWithAggregatesFilter<"MigrationStagedUpload"> | string
+    uploadedBy?: StringWithAggregatesFilter<"MigrationStagedUpload"> | string
+    areaKey?: StringWithAggregatesFilter<"MigrationStagedUpload"> | string
+    fileName?: StringWithAggregatesFilter<"MigrationStagedUpload"> | string
+    checksum?: StringWithAggregatesFilter<"MigrationStagedUpload"> | string
+    rowCount?: IntWithAggregatesFilter<"MigrationStagedUpload"> | number
+    byteSize?: IntWithAggregatesFilter<"MigrationStagedUpload"> | number
+    inventoryVersion?: IntWithAggregatesFilter<"MigrationStagedUpload"> | number
+    storageProvider?: StringWithAggregatesFilter<"MigrationStagedUpload"> | string
+    encryptedPayload?: StringNullableWithAggregatesFilter<"MigrationStagedUpload"> | string | null
+    encryptedResult?: StringNullableWithAggregatesFilter<"MigrationStagedUpload"> | string | null
+    status?: EnumMigrationUploadStatusWithAggregatesFilter<"MigrationStagedUpload"> | $Enums.MigrationUploadStatus
+    batchId?: StringNullableWithAggregatesFilter<"MigrationStagedUpload"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"MigrationStagedUpload"> | Date | string
+    expiresAt?: DateTimeWithAggregatesFilter<"MigrationStagedUpload"> | Date | string
+    importedAt?: DateTimeNullableWithAggregatesFilter<"MigrationStagedUpload"> | Date | string | null
+  }
+
   export type SchoolCreateInput = {
     id: string
     name: string
@@ -137380,6 +138943,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -137482,6 +139046,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -137584,6 +139149,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -137686,6 +139252,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -147404,6 +148971,145 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MigrationStagedUploadCreateInput = {
+    id: string
+    uploadedBy: string
+    areaKey: string
+    fileName: string
+    checksum: string
+    rowCount: number
+    byteSize: number
+    inventoryVersion: number
+    storageProvider: string
+    encryptedPayload?: string | null
+    encryptedResult?: string | null
+    status?: $Enums.MigrationUploadStatus
+    batchId?: string | null
+    createdAt?: Date | string
+    expiresAt: Date | string
+    importedAt?: Date | string | null
+    school: SchoolCreateNestedOneWithoutMigrationUploadsInput
+  }
+
+  export type MigrationStagedUploadUncheckedCreateInput = {
+    id: string
+    schoolId: string
+    uploadedBy: string
+    areaKey: string
+    fileName: string
+    checksum: string
+    rowCount: number
+    byteSize: number
+    inventoryVersion: number
+    storageProvider: string
+    encryptedPayload?: string | null
+    encryptedResult?: string | null
+    status?: $Enums.MigrationUploadStatus
+    batchId?: string | null
+    createdAt?: Date | string
+    expiresAt: Date | string
+    importedAt?: Date | string | null
+  }
+
+  export type MigrationStagedUploadUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    uploadedBy?: StringFieldUpdateOperationsInput | string
+    areaKey?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    checksum?: StringFieldUpdateOperationsInput | string
+    rowCount?: IntFieldUpdateOperationsInput | number
+    byteSize?: IntFieldUpdateOperationsInput | number
+    inventoryVersion?: IntFieldUpdateOperationsInput | number
+    storageProvider?: StringFieldUpdateOperationsInput | string
+    encryptedPayload?: NullableStringFieldUpdateOperationsInput | string | null
+    encryptedResult?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumMigrationUploadStatusFieldUpdateOperationsInput | $Enums.MigrationUploadStatus
+    batchId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    school?: SchoolUpdateOneRequiredWithoutMigrationUploadsNestedInput
+  }
+
+  export type MigrationStagedUploadUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    uploadedBy?: StringFieldUpdateOperationsInput | string
+    areaKey?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    checksum?: StringFieldUpdateOperationsInput | string
+    rowCount?: IntFieldUpdateOperationsInput | number
+    byteSize?: IntFieldUpdateOperationsInput | number
+    inventoryVersion?: IntFieldUpdateOperationsInput | number
+    storageProvider?: StringFieldUpdateOperationsInput | string
+    encryptedPayload?: NullableStringFieldUpdateOperationsInput | string | null
+    encryptedResult?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumMigrationUploadStatusFieldUpdateOperationsInput | $Enums.MigrationUploadStatus
+    batchId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MigrationStagedUploadCreateManyInput = {
+    id: string
+    schoolId: string
+    uploadedBy: string
+    areaKey: string
+    fileName: string
+    checksum: string
+    rowCount: number
+    byteSize: number
+    inventoryVersion: number
+    storageProvider: string
+    encryptedPayload?: string | null
+    encryptedResult?: string | null
+    status?: $Enums.MigrationUploadStatus
+    batchId?: string | null
+    createdAt?: Date | string
+    expiresAt: Date | string
+    importedAt?: Date | string | null
+  }
+
+  export type MigrationStagedUploadUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    uploadedBy?: StringFieldUpdateOperationsInput | string
+    areaKey?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    checksum?: StringFieldUpdateOperationsInput | string
+    rowCount?: IntFieldUpdateOperationsInput | number
+    byteSize?: IntFieldUpdateOperationsInput | number
+    inventoryVersion?: IntFieldUpdateOperationsInput | number
+    storageProvider?: StringFieldUpdateOperationsInput | string
+    encryptedPayload?: NullableStringFieldUpdateOperationsInput | string | null
+    encryptedResult?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumMigrationUploadStatusFieldUpdateOperationsInput | $Enums.MigrationUploadStatus
+    batchId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MigrationStagedUploadUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    uploadedBy?: StringFieldUpdateOperationsInput | string
+    areaKey?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    checksum?: StringFieldUpdateOperationsInput | string
+    rowCount?: IntFieldUpdateOperationsInput | number
+    byteSize?: IntFieldUpdateOperationsInput | number
+    inventoryVersion?: IntFieldUpdateOperationsInput | number
+    storageProvider?: StringFieldUpdateOperationsInput | string
+    encryptedPayload?: NullableStringFieldUpdateOperationsInput | string | null
+    encryptedResult?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumMigrationUploadStatusFieldUpdateOperationsInput | $Enums.MigrationUploadStatus
+    batchId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -147780,6 +149486,12 @@ export namespace Prisma {
     none?: OnboardingAuditLogWhereInput
   }
 
+  export type MigrationStagedUploadListRelationFilter = {
+    every?: MigrationStagedUploadWhereInput
+    some?: MigrationStagedUploadWhereInput
+    none?: MigrationStagedUploadWhereInput
+  }
+
   export type FinanceJobListRelationFilter = {
     every?: FinanceJobWhereInput
     some?: FinanceJobWhereInput
@@ -148154,6 +149866,10 @@ export namespace Prisma {
   }
 
   export type OnboardingAuditLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type MigrationStagedUploadOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -155330,6 +157046,95 @@ export namespace Prisma {
     _max?: NestedEnumOnboardingAuditActionFilter<$PrismaModel>
   }
 
+  export type EnumMigrationUploadStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.MigrationUploadStatus | EnumMigrationUploadStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MigrationUploadStatus[] | ListEnumMigrationUploadStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MigrationUploadStatus[] | ListEnumMigrationUploadStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMigrationUploadStatusFilter<$PrismaModel> | $Enums.MigrationUploadStatus
+  }
+
+  export type MigrationStagedUploadCountOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    uploadedBy?: SortOrder
+    areaKey?: SortOrder
+    fileName?: SortOrder
+    checksum?: SortOrder
+    rowCount?: SortOrder
+    byteSize?: SortOrder
+    inventoryVersion?: SortOrder
+    storageProvider?: SortOrder
+    encryptedPayload?: SortOrder
+    encryptedResult?: SortOrder
+    status?: SortOrder
+    batchId?: SortOrder
+    createdAt?: SortOrder
+    expiresAt?: SortOrder
+    importedAt?: SortOrder
+  }
+
+  export type MigrationStagedUploadAvgOrderByAggregateInput = {
+    rowCount?: SortOrder
+    byteSize?: SortOrder
+    inventoryVersion?: SortOrder
+  }
+
+  export type MigrationStagedUploadMaxOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    uploadedBy?: SortOrder
+    areaKey?: SortOrder
+    fileName?: SortOrder
+    checksum?: SortOrder
+    rowCount?: SortOrder
+    byteSize?: SortOrder
+    inventoryVersion?: SortOrder
+    storageProvider?: SortOrder
+    encryptedPayload?: SortOrder
+    encryptedResult?: SortOrder
+    status?: SortOrder
+    batchId?: SortOrder
+    createdAt?: SortOrder
+    expiresAt?: SortOrder
+    importedAt?: SortOrder
+  }
+
+  export type MigrationStagedUploadMinOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    uploadedBy?: SortOrder
+    areaKey?: SortOrder
+    fileName?: SortOrder
+    checksum?: SortOrder
+    rowCount?: SortOrder
+    byteSize?: SortOrder
+    inventoryVersion?: SortOrder
+    storageProvider?: SortOrder
+    encryptedPayload?: SortOrder
+    encryptedResult?: SortOrder
+    status?: SortOrder
+    batchId?: SortOrder
+    createdAt?: SortOrder
+    expiresAt?: SortOrder
+    importedAt?: SortOrder
+  }
+
+  export type MigrationStagedUploadSumOrderByAggregateInput = {
+    rowCount?: SortOrder
+    byteSize?: SortOrder
+    inventoryVersion?: SortOrder
+  }
+
+  export type EnumMigrationUploadStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MigrationUploadStatus | EnumMigrationUploadStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MigrationUploadStatus[] | ListEnumMigrationUploadStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MigrationUploadStatus[] | ListEnumMigrationUploadStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMigrationUploadStatusWithAggregatesFilter<$PrismaModel> | $Enums.MigrationUploadStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMigrationUploadStatusFilter<$PrismaModel>
+    _max?: NestedEnumMigrationUploadStatusFilter<$PrismaModel>
+  }
+
   export type AdminCreateNestedManyWithoutSchoolInput = {
     create?: XOR<AdminCreateWithoutSchoolInput, AdminUncheckedCreateWithoutSchoolInput> | AdminCreateWithoutSchoolInput[] | AdminUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: AdminCreateOrConnectWithoutSchoolInput | AdminCreateOrConnectWithoutSchoolInput[]
@@ -155698,6 +157503,13 @@ export namespace Prisma {
     connectOrCreate?: OnboardingAuditLogCreateOrConnectWithoutSchoolInput | OnboardingAuditLogCreateOrConnectWithoutSchoolInput[]
     createMany?: OnboardingAuditLogCreateManySchoolInputEnvelope
     connect?: OnboardingAuditLogWhereUniqueInput | OnboardingAuditLogWhereUniqueInput[]
+  }
+
+  export type MigrationStagedUploadCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<MigrationStagedUploadCreateWithoutSchoolInput, MigrationStagedUploadUncheckedCreateWithoutSchoolInput> | MigrationStagedUploadCreateWithoutSchoolInput[] | MigrationStagedUploadUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: MigrationStagedUploadCreateOrConnectWithoutSchoolInput | MigrationStagedUploadCreateOrConnectWithoutSchoolInput[]
+    createMany?: MigrationStagedUploadCreateManySchoolInputEnvelope
+    connect?: MigrationStagedUploadWhereUniqueInput | MigrationStagedUploadWhereUniqueInput[]
   }
 
   export type FinanceJobCreateNestedManyWithoutSchoolInput = {
@@ -156260,6 +158072,13 @@ export namespace Prisma {
     connectOrCreate?: OnboardingAuditLogCreateOrConnectWithoutSchoolInput | OnboardingAuditLogCreateOrConnectWithoutSchoolInput[]
     createMany?: OnboardingAuditLogCreateManySchoolInputEnvelope
     connect?: OnboardingAuditLogWhereUniqueInput | OnboardingAuditLogWhereUniqueInput[]
+  }
+
+  export type MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<MigrationStagedUploadCreateWithoutSchoolInput, MigrationStagedUploadUncheckedCreateWithoutSchoolInput> | MigrationStagedUploadCreateWithoutSchoolInput[] | MigrationStagedUploadUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: MigrationStagedUploadCreateOrConnectWithoutSchoolInput | MigrationStagedUploadCreateOrConnectWithoutSchoolInput[]
+    createMany?: MigrationStagedUploadCreateManySchoolInputEnvelope
+    connect?: MigrationStagedUploadWhereUniqueInput | MigrationStagedUploadWhereUniqueInput[]
   }
 
   export type FinanceJobUncheckedCreateNestedManyWithoutSchoolInput = {
@@ -157210,6 +159029,20 @@ export namespace Prisma {
     update?: OnboardingAuditLogUpdateWithWhereUniqueWithoutSchoolInput | OnboardingAuditLogUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: OnboardingAuditLogUpdateManyWithWhereWithoutSchoolInput | OnboardingAuditLogUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: OnboardingAuditLogScalarWhereInput | OnboardingAuditLogScalarWhereInput[]
+  }
+
+  export type MigrationStagedUploadUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<MigrationStagedUploadCreateWithoutSchoolInput, MigrationStagedUploadUncheckedCreateWithoutSchoolInput> | MigrationStagedUploadCreateWithoutSchoolInput[] | MigrationStagedUploadUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: MigrationStagedUploadCreateOrConnectWithoutSchoolInput | MigrationStagedUploadCreateOrConnectWithoutSchoolInput[]
+    upsert?: MigrationStagedUploadUpsertWithWhereUniqueWithoutSchoolInput | MigrationStagedUploadUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: MigrationStagedUploadCreateManySchoolInputEnvelope
+    set?: MigrationStagedUploadWhereUniqueInput | MigrationStagedUploadWhereUniqueInput[]
+    disconnect?: MigrationStagedUploadWhereUniqueInput | MigrationStagedUploadWhereUniqueInput[]
+    delete?: MigrationStagedUploadWhereUniqueInput | MigrationStagedUploadWhereUniqueInput[]
+    connect?: MigrationStagedUploadWhereUniqueInput | MigrationStagedUploadWhereUniqueInput[]
+    update?: MigrationStagedUploadUpdateWithWhereUniqueWithoutSchoolInput | MigrationStagedUploadUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: MigrationStagedUploadUpdateManyWithWhereWithoutSchoolInput | MigrationStagedUploadUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: MigrationStagedUploadScalarWhereInput | MigrationStagedUploadScalarWhereInput[]
   }
 
   export type FinanceJobUpdateManyWithoutSchoolNestedInput = {
@@ -158324,6 +160157,20 @@ export namespace Prisma {
     update?: OnboardingAuditLogUpdateWithWhereUniqueWithoutSchoolInput | OnboardingAuditLogUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: OnboardingAuditLogUpdateManyWithWhereWithoutSchoolInput | OnboardingAuditLogUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: OnboardingAuditLogScalarWhereInput | OnboardingAuditLogScalarWhereInput[]
+  }
+
+  export type MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<MigrationStagedUploadCreateWithoutSchoolInput, MigrationStagedUploadUncheckedCreateWithoutSchoolInput> | MigrationStagedUploadCreateWithoutSchoolInput[] | MigrationStagedUploadUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: MigrationStagedUploadCreateOrConnectWithoutSchoolInput | MigrationStagedUploadCreateOrConnectWithoutSchoolInput[]
+    upsert?: MigrationStagedUploadUpsertWithWhereUniqueWithoutSchoolInput | MigrationStagedUploadUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: MigrationStagedUploadCreateManySchoolInputEnvelope
+    set?: MigrationStagedUploadWhereUniqueInput | MigrationStagedUploadWhereUniqueInput[]
+    disconnect?: MigrationStagedUploadWhereUniqueInput | MigrationStagedUploadWhereUniqueInput[]
+    delete?: MigrationStagedUploadWhereUniqueInput | MigrationStagedUploadWhereUniqueInput[]
+    connect?: MigrationStagedUploadWhereUniqueInput | MigrationStagedUploadWhereUniqueInput[]
+    update?: MigrationStagedUploadUpdateWithWhereUniqueWithoutSchoolInput | MigrationStagedUploadUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: MigrationStagedUploadUpdateManyWithWhereWithoutSchoolInput | MigrationStagedUploadUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: MigrationStagedUploadScalarWhereInput | MigrationStagedUploadScalarWhereInput[]
   }
 
   export type FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput = {
@@ -167073,6 +168920,24 @@ export namespace Prisma {
     update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutOnboardingAuditLogsInput, SchoolUpdateWithoutOnboardingAuditLogsInput>, SchoolUncheckedUpdateWithoutOnboardingAuditLogsInput>
   }
 
+  export type SchoolCreateNestedOneWithoutMigrationUploadsInput = {
+    create?: XOR<SchoolCreateWithoutMigrationUploadsInput, SchoolUncheckedCreateWithoutMigrationUploadsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutMigrationUploadsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type EnumMigrationUploadStatusFieldUpdateOperationsInput = {
+    set?: $Enums.MigrationUploadStatus
+  }
+
+  export type SchoolUpdateOneRequiredWithoutMigrationUploadsNestedInput = {
+    create?: XOR<SchoolCreateWithoutMigrationUploadsInput, SchoolUncheckedCreateWithoutMigrationUploadsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutMigrationUploadsInput
+    upsert?: SchoolUpsertWithoutMigrationUploadsInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutMigrationUploadsInput, SchoolUpdateWithoutMigrationUploadsInput>, SchoolUncheckedUpdateWithoutMigrationUploadsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -168901,6 +170766,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumOnboardingAuditActionFilter<$PrismaModel>
     _max?: NestedEnumOnboardingAuditActionFilter<$PrismaModel>
+  }
+
+  export type NestedEnumMigrationUploadStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.MigrationUploadStatus | EnumMigrationUploadStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MigrationUploadStatus[] | ListEnumMigrationUploadStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MigrationUploadStatus[] | ListEnumMigrationUploadStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMigrationUploadStatusFilter<$PrismaModel> | $Enums.MigrationUploadStatus
+  }
+
+  export type NestedEnumMigrationUploadStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MigrationUploadStatus | EnumMigrationUploadStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MigrationUploadStatus[] | ListEnumMigrationUploadStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MigrationUploadStatus[] | ListEnumMigrationUploadStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMigrationUploadStatusWithAggregatesFilter<$PrismaModel> | $Enums.MigrationUploadStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMigrationUploadStatusFilter<$PrismaModel>
+    _max?: NestedEnumMigrationUploadStatusFilter<$PrismaModel>
   }
 
   export type AdminCreateWithoutSchoolInput = {
@@ -171052,6 +172934,54 @@ export namespace Prisma {
 
   export type OnboardingAuditLogCreateManySchoolInputEnvelope = {
     data: OnboardingAuditLogCreateManySchoolInput | OnboardingAuditLogCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type MigrationStagedUploadCreateWithoutSchoolInput = {
+    id: string
+    uploadedBy: string
+    areaKey: string
+    fileName: string
+    checksum: string
+    rowCount: number
+    byteSize: number
+    inventoryVersion: number
+    storageProvider: string
+    encryptedPayload?: string | null
+    encryptedResult?: string | null
+    status?: $Enums.MigrationUploadStatus
+    batchId?: string | null
+    createdAt?: Date | string
+    expiresAt: Date | string
+    importedAt?: Date | string | null
+  }
+
+  export type MigrationStagedUploadUncheckedCreateWithoutSchoolInput = {
+    id: string
+    uploadedBy: string
+    areaKey: string
+    fileName: string
+    checksum: string
+    rowCount: number
+    byteSize: number
+    inventoryVersion: number
+    storageProvider: string
+    encryptedPayload?: string | null
+    encryptedResult?: string | null
+    status?: $Enums.MigrationUploadStatus
+    batchId?: string | null
+    createdAt?: Date | string
+    expiresAt: Date | string
+    importedAt?: Date | string | null
+  }
+
+  export type MigrationStagedUploadCreateOrConnectWithoutSchoolInput = {
+    where: MigrationStagedUploadWhereUniqueInput
+    create: XOR<MigrationStagedUploadCreateWithoutSchoolInput, MigrationStagedUploadUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type MigrationStagedUploadCreateManySchoolInputEnvelope = {
+    data: MigrationStagedUploadCreateManySchoolInput | MigrationStagedUploadCreateManySchoolInput[]
     skipDuplicates?: boolean
   }
 
@@ -174077,6 +176007,45 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"OnboardingAuditLog"> | Date | string
   }
 
+  export type MigrationStagedUploadUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: MigrationStagedUploadWhereUniqueInput
+    update: XOR<MigrationStagedUploadUpdateWithoutSchoolInput, MigrationStagedUploadUncheckedUpdateWithoutSchoolInput>
+    create: XOR<MigrationStagedUploadCreateWithoutSchoolInput, MigrationStagedUploadUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type MigrationStagedUploadUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: MigrationStagedUploadWhereUniqueInput
+    data: XOR<MigrationStagedUploadUpdateWithoutSchoolInput, MigrationStagedUploadUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type MigrationStagedUploadUpdateManyWithWhereWithoutSchoolInput = {
+    where: MigrationStagedUploadScalarWhereInput
+    data: XOR<MigrationStagedUploadUpdateManyMutationInput, MigrationStagedUploadUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type MigrationStagedUploadScalarWhereInput = {
+    AND?: MigrationStagedUploadScalarWhereInput | MigrationStagedUploadScalarWhereInput[]
+    OR?: MigrationStagedUploadScalarWhereInput[]
+    NOT?: MigrationStagedUploadScalarWhereInput | MigrationStagedUploadScalarWhereInput[]
+    id?: StringFilter<"MigrationStagedUpload"> | string
+    schoolId?: StringFilter<"MigrationStagedUpload"> | string
+    uploadedBy?: StringFilter<"MigrationStagedUpload"> | string
+    areaKey?: StringFilter<"MigrationStagedUpload"> | string
+    fileName?: StringFilter<"MigrationStagedUpload"> | string
+    checksum?: StringFilter<"MigrationStagedUpload"> | string
+    rowCount?: IntFilter<"MigrationStagedUpload"> | number
+    byteSize?: IntFilter<"MigrationStagedUpload"> | number
+    inventoryVersion?: IntFilter<"MigrationStagedUpload"> | number
+    storageProvider?: StringFilter<"MigrationStagedUpload"> | string
+    encryptedPayload?: StringNullableFilter<"MigrationStagedUpload"> | string | null
+    encryptedResult?: StringNullableFilter<"MigrationStagedUpload"> | string | null
+    status?: EnumMigrationUploadStatusFilter<"MigrationStagedUpload"> | $Enums.MigrationUploadStatus
+    batchId?: StringNullableFilter<"MigrationStagedUpload"> | string | null
+    createdAt?: DateTimeFilter<"MigrationStagedUpload"> | Date | string
+    expiresAt?: DateTimeFilter<"MigrationStagedUpload"> | Date | string
+    importedAt?: DateTimeNullableFilter<"MigrationStagedUpload"> | Date | string | null
+  }
+
   export type FinanceJobUpsertWithWhereUniqueWithoutSchoolInput = {
     where: FinanceJobWhereUniqueInput
     update: XOR<FinanceJobUpdateWithoutSchoolInput, FinanceJobUncheckedUpdateWithoutSchoolInput>
@@ -175235,6 +177204,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -175336,6 +177306,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -175453,6 +177424,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -175554,6 +177526,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -175655,6 +177628,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -175756,6 +177730,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -175929,6 +177904,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -176030,6 +178006,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -176147,6 +178124,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -176248,6 +178226,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -176569,6 +178548,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -176670,6 +178650,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -176863,6 +178844,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -176964,6 +178946,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -177919,6 +179902,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -178020,6 +180004,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -178541,6 +180526,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -178642,6 +180628,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -179549,6 +181536,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -179650,6 +181638,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -180055,6 +182044,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -180156,6 +182146,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -180855,6 +182846,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -180956,6 +182948,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -181275,6 +183268,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -181376,6 +183370,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -181659,6 +183654,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -181760,6 +183756,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -182020,6 +184017,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -182121,6 +184119,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -182238,6 +184237,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -182339,6 +184339,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -182441,6 +184442,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -182542,6 +184544,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -182659,6 +184662,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -182760,6 +184764,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -182861,6 +184866,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -182962,6 +184968,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -183079,6 +185086,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -183180,6 +185188,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -183281,6 +185290,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -183382,6 +185392,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -183499,6 +185510,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -183600,6 +185612,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -183701,6 +185714,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -183802,6 +185816,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -183919,6 +185934,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -184020,6 +186036,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -184121,6 +186138,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -184222,6 +186240,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -184416,6 +186435,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -184517,6 +186537,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -184700,6 +186721,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -184801,6 +186823,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -184959,6 +186982,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -185060,6 +187084,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -185177,6 +187202,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -185278,6 +187304,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -185451,6 +187478,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -185552,6 +187580,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -185669,6 +187698,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -185770,6 +187800,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -185918,6 +187949,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -186019,6 +188051,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -186158,6 +188191,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -186259,6 +188293,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -186376,6 +188411,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -186477,6 +188513,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -186578,6 +188615,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -186679,6 +188717,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -186951,6 +188990,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -187052,6 +189092,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -187268,6 +189309,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -187369,6 +189411,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -187608,6 +189651,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -187709,6 +189753,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -187944,6 +189989,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -188045,6 +190091,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -188284,6 +190331,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -188385,6 +190433,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -188620,6 +190669,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -188721,6 +190771,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -188915,6 +190966,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -189016,6 +191068,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -189200,6 +191253,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -189301,6 +191355,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -189495,6 +191550,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -189596,6 +191652,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -189780,6 +191837,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -189881,6 +191939,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -190051,6 +192110,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -190152,6 +192212,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -190312,6 +192373,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -190413,6 +192475,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -190620,6 +192683,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -190721,6 +192785,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -190854,6 +192919,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -190955,6 +193021,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -191165,6 +193232,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -191266,6 +193334,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -191438,6 +193507,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -191539,6 +193609,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -191748,6 +193819,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -191849,6 +193921,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -192054,6 +194127,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -192155,6 +194229,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -192444,6 +194519,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -192545,6 +194621,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -192806,6 +194883,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -192907,6 +194985,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -193122,6 +195201,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -193223,6 +195303,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -193434,6 +195515,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -193535,6 +195617,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -193897,6 +195980,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -193998,6 +196082,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -194342,6 +196427,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -194443,6 +196529,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -194822,6 +196909,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -194923,6 +197011,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -195310,6 +197399,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -195411,6 +197501,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -195737,6 +197828,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -195838,6 +197930,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -196165,6 +198258,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -196266,6 +198360,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -196592,6 +198687,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -196693,6 +198789,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -196858,6 +198955,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -196959,6 +199057,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -197612,6 +199711,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -197713,6 +199813,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -198087,6 +200188,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -198188,6 +200290,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -198595,6 +200698,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -198696,6 +200800,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -198893,6 +200998,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -198994,6 +201100,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -199438,6 +201545,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -199539,6 +201647,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -199904,6 +202013,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -200005,6 +202115,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -200187,6 +202298,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -200288,6 +202400,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -200447,6 +202560,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -200548,6 +202662,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -200765,6 +202880,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -200866,6 +202982,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -201041,6 +203158,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -201142,6 +203260,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -201441,6 +203560,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -201542,6 +203662,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -201843,6 +203964,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -201944,6 +204066,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -202188,6 +204311,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -202289,6 +204413,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -202535,6 +204660,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -202636,6 +204762,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -202916,6 +205043,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -203017,6 +205145,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -203261,6 +205390,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -203362,6 +205492,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -203634,6 +205765,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -203735,6 +205867,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -204009,6 +206142,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -204110,6 +206244,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -204269,6 +206404,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -204370,6 +206506,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -204519,6 +206656,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -204620,6 +206758,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -204779,6 +206918,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -204880,6 +207020,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -205029,6 +207170,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -205130,6 +207272,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -205247,6 +207390,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -205348,6 +207492,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -205449,6 +207594,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -205550,6 +207696,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -205857,6 +208004,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -205958,6 +208106,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -206238,6 +208387,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -206339,6 +208489,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -206674,6 +208825,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -206775,6 +208927,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -207101,6 +209254,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -207202,6 +209356,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -207515,6 +209670,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -207616,6 +209772,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -207931,6 +210088,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -208032,6 +210190,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -208149,6 +210308,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -208250,6 +210410,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -208351,6 +210512,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -208452,6 +210614,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -208793,6 +210956,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -208894,6 +211058,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -209243,6 +211408,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -209344,6 +211510,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -209503,6 +211670,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -209604,6 +211772,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -209753,6 +211922,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -209854,6 +212024,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -210013,6 +212184,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -210114,6 +212286,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -210263,6 +212436,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -210364,6 +212538,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -210570,6 +212745,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -210671,6 +212847,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -210979,6 +213156,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -211080,6 +213258,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -211350,6 +213529,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -211451,6 +213631,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -211723,6 +213904,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -211824,6 +214006,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -212051,6 +214234,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -212152,6 +214336,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -212474,6 +214659,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -212575,6 +214761,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -212800,6 +214987,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -212901,6 +215089,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -213230,6 +215419,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -213331,6 +215521,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -213572,6 +215763,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -213673,6 +215865,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -213886,6 +216079,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -213987,6 +216181,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -214269,6 +216464,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -214370,6 +216566,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -214654,6 +216851,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -214755,6 +216953,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -214956,6 +217155,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -215057,6 +217257,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -215254,6 +217455,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -215355,6 +217557,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -215832,6 +218035,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -215933,6 +218137,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -216434,6 +218639,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -216535,6 +218741,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -216808,6 +219015,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -216909,6 +219117,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -217376,6 +219585,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -217477,6 +219687,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -217847,6 +220058,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -217948,6 +220160,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -218193,6 +220406,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -218294,6 +220508,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -218559,6 +220774,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -218660,6 +220876,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -218927,6 +221144,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -219028,6 +221246,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -219195,6 +221414,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -219296,6 +221516,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -219453,6 +221674,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -219554,6 +221776,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -219719,6 +221942,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -219820,6 +222044,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -219975,6 +222200,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -220076,6 +222302,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -220193,6 +222420,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -220294,6 +222522,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -220395,6 +222624,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -220496,6 +222726,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -220613,6 +222844,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -220714,6 +222946,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -220815,6 +223048,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -220916,6 +223150,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -221263,6 +223498,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -221364,6 +223600,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -221720,6 +223957,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
@@ -221821,6 +224059,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -221938,6 +224177,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
@@ -222039,6 +224279,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -222140,6 +224381,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
@@ -222241,6 +224483,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -222408,6 +224651,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
@@ -222509,6 +224753,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -222665,6 +224910,7 @@ export namespace Prisma {
     dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -222766,6 +225012,7 @@ export namespace Prisma {
     dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -222883,6 +225130,7 @@ export namespace Prisma {
     dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -222984,6 +225232,7 @@ export namespace Prisma {
     dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -223085,6 +225334,7 @@ export namespace Prisma {
     dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -223186,6 +225436,7 @@ export namespace Prisma {
     dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -223303,6 +225554,7 @@ export namespace Prisma {
     dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -223404,6 +225656,7 @@ export namespace Prisma {
     dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -223506,6 +225759,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
@@ -223607,6 +225861,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -223829,6 +226084,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
@@ -223930,6 +226186,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -224130,6 +226387,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -224231,6 +226489,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -224487,6 +226746,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -224588,6 +226848,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -225072,6 +227333,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -225173,6 +227435,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -225343,6 +227606,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -225444,6 +227708,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -225603,6 +227868,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -225704,6 +227970,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -225884,6 +228151,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -225985,6 +228253,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -226143,6 +228412,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -226244,6 +228514,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -226412,6 +228683,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -226513,6 +228785,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -226671,6 +228944,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -226772,6 +229046,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -226960,6 +229235,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -227061,6 +229337,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -227227,6 +229504,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -227328,6 +229606,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -227496,6 +229775,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -227597,6 +229877,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -227756,6 +230037,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -227857,6 +230139,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -228202,6 +230485,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -228303,6 +230587,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -228656,6 +230941,7 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -228757,6 +231043,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -228929,6 +231216,7 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -229030,6 +231318,7 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -229191,6 +231480,7 @@ export namespace Prisma {
     dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
@@ -229292,6 +231582,7 @@ export namespace Prisma {
     dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    migrationUploads?: MigrationStagedUploadUncheckedCreateNestedManyWithoutSchoolInput
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -229409,6 +231700,7 @@ export namespace Prisma {
     dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
@@ -229510,6 +231802,431 @@ export namespace Prisma {
     dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    migrationUploads?: MigrationStagedUploadUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationAuditLogs?: AppNotificationAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationSettings?: AppNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    appNotificationPreferences?: AppNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolCreateWithoutMigrationUploadsInput = {
+    id: string
+    name: string
+    slug: string
+    code?: string | null
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    collectors?: CollectorCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
+    timetablePublications?: TimetablePublicationCreateNestedManyWithoutSchoolInput
+    publishedTimetableLessons?: PublishedTimetableLessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentSettings?: SchoolPaymentSettingCreateNestedOneWithoutSchoolInput
+    paymentIntents?: PaymentIntentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    bursars?: BursarCreateNestedManyWithoutSchoolInput
+    bursarInvites?: BursarInviteCreateNestedManyWithoutSchoolInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
+    collectorInvites?: CollectorInviteCreateNestedManyWithoutSchoolInput
+    collectorInviteAuditLogs?: CollectorInviteAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionTypes?: DailyCollectionTypeCreateNestedManyWithoutSchoolInput
+    dailyCollectionAuditLogs?: DailyCollectionAuditLogCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
+    appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
+    appNotificationAuditLogs?: AppNotificationAuditLogCreateNestedManyWithoutSchoolInput
+    appNotificationSettings?: AppNotificationSettingCreateNestedOneWithoutSchoolInput
+    appNotificationPreferences?: AppNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutMigrationUploadsInput = {
+    id: string
+    name: string
+    slug: string
+    code?: string | null
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    collectors?: CollectorUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
+    timetablePublications?: TimetablePublicationUncheckedCreateNestedManyWithoutSchoolInput
+    publishedTimetableLessons?: PublishedTimetableLessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentSettings?: SchoolPaymentSettingUncheckedCreateNestedOneWithoutSchoolInput
+    paymentIntents?: PaymentIntentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    bursars?: BursarUncheckedCreateNestedManyWithoutSchoolInput
+    bursarInvites?: BursarInviteUncheckedCreateNestedManyWithoutSchoolInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    collectorInvites?: CollectorInviteUncheckedCreateNestedManyWithoutSchoolInput
+    collectorInviteAuditLogs?: CollectorInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionTypes?: DailyCollectionTypeUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedCreateNestedManyWithoutSchoolInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationAuditLogs?: AppNotificationAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationSettings?: AppNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    appNotificationPreferences?: AppNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutMigrationUploadsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutMigrationUploadsInput, SchoolUncheckedCreateWithoutMigrationUploadsInput>
+  }
+
+  export type SchoolUpsertWithoutMigrationUploadsInput = {
+    update: XOR<SchoolUpdateWithoutMigrationUploadsInput, SchoolUncheckedUpdateWithoutMigrationUploadsInput>
+    create: XOR<SchoolCreateWithoutMigrationUploadsInput, SchoolUncheckedCreateWithoutMigrationUploadsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutMigrationUploadsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutMigrationUploadsInput, SchoolUncheckedUpdateWithoutMigrationUploadsInput>
+  }
+
+  export type SchoolUpdateWithoutMigrationUploadsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    collectors?: CollectorUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
+    timetablePublications?: TimetablePublicationUpdateManyWithoutSchoolNestedInput
+    publishedTimetableLessons?: PublishedTimetableLessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentSettings?: SchoolPaymentSettingUpdateOneWithoutSchoolNestedInput
+    paymentIntents?: PaymentIntentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    bursars?: BursarUpdateManyWithoutSchoolNestedInput
+    bursarInvites?: BursarInviteUpdateManyWithoutSchoolNestedInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    collectorInvites?: CollectorInviteUpdateManyWithoutSchoolNestedInput
+    collectorInviteAuditLogs?: CollectorInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionTypes?: DailyCollectionTypeUpdateManyWithoutSchoolNestedInput
+    dailyCollectionAuditLogs?: DailyCollectionAuditLogUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
+    appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
+    appNotificationAuditLogs?: AppNotificationAuditLogUpdateManyWithoutSchoolNestedInput
+    appNotificationSettings?: AppNotificationSettingUpdateOneWithoutSchoolNestedInput
+    appNotificationPreferences?: AppNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutMigrationUploadsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    collectors?: CollectorUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
+    timetablePublications?: TimetablePublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    publishedTimetableLessons?: PublishedTimetableLessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentSettings?: SchoolPaymentSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    paymentIntents?: PaymentIntentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    bursars?: BursarUncheckedUpdateManyWithoutSchoolNestedInput
+    bursarInvites?: BursarInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    collectorInvites?: CollectorInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    collectorInviteAuditLogs?: CollectorInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionTypes?: DailyCollectionTypeUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionAuditLogs?: DailyCollectionAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionSessions?: DailyCollectionSessionUncheckedUpdateManyWithoutSchoolNestedInput
+    dailyCollectionEntries?: DailyCollectionEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -230245,6 +232962,25 @@ export namespace Prisma {
     performedBy: string
     metadata: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
+  }
+
+  export type MigrationStagedUploadCreateManySchoolInput = {
+    id: string
+    uploadedBy: string
+    areaKey: string
+    fileName: string
+    checksum: string
+    rowCount: number
+    byteSize: number
+    inventoryVersion: number
+    storageProvider: string
+    encryptedPayload?: string | null
+    encryptedResult?: string | null
+    status?: $Enums.MigrationUploadStatus
+    batchId?: string | null
+    createdAt?: Date | string
+    expiresAt: Date | string
+    importedAt?: Date | string | null
   }
 
   export type FinanceJobCreateManySchoolInput = {
@@ -232936,6 +235672,63 @@ export namespace Prisma {
     performedBy?: StringFieldUpdateOperationsInput | string
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MigrationStagedUploadUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    uploadedBy?: StringFieldUpdateOperationsInput | string
+    areaKey?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    checksum?: StringFieldUpdateOperationsInput | string
+    rowCount?: IntFieldUpdateOperationsInput | number
+    byteSize?: IntFieldUpdateOperationsInput | number
+    inventoryVersion?: IntFieldUpdateOperationsInput | number
+    storageProvider?: StringFieldUpdateOperationsInput | string
+    encryptedPayload?: NullableStringFieldUpdateOperationsInput | string | null
+    encryptedResult?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumMigrationUploadStatusFieldUpdateOperationsInput | $Enums.MigrationUploadStatus
+    batchId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MigrationStagedUploadUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    uploadedBy?: StringFieldUpdateOperationsInput | string
+    areaKey?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    checksum?: StringFieldUpdateOperationsInput | string
+    rowCount?: IntFieldUpdateOperationsInput | number
+    byteSize?: IntFieldUpdateOperationsInput | number
+    inventoryVersion?: IntFieldUpdateOperationsInput | number
+    storageProvider?: StringFieldUpdateOperationsInput | string
+    encryptedPayload?: NullableStringFieldUpdateOperationsInput | string | null
+    encryptedResult?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumMigrationUploadStatusFieldUpdateOperationsInput | $Enums.MigrationUploadStatus
+    batchId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MigrationStagedUploadUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    uploadedBy?: StringFieldUpdateOperationsInput | string
+    areaKey?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    checksum?: StringFieldUpdateOperationsInput | string
+    rowCount?: IntFieldUpdateOperationsInput | number
+    byteSize?: IntFieldUpdateOperationsInput | number
+    inventoryVersion?: IntFieldUpdateOperationsInput | number
+    storageProvider?: StringFieldUpdateOperationsInput | string
+    encryptedPayload?: NullableStringFieldUpdateOperationsInput | string | null
+    encryptedResult?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumMigrationUploadStatusFieldUpdateOperationsInput | $Enums.MigrationUploadStatus
+    batchId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type FinanceJobUpdateWithoutSchoolInput = {
