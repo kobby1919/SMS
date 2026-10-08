@@ -24,6 +24,7 @@ import {
 import type { MigrationValidationPayload } from "@/src/lib/validation/data-migration";
 import { applyDiscountInTransaction } from "@/src/lib/services/bill-discounts";
 import { getMigrationInventory } from "@/src/lib/services/migration-inventory";
+import { inventorySchema } from "@/src/lib/migration/inventory";
 
 export type MigrationImportResult = {
   batchId: string | null;
@@ -653,9 +654,9 @@ export async function importValidatedMigrationRows(
 
   if (cleanRows.length > 0) {
     await prisma.$transaction(async (tx) => {
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${context.schoolId}), hashtext('migration-inventory'))`;
+      await tx.$queryRaw`SELECT "id" FROM "School" WHERE "id" = ${context.schoolId} FOR SHARE`;
       const inventory = await getMigrationInventory(context.schoolId, tx);
-      if (inventory?.status !== "CONFIRMED" || !inventory.rows.some((row) => row.key === context.areaKey && row.disposition === "INCLUDE")) {
+      if (inventory?.status !== "CONFIRMED" || !inventorySchema.safeParse(inventory).success || !inventory.rows.some((row) => row.key === context.areaKey && row.disposition === "INCLUDE")) {
         throw new MigrationImportError("Confirm a migration inventory that includes this dataset before importing.", 409);
       }
       if (["fees", "feeStructures", "discounts"].includes(context.areaKey)) await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${context.schoolId}), hashtext('finance-migration'))`;
