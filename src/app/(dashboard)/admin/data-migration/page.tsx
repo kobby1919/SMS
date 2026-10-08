@@ -19,7 +19,7 @@ import { requirePageSession } from "@/src/lib/authz";
 import DataMigrationMapper from "@/src/components/DataMigrationMapper";
 import MigrationInventoryPanel from "@/src/components/MigrationInventoryPanel";
 import MigrationRecoveryPanel from "@/src/components/MigrationRecoveryPanel";
-import { getMigrationRecovery } from "@/src/lib/services/migration-recovery";
+import { getMigrationRecovery, getRecoveryDatabaseReference } from "@/src/lib/services/migration-recovery";
 import { getMigrationInventory } from "@/src/lib/services/migration-inventory";
 import { getMigrationReconciliation } from "@/src/lib/services/migration-reconciliation";
 import MigrationReconciliationPanel from "@/src/components/MigrationReconciliationPanel";
@@ -282,7 +282,7 @@ export async function DataMigrationWorkspace({
       </section>
 
       <MigrationInventoryPanel initial={inventory} />
-      <MigrationRecoveryPanel key={`${inventory?.version ?? 0}:${recovery?.plan.version ?? 0}`} initial={recovery} inventoryVersion={inventory?.version ?? 0} production={process.env.NODE_ENV === "production"} />
+      <MigrationRecoveryPanel key={`${inventory?.version ?? 0}:${recovery?.plan.version ?? 0}`} initial={recovery} inventoryVersion={inventory?.version ?? 0} production={process.env.NODE_ENV === "production"} databaseReference={getRecoveryDatabaseReference()} />
       <DataMigrationMapper />
 
       <MigrationReconciliationPanel key={reconciliation.fingerprint} report={reconciliation} />

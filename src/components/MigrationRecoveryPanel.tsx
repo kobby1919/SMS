@@ -7,7 +7,7 @@ import { recordMigrationRecovery } from "@/src/lib/actions/migrationRecoveryActi
 import { recoveryBlockers } from "@/src/lib/migration/recovery";
 
 type Current = Awaited<ReturnType<typeof getMigrationRecovery>>;
-export default function MigrationRecoveryPanel({ initial, inventoryVersion, production }: { initial: Current; inventoryVersion: number; production: boolean }) {
+export default function MigrationRecoveryPanel({ initial, inventoryVersion, production, databaseReference }: { initial: Current; inventoryVersion: number; production: boolean; databaseReference: string | null }) {
   const router = useRouter();
   const [current, setCurrent] = useState(initial);
   const [status, setStatus] = useState<"READY" | "HOLD">(initial?.plan.status ?? "READY");
@@ -23,7 +23,7 @@ export default function MigrationRecoveryPanel({ initial, inventoryVersion, prod
   const [acknowledged, setAcknowledged] = useState(false);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
-  const blockers = recoveryBlockers(current?.plan ?? null, inventoryVersion, production);
+  const blockers = recoveryBlockers(current?.plan ?? null, inventoryVersion, production, new Date(), databaseReference);
   const changed = () => { setAcknowledged(false); setMessage(""); };
   async function save() {
     setPending(true); setMessage("");
@@ -38,6 +38,7 @@ export default function MigrationRecoveryPanel({ initial, inventoryVersion, prod
   return <section aria-labelledby="migration-recovery-title" className="min-w-0 border-t border-gray-200 py-6">
     <h2 id="migration-recovery-title" className="flex items-center gap-2 text-lg font-semibold"><ShieldCheck size={20} />Recovery and cutover</h2>
     <p className="mt-2 text-sm text-gray-600">Keep original school records until reconciliation is approved. Database recovery is handled by the deployment team, never by deleting imported records here.</p>
+    {databaseReference && <p className="mt-2 break-words text-sm text-gray-600">Deployment database reference: {databaseReference}</p>}
     <p className="mt-2 text-sm font-medium">{current ? `Latest checkpoint: ${current.plan.status === "HOLD" ? "On hold" : "Recorded"} (${new Date(current.recordedAt).toLocaleString("en-GH", { timeZone: "UTC", dateStyle: "medium", timeStyle: "short" })} UTC).` : "No recovery checkpoint recorded."} {!production && "Development workspace: live backup evidence is still required before production migration."}</p>
     {blockers.length > 0 && <ul className="mt-3 list-inside list-disc text-sm text-amber-800">{blockers.map((item) => <li key={item}>{item}</li>)}</ul>}
     <details className="mt-4" open={production && !current}>

@@ -5,9 +5,9 @@ import vm from "node:vm";
 import ts from "typescript";
 import { z } from "zod";
 
-function load(path, modules, environment = "development") {
+function load(path, modules, environment = "development", databaseReference = "production-project-1") {
   const exports = {};
-  vm.runInNewContext(ts.transpileModule(readFileSync(path, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, { exports, require: (name) => modules[name] ?? {}, Date, process: { env: { NODE_ENV: environment } } });
+  vm.runInNewContext(ts.transpileModule(readFileSync(path, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, { exports, require: (name) => modules[name] ?? {}, Date, process: { env: { NODE_ENV: environment, MIGRATION_RECOVERY_DATABASE_REFERENCE: databaseReference } } });
   return exports;
 }
 const core = load("src/lib/migration/recovery.ts", { zod: { z } });
@@ -31,7 +31,7 @@ test("production cannot pass with local-development evidence or no plan", () => 
   assert.equal(core.recoveryBlockers(null, 3, false, now).length, 0);
   assert.ok(core.recoveryBlockers(null, 3, true, now).length);
   assert.ok(core.recoveryBlockers(plan(), 3, true, now).length);
-  assert.equal(core.recoveryBlockers({ ...plan(), evidence: evidence() }, 3, true, now).length, 0);
+  assert.equal(core.recoveryBlockers({ ...plan(), evidence: evidence() }, 3, true, now, "production-project-1").length, 0);
 });
 test("hold blocks every environment even when inventory changed", () => {
   for (const production of [false, true]) assert.match(core.recoveryBlockers({ ...plan(), status: "HOLD", holdReason: "Unreconciled opening balances" }, 99, production, now)[0], /hold/);
@@ -40,10 +40,24 @@ test("inventory revision invalidates ready checkpoint", () => {
   assert.match(core.recoveryBlockers({ ...plan(), evidence: evidence() }, 4, true, now)[0], /inventory changed/);
 });
 test("expired and future backup/drill timestamps fail closed", () => {
-  for (const [key, date] of [["backupAt", "2026-10-07T11:59:59Z"], ["backupAt", "2026-10-08T12:00:01Z"], ["restoreDrillAt", "2026-09-07T12:00:00Z"], ["restoreDrillAt", "2026-10-08T12:00:01Z"]]) assert.ok(core.recoveryBlockers({ ...plan(), evidence: { ...evidence(), [key]: date } }, 3, true, now).length);
+  for (const [key, date] of [["backupAt", "2026-10-07T11:59:59Z"], ["backupAt", "2026-10-08T12:00:01Z"], ["restoreDrillAt", "2026-09-07T12:00:00Z"], ["restoreDrillAt", "2026-10-08T12:00:01Z"]]) assert.ok(core.recoveryBlockers({ ...plan(), evidence: { ...evidence(), [key]: date } }, 3, true, now, "production-project-1").length);
 });
 
-function fixture(environment = "development") {
+test("production evidence must name the configured deployment database", () => {
+  const ready = { ...plan(), evidence: evidence() };
+  assert.match(core.recoveryBlockers(ready, 3, true, now)[0], /configure/);
+  assert.match(core.recoveryBlockers(ready, 3, true, now, "different-project")[0], /different database/);
+  assert.equal(core.recoveryBlockers(ready, 3, true, now, "production-project-1").length, 0);
+});
+
+test("recovery notes reject common credentials before audit persistence", () => {
+  for (const secret of ["postgresql://admin:password@host/database", "api_key=re_private123", "Bearer private123", "password=private123"]) {
+    assert.equal(core.recoveryInputSchema.safeParse({ ...plan(), cutoverNote: `Restore using ${secret} and compare records.` }).success, false);
+    assert.equal(core.recoveryInputSchema.safeParse({ ...plan(), status: "HOLD", holdReason: `Investigate ${secret}` }).success, false);
+  }
+});
+
+function fixture(environment = "development", databaseReference = "production-project-1") {
   const state = { inventory: { version: 3, status: "CONFIRMED" }, logs: [], writes: 0, locked: false };
   const tx = {
     $queryRaw: async (_template, schoolId) => { state.locked = true; return schoolId === "a" ? [{ id: "a" }] : []; },
@@ -57,7 +71,7 @@ function fixture(environment = "development") {
     "@/src/generated/prisma": { Prisma: { TransactionIsolationLevel: { Serializable: "Serializable" } } },
     "@/src/lib/services/migration-inventory": { getMigrationInventory: async (schoolId) => schoolId === "a" ? state.inventory : null },
     "@/src/lib/migration/recovery": core,
-  }, environment);
+  }, environment, databaseReference);
   return { state, service, tx };
 }
 test("recovery records are append-only and school scoped", async () => {
@@ -94,6 +108,16 @@ test("corrupt latest checkpoint cannot silently fall back to an old ready record
   await service.saveMigrationRecovery("a", "admin", plan());
   state.logs.push({ ...state.logs[0], id: 99, metadata: { status: "READY" } });
   await assert.rejects(service.requireMigrationRecovery("a", 3, tx), /invalid/);
+});
+
+test("missing or wrong deployment reference blocks ready saves but not emergency holds", async () => {
+  for (const reference of [null, "other-project", "postgresql://user:password@host/db"]) {
+    const { service, state } = fixture("production", reference);
+    await assert.rejects(service.saveMigrationRecovery("a", "admin", { ...plan(), evidence: evidence(new Date()) }), /configure|different database/);
+    assert.equal(state.logs.length, 0);
+    await service.saveMigrationRecovery("a", "admin", { ...plan(), status: "HOLD", holdReason: "Backup target requires verification" });
+    assert.equal(state.logs[0].metadata.status, "HOLD");
+  }
 });
 test("imports and setup transitions gate recovery inside their locked transactions", () => {
   const importer = readFileSync("src/lib/services/data-migration-import.ts", "utf8");
