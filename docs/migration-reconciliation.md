@@ -14,6 +14,8 @@
 
 New imports save committed record IDs and exact minor-unit financial controls in their existing import audit transaction. Guardian IDs are deduplicated across student/parent files. Fee-structure evidence counts fee items; opening bill evidence counts line items. No whole-school totals are substituted for migration totals.
 
+New imports also preserve each opening fee line's bill, student, fee item, charge and opening paid credit; each discount's bill/student/amount; and each student's class/grade/primary guardian and guardian relationship. Approval checks these snapshots so compensating changes between two records cannot hide behind matching aggregate totals. Batches missing these controls cannot receive automatic approval for the affected datasets.
+
 Legacy batches without record-level evidence are blocked from automatic approval. Their records are not deleted or reimported automatically. They need a separately verified reconciliation; this implementation does not fabricate retrospective evidence.
 
 Problematic batches block approval. A dedicated correction/resolution workflow is still needed for those historical batches; do not remove their flags to bypass review. At most 1,000 batches and 50,000 identities per dataset are reviewed by this interactive workflow. Larger migrations need a dedicated review process.
@@ -21,3 +23,5 @@ Problematic batches block approval. A dedicated correction/resolution workflow i
 Approval is an append-only school admin attestation, not an independent financial audit. Small deterministic samples are not a substitute for checking all disputed records against the source. This step does not send bulk invites, create backups, roll back imported data or certify deployment readiness.
 
 Production still requires live database concurrency tests, a browser walkthrough at desktop/mobile sizes, and the backup/restore and cutover controls in later points. Existing unrelated data is not changed by reconciliation.
+
+Return to `docs/production-readiness.md`, Point 5, when real service payments/setup or Vercel deployment starts. Setup transitions are checked again under the school lock; completion and its audit record commit together. Live concurrency and UI tests remain pre-go-live gates, not work to postpone until customers depend on the app.

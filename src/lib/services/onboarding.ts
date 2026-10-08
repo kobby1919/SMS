@@ -384,7 +384,7 @@ export async function advanceSchoolSetupToReview(context: AuthzContext) {
       onboardingStatus: school.onboardingStatus === "PROFILE_DONE" ? "ACADEMIC_DONE" : school.onboardingStatus,
       setupStep: "review",
     },
-  }), school.setupStep === "migration");
+  }), school.setupStep === "migration", ["fresh", "migration"]);
 }
 
 export async function advanceSchoolSetupToCompletion(context: AuthzContext) {
@@ -416,7 +416,7 @@ export async function advanceSchoolSetupToCompletion(context: AuthzContext) {
       onboardingStatus: "USERS_DONE",
       setupStep: "complete",
     },
-  }));
+  }), false, ["review"]);
 }
 
 export async function completeSchoolOnboarding(context: AuthzContext) {
@@ -426,6 +426,7 @@ export async function completeSchoolOnboarding(context: AuthzContext) {
   if (!school) {
     throw new Error("School not found.");
   }
+  if (school.onboardingStatus === "COMPLETED") return school;
 
   if (!school.code) {
     throw new Error("Save the school code before entering the live dashboard.");
@@ -435,27 +436,12 @@ export async function completeSchoolOnboarding(context: AuthzContext) {
     throw new Error("Add at least one grade, class, and subject before finishing setup.");
   }
 
-  const updated = await withApprovedMigration(context.schoolId, (tx) => tx.school.update({
-    where: { id: context.schoolId },
-    data: {
-      onboardingStatus: "COMPLETED",
-      setupStep: null,
-      setupCompletedAt: new Date(),
-    },
-  }));
-
-  await writeOnboardingAudit({
-    action: "ONBOARDING_COMPLETED",
-    performedBy: context.userId,
-    schoolId: context.schoolId,
-    metadata: {
-      grades: school._count.grades,
-      classes: school._count.classes,
-      subjects: school._count.subjects,
-    },
-  });
-
-  return updated;
+  return withApprovedMigration(context.schoolId, async (tx) => {
+    const current = await tx.school.findUniqueOrThrow({ where: { id: context.schoolId }, select: { _count: { select: { grades: true, classes: true, subjects: true } } } });
+    const updated = await tx.school.update({ where: { id: context.schoolId }, data: { onboardingStatus: "COMPLETED", setupStep: null, setupCompletedAt: new Date() } });
+    await tx.onboardingAuditLog.create({ data: { action: "ONBOARDING_COMPLETED", performedBy: context.userId, schoolId: context.schoolId, metadata: { grades: current._count.grades, classes: current._count.classes, subjects: current._count.subjects } } });
+    return updated;
+  }, false, ["complete"]);
 }
 
 export async function createDefaultAcademicSetup(context: AuthzContext) {

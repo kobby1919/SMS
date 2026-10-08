@@ -18,10 +18,11 @@ const inventory = () => ({ version: 3, status: "CONFIRMED", source: "School regi
 
 function fixture() {
   const evidence = core.newMigrationEvidence(); evidence.records.subjects = ["1"];
-  const state = { inventory: inventory(), pending: [], logs: [{ id: 1, schoolId: "a", action: "IMPORT_RECORDED", createdAt: new Date("2026-10-08T10:00:00Z"), performedBy: "admin", metadata: { fileName: "subjects.csv", importedRows: 1, skippedRows: 0, evidence } }], approvals: [], records: Object.fromEntries(core.evidenceKeys.map((key) => [key, []])), bills: [] };
+  const state = { school: { code: "EDJ", onboardingStatus: "ACADEMIC_DONE", setupStep: "fresh", _count: { grades: 1, classes: 1, subjects: 1 } }, inventory: inventory(), pending: [], logs: [{ id: 1, schoolId: "a", action: "IMPORT_RECORDED", createdAt: new Date("2026-10-08T10:00:00Z"), performedBy: "admin", metadata: { fileName: "subjects.csv", importedRows: 1, skippedRows: 0, evidence } }], approvals: [], records: Object.fromEntries(core.evidenceKeys.map((key) => [key, []])), bills: [] };
   state.records.subjects = [{ id: 1, schoolId: "a", name: "English" }];
   const tx = {
     $queryRaw: async () => [{ id: "a" }],
+    school: { findUnique: async ({ where }) => where.id === "a" ? state.school : null },
     onboardingAuditLog: {
       findMany: async ({ where }) => state.logs.filter((log) => log.schoolId === where.schoolId),
       findFirst: async ({ where }) => [...state.approvals].reverse().find((log) => log.schoolId === where.schoolId) ?? null,
@@ -102,8 +103,9 @@ function financeFixture() {
   Object.assign(state.inventory.rows.find((row) => row.key === "fees"), { disposition: "INCLUDE", expectedRecords: 1, files: "bills.csv" });
   state.inventory.finance = { gross: "100.10", discounts: "0", paid: "30.10", outstanding: "70" };
   evidence.records.fees = ["11"]; evidence.finance = { gross: "10010", paid: "3010", discounts: "0" };
-  const line = { id: 11, schoolId: "a", studentBillId: 7, amount: new Decimal("100.10"), amountPaid: new Decimal("30.10") };
-  state.records.fees = [line]; state.bills = [{ id: 7, schoolId: "a", totalAmount: line.amount, amountPaid: line.amountPaid, discountAmount: new Decimal(0), balance: new Decimal(70), lineItems: [line], discounts: [] }];
+  const line = { id: 11, schoolId: "a", studentBillId: 7, feeItemId: 22, amount: new Decimal("100.10"), amountPaid: new Decimal("30.10"), balance: new Decimal(70), isPaid: false };
+  evidence.controls.feeLines = [{ id: "11", billId: 7, studentId: "s1", feeItemId: 22, amount: "10010", paid: "3010" }];
+  state.records.fees = [line]; state.bills = [{ id: 7, schoolId: "a", studentId: "s1", totalAmount: line.amount, amountPaid: line.amountPaid, discountAmount: new Decimal(0), balance: new Decimal(70), lineItems: [line], discounts: [] }];
   return value;
 }
 test("opening paid credits reconcile without counting them as new payments", async () => {
@@ -140,4 +142,76 @@ test("student primary guardians must match the committed relationship evidence",
   state.records.students = [{ id: "s1", schoolId: "a", admissionNumber: "EDJ-2026-0001", name: "Student", surname: "One", parentId: "p1", class: { name: "Basic 1" } }];
   state.records.parents = [{ id: "p1", schoolId: "a", name: "Guardian" }];
   const report = await service.getMigrationReconciliation("a"); assert.equal(report.canApprove, false); assert.match(report.blockers.join(" "), /primary guardian/);
+});
+test("compensating paid-credit changes cannot hide behind matching totals", async () => {
+  const { state, service, evidence } = financeFixture();
+  state.inventory.rows.find((row) => row.key === "fees").expectedRecords = 2;
+  state.inventory.finance = { gross: "200.10", discounts: "0", paid: "40.10", outstanding: "160" };
+  evidence.records.fees.push("12"); evidence.finance = { gross: "20010", paid: "4010", discounts: "0" };
+  evidence.controls.feeLines.push({ id: "12", billId: 8, studentId: "s2", feeItemId: 22, amount: "10000", paid: "1000" });
+  const line = { id: 12, schoolId: "a", studentBillId: 8, feeItemId: 22, amount: new Decimal(100), amountPaid: new Decimal(10), balance: new Decimal(90), isPaid: false };
+  state.records.fees.push(line); state.bills.push({ id: 8, schoolId: "a", studentId: "s2", totalAmount: line.amount, amountPaid: line.amountPaid, discountAmount: new Decimal(0), balance: line.balance, lineItems: [line], discounts: [] });
+  assert.equal((await service.getMigrationReconciliation("a")).canApprove, true);
+  state.records.fees[0].amountPaid = new Decimal("35.10"); state.records.fees[0].balance = new Decimal(65);
+  line.amountPaid = new Decimal(5); line.balance = new Decimal(95);
+  for (const bill of state.bills) { bill.amountPaid = bill.lineItems[0].amountPaid; bill.balance = bill.lineItems[0].balance; }
+  const report = await service.getMigrationReconciliation("a"); assert.equal(report.finance.actual.paid, "40.10"); assert.equal(report.canApprove, false); assert.match(report.blockers.join(" "), /individual opening fee line/);
+});
+test("an opening bill cannot be reassigned to another student", async () => {
+  const { state, service } = financeFixture(); state.bills[0].studentId = "other-student";
+  const report = await service.getMigrationReconciliation("a"); assert.equal(report.canApprove, false); assert.match(report.blockers.join(" "), /original student/);
+});
+test("missing per-record finance controls require verified legacy review", async () => {
+  const { evidence, service } = financeFixture(); delete evidence.controls;
+  const report = await service.getMigrationReconciliation("a"); assert.equal(report.canApprove, false); assert.match(report.blockers.join(" "), /complete per-record controls/);
+});
+test("invalid line balances block approval even when bill totals balance", async () => {
+  const { state, service } = financeFixture(); state.records.fees[0].balance = new Decimal(0);
+  const report = await service.getMigrationReconciliation("a"); assert.equal(report.canApprove, false); assert.match(report.blockers.join(" "), /fee-line balance/);
+});
+test("direct completion cannot jump over setup stages", async () => {
+  const { state, service } = fixture(); state.inventory = null;
+  await assert.rejects(service.withApprovedMigration("a", async () => "completed", false, ["complete"]), /current setup stage/);
+  state.school.setupStep = "migration";
+  await assert.rejects(service.withApprovedMigration("a", async () => "completed"), /inventory/);
+  state.school.setupStep = "complete"; state.school._count.subjects = 0;
+  await assert.rejects(service.withApprovedMigration("a", async () => "completed", false, ["complete"]), /academic foundation/);
+});
+test("already-completed schools cannot be moved backwards by stale setup actions", async () => {
+  const { state, service } = fixture(); state.school.onboardingStatus = "COMPLETED";
+  await assert.rejects(service.withApprovedMigration("a", async () => "review"), /already completed/);
+});
+test("school completion and its audit record share the approval transaction", () => {
+  const source = readFileSync("src/lib/services/onboarding.ts", "utf8").split("export async function completeSchoolOnboarding")[1].split("export async function")[0];
+  assert.match(source, /tx\.onboardingAuditLog\.create/); assert.doesNotMatch(source, /await writeOnboardingAudit/); assert.match(source, /false, \["complete"\]/);
+});
+test("guardian ownership changes are detected even when profile counts match", async () => {
+  const { state, evidence, service } = fixture();
+  Object.assign(state.inventory.rows.find((row) => row.key === "parents"), { disposition: "INCLUDE", expectedRecords: 1, files: "parents.csv" });
+  evidence.records.parents = ["p1"]; evidence.records.parentLinks = ["r1"];
+  evidence.controls.guardianLinks = [{ id: "r1", parentId: "p1", studentId: "s1", role: "GUARDIAN" }];
+  state.records.parents = [{ id: "p1", schoolId: "a" }];
+  state.records.parentLinks = [{ id: "r1", schoolId: "a", parentId: "p1", studentId: "s2", role: "GUARDIAN", status: "ACTIVE", parent: { name: "Guardian", surname: "One" }, student: { admissionNumber: "EDJ-2026-0002" } }];
+  const report = await service.getMigrationReconciliation("a"); assert.equal(report.rows.find((row) => row.key === "parents").difference, 0); assert.equal(report.canApprove, false); assert.match(report.blockers.join(" "), /original parent, student/);
+});
+test("student placement changes require reconciliation against original controls", async () => {
+  const { state, evidence, service } = fixture();
+  for (const key of ["students", "parents"]) Object.assign(state.inventory.rows.find((row) => row.key === key), { disposition: "INCLUDE", expectedRecords: 1, files: "students.csv" });
+  evidence.records.students = ["s1"]; evidence.records.parents = ["p1"]; evidence.records.parentLinks = ["r1"];
+  evidence.controls.studentPlacements = [{ id: "s1", classId: 1, gradeId: 1, parentId: "p1" }];
+  evidence.controls.guardianLinks = [{ id: "r1", parentId: "p1", studentId: "s1", role: "PRIMARY_GUARDIAN" }];
+  state.records.parents = [{ id: "p1", schoolId: "a" }];
+  state.records.students = [{ id: "s1", schoolId: "a", classId: 2, gradeId: 2, parentId: "p1", name: "Student", surname: "One", admissionNumber: "EDJ-2026-0001", class: { name: "Basic 2" } }];
+  state.records.parentLinks = [{ id: "r1", schoolId: "a", parentId: "p1", studentId: "s1", role: "PRIMARY_GUARDIAN", status: "ACTIVE", parent: { name: "Guardian", surname: "One" }, student: { admissionNumber: "EDJ-2026-0001" } }];
+  const report = await service.getMigrationReconciliation("a"); assert.equal(report.canApprove, false); assert.match(report.blockers.join(" "), /committed class, grade/);
+});
+test("conflicting snapshots cannot be resolved by silently taking the latest", async () => {
+  const { state, evidence, service } = financeFixture();
+  const other = core.newMigrationEvidence(); other.records.fees = ["11"]; other.controls.feeLines = [{ ...evidence.controls.feeLines[0], paid: "0" }];
+  state.logs.push({ ...state.logs[0], id: 9, metadata: { evidence: other } });
+  const report = await service.getMigrationReconciliation("a"); assert.equal(report.canApprove, false); assert.match(report.blockers.join(" "), /conflicting record-level controls/);
+});
+test("oversized financial evidence is rejected before BigInt processing", () => {
+  const evidence = core.newMigrationEvidence(); evidence.finance.gross = "9".repeat(10000);
+  assert.equal(core.evidenceSchema.safeParse(evidence).success, false);
 });

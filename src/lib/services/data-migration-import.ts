@@ -360,6 +360,8 @@ async function importStudents(
     evidence.records.students.push(student.id);
     evidence.records.parents.push(parentId);
     evidence.records.parentLinks.push(String(relationship.id));
+    evidence.controls!.guardianLinks.push({ id: relationship.id, parentId, studentId: student.id, role: relationship.role });
+    evidence.controls!.studentPlacements.push({ id: student.id, classId: klass.id, gradeId: klass.gradeId, parentId });
     counters.students += 1;
     counters.parentLinks += 1;
   }
@@ -406,6 +408,7 @@ async function importParents(
     });
     evidence.records.parents.push(parentId);
     evidence.records.parentLinks.push(String(relationship.id));
+    evidence.controls!.guardianLinks.push({ id: relationship.id, parentId, studentId: student.id, role: relationship.role });
     counters.parentLinks += 1;
   }
 }
@@ -611,6 +614,7 @@ async function importFees(
       },
     });
     evidence.records.fees.push(String(line.id));
+    evidence.controls!.feeLines.push({ id: String(line.id), billId: bill.id, studentId: student.id, feeItemId: feeItem.id, amount: moneyMinor(feeItem.amount.toFixed(2)).toString(), paid: moneyMinor(amountPaid.toFixed(2)).toString() });
     evidence.finance.gross = (BigInt(evidence.finance.gross) + moneyMinor(feeItem.amount.toFixed(2))).toString();
     evidence.finance.paid = (BigInt(evidence.finance.paid) + moneyMinor(amountPaid.toFixed(2))).toString();
     counters.feeLineItems += 1;
@@ -650,6 +654,7 @@ async function importDiscounts(tx: Prisma.TransactionClient, schoolId: string, a
     const bill = bills[0];
     const applied = await applyDiscountInTransaction(tx, { schoolId, actorId, billId: bill.id, type: values.discountType.trim().toUpperCase() as DiscountType, description: values.reason.trim(), amount: values.amount ? parseMoney(values.amount).toString() : undefined, percentage: values.percentage ? parseMoney(values.percentage).toString() : undefined, approvalReference: reference });
     evidence.records.discounts.push(String(applied.discount.id));
+    evidence.controls!.discounts.push({ id: String(applied.discount.id), billId: bill.id, studentId: bill.studentId, amount: moneyMinor(applied.value.toFixed(2)).toString() });
     evidence.finance.discounts = (BigInt(evidence.finance.discounts) + moneyMinor(applied.value.toFixed(2))).toString();
     counters.discounts += 1;
   }
