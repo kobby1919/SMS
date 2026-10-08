@@ -23,6 +23,7 @@ import {
 } from "@/src/lib/services/data-migration-validation";
 import type { MigrationValidationPayload } from "@/src/lib/validation/data-migration";
 import { applyDiscountInTransaction } from "@/src/lib/services/bill-discounts";
+import { getMigrationInventory } from "@/src/lib/services/migration-inventory";
 
 export type MigrationImportResult = {
   batchId: string | null;
@@ -652,6 +653,11 @@ export async function importValidatedMigrationRows(
 
   if (cleanRows.length > 0) {
     await prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${context.schoolId}), hashtext('migration-inventory'))`;
+      const inventory = await getMigrationInventory(context.schoolId, tx);
+      if (inventory?.status !== "CONFIRMED" || !inventory.rows.some((row) => row.key === context.areaKey && row.disposition === "INCLUDE")) {
+        throw new MigrationImportError("Confirm a migration inventory that includes this dataset before importing.", 409);
+      }
       if (["fees", "feeStructures", "discounts"].includes(context.areaKey)) await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${context.schoolId}), hashtext('finance-migration'))`;
       if (context.areaKey === "classes") await importClasses(tx, context.schoolId, cleanRows, counters);
       if (context.areaKey === "subjects") await importSubjects(tx, context.schoolId, cleanRows, counters);
@@ -670,6 +676,7 @@ export async function importValidatedMigrationRows(
           performedBy: context.actorId,
           metadata: {
             importType: context.areaKey,
+            inventoryVersion: inventory.version,
             rowCount: context.rows.length,
             importedRows: cleanRows.length,
             skippedRows: dirtyRows.length,
