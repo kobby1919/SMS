@@ -33,7 +33,7 @@ function Evidence({ row }: { row: Row }) {
 export default async function AdminAssessmentReview({ params }: { params: Record<string, string | string[] | undefined> }) {
   const data = await getAdminAssessmentReview(params);
   const selectedSubject = data.subjects.find((subject) => subject.id === data.subjectId);
-  const inputClass = "min-h-11 w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900";
+  const inputClass = "min-h-11 w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 text-sm font-semibold text-gray-900";
   function pageHref(page: number) {
     const query = new URLSearchParams({ year: data.year, term: data.term, page: String(page) });
     if (data.classId !== undefined) query.set("classId", String(data.classId));
@@ -41,10 +41,10 @@ export default async function AdminAssessmentReview({ params }: { params: Record
     if (data.search) query.set("search", data.search);
     return `/list/ca?${query}`;
   }
-  return <main className="m-3 mt-0 min-w-0 flex-1 bg-white p-4 sm:m-4 sm:mt-0 sm:p-6">
+  return <main className="m-3 mt-0 min-w-0 flex-1 bg-white p-4 font-nunito text-sm font-semibold text-gray-700 sm:m-4 sm:mt-0 sm:p-5">
     <header className="border-b border-gray-200 pb-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div><h1 className="text-xl font-bold text-gray-900">Assessments</h1><p className="mt-1 text-sm text-gray-600">{termLabel(data.term)} · {data.year}</p></div>
+        <div><h1 className="text-xl font-black text-gray-950">Assessments</h1><p className="mt-2 text-sm font-medium leading-6 text-gray-600">{termLabel(data.term)} · {data.year}</p></div>
         <Link href="/admin/ca-config" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-blue-800"><SlidersHorizontal size={16} /> Assessment settings</Link>
       </div>
       <AssessmentReviewFilters>
@@ -60,7 +60,7 @@ export default async function AdminAssessmentReview({ params }: { params: Record
     </header>
     {data.error ? <p role="alert" className="my-5 border-l-4 border-amber-500 bg-amber-50 p-4 text-sm text-amber-900">{data.error}</p> : data.classes.length === 0 ? <p className="py-8 text-sm text-gray-600">No classes have been created yet.</p> : !selectedSubject ? <p className="py-8 text-sm text-gray-600">No subjects are available for this class and period. Current-term subjects appear after the timetable is published.</p> : <>
       <section className="border-b border-gray-200 py-4">
-        <h2 className="break-words text-base font-semibold text-gray-900">{data.classes.find((item) => item.id === data.classId)?.name} · {selectedSubject.name}</h2>
+        <h2 className="break-words text-sm font-black text-gray-950">{data.classes.find((item) => item.id === data.classId)?.name} · {selectedSubject.name}</h2>
         <p className="mt-1 break-words text-sm text-gray-600">{data.teacherNames.length ? `Assigned teacher: ${data.teacherNames.join(", ")}` : "Teacher names appear in the activity history."}</p>
         <p className="mt-2 text-xs text-gray-500">CA maximum: {mark(data.config?.classworkWeight)} · Exam maximum: {mark(data.config?.examWeight)} · {data.count} matching students</p>
         <p className="mt-2 text-xs text-gray-500">{data.config?.examWeight === 0 ? "No exam component is required." : "Exam zero: entry not confirmed. Partial totals are not final results."} Future activities are excluded.</p>

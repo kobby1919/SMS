@@ -1,4 +1,4 @@
-import type { Day, TeacherStatus } from "@/src/generated/prisma";
+import type { Day, TeacherStatus, Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import {
   dateTimeToTimeString,
@@ -114,10 +114,10 @@ function pushConflictIssues(
   }
 }
 
-export async function getTimetableHealthSummary(schoolId: string): Promise<TimetableHealthSummary> {
+export async function getTimetableHealthSummary(schoolId: string, db: Pick<Prisma.TransactionClient, "class" | "lesson" | "schoolNotificationSetting"> = prisma): Promise<TimetableHealthSummary> {
   const [operatingRules, classes, lessons] = await Promise.all([
-    getSchoolOperatingWindowStatus(schoolId),
-    prisma.class.findMany({
+    getSchoolOperatingWindowStatus(schoolId, new Date(), db),
+    db.class.findMany({
       where: { schoolId },
       select: {
         id: true,
@@ -126,7 +126,7 @@ export async function getTimetableHealthSummary(schoolId: string): Promise<Timet
       },
       orderBy: [{ grade: { order: "asc" } }, { name: "asc" }],
     }),
-    prisma.lesson.findMany({
+    db.lesson.findMany({
       where: { schoolId },
       include: {
         subject: { select: { name: true } },

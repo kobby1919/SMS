@@ -24,7 +24,8 @@ export async function getAdminPublishedSchedule(params: Record<string, string | 
     const lessons = publication?.lessons ?? [];
     const teachers = [...new Map(lessons.map((lesson) => [lesson.teacherId, { id: lesson.teacherId, name: lesson.teacherName }])).values()].sort((a, b) => a.name.localeCompare(b.name));
     const currentTeachers = await db.teacher.findMany({ where: { schoolId, id: { in: teachers.map((teacher) => teacher.id) } }, select: { id: true, status: true } });
-    const unavailableTeachers = teachers.filter((teacher) => !currentTeachers.some((item) => item.id === teacher.id && item.status === "ACTIVE"));
+    const unavailableTeachers = teachers.filter((teacher) => !currentTeachers.some((item) => item.id === teacher.id && item.status === "ACTIVE"))
+      .map((teacher) => ({ ...teacher, profileExists: currentTeachers.some((item) => item.id === teacher.id) }));
     const uncoveredClasses = classes.filter((cls) => cls._count.students > 0 && !lessons.some((lesson) => lesson.classId === cls.id));
     let error: string | null = parsed.success ? null : "Some schedule filters are invalid.";
     const selection = parsed.success ? parsed.data : {};

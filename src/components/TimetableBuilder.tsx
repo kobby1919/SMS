@@ -905,6 +905,10 @@ const TimetableBuilder = ({
   const [buildDay, setBuildDay]         = useState<string>(defaultDay);
   const [selectedClass, setSelectedClass] = useState<number | "all">("all");
   const [selectedDay, setSelectedDay]     = useState<string>("all");
+  useEffect(() => {
+    setBuildClassId((current) => classes.some((cls) => cls.id === current) ? current : classes[0]?.id ?? "");
+    setSelectedClass((current) => current === "all" || classes.some((cls) => cls.id === current) ? current : "all");
+  }, [classes]);
   const [viewMode, setViewMode]           = useState<"grid" | "list">("grid");
   const [isCompactReview, setIsCompactReview] = useState(true);
   const [modalOpen, setModalOpen]         = useState(false);
@@ -1226,11 +1230,13 @@ const TimetableBuilder = ({
               <div className="grid gap-2 sm:grid-cols-2 lg:min-w-[420px]">
                 <div className="relative">
                   <select
+                    aria-label="Choose class"
+                    disabled={classes.length === 0}
                     value={buildClassId}
                     onChange={(e) => setBuildClassId(e.target.value ? parseInt(e.target.value) : "")}
                     className="w-full appearance-none rounded-xl border border-gray-200 bg-white px-3 py-2.5 pr-8 text-sm font-black text-gray-700 outline-none focus:ring-2 focus:ring-indigo-300"
                   >
-                    <option value="">Choose class</option>
+                    <option value="">{classes.length ? "Choose class" : "No classes created"}</option>
                     {classes.map((cls) => (
                       <option key={cls.id} value={cls.id}>{cls.name}</option>
                     ))}

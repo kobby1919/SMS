@@ -1,5 +1,5 @@
 import prisma from "@/src/lib/prisma";
-import { Day } from "@/src/generated/prisma";
+import { Day, Prisma } from "@/src/generated/prisma";
 import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
 import {
   dateTimeToTimeString,
@@ -460,35 +460,34 @@ export async function publishTimetableDraft(
   publishedBy: string,
   reason?: string,
 ) {
-  const [health, lessons, lastPublication] = await Promise.all([
-    getTimetableHealthSummary(schoolId),
-    prisma.lesson.findMany({
-      where: { schoolId },
-      include: lessonInclude,
-      orderBy: [{ day: "asc" }, { startTime: "asc" }],
-    }),
-    prisma.timetablePublication.findFirst({
-      where: { schoolId },
-      select: { version: true },
-      orderBy: { version: "desc" },
-    }),
-  ]);
-
-  if (lessons.length === 0) {
-    throw new TimetableServiceError("Add lessons before publishing the timetable.", 400);
-  }
-
-  if (health.criticalCount > 0) {
-    throw new TimetableServiceError(
-      `Resolve ${health.criticalCount} critical timetable issue${health.criticalCount === 1 ? "" : "s"} before publishing.`,
-      409,
-    );
-  }
-
-  const version = (lastPublication?.version ?? 0) + 1;
   const trimmedReason = reason?.trim() || null;
-
   const publication = await prisma.$transaction(async (tx) => {
+    const [health, lessons, lastPublication] = await Promise.all([
+      getTimetableHealthSummary(schoolId, tx),
+      tx.lesson.findMany({
+        where: { schoolId },
+        include: lessonInclude,
+        orderBy: [{ day: "asc" }, { startTime: "asc" }],
+      }),
+      tx.timetablePublication.findFirst({
+        where: { schoolId },
+        select: { version: true },
+        orderBy: { version: "desc" },
+      }),
+    ]);
+
+    if (lessons.length === 0) {
+      throw new TimetableServiceError("Add lessons before publishing the timetable.", 400);
+    }
+
+    if (health.criticalCount > 0) {
+      throw new TimetableServiceError(
+        `Resolve ${health.criticalCount} critical timetable issue${health.criticalCount === 1 ? "" : "s"} before publishing.`,
+        409,
+      );
+    }
+
+    const version = (lastPublication?.version ?? 0) + 1;
     await tx.timetablePublication.updateMany({
       where: { schoolId, status: "ACTIVE" },
       data: { status: "ARCHIVED", archivedAt: new Date() },
@@ -529,6 +528,11 @@ export async function publishTimetableDraft(
     });
 
     return created;
+  }, { isolationLevel: "Serializable", timeout: 30000 }).catch((error: unknown) => {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && ["P2034", "P2002"].includes(error.code)) {
+      throw new TimetableServiceError("The timetable changed while publishing. Refresh, review the draft and try again.", 409);
+    }
+    throw error;
   });
 
   invalidateTimetable(schoolId);

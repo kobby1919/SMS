@@ -1,4 +1,5 @@
 import prisma from "@/src/lib/prisma";
+import type { Prisma } from "@/src/generated/prisma";
 
 const DEFAULT_SCHOOL_HOURS = {
   timezone: "Africa/Accra",
@@ -76,8 +77,8 @@ export function isTimeRangeWithinWindow(
   return start >= opening || end <= closing;
 }
 
-async function getOrCreateSchoolOperatingSettings(schoolId: string) {
-  return prisma.schoolNotificationSetting.upsert({
+async function getOrCreateSchoolOperatingSettings(schoolId: string, db: Pick<Prisma.TransactionClient, "schoolNotificationSetting">) {
+  return db.schoolNotificationSetting.upsert({
     where: { schoolId },
     create: {
       schoolId,
@@ -87,8 +88,8 @@ async function getOrCreateSchoolOperatingSettings(schoolId: string) {
   });
 }
 
-export async function getSchoolOperatingWindowStatus(schoolId: string, now = new Date()) {
-  const settings = await getOrCreateSchoolOperatingSettings(schoolId);
+export async function getSchoolOperatingWindowStatus(schoolId: string, now = new Date(), db: Pick<Prisma.TransactionClient, "schoolNotificationSetting"> = prisma) {
+  const settings = await getOrCreateSchoolOperatingSettings(schoolId, db);
   const timezone = settings.timezone || DEFAULT_SCHOOL_HOURS.timezone;
   const openingTime = settings.openingTime || DEFAULT_SCHOOL_HOURS.openingTime;
   const closingTime = settings.closingTime || DEFAULT_SCHOOL_HOURS.closingTime;

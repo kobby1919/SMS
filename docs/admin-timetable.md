@@ -30,7 +30,22 @@ curriculum requirements that the school has not configured.
 - Publication names/times remain the published snapshot, not renamed draft data.
 - No editing or publishing controls appear in the published view.
 
-## Before Pilot
+## Hardening Follow-Up
+
+- Draft class choices are read directly from the authorized school's database,
+  avoiding stale cached empty lists after imports. Refreshed selections retain
+  valid classes and reset removed classes; empty schools show an explicit state.
+- Publishing validates draft lessons, teacher status and operating settings in
+  the same serializable transaction that creates the publication. Concurrent
+  conflicts return a refresh-and-review message rather than silently publishing
+  an inconsistent draft.
+- Missing teacher profiles remain visible as warnings without broken detail links.
+- Assessment and timetable review use the app's Nunito typography. Fixture-based
+  browser checks cover 320, 390, 768 and 1440px with the real font assets loaded.
+- 226 regression tests, TypeScript, scoped lint and the production build passed.
+  These checks do not replace authenticated, real-database pilot testing.
+
+## Pilot Verification
 
 Confirm with an authenticated admin that draft edits do not change the published
 view, publishing switches the displayed version, archived lessons stay excluded,

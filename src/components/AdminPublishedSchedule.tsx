@@ -7,20 +7,20 @@ const dayLabel = (day: string) => day.charAt(0) + day.slice(1).toLowerCase();
 
 export default async function AdminPublishedSchedule({ params }: { params: Record<string, string | string[] | undefined> }) {
   const data = await getAdminPublishedSchedule(params);
-  const field = "mt-1 min-h-11 w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900";
+  const field = "mt-1 min-h-11 w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 text-sm font-semibold text-gray-900";
   const href = (page: number) => {
     const query = new URLSearchParams({ view: "published", page: String(page) });
     for (const [key, value] of Object.entries(data.selection)) if (key !== "page" && value !== undefined) query.set(key, String(value));
     return `/admin/timetable?${query}`;
   };
-  return <section className="min-w-0 bg-white p-4 sm:p-6">
-    <header className="border-b border-gray-200 pb-4"><h2 className="text-lg font-bold text-gray-900">Published schedule</h2>
-      <p className="mt-1 text-sm text-gray-600">{data.publication ? `Version ${data.publication.version} · Published ${data.publication.publishedAt.toLocaleString("en-GH", { timeZone: "Africa/Accra", dateStyle: "medium", timeStyle: "short" })} · ${data.totalLessons} lesson slots` : "No timetable has been published."}</p>
+  return <section className="min-w-0 bg-white p-4 font-nunito text-sm font-semibold text-gray-700 sm:p-5">
+    <header className="border-b border-gray-200 pb-4"><h2 className="text-sm font-black text-gray-950">Published schedule</h2>
+      <p className="mt-2 text-sm font-medium leading-6 text-gray-600">{data.publication ? `Version ${data.publication.version} · Published ${data.publication.publishedAt.toLocaleString("en-GH", { timeZone: "Africa/Accra", dateStyle: "medium", timeStyle: "short" })} · ${data.totalLessons} lesson slots` : "No timetable has been published."}</p>
     </header>
     {!data.publication ? <div className="py-8"><p className="text-sm text-gray-600">Published lessons are not available yet.</p><Link href="/admin/timetable" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-blue-800">Open draft timetable</Link></div> : <>
       {(data.uncoveredClasses.length > 0 || data.unavailableTeachers.length > 0) && <div className="space-y-3 border-b border-gray-200 py-4">
         {data.uncoveredClasses.length > 0 && <div><h3 className="text-sm font-semibold text-amber-900">Classes with active students but no published lessons ({data.uncoveredClasses.length})</h3><p className="mt-1 break-words text-sm text-gray-600">{data.uncoveredClasses.map((cls) => cls.name).join(", ")}</p></div>}
-        {data.unavailableTeachers.length > 0 && <div><h3 className="text-sm font-semibold text-rose-800">Published teachers without active access ({data.unavailableTeachers.length})</h3><ul className="mt-1 flex flex-wrap gap-x-4 gap-y-2 text-sm text-blue-800">{data.unavailableTeachers.map((teacher) => <li key={teacher.id}><Link href={`/list/teachers/${encodeURIComponent(teacher.id)}`}>{teacher.name}</Link></li>)}</ul></div>}
+        {data.unavailableTeachers.length > 0 && <div><h3 className="text-sm font-black text-rose-800">Published teachers with inactive or missing profiles ({data.unavailableTeachers.length})</h3><ul className="mt-1 flex flex-wrap gap-x-4 gap-y-2 text-sm text-blue-800">{data.unavailableTeachers.map((teacher) => <li key={teacher.id}>{teacher.profileExists ? <Link href={`/list/teachers/${encodeURIComponent(teacher.id)}`}>{teacher.name}</Link> : <span className="text-gray-600">{teacher.name} · Profile unavailable</span>}</li>)}</ul></div>}
       </div>}
       <form action="/admin/timetable" className="grid min-w-0 grid-cols-1 gap-3 border-b border-gray-200 py-4 sm:grid-cols-2 xl:grid-cols-5">
         <input type="hidden" name="view" value="published" />

@@ -6,9 +6,9 @@ import type { TBClass, TBTeacher, TBLesson, TBPeriodTemplate } from "@/src/compo
 import TimetableHealthPanel from "@/src/components/TimetableHealthPanel";
 import { Calendar } from "lucide-react";
 import Link from "next/link";
+import prisma from "@/src/lib/prisma";
 import AdminPublishedSchedule from "@/src/components/AdminPublishedSchedule";
 import {
-  getCachedClasses,
   getCachedPeriodTemplates,
   getCachedTimetableTeachers,
 } from "@/src/lib/referenceData";
@@ -24,7 +24,11 @@ const TimetablePage = async ({ searchParams }: { searchParams: Promise<Record<st
   if (published) return <main className="m-3 mt-0 min-w-0 flex-1 sm:m-4 sm:mt-0"><header className="bg-white p-4 sm:p-6"><h1 className="text-xl font-bold text-gray-900">Timetable</h1></header>{navigation}<AdminPublishedSchedule params={params} /></main>;
 
   const [classes, teachers, lessons, periodTemplates, operatingRules, timetableHealth, activePublication] = await Promise.all([
-    getCachedClasses(schoolId),
+    prisma.class.findMany({
+      where: { schoolId },
+      select: { id: true, name: true, grade: { select: { level: true, order: true } } },
+      orderBy: [{ grade: { order: "asc" } }, { name: "asc" }],
+    }),
     getCachedTimetableTeachers(schoolId),
     listTimetableLessons(schoolId),
     getCachedPeriodTemplates(schoolId),
