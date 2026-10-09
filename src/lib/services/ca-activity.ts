@@ -165,8 +165,8 @@ export function calculateAllocatedMark(rawScore: number, rawMaxScore: number, al
   return roundScore((rawScore / rawMaxScore) * allocationMarks);
 }
 
-export async function getCAConfigOrThrow(schoolId: string, academicYear: string) {
-  const config = await prisma.cAConfig.findUnique({
+export async function getCAConfigOrThrow(schoolId: string, academicYear: string, db = prisma as Pick<typeof prisma, "cAConfig">) {
+  const config = await db.cAConfig.findUnique({
     where: { schoolId_academicYear: { schoolId, academicYear } },
   });
 
@@ -444,9 +444,9 @@ export async function upsertCAActivityScore(input: CAActivityScoreInput): Promis
   return { score, changed: true };
 }
 
-export async function getSubjectCAProgress(input: CAContext & { studentId: string; asOf?: Date }): Promise<SubjectCAProgress> {
-  const config = await getCAConfigOrThrow(input.schoolId, input.academicYear);
-  const buckets = await prisma.cABucket.findMany({
+export async function getSubjectCAProgress(input: CAContext & { studentId: string; asOf?: Date }, db = prisma as Pick<typeof prisma, "cAConfig" | "cABucket">): Promise<SubjectCAProgress> {
+  const config = await getCAConfigOrThrow(input.schoolId, input.academicYear, db);
+  const buckets = await db.cABucket.findMany({
     where: {
       schoolId: input.schoolId,
       classId: input.classId,
@@ -456,7 +456,8 @@ export async function getSubjectCAProgress(input: CAContext & { studentId: strin
     },
     include: {
       activities: {
-        ...(input.asOf ? { where: { activityDate: { lte: input.asOf } } } : {}),
+        where: { schoolId: input.schoolId, classId: input.classId, subjectId: input.subjectId,
+          ...(input.asOf ? { activityDate: { lte: input.asOf } } : {}) },
         orderBy: [{ activityDate: "asc" }, { sequence: "asc" }],
         include: {
           teacher: { select: { name: true, surname: true } },

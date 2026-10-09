@@ -11,8 +11,10 @@ view. Assessment configuration remains a separate admin setting.
 - Filters are academic year, term, class, subject, and student/admission search.
 - Current-period subjects come only from the published timetable.
 - Historical subjects come from same-school assessment/bucket records.
-- Current-period students must be active. The view uses current class placement;
-  it is not a historical enrolment snapshot.
+- Current-period students must be active in the class. Historical views use
+  assessment/score evidence for the selected class and period, including students
+  who have since moved class or left. This is not a complete historical enrolment
+  snapshot: pupils with no assessment evidence cannot be reconstructed.
 - Results are paginated at 25 students, ordered deterministically.
 - CA marks use `getSubjectCAProgress`, the existing scoring implementation.
 - Admin review supplies an as-of cutoff; future activities do not inflate marks
@@ -20,6 +22,10 @@ view. Assessment configuration remains a separate admin setting.
 - Future activities, incomplete allocations, missing activities, unscored
   activities, or unconfirmed exam entries prevent an overall result being shown.
 - Activity completeness is not a teacher lateness/escalation calculation.
+- Score reads, student count/roster, and grading configuration share a repeatable-read
+  transaction. Concurrent score corrections cannot mix values within these reads.
+- Duplicate URL values and malformed numeric IDs are rejected. Invalid raw scores
+  or impossible totals are labelled for review, never treated as complete results.
 
 ## Known Exam Limitation
 

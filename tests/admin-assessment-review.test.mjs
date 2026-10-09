@@ -12,24 +12,26 @@ function load(path, mocks = {}) {
   return module.exports;
 }
 const now = new Date("2026-10-09T12:00:00Z");
-function fixture() {
+function fixture(options = {}) {
   const queries = [];
-  const progress = { classworkWeight: 30, earnedMarks: 0, totalAllocatedMarks: 30, buckets: [{ allocationMarks: 30, aggregationMode: "AVERAGE_TO_BUCKET", activityCount: 1, activities: [{ rawScore: 0 }] }] };
+  const progress = { classworkWeight: 30, earnedMarks: 0, totalAllocatedMarks: 30, buckets: [{ allocationMarks: 30, aggregationMode: "AVERAGE_TO_BUCKET", activityCount: 1, activities: [{ rawScore: 0, rawMaxScore: 10 }] }] };
   const prisma = {
     class: { findMany: async (q) => { queries.push(q); return [{ id: 1, name: "Class 1" }]; } },
-    cAConfig: { findMany: async (q) => { queries.push(q); return [{ academicYear: "2026/27", classworkWeight: 30, examWeight: 70 }]; } },
+    cAConfig: { findMany: async (q) => { queries.push(q); return [{ academicYear: "2026/27", classworkWeight: 30, examWeight: 70 }]; }, findUnique: async () => ({ academicYear: "2026/27", classworkWeight: 30, examWeight: 70 }) },
+    subject: { findMany: async (q) => { queries.push(q); return [{ id: 2, name: "Math" }]; } },
     student: { count: async (q) => { queries.push(q); return 1; }, findMany: async (q) => { queries.push(q); return [{ id: "s1", name: "Student", surname: "One", admissionNumber: "EDJ-001" }]; } },
     continuousAssessment: { findMany: async (q) => { queries.push(q); return [{ studentId: "s1", examScore: 50, updatedAt: now }]; } },
     cAActivityScore: { findMany: async (q) => { queries.push(q); return []; } },
     cAActivity: { count: async (q) => { queries.push(q); return 0; } },
   };
+  prisma.$transaction = async (work, options) => { assert.equal(options.isolationLevel, "RepeatableRead"); return work(prisma); };
   const calls = [];
   const service = load("src/lib/queries/admin-assessment-review.ts", {
     "@/src/lib/prisma": prisma,
     "@/src/lib/authz": { requireRole: async (roles) => { assert.deepEqual(roles, ["admin"]); return { schoolId: "school-a" }; } },
     "@/src/lib/services/academic-period": { getActiveAcademicPeriod: async () => ({ academicYear: "2026/27", currentTerm: "TERM_1" }) },
     "@/src/lib/services/timetable": { listLiveTimetableLessons: async (schoolId) => { assert.equal(schoolId, "school-a"); return [{ subjectId: 2, subject: { id: 2, name: "Math" }, teacher: { name: "Teacher", surname: "One" } }]; } },
-    "@/src/lib/services/ca-activity": { getSubjectCAProgress: async (input) => { calls.push(input); return progress; } },
+    "@/src/lib/services/ca-activity": { getSubjectCAProgress: async (input) => { calls.push(input); if (options.progressError) throw new Error(options.progressError); return progress; } },
   });
   return { service, queries, calls, progress };
 }
@@ -55,7 +57,7 @@ test("all review queries use the authorized school and canonical progress with a
   assert.ok(f.queries.some((q) => q.take === 25));
 });
 test("foreign class, unpublished subject, unknown year and malformed filters never load student scores", async () => {
-  for (const params of [{ classId: "999" }, { subjectId: "999" }, { year: "foreign-year" }, { classId: "1garbage" }, { term: "INVALID" }, { page: "-1" }]) {
+  for (const params of [{ classId: "999" }, { subjectId: "999" }, { year: "foreign-year" }, { classId: "1garbage" }, { term: "INVALID" }, { page: "-1" }, { classId: ["1"] }, { subjectId: ["2", "99"] }, { classId: "1e0" }, { page: ["1"] }]) {
     const f = fixture();
     const result = await f.service.getAdminAssessmentReview(params, now);
     assert.ok(result.error);
@@ -83,5 +85,53 @@ test("canonical progress excludes future activities only when an as-of date is r
   assert.equal(query.include.activities.where.activityDate.lte, now);
   assert.deepEqual(query.include.activities.include.scores.where, { studentId: "s1", schoolId: "a" });
   await service.getSubjectCAProgress(context);
-  assert.equal(query.include.activities.where, undefined);
+  assert.deepEqual(query.include.activities.where, { schoolId: "a", classId: 1, subjectId: 2 });
+});
+
+test("historical review uses period evidence rather than a student's current class", async () => {
+  const f = fixture();
+  await f.service.getAdminAssessmentReview({ term: "TERM_2", search: "Student" }, now);
+  const rosterQuery = f.queries.find((q) => q.take === 25);
+  assert.equal(rosterQuery.where.classId, undefined);
+  assert.equal(rosterQuery.where.status, undefined);
+  assert.equal(rosterQuery.where.OR[0].continuousAssessments.some.classId, 1);
+  assert.equal(rosterQuery.where.OR[0].continuousAssessments.some.term, "TERM_2");
+  assert.equal(rosterQuery.where.OR[1].caActivityScores.some.schoolId, "school-a");
+  assert.ok(rosterQuery.where.AND[0].OR.length > 0);
+});
+
+test("invalid raw scores and impossible totals cannot masquerade as complete results", () => {
+  for (const change of [
+    (progress) => { progress.earnedMarks = NaN; },
+    (progress) => { progress.earnedMarks = 31; },
+    (progress) => { progress.buckets[0].activities[0].rawScore = 90; },
+    (progress) => { progress.buckets[0].activities[0].rawMaxScore = 0; },
+  ]) {
+    const { service, progress } = fixture();
+    change(progress);
+    const result = service.assessmentPosition(progress, 50, 70);
+    assert.equal(result.status, "Needs review");
+    assert.equal(result.ca, null);
+    assert.equal(result.total, null);
+  }
+});
+
+test("canonical progress uses the supplied transaction reader, never the global client", async () => {
+  let query;
+  const service = load("src/lib/services/ca-activity.ts", {
+    "@/src/lib/prisma": {}, "@/src/lib/services/timetable": {}, "@/src/lib/caGrades": {},
+  });
+  const db = { cAConfig: { findUnique: async () => ({ classworkWeight: 30 }) }, cABucket: { findMany: async (q) => { query = q; return []; } } };
+  await service.getSubjectCAProgress({ schoolId: "a", classId: 1, subjectId: 2, studentId: "s1", academicYear: "2026/27", term: "TERM_1", asOf: now }, db);
+  assert.equal(query.where.schoolId, "a");
+  assert.equal(query.include.activities.where.schoolId, "a");
+});
+
+test("known invalid score data is flagged without disguising infrastructure failures", async () => {
+  const f = fixture({ progressError: "Raw score cannot exceed the activity maximum score." });
+  const result = await f.service.getAdminAssessmentReview({}, now);
+  assert.equal(result.rows[0].position.status, "Needs review");
+  assert.equal(result.rows[0].position.total, null);
+  const broken = fixture({ progressError: "Database unavailable" });
+  await assert.rejects(() => broken.service.getAdminAssessmentReview({}, now), /Database unavailable/);
 });

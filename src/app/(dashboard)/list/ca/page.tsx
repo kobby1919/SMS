@@ -23,12 +23,13 @@ export const dynamic = "force-dynamic";
 const CAPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | undefined }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
   const { userId, role, schoolId } = await requirePageSession(["admin", "teacher"]);
 
-  const params = await searchParams;
-  if (role === "admin") return <AdminAssessmentReview params={params} />;
+  const rawParams = await searchParams;
+  if (role === "admin") return <AdminAssessmentReview params={rawParams} />;
+  const params = Object.fromEntries(Object.entries(rawParams).filter((entry): entry is [string, string] => typeof entry[1] === "string"));
   const selectedClassId = params.classId ? parseInt(params.classId) : null;
   const viewMode = params.view ?? "entry";
 

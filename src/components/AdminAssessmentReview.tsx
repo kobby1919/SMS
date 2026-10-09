@@ -4,12 +4,13 @@ import { ChevronLeft, ChevronRight, Search, SlidersHorizontal } from "lucide-rea
 import { getAdminAssessmentReview } from "@/src/lib/queries/admin-assessment-review";
 import AssessmentReviewFilters from "@/src/components/AssessmentReviewFilters";
 
-const mark = (value: number | null | undefined) => value == null ? "Not recorded" : value.toLocaleString("en-GH", { maximumFractionDigits: 2 });
+const mark = (value: number | null | undefined) => value == null ? "Not recorded" : !Number.isFinite(value) ? "Needs review" : value.toLocaleString("en-GH", { maximumFractionDigits: 2 });
 const termLabel = (value: string) => value.replace("TERM_", "Term ");
 const dateLabel = (value: Date | null) => value ? value.toLocaleString("en-GH", { timeZone: "Africa/Accra", dateStyle: "medium", timeStyle: "short" }) : "No score recorded";
 type Row = Awaited<ReturnType<typeof getAdminAssessmentReview>>["rows"][number];
 
 function Evidence({ row }: { row: Row }) {
+  if (row.position.status === "Needs review") return <p className="mt-3 text-sm text-amber-800">Score data requires review before this result can be used.</p>;
   return <details className="mt-3 border-t border-gray-100 pt-3">
     <summary className="cursor-pointer text-sm font-semibold text-blue-800">Activity scores</summary>
     <div className="mt-3 space-y-4">
@@ -29,7 +30,7 @@ function Evidence({ row }: { row: Row }) {
   </details>;
 }
 
-export default async function AdminAssessmentReview({ params }: { params: Record<string, string | undefined> }) {
+export default async function AdminAssessmentReview({ params }: { params: Record<string, string | string[] | undefined> }) {
   const data = await getAdminAssessmentReview(params);
   const selectedSubject = data.subjects.find((subject) => subject.id === data.subjectId);
   const inputClass = "min-h-11 w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900";
@@ -63,7 +64,7 @@ export default async function AdminAssessmentReview({ params }: { params: Record
         <p className="mt-1 break-words text-sm text-gray-600">{data.teacherNames.length ? `Assigned teacher: ${data.teacherNames.join(", ")}` : "Teacher names appear in the activity history."}</p>
         <p className="mt-2 text-xs text-gray-500">CA maximum: {mark(data.config?.classworkWeight)} · Exam maximum: {mark(data.config?.examWeight)} · {data.count} matching students</p>
         <p className="mt-2 text-xs text-gray-500">{data.config?.examWeight === 0 ? "No exam component is required." : "Exam zero: entry not confirmed. Partial totals are not final results."} Future activities are excluded.</p>
-        <p className="mt-1 text-xs text-gray-500">Students are listed under their current class placement. Activity completeness is not an overdue-duty count.</p>
+        <p className="mt-1 text-xs text-gray-500">{data.currentPeriod ? "Active students in this class." : "Students with assessment records for this class and period, including those who have moved class."} Activity completeness is not an overdue-duty count.</p>
       </section>
       {data.rows.length === 0 ? <p className="py-8 text-sm text-gray-600">No students match this selection.</p> : <>
         <div className="hidden xl:block">
