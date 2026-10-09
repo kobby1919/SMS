@@ -7,22 +7,22 @@ type Props = {
 
 const statusCopy = {
   HEALTHY: {
-    label: "Healthy",
+    label: "No issues found",
     tone: "border-emerald-200 bg-emerald-50 text-emerald-800",
     icon: CheckCircle2,
-    message: "Your timetable is clean enough to power attendance, CA, homework, and Today’s Pulse.",
+    message: "No draft clashes or setup gaps were found in the current checks.",
   },
   NEEDS_REVIEW: {
     label: "Needs review",
     tone: "border-amber-200 bg-amber-50 text-amber-900",
     icon: AlertTriangle,
-    message: "The timetable can still run, but some setup gaps may confuse teachers or dashboards.",
+    message: "Review the draft setup gaps before publishing.",
   },
   CRITICAL: {
     label: "Critical",
     tone: "border-rose-200 bg-rose-50 text-rose-800",
     icon: AlertTriangle,
-    message: "Fix the critical timetable issues before relying on attendance, CA, homework, or owner dashboard numbers.",
+    message: "Critical draft issues must be resolved before publishing.",
   },
 } as const;
 
@@ -59,12 +59,7 @@ export default function TimetableHealthPanel({ health }: Props) {
             <ShieldCheck size={18} />
           </div>
           <div>
-            <p className="text-xs font-black uppercase tracking-wide text-gray-400">Timetable health</p>
-            <h2 className="mt-1 text-lg font-black text-gray-950">Source-of-truth check</h2>
-            <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-gray-500">
-              Edujay checks whether this timetable is safe enough to drive attendance, CA, homework,
-              syllabus, parent updates, and the owner dashboard.
-            </p>
+            <h2 className="mt-1 text-lg font-black text-gray-950">Draft checks</h2>
           </div>
         </div>
 
@@ -73,7 +68,6 @@ export default function TimetableHealthPanel({ health }: Props) {
             <StatusIcon size={16} />
             <p className="text-sm font-black">{status.label}</p>
           </div>
-          <p className="mt-1 text-xs font-bold opacity-80">{health.score}% health score</p>
         </div>
       </div>
 
@@ -87,7 +81,7 @@ export default function TimetableHealthPanel({ health }: Props) {
         ].map(([label, value]) => (
           <div key={label} className="rounded-xl bg-gray-50 px-3 py-2.5">
             <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">{label}</p>
-            <p className="mt-1 text-sm font-black text-gray-900">{value}</p>
+            <p className="mt-1 break-words text-sm font-black text-gray-900">{value}</p>
           </div>
         ))}
       </div>

@@ -1,4 +1,4 @@
-import type { Day } from "@/src/generated/prisma";
+import type { Day, TeacherStatus } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import {
   dateTimeToTimeString,
@@ -18,7 +18,7 @@ type LessonForHealth = {
   teacherId: string;
   subject: { name: string };
   class: { name: string; _count: { students: number } };
-  teacher: { name: string; surname: string; subjects: { id: number }[] };
+  teacher: { name: string; surname: string; status: TeacherStatus; subjects: { id: number }[] };
   periodTemplate: null | { name: string; type: string; startTime: string; endTime: string; isActive: boolean };
 };
 
@@ -130,8 +130,8 @@ export async function getTimetableHealthSummary(schoolId: string): Promise<Timet
       where: { schoolId },
       include: {
         subject: { select: { name: true } },
-        class: { select: { name: true, _count: { select: { students: true } } } },
-        teacher: { select: { name: true, surname: true, subjects: { select: { id: true } } } },
+        class: { select: { name: true, _count: { select: { students: { where: { schoolId, status: "ACTIVE" } } } } } },
+        teacher: { select: { name: true, surname: true, status: true, subjects: { where: { schoolId }, select: { id: true } } } },
         periodTemplate: { select: { name: true, type: true, startTime: true, endTime: true, isActive: true } },
       },
       orderBy: [{ day: "asc" }, { startTime: "asc" }],
@@ -139,12 +139,16 @@ export async function getTimetableHealthSummary(schoolId: string): Promise<Timet
   ]);
 
   const issues: TimetableHealthIssue[] = [];
+  if (lessons.length === 0) issues.push({ id: "empty-draft", severity: "warning", title: "Draft has no lessons", detail: "Add lessons before publishing a timetable." });
   const activeDays = operatingRules.activeDays;
   const lessonsWithoutPeriod: LessonForHealth[] = [];
   const periodMismatches: LessonForHealth[] = [];
   const emptyClassLessonCounts = new Map<string, { classId: number; className: string; count: number }>();
 
   for (const lesson of lessons) {
+    if (lesson.teacher.status !== "ACTIVE") {
+      issues.push({ id: `inactive-teacher-${lesson.id}`, severity: "critical", title: "Assigned teacher is not active", detail: `${personName(lesson.teacher)} cannot operate ${lessonLabel(lesson)} with their current access status.`, lessonId: lesson.id, classId: lesson.classId });
+    }
     const lessonStart = dateTimeToTimeString(lesson.startTime);
     const lessonEnd = dateTimeToTimeString(lesson.endTime);
 

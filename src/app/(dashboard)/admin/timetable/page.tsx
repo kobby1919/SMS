@@ -5,6 +5,8 @@ import TimetableBuilder from "@/src/components/TimetableBuilder";
 import type { TBClass, TBTeacher, TBLesson, TBPeriodTemplate } from "@/src/components/TimetableBuilder";
 import TimetableHealthPanel from "@/src/components/TimetableHealthPanel";
 import { Calendar } from "lucide-react";
+import Link from "next/link";
+import AdminPublishedSchedule from "@/src/components/AdminPublishedSchedule";
 import {
   getCachedClasses,
   getCachedPeriodTemplates,
@@ -14,8 +16,12 @@ import { getSchoolOperatingWindowStatus } from "@/src/lib/services/school-operat
 import { getTimetableHealthSummary } from "@/src/lib/services/timetable-health";
 import { getActiveTimetablePublication, listTimetableLessons } from "@/src/lib/services/timetable";
 
-const TimetablePage = async () => {
+const TimetablePage = async ({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) => {
   const { schoolId } = await requirePageSession(["admin"]);
+  const params = await searchParams;
+  const published = params.view === "published";
+  const navigation = <nav aria-label="Timetable views" className="flex flex-wrap gap-4 border-b border-gray-200 bg-white px-4 sm:px-6"><Link href="/admin/timetable" aria-current={!published ? "page" : undefined} className={`inline-flex min-h-12 items-center border-b-2 text-sm font-semibold ${!published ? "border-blue-800 text-blue-800" : "border-transparent text-gray-600"}`}>Draft & checks</Link><Link href="/admin/timetable?view=published" aria-current={published ? "page" : undefined} className={`inline-flex min-h-12 items-center border-b-2 text-sm font-semibold ${published ? "border-blue-800 text-blue-800" : "border-transparent text-gray-600"}`}>Published schedule</Link></nav>;
+  if (published) return <main className="m-3 mt-0 min-w-0 flex-1 sm:m-4 sm:mt-0"><header className="bg-white p-4 sm:p-6"><h1 className="text-xl font-bold text-gray-900">Timetable</h1></header>{navigation}<AdminPublishedSchedule params={params} /></main>;
 
   const [classes, teachers, lessons, periodTemplates, operatingRules, timetableHealth, activePublication] = await Promise.all([
     getCachedClasses(schoolId),
@@ -66,7 +72,7 @@ const TimetablePage = async () => {
   const totalSubjects = new Set(lessons.map((l) => l.subject.id)).size;
 
   return (
-    <div className="flex-1 m-4 mt-0 flex flex-col gap-5">
+    <div className="min-w-0 flex-1 m-3 mt-0 flex flex-col gap-4 sm:m-4 sm:mt-0">
       <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -74,13 +80,13 @@ const TimetablePage = async () => {
               <Calendar size={20} className="text-indigo-600" />
             </div>
             <div>
-              <h1 className="text-xl font-black text-gray-800 tracking-tight">Timetable Builder</h1>
+              <h1 className="text-xl font-black text-gray-800 tracking-tight">Timetable</h1>
               <p className="text-sm text-gray-400 mt-0.5 font-medium">
-                Master schedule — {classes.length} classes · {lessons.length} lesson slots
+                Draft · {classes.length} classes · {lessons.length} lesson slots
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <div className="bg-indigo-50 text-indigo-600 text-xs font-bold px-4 py-2 rounded-xl border border-indigo-100">
               {operatingRules.openingTime}-{operatingRules.closingTime}
             </div>
@@ -91,6 +97,7 @@ const TimetablePage = async () => {
         </div>
       </div>
 
+      {navigation}
       <TimetableHealthPanel health={timetableHealth} />
 
       <TimetableBuilder

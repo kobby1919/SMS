@@ -242,7 +242,7 @@ const menuItems = [
         icon: BookMarked,
         label: "Published Lessons",
         href: "/list/lessons",
-        visible: ["admin", "teacher"],
+        visible: ["teacher"],
       },
       {
         icon: ScrollText,

@@ -2,6 +2,7 @@ import Pagination from "@/src/components/pagination";
 import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
 import { BookOpen } from "lucide-react";
+import { redirect } from "next/navigation";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import {
   getActiveTimetablePublication,
@@ -11,11 +12,20 @@ import {
 const LessonListPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | undefined }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
   // 1. Fetch Auth and Role
   const { role, schoolId, userId } = await requirePageSession(["admin", "teacher"]);
-  const { page, ...queryParams } = await searchParams;
+  const params = await searchParams;
+  if (role === "admin") {
+    const query = new URLSearchParams({ view: "published" });
+    for (const key of ["classId", "teacherId", "day", "search", "page"]) {
+      const value = params[key];
+      if (typeof value === "string") query.set(key, value);
+    }
+    redirect(`/admin/timetable?${query}`);
+  }
+  const { page, ...queryParams } = Object.fromEntries(Object.entries(params).filter((entry): entry is [string, string] => typeof entry[1] === "string"));
   const p = page && /^[1-9]\d*$/.test(page) && Number.isSafeInteger(Number(page)) ? Math.min(Number(page), 100000) : 1;
 
   const [publication, liveLessons] = await Promise.all([
