@@ -444,7 +444,7 @@ export async function upsertCAActivityScore(input: CAActivityScoreInput): Promis
   return { score, changed: true };
 }
 
-export async function getSubjectCAProgress(input: CAContext & { studentId: string }): Promise<SubjectCAProgress> {
+export async function getSubjectCAProgress(input: CAContext & { studentId: string; asOf?: Date }): Promise<SubjectCAProgress> {
   const config = await getCAConfigOrThrow(input.schoolId, input.academicYear);
   const buckets = await prisma.cABucket.findMany({
     where: {
@@ -456,11 +456,12 @@ export async function getSubjectCAProgress(input: CAContext & { studentId: strin
     },
     include: {
       activities: {
+        ...(input.asOf ? { where: { activityDate: { lte: input.asOf } } } : {}),
         orderBy: [{ activityDate: "asc" }, { sequence: "asc" }],
         include: {
           teacher: { select: { name: true, surname: true } },
           scores: {
-            where: { studentId: input.studentId },
+            where: { studentId: input.studentId, schoolId: input.schoolId },
             select: { rawScore: true, normalizedContribution: true },
           },
         },

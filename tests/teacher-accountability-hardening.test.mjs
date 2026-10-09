@@ -159,7 +159,7 @@ test("admin entry bypasses are blocked by server guards, not menu hiding alone",
   assert.match(readFileSync("src/app/(dashboard)/list/attendance/take/page.tsx", "utf8"), /requirePageSession\(\["teacher"\]\)/);
   const api = readFileSync("src/app/api/attendance/route.ts", "utf8");
   assert.match(api.slice(api.indexOf("export async function POST"), api.indexOf("export async function DELETE")), /requireRole\(\["teacher"\]\)/);
-  assert.match(readFileSync("src/app/(dashboard)/list/ca/page.tsx", "utf8"), /role === "admin" \? "summary"/);
+  assert.match(readFileSync("src/app/(dashboard)/list/ca/page.tsx", "utf8"), /role === "admin"\) return <AdminAssessmentReview/);
   const actions = readFileSync("src/lib/actions/actions.ts", "utf8");
   for (const name of ["createResult", "updateResult", "deleteResult"]) assert.match(actions.slice(actions.indexOf(`export async function ${name}`), actions.indexOf(`export async function ${name}`) + 400), /requireRole\(\["teacher"\]\)/);
 });

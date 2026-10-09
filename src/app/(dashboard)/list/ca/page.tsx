@@ -7,6 +7,7 @@ import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import CAEntryForm from "@/src/components/CAEntryForm";
 import CAClassSummary from "@/src/components/CAClassSummary";
+import AdminAssessmentReview from "@/src/components/AdminAssessmentReview";
 import CAActivityManager from "@/src/components/CAActivityManager";
 import ExamEntryWindowControls from "@/src/components/ExamEntryWindowControls";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
@@ -27,8 +28,9 @@ const CAPage = async ({
   const { userId, role, schoolId } = await requirePageSession(["admin", "teacher"]);
 
   const params = await searchParams;
+  if (role === "admin") return <AdminAssessmentReview params={params} />;
   const selectedClassId = params.classId ? parseInt(params.classId) : null;
-  const viewMode = role === "admin" ? "summary" : params.view ?? "entry";
+  const viewMode = params.view ?? "entry";
 
   // ── Which classes can this user access? ──────────────────────────────────
   let supervisedClasses: {
@@ -38,13 +40,7 @@ const CAPage = async ({
     grade: { level: string };
   }[] = [];
 
-  if (role === "admin") {
-    supervisedClasses = await prisma.class.findMany({
-      where: { schoolId },
-      orderBy: { name: "asc" },
-      include: { grade: { select: { level: true } } },
-    });
-  } else {
+  {
     const teacherScope = await getTeacherScope({ schoolId, teacherId: userId });
     supervisedClasses = await prisma.class.findMany({
       where: {
@@ -268,7 +264,7 @@ const CAPage = async ({
               { key: "entry", label: "Entry", icon: <BookOpen size={13} /> },
               { key: "activity", label: "Activity CA", icon: <Layers3 size={13} /> },
               { key: "summary", label: "Summary", icon: <Users size={13} /> },
-            ].filter((tab) => role !== "admin" || tab.key === "summary").map((tab) => (
+            ].map((tab) => (
               <a
                 key={tab.key}
                 href={`/list/ca?classId=${activeClass.id}&view=${tab.key}`}
@@ -413,7 +409,7 @@ const CAPage = async ({
                 academicYears={academicYears}
                 activeTerm={activePeriod.currentTerm}
                 activeYear={activePeriod.academicYear}
-                canLock={role === "admin"}
+                canLock={false}
                 scoreEntryWindowsBySubjectId={scoreEntryWindowsBySubjectId}
                 buckets={caBuckets.map((bucket) => ({
                   id: bucket.id,

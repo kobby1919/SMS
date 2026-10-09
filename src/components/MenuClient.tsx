@@ -276,7 +276,7 @@ const menuItems = [
       },
       {
         icon: Star,
-        label: "Assessment Review",
+        label: "Assessments",
         href: "/list/ca?view=summary",
         visible: ["admin"],
       },
