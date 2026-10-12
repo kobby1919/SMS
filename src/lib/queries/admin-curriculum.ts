@@ -27,7 +27,7 @@ export async function getAdminCurriculum(params: Record<string, string | string[
     const guides = await db.syllabus.findMany({
         where: { schoolId, academicYear: year, term, subject: { is: { schoolId } }, grade: { is: { schoolId } },
           ...(selection.subjectId ? { subjectId: selection.subjectId } : {}),
-          ...(selection.classId ? { gradeId: classes.find((cls) => cls.id === selection.classId)?.gradeId ?? -1 } : {}), ...(error ? { id: -1 } : {}),
+          ...(selection.classId ? { OR: [{ gradeId: classes.find((cls) => cls.id === selection.classId)?.gradeId ?? -1 }, { topics: { some: { progress: { some: { schoolId, classId: selection.classId } } } } }] } : {}), ...(error ? { id: -1 } : {}),
         },
         include: { subject: { select: { name: true } }, grade: { select: { level: true } }, topics: {
           orderBy: [{ weekNumber: "asc" }, { order: "asc" }, { id: "asc" }],
@@ -38,11 +38,16 @@ export async function getAdminCurriculum(params: Record<string, string | string[
     const teachers = publication ? await db.teacher.findMany({ where: { schoolId, id: { in: [...new Set(publication.lessons.map((lesson) => lesson.teacherId))] } }, select: { id: true, status: true } }) : [];
     const rows = classes.flatMap((cls) => {
       if (selection.classId && cls.id !== selection.classId) return [];
-      return subjects.filter((subject) => (!selection.subjectId || subject.id === selection.subjectId) && (guides.some((guide) => guide.gradeId === cls.gradeId && guide.subjectId === subject.id) || publication?.lessons.some((lesson) => lesson.classId === cls.id && lesson.subjectId === subject.id))).map((subject) => {
-        const guide = guides.find((item) => item.gradeId === cls.gradeId && item.subjectId === subject.id);
+      return subjects.filter((subject) => !selection.subjectId || subject.id === selection.subjectId).flatMap((subject) => {
+        const matchingGuides = guides.filter((guide) => guide.subjectId === subject.id && (guide.gradeId === cls.gradeId || guide.topics.some((topic) => topic.progress.some((progress) => progress.classId === cls.id))));
+        const needsCurrentGuide = publication?.lessons.some((lesson) => lesson.classId === cls.id && lesson.subjectId === subject.id) && !matchingGuides.some((guide) => guide.gradeId === cls.gradeId);
+        const applicableGuides = needsCurrentGuide ? [...matchingGuides, undefined] : matchingGuides;
+        return applicableGuides.map((guide) => {
+        const historicalPlacement = guide !== undefined && guide.gradeId !== cls.gradeId;
         const recorded = guide?.topics.filter((topic) => topic.progress.some((progress) => progress.classId === cls.id)).length ?? 0;
-        const assignments = [...new Map((publication?.lessons ?? []).filter((lesson) => lesson.classId === cls.id && lesson.subjectId === subject.id).map((lesson) => [lesson.teacherId, { name: lesson.teacherName, active: teachers.some((teacher) => teacher.id === lesson.teacherId && teacher.status === "ACTIVE") }])).values()];
-        return { classId: cls.id, className: cls.name, subjectId: subject.id, subjectName: subject.name, guideId: guide?.id ?? null, guideStatus: guide?.status ?? null, planned: guide?.topics.length ?? 0, recorded, gaps: guide?.topics.filter((topic) => !topic.progress.some((progress) => progress.classId === cls.id)).map((topic) => ({ id: topic.id, title: topic.title, weekNumber: topic.weekNumber, durationWeeks: topic.durationWeeks })) ?? [], assignments };
+        const assignments = historicalPlacement ? [] : [...new Map((publication?.lessons ?? []).filter((lesson) => lesson.classId === cls.id && lesson.subjectId === subject.id).map((lesson) => [lesson.teacherId, { name: lesson.teacherName, active: teachers.some((teacher) => teacher.id === lesson.teacherId && teacher.status === "ACTIVE") }])).values()];
+        return { classId: cls.id, className: cls.name, subjectId: subject.id, subjectName: subject.name, guideId: guide?.id ?? null, guideStatus: guide?.status ?? null, guideGrade: guide?.grade.level ?? null, historicalPlacement, planned: guide?.topics.length ?? 0, recorded, gaps: guide?.topics.filter((topic) => !topic.progress.some((progress) => progress.classId === cls.id)).map((topic) => ({ id: topic.id, title: topic.title, weekNumber: topic.weekNumber, durationWeeks: topic.durationWeeks })) ?? [], assignments };
+        });
       });
     });
     const view = selection.view ?? "coverage";

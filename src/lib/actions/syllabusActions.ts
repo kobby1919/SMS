@@ -7,7 +7,7 @@ import { parseActionInput } from "@/src/lib/validation/parse";
 import { revalidateDashboard, revalidateDocument } from "@/src/lib/cacheTags";
 import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
 import { withCurriculumWrite } from "@/src/lib/services/curriculum-write";
-import { syllabusCreateSchema, syllabusProgressSchema, syllabusTopicDeleteSchema, syllabusTopicOrderSchema, syllabusTopicUpsertSchema, syllabusUpdateSchema } from "@/src/lib/validation/syllabus";
+import { syllabusCreateSchema, syllabusProgressSchema, syllabusTopicDeleteSchema, syllabusTopicOrderSchema, syllabusTopicUpsertSchema, syllabusTopicSchema, syllabusUpdateSchema } from "@/src/lib/validation/syllabus";
 import { positiveIntSchema } from "@/src/lib/validation/common";
 
 function refresh(schoolId: string, id: number) {
@@ -18,7 +18,7 @@ function refresh(schoolId: string, id: number) {
   revalidateDocument(schoolId, "syllabus", id);
 }
 async function requireGuide(db: Prisma.TransactionClient, schoolId: string, id: number) {
-  const guide = await db.syllabus.findFirst({ where: { id, schoolId }, select: { id: true, status: true } });
+  const guide = await db.syllabus.findFirst({ where: { id, schoolId, subject: { is: { schoolId } }, grade: { is: { schoolId } } }, select: { id: true, status: true } });
   if (!guide) throw new Error("Teaching guide not found.");
   return guide;
 }
@@ -33,9 +33,9 @@ async function requireEditableGuide(db: Prisma.TransactionClient, schoolId: stri
 async function setGuideStatus(db: Prisma.TransactionClient, schoolId: string, id: number, status: SyllabusStatus) {
   await requireGuide(db, schoolId, id);
   if (status === "PUBLISHED") {
-    const topics = await db.syllabusTopic.findMany({ where: { syllabusId: id }, select: { title: true, weekNumber: true, durationWeeks: true } });
+    const topics = await db.syllabusTopic.findMany({ where: { syllabusId: id } });
     if (!topics.length) throw new Error("Add at least one topic before publishing.");
-    if (topics.some((topic) => !topic.title.trim() || topic.weekNumber < 1 || topic.durationWeeks < 1)) throw new Error("Correct incomplete topic titles and planned weeks before publishing.");
+    if (topics.some((topic) => !syllabusTopicSchema.safeParse(topic).success || topic.weekNumber + topic.durationWeeks - 1 > 52)) throw new Error("Correct invalid topic details and planned weeks before publishing.");
   } else await requireNoCoverage(db, id);
   await db.syllabus.updateMany({ where: { id, schoolId }, data: { status } });
 }
@@ -122,7 +122,7 @@ export async function reorderTopics(syllabusId: number, orderedIds: number[]) {
 }
 
 async function progressAccess(db: Prisma.TransactionClient, schoolId: string, userId: string, syllabusTopicId: number, classId: number) {
-  const topic = await db.syllabusTopic.findFirst({ where: { id: syllabusTopicId, syllabus: { is: { schoolId, status: "PUBLISHED" } } }, select: { syllabusId: true, syllabus: { select: { subjectId: true, gradeId: true, academicYear: true, term: true } } } });
+  const topic = await db.syllabusTopic.findFirst({ where: { id: syllabusTopicId, syllabus: { is: { schoolId, status: "PUBLISHED", subject: { is: { schoolId } }, grade: { is: { schoolId } } } } }, select: { syllabusId: true, syllabus: { select: { subjectId: true, gradeId: true, academicYear: true, term: true } } } });
   const cls = await db.class.findFirst({ where: { id: classId, schoolId }, select: { gradeId: true } });
   const teacher = await db.teacher.findFirst({ where: { id: userId, schoolId, status: "ACTIVE" }, select: { id: true } });
   if (!topic || !cls || !teacher || cls.gradeId !== topic.syllabus.gradeId) throw new Error("This published guide is not available for your class.");

@@ -11,7 +11,7 @@ import { TERM_LABELS } from "@/src/lib/caGrades";
 import { enforceRateLimit } from "@/src/lib/rate-limit";
 import { syllabusPdfQuerySchema } from "@/src/lib/validation/academic";
 import { parseSearchParams } from "@/src/lib/validation/parse";
-import { documentTag } from "@/src/lib/cacheTags";
+import { documentTag, referenceDataTag } from "@/src/lib/cacheTags";
 import { getCachedDocument } from "@/src/lib/services/document-cache";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 import {
@@ -369,7 +369,7 @@ export async function GET(req: NextRequest) {
     const { syllabusId } = parsed.data;
 
     const syllabus = await prisma.syllabus.findFirst({
-      where:   { id: syllabusId, schoolId, ...(role === "teacher" ? { status: "PUBLISHED" } : {}) },
+      where:   { id: syllabusId, schoolId, subject: { is: { schoolId } }, grade: { is: { schoolId } }, ...(role === "teacher" ? { status: "PUBLISHED" } : {}) },
       include: {
         subject: { select: { name: true } },
         grade:   { select: { level: true } },
@@ -407,11 +407,11 @@ export async function GET(req: NextRequest) {
     }
 
     // Grade classes for progress summary
+    const recordedClassIds = [...new Set(syllabus.topics.flatMap((topic) => topic.progress.map((record) => record.classId)))];
     const gradeClasses = await prisma.class.findMany({
       where:  {
         schoolId,
-        gradeId: syllabus.gradeId,
-        ...(teacherClassIds ? { id: { in: teacherClassIds } } : {}),
+        ...(teacherClassIds ? { gradeId: syllabus.gradeId, id: { in: teacherClassIds } } : { OR: [{ gradeId: syllabus.gradeId }, { id: { in: recordedClassIds } }] }),
       },
       select: { id: true, name: true },
       orderBy: { name: "asc" },
@@ -445,10 +445,13 @@ export async function GET(req: NextRequest) {
     }));
 
     const pdfBuffer = await getCachedDocument({
-      keyParts: [ctx.schoolId, "syllabus-curriculum-v2", syllabus.id, role, teacherClassIds ? [...teacherClassIds].sort((a, b) => a - b).join(",") : "all-classes"],
+      keyParts: [ctx.schoolId, "syllabus-curriculum-v3", syllabus.id, role, teacherClassIds ? [...teacherClassIds].sort((a, b) => a - b).join(",") : "all-classes"],
       tags: [
         documentTag(ctx.schoolId, "syllabus"),
         documentTag(ctx.schoolId, "syllabus", syllabus.id),
+        referenceDataTag(ctx.schoolId, "classes"),
+        referenceDataTag(ctx.schoolId, "subjects"),
+        referenceDataTag(ctx.schoolId, "grades"),
       ],
       generate: () => renderToBuffer(
       <SyllabusPDF

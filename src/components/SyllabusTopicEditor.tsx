@@ -4,6 +4,7 @@
 
 
 import { useState, useTransition } from "react";
+import { hasUnsavedSyllabusTopics } from "@/src/lib/syllabus-editor-state";
 import {
   Plus, Trash2, ChevronUp, ChevronDown, Save,
   Loader2, AlertCircle, CheckCircle2, Globe, Lock, X, Wand2,
@@ -102,6 +103,7 @@ function emptyTopic(order: number): Topic {
 // ─── Main component ───────────────────────────────────────────────────────────
 const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Props) => {
   const [topics,    setTopics]    = useState<Topic[]>(initialTopics);
+  const [savedTopics, setSavedTopics] = useState<Topic[]>(initialTopics);
   const [editing,   setEditing]   = useState<number | null>(null); // index of topic being edited
   const [status,    setStatus]    = useState(syllabusStatus);
   const [error,     setError]     = useState<string | null>(null);
@@ -163,6 +165,7 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
           coreCompetencies:  t.coreCompetencies,
           teachingResources: t.teachingResources,
         });
+        setSavedTopics((previous) => [...previous.filter((topic) => topic.id !== saved.id), { ...t, id: saved.id }]);
         setTopics((prev) => {
           const next = [...prev];
           next[idx] = { ...next[idx], id: saved.id, order: idx + 1 };
@@ -213,7 +216,7 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
 
   // ── Publish / unpublish ───────────────────────────────────────────────────
   const togglePublish = () => {
-    if (status === "DRAFT" && (unsavedTopics > 0 || editing !== null)) { setError("Save or close the topic editor before publishing the guide."); return; }
+    if (status === "DRAFT" && (hasUnsavedSyllabusTopics(topics, savedTopics) || editing !== null)) { setError("Save every changed topic and close its editor before publishing the guide."); return; }
     startTransition(async () => {
       try {
         if (status === "PUBLISHED") {

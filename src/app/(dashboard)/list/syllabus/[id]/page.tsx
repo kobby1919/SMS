@@ -30,7 +30,8 @@ export default async function SyllabusViewPage({ params, searchParams }: { param
   ]);
   const currentPeriod = activePeriod?.academicYear === syllabus.academicYear && activePeriod.currentTerm === syllabus.term;
   const scopedLessons = lessons.filter((lesson) => lesson.subjectId === syllabus.subjectId);
-  const gradeClasses = await prisma.class.findMany({ where: { schoolId, gradeId: syllabus.gradeId, ...(role === "teacher" ? { id: { in: [...new Set(scopedLessons.map((lesson) => lesson.classId))] } } : {}) }, select: { id: true, name: true }, orderBy: { name: "asc" } });
+  const recordedClassIds = [...new Set(syllabus.topics.flatMap((topic) => topic.progress.map((record) => record.classId)))];
+  const gradeClasses = await prisma.class.findMany({ where: { schoolId, ...(role === "teacher" ? { gradeId: syllabus.gradeId, id: { in: [...new Set(scopedLessons.map((lesson) => lesson.classId))] } } : { OR: [{ gradeId: syllabus.gradeId }, { id: { in: recordedClassIds } }] }) }, select: { id: true, name: true, gradeId: true }, orderBy: { name: "asc" } });
   if (role === "teacher" && gradeClasses.length === 0) notFound();
   if (selectedClassId && !gradeClasses.some((cls) => cls.id === selectedClassId)) notFound();
   const classes = selectedClassId ? gradeClasses.filter((cls) => cls.id === selectedClassId) : gradeClasses;
@@ -51,7 +52,7 @@ export default async function SyllabusViewPage({ params, searchParams }: { param
       <form action={`/list/syllabus/${id}`} className="mt-3 flex flex-wrap items-end gap-3"><label className="min-w-0 flex-1 text-xs">Class<select name="classId" defaultValue={selectedClassId ?? ""} className="mt-1 min-h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm font-semibold"><option value="">All available classes</option>{gradeClasses.map((cls) => <option key={cls.id} value={cls.id}>{cls.name}</option>)}</select></label><button className="min-h-11 rounded-lg bg-blue-900 px-4 text-xs font-black text-white">Review</button></form>
       <ul className="mt-3 divide-y divide-gray-100">{classes.map((cls) => {
         const covered = topics.filter((topic) => topic.progress.some((record) => record.classId === cls.id)).length;
-        const names = currentPeriod ? [...new Set(scopedLessons.filter((lesson) => lesson.classId === cls.id).map((lesson) => `${lesson.teacher.name} ${lesson.teacher.surname}`.trim()))] : [];
+        const names = currentPeriod && cls.gradeId === syllabus.gradeId ? [...new Set(scopedLessons.filter((lesson) => lesson.classId === cls.id).map((lesson) => `${lesson.teacher.name} ${lesson.teacher.surname}`.trim()))] : [];
         return <li key={cls.id} className="py-3"><p className="break-words font-black">{cls.name}</p><p className="mt-1 text-xs leading-5">{covered} / {topics.length} topics teacher-recorded · {topics.length - covered} without a coverage record</p><p className="mt-1 break-words text-xs text-gray-500">{names.length ? `Published timetable: ${names.join(", ")}` : currentPeriod ? "No published teacher assignment" : "Historical period; current assignments not attributed"}</p></li>;
       })}</ul>{classes.length === 0 && <p className="mt-3 text-xs">No classes are available at this grade.</p>}
     </section>

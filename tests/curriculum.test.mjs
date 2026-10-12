@@ -10,9 +10,10 @@ function load(path, mocks) {
   new Function("require", "module", "exports", code)((id) => Object.hasOwn(mocks, id) ? mocks[id] : id === "server-only" ? {} : nodeRequire(id), loaded, loaded.exports);
   return loaded.exports;
 }
-function review({ empty = false } = {}) {
+function review({ empty = false, movedGrade = false } = {}) {
   const queries = [];
   const classes = [{ id: 1, name: "Primary Six A", gradeId: 1 }, { id: 2, name: "Primary Six B", gradeId: 1 }];
+  if (movedGrade) classes[0].gradeId = 2;
   const guides = [{ id: 1, gradeId: 1, subjectId: 10, status: "PUBLISHED", subject: { name: "Math" }, grade: { level: "Primary Six" }, topics: [{ id: 1, title: "Fractions", weekNumber: 1, durationWeeks: 1, progress: [{ classId: 1 }, { classId: 1 }] }, { id: 2, title: "Decimals", weekNumber: 2, durationWeeks: 2, progress: [] }] }];
   const db = {
     class: { findMany: async (q) => { queries.push(q); return empty ? [] : classes; } },
@@ -61,11 +62,11 @@ test("empty curriculum and guide view remain honest", async () => {
   assert.equal(result.pageCount, 1);
 });
 
-function actions({ role = "teacher", history = 0, draft = false, wrongGrade = false, assigned = true, otherTeacher = false, historical = false } = {}) {
+function actions({ role = "teacher", history = 0, draft = false, wrongGrade = false, assigned = true, otherTeacher = false, historical = false, savedTopic } = {}) {
   const writes = [];
   const db = {
-    syllabus: { findFirst: async () => ({ id: 1, status: draft ? "DRAFT" : "PUBLISHED" }), updateMany: async (q) => { writes.push(q); return { count: 1 }; }, deleteMany: async (q) => { writes.push(q); return { count: 1 }; } },
-    syllabusTopic: { findFirst: async (q) => { assert.equal(q.where.syllabus.is.schoolId, "a"); assert.equal(q.where.syllabus.is.status, "PUBLISHED"); return draft ? null : { syllabusId: 1, syllabus: { gradeId: 1, subjectId: 10, academicYear: "2026/27", term: "TERM_1" } }; }, findMany: async () => [] },
+    syllabus: { findFirst: async (q) => { assert.equal(q.where.subject.is.schoolId, "a"); assert.equal(q.where.grade.is.schoolId, "a"); return { id: 1, status: draft ? "DRAFT" : "PUBLISHED" }; }, updateMany: async (q) => { writes.push(q); return { count: 1 }; }, deleteMany: async (q) => { writes.push(q); return { count: 1 }; } },
+    syllabusTopic: { findFirst: async (q) => { assert.equal(q.where.syllabus.is.schoolId, "a"); assert.equal(q.where.syllabus.is.status, "PUBLISHED"); return draft ? null : { syllabusId: 1, syllabus: { gradeId: 1, subjectId: 10, academicYear: "2026/27", term: "TERM_1" } }; }, findMany: async () => savedTopic ? [savedTopic] : [] },
     class: { findFirst: async (q) => { assert.equal(q.where.schoolId, "a"); return { gradeId: wrongGrade ? 2 : 1 }; } },
     teacher: { findFirst: async (q) => { assert.equal(q.where.schoolId, "a"); assert.equal(q.where.status, "ACTIVE"); return { id: "t1" }; } },
     cAConfig: { findFirst: async () => ({ academicYear: historical ? "2025/26" : "2026/27", currentTerm: "TERM_1" }) },
@@ -114,7 +115,8 @@ test("recorded curriculum cannot be unpublished or deleted, and empty guides can
 test("coverage PDFs and detail pages protect drafts and class-scoped evidence", () => {
   const pdf = readFileSync("src/app/api/syllabus/pdf/route.tsx", "utf8");
   assert.match(pdf, /role === "teacher" \? \{ status: "PUBLISHED" \}/);
-  assert.match(pdf, /keyParts: \[ctx.schoolId, "syllabus-curriculum-v2", syllabus.id, role, teacherClassIds/);
+  assert.match(pdf, /keyParts: \[ctx.schoolId, "syllabus-curriculum-v3", syllabus.id, role, teacherClassIds/);
+  assert.match(pdf, /referenceDataTag\(ctx.schoolId, "classes"\)/);
   assert.match(pdf, /t.progress.filter/);
   assert.match(pdf, /private, no-store/);
   const detail = readFileSync("src/app/(dashboard)/list/syllabus/[id]/page.tsx", "utf8");
@@ -128,5 +130,37 @@ test("curriculum transaction conflicts return a review-and-retry error without m
   for (const code of ["P2034", "P2002", "P1001"]) {
     const service = load("src/lib/services/curriculum-write.ts", { "@/src/generated/prisma": { Prisma: { PrismaClientKnownRequestError: KnownError } }, "@/src/lib/prisma": { $transaction: async (_, options) => { assert.equal(options.isolationLevel, "Serializable"); throw new KnownError(code); } } });
     await assert.rejects(() => service.withCurriculumWrite(async () => {}), code === "P1001" ? /P1001/ : /Refresh and review/);
+  }
+});
+
+test("grade changes preserve recorded curriculum while flagging a missing current-grade guide", async () => {
+  const f = review({ movedGrade: true });
+  const result = await f.service.getAdminCurriculum({ classId: "1" });
+  const history = result.rows.find((row) => row.guideId === 1);
+  assert.equal(history.recorded, 1);
+  assert.equal(history.historicalPlacement, true);
+  assert.equal(history.assignments.length, 0);
+  assert.ok(result.rows.some((row) => row.subjectId === 10 && row.guideId === null));
+  const query = f.queries.find((query) => query.include?.topics);
+  assert.equal(query.where.OR[1].topics.some.progress.some.classId, 1);
+  const detail = readFileSync("src/app/(dashboard)/list/syllabus/[id]/page.tsx", "utf8");
+  assert.match(detail, /OR: \[\{ gradeId: syllabus.gradeId \}, \{ id: \{ in: recordedClassIds \} \}\]/);
+});
+test("closing an edited topic without saving cannot silently publish the older plan", () => {
+  const { hasUnsavedSyllabusTopics } = load("src/lib/syllabus-editor-state.ts", {});
+  const topic = { id: 1, weekNumber: 1, durationWeeks: 1, title: "Fractions", subtopics: [], objectives: [], coreCompetencies: [], teachingResources: "Reader" };
+  assert.equal(hasUnsavedSyllabusTopics([topic], [topic]), false);
+  assert.equal(hasUnsavedSyllabusTopics([{ ...topic, title: "Decimals" }], [topic]), true);
+  assert.equal(hasUnsavedSyllabusTopics([{ ...topic, objectives: ["Explain decimals"] }], [topic]), true);
+  assert.equal(hasUnsavedSyllabusTopics([{ ...topic, id: undefined }], [topic]), true);
+  assert.equal(hasUnsavedSyllabusTopics([{ ...topic, title: "Decimals" }], [{ ...topic, title: "Decimals" }]), false);
+  assert.match(readFileSync("src/components/SyllabusTopicEditor.tsx", "utf8"), /hasUnsavedSyllabusTopics\(topics, savedTopics\)/);
+});
+test("invalid legacy topics cannot bypass saved-topic checks through either publish action", async () => {
+  for (const change of [{ weekNumber: 53 }, { weekNumber: 52, durationWeeks: 2 }, { title: "" }, { teachingResources: "x".repeat(4001) }]) {
+    const f = actions({ role: "admin", savedTopic: { weekNumber: 1, durationWeeks: 1, order: 1, title: "Fractions", subtopics: [], objectives: [], coreCompetencies: [], teachingResources: "Reader", ...change } });
+    await assert.rejects(() => f.service.publishSyllabus(1), /invalid topic/);
+    await assert.rejects(() => f.service.updateSyllabus(1, { status: "PUBLISHED" }), /invalid topic/);
+    assert.equal(f.writes.length, 0);
   }
 });
