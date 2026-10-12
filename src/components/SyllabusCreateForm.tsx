@@ -103,9 +103,9 @@ const SyllabusCreateForm = ({ subjects, grades, academicYears }: Props) => {
           {Object.entries(TERM_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
         </SelectField>
 
-        <SelectField label="Academic Year" value={academicYear} onChange={setAcademicYear}>
+        {academicYears.length > 0 ? <SelectField label="Academic Year" value={academicYear} onChange={setAcademicYear}>
           {academicYears.map((y) => <option key={y} value={y}>{y}</option>)}
-        </SelectField>
+        </SelectField> : <label className="flex min-w-0 flex-col gap-1.5 text-xs font-black text-gray-500">Academic year<input aria-label="Academic year" value={academicYear} maxLength={20} onChange={(event) => setAcademicYear(event.target.value)} className="min-h-11 w-full rounded-lg border border-gray-300 px-3 text-sm font-semibold text-gray-700" /></label>}
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -113,6 +113,7 @@ const SyllabusCreateForm = ({ subjects, grades, academicYears }: Props) => {
           Overview / Description <span className="font-normal normal-case text-gray-300">(optional)</span>
         </label>
         <textarea
+          maxLength={2000}
           rows={3}
           value={description}
           onChange={(e) => setDescription(e.target.value)}

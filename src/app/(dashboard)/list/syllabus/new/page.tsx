@@ -18,9 +18,7 @@ const NewSyllabusPage = async () => {
     prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } }),
   ]);
 
-  const academicYears = configs.length > 0
-    ? configs.map((c) => c.academicYear)
-    : ["2024/25", "2025/26"];
+  const academicYears = [...new Set(configs.map((config) => config.academicYear))];
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4 max-w-2xl">

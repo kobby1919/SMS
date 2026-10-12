@@ -118,12 +118,14 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
 
   // ── Add new blank topic ───────────────────────────────────────────────────
   const addTopic = () => {
+    if (status !== "DRAFT") { setError("Unpublish the guide before editing its teaching plan."); return; }
     const newTopic = emptyTopic(topics.length + 1);
     setTopics([...topics, newTopic]);
     setEditing(topics.length); // open the new one immediately
   };
 
   const planTwelveWeeks = () => {
+    if (status !== "DRAFT") { setError("Unpublish the guide before editing its teaching plan."); return; }
     if (topics.length > 0) return;
     const planned = Array.from({ length: 12 }, (_, index) => emptyTopic(index + 1));
     setTopics(planned);
@@ -142,6 +144,7 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
 
   // ── Save a topic ──────────────────────────────────────────────────────────
   const saveTopic = (idx: number) => {
+    if (status !== "DRAFT") { setError("Unpublish the guide before editing its teaching plan."); return; }
     const t = topics[idx];
     if (!t.title.trim()) { setError("Topic title is required."); return; }
     setError(null);
@@ -175,6 +178,7 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
 
   // ── Delete a topic ────────────────────────────────────────────────────────
   const deleteTopic = (idx: number) => {
+    if (status !== "DRAFT") { setError("Unpublish the guide before editing its teaching plan."); return; }
     const t = topics[idx];
     startTransition(async () => {
       try {
@@ -190,23 +194,26 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
 
   // ── Move topic up/down ────────────────────────────────────────────────────
   const moveTopic = (idx: number, dir: "up" | "down") => {
+    if (status !== "DRAFT") { setError("Unpublish the guide before editing its teaching plan."); return; }
+    if (unsavedTopics > 0) { setError("Save every topic before changing the order."); return; }
     const newIdx = dir === "up" ? idx - 1 : idx + 1;
     if (newIdx < 0 || newIdx >= topics.length) return;
 
     const next = [...topics];
     [next[idx], next[newIdx]] = [next[newIdx], next[idx]];
-    setTopics(next);
 
     startTransition(async () => {
       try {
         const savedIds = next.filter((t) => t.id).map((t) => t.id!);
-        if (savedIds.length === next.length) await reorderTopics(syllabusId, savedIds);
-      } catch { /* reorder errors are non-critical */ }
+        await reorderTopics(syllabusId, savedIds);
+        setTopics(next);
+      } catch (error: unknown) { setError(error instanceof Error ? error.message : "Topic order could not be saved."); }
     });
   };
 
   // ── Publish / unpublish ───────────────────────────────────────────────────
   const togglePublish = () => {
+    if (status === "DRAFT" && (unsavedTopics > 0 || editing !== null)) { setError("Save or close the topic editor before publishing the guide."); return; }
     startTransition(async () => {
       try {
         if (status === "PUBLISHED") {

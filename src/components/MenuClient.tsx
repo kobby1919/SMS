@@ -246,9 +246,9 @@ const menuItems = [
       },
       {
         icon: ScrollText,
-        label: "Syllabus",
+        label: "Curriculum",
         href: "/list/syllabus",
-        visible: ["admin", "teacher"],
+        visible: ["admin"],
       },
       {
         icon: GraduationCap,

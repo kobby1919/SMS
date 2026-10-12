@@ -4,6 +4,7 @@
 
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { CheckCircle2, Clock, Loader2, MessageSquare } from "lucide-react";
 import { markTopicCovered, unmarkTopicCovered } from "@/src/lib/actions/syllabusActions";
 
@@ -30,6 +31,7 @@ const SyllabusProgressCard = ({
   coveredClassIds: initialCovered,
   existingProgress,
 }: Props) => {
+  const router = useRouter();
   const [coveredIds, setCoveredIds] = useState<number[]>(initialCovered);
   const [notes,      setNotes]      = useState<Record<number, string>>(
     Object.fromEntries(existingProgress.map((p) => [p.classId, p.notes]))
@@ -56,6 +58,7 @@ const SyllabusProgressCard = ({
           setCoveredIds((prev) => [...prev, classId]);
           setSuccess(`${className} marked as covered.`);
         }
+        router.refresh();
       } catch (e: unknown) {
         setError(e instanceof Error ? e.message : "Failed to update progress.");
       }
@@ -70,6 +73,7 @@ const SyllabusProgressCard = ({
         await markTopicCovered(topicId, classId, notes[classId] ?? "");
         setShowNotes((prev) => ({ ...prev, [classId]: false }));
         setSuccess("Progress note saved.");
+        router.refresh();
       } catch (e: unknown) {
         setError(e instanceof Error ? e.message : "Failed to save note.");
       }
@@ -79,7 +83,7 @@ const SyllabusProgressCard = ({
   return (
     <div className="border-t border-gray-100 pt-4" aria-label={`Progress for ${topicTitle}`}>
       <p className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-3">
-        Mark as Covered — Your Classes
+        Record coverage - Your classes
       </p>
 
       {error && (
@@ -96,7 +100,7 @@ const SyllabusProgressCard = ({
           const existing = existingProgress.find((p) => p.classId === cls.id);
 
           return (
-            <div key={cls.id} className={`rounded-xl border transition-colors ${covered ? "bg-emerald-50 border-emerald-200" : "bg-gray-50 border-gray-200"}`}>
+            <div key={cls.id} className={`min-w-0 rounded-lg border transition-colors ${covered ? "bg-emerald-50 border-emerald-200" : "bg-gray-50 border-gray-200"}`}>
               <div className="flex items-center gap-3 px-3 py-3 sm:px-4">
                 {/* Toggle button */}
                 <button
@@ -113,13 +117,13 @@ const SyllabusProgressCard = ({
                       ? <CheckCircle2 size={14} className="text-white" />
                       : <Clock size={12} className="text-gray-300" />}
                   </div>
-                  <div>
+                  <div className="min-w-0 break-words">
                     <p className={`text-sm font-bold ${covered ? "text-emerald-800" : "text-gray-700"}`}>
                       {cls.name}
                     </p>
                     {covered && existing && (
                       <p className="text-[10px] text-emerald-600 font-semibold">
-                        Covered {new Date(existing.coveredDate).toLocaleDateString("en-GH", { day: "numeric", month: "short", year: "numeric" })}
+                        Recorded {new Date(existing.coveredDate).toLocaleDateString("en-GH", { timeZone: "Africa/Accra", day: "numeric", month: "short", year: "numeric" })}
                       </p>
                     )}
                   </div>
@@ -132,6 +136,7 @@ const SyllabusProgressCard = ({
                   className={`w-7 h-7 flex items-center justify-center rounded-lg transition-colors
                     ${noteOpen ? "bg-indigo-100 text-indigo-600" : "bg-white border border-gray-200 text-gray-400 hover:bg-gray-100"}`}
                   title="Add note"
+                  aria-label={`Notes for ${cls.name}`}
                 >
                   <MessageSquare size={12} />
                 </button>
@@ -142,6 +147,8 @@ const SyllabusProgressCard = ({
                 <div className="flex flex-col gap-2 px-3 pb-3 sm:flex-row sm:px-4">
                   <input
                     type="text"
+                    aria-label={`Coverage note for ${cls.name}`}
+                    maxLength={2000}
                     value={notes[cls.id] ?? ""}
                     onChange={(e) => setNotes((prev) => ({ ...prev, [cls.id]: e.target.value }))}
                     placeholder="Optional note e.g. 'Completed with extra exercises'"

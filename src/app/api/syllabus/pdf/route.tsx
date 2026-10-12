@@ -308,7 +308,7 @@ function SyllabusPDF({
         {/* Class progress table */}
         {progressRows.length > 0 && (
           <>
-            <Text style={[S.sectionHd, { marginTop: 10 }]}>CLASS PROGRESS SUMMARY</Text>
+            <Text style={[S.sectionHd, { marginTop: 10 }]}>TEACHER-RECORDED COVERAGE - NOT INDEPENDENTLY VERIFIED</Text>
             <View style={S.progTable}>
               <View style={S.progHeader}>
                 <Text style={[S.progClass,   S.thText]}>CLASS</Text>
@@ -369,13 +369,14 @@ export async function GET(req: NextRequest) {
     const { syllabusId } = parsed.data;
 
     const syllabus = await prisma.syllabus.findFirst({
-      where:   { id: syllabusId, schoolId },
+      where:   { id: syllabusId, schoolId, ...(role === "teacher" ? { status: "PUBLISHED" } : {}) },
       include: {
         subject: { select: { name: true } },
         grade:   { select: { level: true } },
         topics: {
           include: {
             progress: {
+              where: { schoolId, class: { is: { schoolId } }, teacher: { is: { schoolId } }, coveredDate: { lte: new Date() } },
               include: { class: { select: { name: true } } },
             },
           },
@@ -440,11 +441,11 @@ export async function GET(req: NextRequest) {
       objectives:        t.objectives,
       coreCompetencies:  t.coreCompetencies,
       teachingResources: t.teachingResources,
-      coveredByClasses:  t.progress.map((p) => p.class.name),
+      coveredByClasses:  t.progress.filter((progress) => !teacherClassIds || teacherClassIds.includes(progress.classId)).map((p) => p.class.name),
     }));
 
     const pdfBuffer = await getCachedDocument({
-      keyParts: [ctx.schoolId, "syllabus", syllabus.id],
+      keyParts: [ctx.schoolId, "syllabus-curriculum-v2", syllabus.id, role, teacherClassIds ? [...teacherClassIds].sort((a, b) => a - b).join(",") : "all-classes"],
       tags: [
         documentTag(ctx.schoolId, "syllabus"),
         documentTag(ctx.schoolId, "syllabus", syllabus.id),
@@ -464,7 +465,7 @@ export async function GET(req: NextRequest) {
     });
 
     const filename = `syllabus-${syllabus.subject.name}-${syllabus.grade.level}-${syllabus.term}-${syllabus.academicYear.replace("/", "-")}.pdf`
-      .toLowerCase().replace(/\s+/g, "-");
+      .toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9._-]/g, "");
 
     return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,
@@ -472,12 +473,12 @@ export async function GET(req: NextRequest) {
         "Content-Type":        "application/pdf",
         "Content-Disposition": `attachment; filename="${filename}"`,
         "Content-Length":      pdfBuffer.byteLength.toString(),
+        "Cache-Control":       "private, no-store",
       },
     });
 
   } catch (err: unknown) {
     console.error("[syllabus/pdf]", err);
-    const message = err instanceof Error ? err.message : "Unknown error";
-    return new NextResponse(`PDF generation failed: ${message}`, { status: 500 });
+    return new NextResponse("The teaching guide PDF could not be generated. Please try again.", { status: 500 });
   }
 }

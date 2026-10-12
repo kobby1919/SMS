@@ -17,7 +17,8 @@ const SyllabusEditPage = async ({
   const { schoolId } = await requirePageSession(["admin"]);
 
   const { id } = await params;
-  const syllabusId = parseInt(id);
+  if (!/^[1-9]\d*$/.test(id) || !Number.isSafeInteger(Number(id))) notFound();
+  const syllabusId = Number(id);
 
   const syllabus = await prisma.syllabus.findFirst({
     where:   { id: syllabusId, schoolId },
@@ -36,6 +37,8 @@ const SyllabusEditPage = async ({
   });
 
   if (!syllabus) notFound();
+  const historyCount = await prisma.syllabusTopicProgress.count({ where: { syllabusTopic: { is: { syllabusId } } } });
+  if (historyCount > 0) return <main className="m-3 min-w-0 bg-white p-4 font-nunito sm:m-4 sm:p-5"><h1 className="text-xl font-black text-gray-950">Teaching guide preserved</h1><p className="mt-3 text-sm font-semibold leading-6 text-gray-600">This plan has recorded coverage. Its topics cannot be rewritten or removed.</p><Link className="mt-4 inline-flex min-h-11 items-center gap-2 text-xs font-black text-blue-800" href={`/list/syllabus/${syllabusId}`}><Eye size={14} />Review guide and coverage</Link></main>;
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
