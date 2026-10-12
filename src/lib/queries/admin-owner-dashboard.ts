@@ -15,6 +15,8 @@ import { getClassReportReadiness } from "@/src/lib/services/report-card-readines
 import { attendanceObligationSourceKey } from "@/src/lib/services/teacher-attendance-obligations";
 import { getSchoolOperatingWindowStatus } from "@/src/lib/services/school-operating-hours";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
+import { getAdminAttendanceReview } from "@/src/lib/queries/admin-attendance-review";
+import { applyAttendanceReviewToPulse } from "@/src/lib/admin-attendance-pulse";
 
 const DAY_ENUM_MAP: Record<number, Day> = {
   1: "MONDAY",
@@ -71,6 +73,10 @@ export type AdminOwnerDashboardData = {
     late: number;
     excused: number;
     attendanceRate: number;
+    unknown?: number;
+    noScheduledLessons?: number;
+    timetableAmbiguous?: boolean;
+    closedUnmarkedLessons?: number;
     classDutySummary: {
       classId: number;
       className: string;
@@ -255,12 +261,12 @@ function schoolClassSortValue(name: string) {
 function buildActionItems(data: Omit<AdminOwnerDashboardData, "actionCenter">): AdminOwnerActionItem[] {
   const items: AdminOwnerActionItem[] = [];
 
-  if (data.schoolPulse.operatingStatus.isActiveDay && data.schoolPulse.unmarkedLessonsToday > 0) {
+  if (data.schoolPulse.operatingStatus.isActiveDay && (data.schoolPulse.closedUnmarkedLessons ?? 0) > 0) {
     items.push({
       id: "pulse-unmarked-attendance",
       section: "schoolPulse",
-      severity: data.schoolPulse.unmarkedLessonsToday > 3 ? "critical" : "warning",
-      title: `${data.schoolPulse.unmarkedLessonsToday} lesson${data.schoolPulse.unmarkedLessonsToday === 1 ? "" : "s"} need attendance`,
+      severity: (data.schoolPulse.closedUnmarkedLessons ?? 0) > 3 ? "critical" : "warning",
+      title: `${data.schoolPulse.closedUnmarkedLessons} lesson${data.schoolPulse.closedUnmarkedLessons === 1 ? "" : "s"} closed without complete attendance`,
       detail: "Some teachers have not completed today's attendance records yet.",
       href: "/admin/accountability",
     });
@@ -820,6 +826,10 @@ export async function getAdminOwnerDashboardData(
       })),
     },
   };
+
+  const attendanceReview = await getAdminAttendanceReview({}, now, { includeHistory: false });
+  if (attendanceReview.schoolId !== schoolId) throw new Error("School attendance scope mismatch.");
+  dataWithoutActions.schoolPulse = applyAttendanceReviewToPulse(dataWithoutActions.schoolPulse, attendanceReview);
 
   return {
     ...dataWithoutActions,

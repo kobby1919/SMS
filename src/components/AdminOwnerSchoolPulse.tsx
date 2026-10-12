@@ -53,7 +53,15 @@ function getPulseStatus(pulse: Props["pulse"]) {
     };
   }
 
-  if (pulse.unmarkedLessonsToday > 3) {
+  if (pulse.lessonsScheduledToday === 0) {
+    return { label: "Not assessed", tone: "border-gray-200 bg-gray-50 text-gray-700", bar: "bg-gray-400", message: "No eligible published lessons are scheduled today. Student absence cannot be inferred from missing lessons." };
+  }
+
+  if ((pulse.closedUnmarkedLessons ?? 0) === 0 && (pulse.unmarkedLessonsToday > 0 || (pulse.unknown ?? 0) > 0)) {
+    return { label: pulse.attendanceRecordsToday === 0 ? "Awaiting marking" : "In progress", tone: "border-gray-200 bg-gray-50 text-gray-700", bar: "bg-gray-400", message: "Today's attendance picture is still developing. Upcoming lessons are not missed duties, and unconfirmed students are not counted as absent." };
+  }
+
+  if ((pulse.closedUnmarkedLessons ?? 0) > 3) {
     return {
       label: "Critical",
       tone: "border-rose-200 bg-rose-50 text-rose-700",
@@ -62,7 +70,7 @@ function getPulseStatus(pulse: Props["pulse"]) {
     };
   }
 
-  if (pulse.unmarkedLessonsToday > 0 || pulse.attendanceRecordsToday === 0 || pulse.attendanceRate < 70) {
+  if (pulse.unmarkedLessonsToday > 0 || (pulse.unknown ?? 0) > 0 || pulse.timetableAmbiguous || pulse.attendanceRecordsToday === 0 || pulse.attendanceRate < 70) {
     return {
       label: "Needs Attention",
       tone: "border-amber-200 bg-amber-50 text-amber-700",
@@ -189,7 +197,7 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
                 <p className="text-xs font-semibold text-gray-500">
                   {isClosedDay
                     ? "Paused because today is not an active school day."
-                    : "Based only on submitted records, not unmarked lessons."}
+                    : "Present or late students, counted once per day, among confirmed daily positions."}
                 </p>
               </div>
               <p className="text-xl font-black text-gray-950">{pulse.attendanceRate}%</p>
@@ -200,6 +208,8 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
                 style={{ width: `${Math.min(Math.max(pulse.attendanceRate, 0), 100)}%` }}
               />
             </div>
+            {!isClosedDay ? <p className="mt-2 text-xs font-semibold text-gray-500">{pulse.unknown ?? 0} students not confirmed · {pulse.noScheduledLessons ?? 0} without scheduled lessons. Neither is counted as absent.</p> : null}
+            {pulse.timetableAmbiguous ? <p className="mt-2 text-xs font-semibold text-amber-800">Timetable changed today; full-day absence and lesson completion need review.</p> : null}
           </div>
         </div>
 

@@ -3,6 +3,7 @@ import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
 import { attendanceStatsQuerySchema } from "@/src/lib/validation/attendance";
 import { parseSearchParams } from "@/src/lib/validation/parse";
 import { enforceRateLimit } from "@/src/lib/rate-limit";
+import { assertAttendanceStatsAccess } from "@/src/lib/services/attendance-read-access";
 import {
   getClassAttendanceStats,
   getSchoolAttendanceOverview,
@@ -11,12 +12,13 @@ import {
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId, schoolId } = await requireRole([
+    const context = await requireRole([
       "admin",
       "teacher",
       "student",
       "parent",
     ]);
+    const { userId, schoolId } = context;
     const limited = await enforceRateLimit(req, {
       scope: "attendance:stats",
       actorId: userId,
@@ -27,6 +29,7 @@ export async function GET(req: NextRequest) {
 
     const parsed = parseSearchParams(attendanceStatsQuerySchema, req.nextUrl.searchParams);
     if (!parsed.ok) return parsed.response;
+    await assertAttendanceStatsAccess(context, parsed.data);
 
     if (parsed.data.studentId) {
       const stats = await getStudentAttendanceStats(schoolId, parsed.data.studentId);
