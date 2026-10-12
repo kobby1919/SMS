@@ -6,10 +6,10 @@ import ts from "typescript";
 
 const nodeRequire = createRequire(import.meta.url);
 function load(path, mocks = {}) {
-  const module = { exports: {} };
+  const loadedModule = { exports: {} };
   const code = ts.transpileModule(readFileSync(path, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, esModuleInterop: true } }).outputText;
-  new Function("require", "module", "exports", code)((id) => Object.hasOwn(mocks, id) ? mocks[id] : id === "server-only" ? {} : nodeRequire(id), module, module.exports);
-  return module.exports;
+  new Function("require", "module", "exports", code)((id) => Object.hasOwn(mocks, id) ? mocks[id] : id === "server-only" ? {} : id.startsWith("@/") ? load(`${id.slice(2)}.ts`, mocks) : nodeRequire(id), loadedModule, loadedModule.exports);
+  return loadedModule.exports;
 }
 const now = new Date("2026-10-09T12:00:00Z");
 function fixture(options = {}) {

@@ -16,6 +16,7 @@ import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import type { Prisma } from "@/src/generated/prisma";
 import { listActiveParentChildren } from "@/src/lib/services/parent-student-relationships";
+import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -38,13 +39,16 @@ const getCountdownColor = (date: Date): string => {
 const AssignmentListPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | undefined }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-  const { userId, role, schoolId } = await requirePageSession();
+  const { userId, role, schoolId } = await requirePageSession(["admin", "teacher", "student", "parent"]);
   const currentUserId = userId;
 
-  const { page, tab, ...queryParams } = await searchParams;
-  const p = page ? parseInt(page) : 1;
+  const rawParams = await searchParams;
+  if (Object.values(rawParams).some((value) => value !== undefined && typeof value !== "string")) notFound();
+  const { page, tab, ...queryParams } = Object.fromEntries(Object.entries(rawParams).filter((entry): entry is [string, string] => typeof entry[1] === "string"));
+  if (page && (!/^[1-9]\d*$/.test(page) || Number(page) > 100000)) notFound();
+  const p = page ? Number(page) : 1;
   const activeTab = tab === "past" ? "past" : "upcoming";
   const now = new Date();
   const todayStart = new Date(now);
@@ -57,7 +61,10 @@ const AssignmentListPage = async ({
   const lessonQuery: Prisma.LessonWhereInput = {};
 
   if (queryParams.classId) {
-    lessonQuery.classId = parseInt(queryParams.classId);
+    if (!/^[1-9]\d*$/.test(queryParams.classId) || Number(queryParams.classId) > 2147483647) notFound();
+    const cls = await prisma.class.findFirst({ where: { id: Number(queryParams.classId), schoolId }, select: { id: true } });
+    if (!cls) notFound();
+    lessonQuery.classId = cls.id;
   }
 
   const parentClassIds = role === "parent"

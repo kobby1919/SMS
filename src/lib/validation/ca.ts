@@ -105,6 +105,7 @@ export const reportPublicationSchema = z.object({
   term: termSchema,
   academicYear: nonEmptyStringSchema,
   notes: z.string().trim().max(500).optional(),
+  expectedUpdatedAt: z.iso.datetime().optional(),
 });
 
 export const examEntryWindowSchema = z.object({

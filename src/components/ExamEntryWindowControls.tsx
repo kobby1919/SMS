@@ -54,7 +54,7 @@ export default function ExamEntryWindowControls({
   };
 
   return (
-    <div className={`rounded-2xl border p-4 ${
+    <div className={`rounded-lg border p-4 ${
       isOpen
         ? "border-emerald-100 bg-emerald-50"
         : isClosed

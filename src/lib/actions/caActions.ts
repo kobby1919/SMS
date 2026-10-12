@@ -38,7 +38,7 @@ import {
 } from "@/src/lib/services/parent-daily-summary";
 import { syncCAActivityScorePublishingObligation } from "@/src/lib/services/teacher-ca-obligations";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
-import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
+import { transitionClassReports, type ReportActionInput, type ReportActionMode } from "@/src/lib/services/report-publication";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 import { recordApprovedCorrectionParentEvent } from "@/src/lib/services/correction-parent-events";
 import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
@@ -98,11 +98,13 @@ async function assertCAStudents(schoolId: string, classId: number, studentIds: s
 
 async function assertTeacherUsesActivePeriod({
   schoolId,
+  classId,
   role,
   term,
   academicYear,
 }: {
   schoolId: string;
+  classId: number;
   role: string;
   term: Term;
   academicYear: string;
@@ -115,6 +117,8 @@ async function assertTeacherUsesActivePeriod({
       `Teachers can only work in the active academic period: ${activePeriod.academicYear} ${activePeriod.currentTerm.replace("_", " ")}. Ask an admin to change the school period if needed.`,
     );
   }
+  const release = await prisma.reportCardPublication.findUnique({ where: { schoolId_classId_term_academicYear: { schoolId, classId, term, academicYear } }, select: { status: true } });
+  if (release && ["SUBMITTED", "PUBLISHED"].includes(release.status)) throw new Error("This report set is submitted or published. Ask an admin to return or withdraw it before changing assessment records.");
 }
 
 async function assertExamEntryOpen(input: {
@@ -242,7 +246,7 @@ export async function createCA(data: CAInput) {
   const { userId: teacherId, role, schoolId } = await requireCAAccess(parsed.classId);
   await assertCAStudents(schoolId, parsed.classId, [parsed.studentId]);
   await assertClassSubjectInPublishedTimetable({ schoolId, classId: parsed.classId, subjectId: parsed.subjectId });
-  await assertTeacherUsesActivePeriod({ schoolId, role, term: parsed.term, academicYear: parsed.academicYear });
+  await assertTeacherUsesActivePeriod({ schoolId, classId: parsed.classId, role, term: parsed.term, academicYear: parsed.academicYear });
   if (role === "teacher") {
     await assertTeacherCAEntryWindowOpen({
       schoolId,
@@ -322,7 +326,7 @@ export async function updateCA(data: CAInput) {
     throw new Error("Saved exam scores require an approved correction request.");
   }
   await assertClassSubjectInPublishedTimetable({ schoolId, classId: parsed.classId, subjectId: parsed.subjectId });
-  await assertTeacherUsesActivePeriod({ schoolId, role, term: parsed.term, academicYear: parsed.academicYear });
+  await assertTeacherUsesActivePeriod({ schoolId, classId: parsed.classId, role, term: parsed.term, academicYear: parsed.academicYear });
   if (role === "teacher") {
     await assertTeacherCAEntryWindowOpen({
       schoolId,
@@ -423,7 +427,7 @@ export async function bulkUpsertCA(
   const { userId: teacherId, role, schoolId } = await requireCAAccess(classId);
   await assertCAStudents(schoolId, classId, rows.map((row) => row.studentId));
   await assertClassSubjectInPublishedTimetable({ schoolId, classId, subjectId });
-  await assertTeacherUsesActivePeriod({ schoolId, role, term, academicYear });
+  await assertTeacherUsesActivePeriod({ schoolId, classId, role, term, academicYear });
   if (role === "teacher") {
     await assertTeacherCAEntryWindowOpen({
       schoolId,
@@ -565,6 +569,7 @@ export async function createCABucketAction(data: {
   await assertTeacherUsesActivePeriod({
     schoolId,
     role,
+    classId: parsed.classId,
     term: parsed.term,
     academicYear: parsed.academicYear,
   });
@@ -636,6 +641,7 @@ export async function createCAActivityAction(data: {
   await assertTeacherUsesActivePeriod({
     schoolId,
     role: "teacher",
+    classId: bucket.classId,
     term: bucket.term,
     academicYear: bucket.academicYear,
   });
@@ -727,6 +733,7 @@ export async function bulkUpsertCAActivityScores(data: {
   await assertTeacherUsesActivePeriod({
     schoolId,
     role: "teacher",
+    classId: activity.classId,
     term: activity.bucket.term,
     academicYear: activity.bucket.academicYear,
   });
@@ -985,6 +992,7 @@ export async function requestExamScoreCorrection(data: {
   await assertTeacherUsesActivePeriod({
     schoolId,
     role: "teacher",
+    classId: parsed.classId,
     term: parsed.term,
     academicYear: parsed.academicYear,
   });
@@ -1372,347 +1380,29 @@ export async function lockCAActivityAction(activityId: number) {
   return { id: activity.id };
 }
 
-export async function publishClassReportCardsAction(data: {
-  classId: number;
-  term: Term;
-  academicYear: string;
-  notes?: string;
-}) {
+async function runReportAction(mode: ReportActionMode, data: ReportActionInput) {
   const parsed = parseActionInput(reportPublicationSchema, data);
-  const { userId, schoolId } = await requireRole(["admin"]);
-
-  const cls = await prisma.class.findFirst({
-    where: { id: parsed.classId, schoolId },
-    select: { id: true, name: true },
-  });
-  if (!cls) throw new Error("Class not found.");
-
-  const examWindow = await prisma.examEntryWindow.findUnique({
-    where: {
-      schoolId_classId_term_academicYear: {
-        schoolId,
-        classId: parsed.classId,
-        term: parsed.term,
-        academicYear: parsed.academicYear,
-      },
-    },
-    select: { status: true },
-  });
-  if (!examWindow || examWindow.status === "LOCKED") {
-    throw new Error("Open exam entry before publishing report cards for this class period.");
-  }
-
-  const readiness = await getClassReportReadiness({
-    schoolId,
-    classId: parsed.classId,
-    term: parsed.term,
-    academicYear: parsed.academicYear,
-  });
-  if (readiness.subjectCount === 0) {
-    throw new Error("This class has no timetable subjects. Add subjects to the timetable before publishing reports.");
-  }
-  if (readiness.studentCount === 0) {
-    throw new Error("This class has no students to publish report cards for.");
-  }
-  if (!readiness.isReady) {
-    throw new Error(
-      `Cannot publish yet. ${readiness.missingCount} student-subject report entr${readiness.missingCount === 1 ? "y is" : "ies are"} still incomplete.`,
-    );
-  }
-
-  const currentPublication = await prisma.reportCardPublication.findUnique({
-    where: {
-      schoolId_classId_term_academicYear: {
-        schoolId,
-        classId: parsed.classId,
-        term: parsed.term,
-        academicYear: parsed.academicYear,
-      },
-    },
-    select: { status: true },
-  });
-  if (currentPublication?.status !== "SUBMITTED" && currentPublication?.status !== "PUBLISHED") {
-    throw new Error("The class teacher must submit this class report set for admin review before publishing.");
-  }
-
-  const publication = await prisma.reportCardPublication.upsert({
-    where: {
-      schoolId_classId_term_academicYear: {
-        schoolId,
-        classId: parsed.classId,
-        term: parsed.term,
-        academicYear: parsed.academicYear,
-      },
-    },
-    create: {
-      schoolId,
-      classId: parsed.classId,
-      term: parsed.term,
-      academicYear: parsed.academicYear,
-      status: "PUBLISHED",
-      notes: parsed.notes,
-      reviewedAt: new Date(),
-      reviewedBy: userId,
-      reviewNote: parsed.notes,
-      publishedAt: new Date(),
-      publishedBy: userId,
-    },
-    update: {
-      status: "PUBLISHED",
-      notes: parsed.notes,
-      reviewedAt: new Date(),
-      reviewedBy: userId,
-      reviewNote: parsed.notes,
-      publishedAt: new Date(),
-      publishedBy: userId,
-      unpublishedAt: null,
-      unpublishedBy: null,
-    },
-  });
-
-  await logCAAudit({
-    schoolId,
-    actorId: userId,
-    action: "REPORT_CARDS_PUBLISHED",
-    entityType: "ReportCardPublication",
-    entityId: publication.id,
-    message: `${cls.name} report cards were published for ${parsed.academicYear} ${parsed.term.replace("_", " ")}.`,
-    metadata: {
-      classId: parsed.classId,
-      term: parsed.term,
-      academicYear: parsed.academicYear,
-      studentCount: readiness.studentCount,
-      subjectCount: readiness.subjectCount,
-      notes: parsed.notes,
-    },
-  });
-
+  const actor = await requireRole(mode === "SUBMIT" ? ["teacher"] : ["admin"]);
+  if (mode === "SUBMIT") await assertWithinSchoolOperatingHours(actor.schoolId, "Submitting class report cards");
+  const result = await transitionClassReports(mode, parsed, actor);
   revalidatePath("/list/report-cards");
   revalidatePath("/parent");
-  revalidateDashboard(schoolId);
-  revalidateDocument(schoolId, "report-card");
-  return { id: publication.id };
+  revalidateDashboard(actor.schoolId);
+  revalidateDocument(actor.schoolId, "report-card");
+  return result;
 }
 
-export async function submitClassReportCardsForReviewAction(data: {
-  classId: number;
-  term: Term;
-  academicYear: string;
-  notes?: string;
-}) {
-  const parsed = parseActionInput(reportPublicationSchema, data);
-  const { userId, role, schoolId } = await requireRole(["teacher"]);
-  await assertWithinSchoolOperatingHours(schoolId, "Submitting class report cards");
-  const activePeriod = await getActiveAcademicPeriod(schoolId);
-  if (parsed.term !== activePeriod.currentTerm || parsed.academicYear !== activePeriod.academicYear) {
-    throw new Error("Class reports can only be submitted for the active academic period.");
-  }
-
-  const teacherScope = await getTeacherScope({ schoolId, teacherId: userId });
-  if (!teacherScope.supervisedClassIds.includes(parsed.classId)) {
-    throw new Error("Only the assigned class teacher can submit this class for report-card review.");
-  }
-
-  const cls = await prisma.class.findFirst({
-    where: { id: parsed.classId, schoolId },
-    select: { id: true, name: true },
-  });
-  if (!cls) throw new Error("Class not found.");
-
-  const readiness = await getClassReportReadiness({
-    schoolId,
-    classId: parsed.classId,
-    term: parsed.term,
-    academicYear: parsed.academicYear,
-  });
-  if (readiness.subjectCount === 0) {
-    throw new Error("This class has no timetable subjects. Add subjects to the timetable before submitting.");
-  }
-  if (readiness.studentCount === 0) {
-    throw new Error("This class has no students to submit.");
-  }
-  if (!readiness.isReady) {
-    throw new Error(
-      `Cannot submit yet. ${readiness.missingCount} student-subject report entr${readiness.missingCount === 1 ? "y is" : "ies are"} still incomplete.`,
-    );
-  }
-
-  const currentPublication = await prisma.reportCardPublication.findUnique({
-    where: {
-      schoolId_classId_term_academicYear: {
-        schoolId,
-        classId: parsed.classId,
-        term: parsed.term,
-        academicYear: parsed.academicYear,
-      },
-    },
-    select: { status: true },
-  });
-  if (currentPublication?.status === "SUBMITTED") {
-    throw new Error("This class is already submitted and waiting for admin review.");
-  }
-  if (currentPublication?.status === "PUBLISHED") {
-    throw new Error("Published report cards cannot be resubmitted by the class teacher. Ask an admin to unpublish or return the report set first.");
-  }
-
-  const publication = await prisma.reportCardPublication.upsert({
-    where: {
-      schoolId_classId_term_academicYear: {
-        schoolId,
-        classId: parsed.classId,
-        term: parsed.term,
-        academicYear: parsed.academicYear,
-      },
-    },
-    create: {
-      schoolId,
-      classId: parsed.classId,
-      term: parsed.term,
-      academicYear: parsed.academicYear,
-      status: "SUBMITTED",
-      notes: parsed.notes,
-      submittedAt: new Date(),
-      submittedBy: userId,
-    },
-    update: {
-      status: "SUBMITTED",
-      notes: parsed.notes,
-      submittedAt: new Date(),
-      submittedBy: userId,
-      reviewedAt: null,
-      reviewedBy: null,
-      reviewNote: null,
-      unpublishedAt: null,
-      unpublishedBy: null,
-    },
-  });
-
-  await logCAAudit({
-    schoolId,
-    actorId: userId,
-    action: "REPORT_CARDS_SUBMITTED_FOR_REVIEW",
-    entityType: "ReportCardPublication",
-    entityId: publication.id,
-    message: `${cls.name} report cards were submitted for admin review for ${parsed.academicYear} ${parsed.term.replace("_", " ")}.`,
-    metadata: {
-      classId: parsed.classId,
-      term: parsed.term,
-      academicYear: parsed.academicYear,
-      studentCount: readiness.studentCount,
-      subjectCount: readiness.subjectCount,
-      notes: parsed.notes,
-      role,
-    },
-  });
-
-  revalidatePath("/list/report-cards");
-  revalidateDashboard(schoolId);
-  revalidateDocument(schoolId, "report-card");
-  return { id: publication.id };
+export async function publishClassReportCardsAction(data: ReportActionInput) {
+  return runReportAction("PUBLISH", data);
 }
-
-export async function rejectClassReportCardsReviewAction(data: {
-  classId: number;
-  term: Term;
-  academicYear: string;
-  notes?: string;
-}) {
-  const parsed = parseActionInput(reportPublicationSchema, data);
-  const { userId, schoolId } = await requireRole(["admin"]);
-
-  const publication = await prisma.reportCardPublication.findUnique({
-    where: {
-      schoolId_classId_term_academicYear: {
-        schoolId,
-        classId: parsed.classId,
-        term: parsed.term,
-        academicYear: parsed.academicYear,
-      },
-    },
-    include: { class: { select: { name: true } } },
-  });
-  if (!publication || publication.status !== "SUBMITTED") {
-    throw new Error("Only submitted report-card sets can be rejected.");
-  }
-
-  const updated = await prisma.reportCardPublication.update({
-    where: { id: publication.id, schoolId },
-    data: {
-      status: "REJECTED",
-      reviewedAt: new Date(),
-      reviewedBy: userId,
-      reviewNote: parsed.notes || "Returned for correction.",
-    },
-  });
-
-  await logCAAudit({
-    schoolId,
-    actorId: userId,
-    action: "REPORT_CARDS_REJECTED",
-    entityType: "ReportCardPublication",
-    entityId: publication.id,
-    message: `${publication.class.name} report cards were returned for correction for ${parsed.academicYear} ${parsed.term.replace("_", " ")}.`,
-    metadata: parsed,
-  });
-
-  revalidatePath("/list/report-cards");
-  revalidateDashboard(schoolId);
-  revalidateDocument(schoolId, "report-card");
-  return { id: updated.id };
+export async function submitClassReportCardsForReviewAction(data: ReportActionInput) {
+  return runReportAction("SUBMIT", data);
 }
-
-export async function unpublishClassReportCardsAction(data: {
-  classId: number;
-  term: Term;
-  academicYear: string;
-  notes?: string;
-}) {
-  const parsed = parseActionInput(reportPublicationSchema, data);
-  const { userId, schoolId } = await requireRole(["admin"]);
-
-  const publication = await prisma.reportCardPublication.findUnique({
-    where: {
-      schoolId_classId_term_academicYear: {
-        schoolId,
-        classId: parsed.classId,
-        term: parsed.term,
-        academicYear: parsed.academicYear,
-      },
-    },
-    include: { class: { select: { name: true } } },
-  });
-  if (!publication) throw new Error("No published report-card record exists for this class period.");
-
-  const updated = await prisma.reportCardPublication.update({
-    where: { id: publication.id, schoolId },
-    data: {
-      status: "UNPUBLISHED",
-      notes: parsed.notes,
-      unpublishedAt: new Date(),
-      unpublishedBy: userId,
-    },
-  });
-
-  await logCAAudit({
-    schoolId,
-    actorId: userId,
-    action: "REPORT_CARDS_UNPUBLISHED",
-    entityType: "ReportCardPublication",
-    entityId: publication.id,
-    message: `${publication.class.name} report cards were unpublished for ${parsed.academicYear} ${parsed.term.replace("_", " ")}.`,
-    metadata: {
-      classId: parsed.classId,
-      term: parsed.term,
-      academicYear: parsed.academicYear,
-      notes: parsed.notes,
-    },
-  });
-
-  revalidatePath("/list/report-cards");
-  revalidatePath("/parent");
-  revalidateDashboard(schoolId);
-  revalidateDocument(schoolId, "report-card");
-  return { id: updated.id };
+export async function rejectClassReportCardsReviewAction(data: ReportActionInput) {
+  return runReportAction("REJECT", data);
+}
+export async function unpublishClassReportCardsAction(data: ReportActionInput) {
+  return runReportAction("UNPUBLISH", data);
 }
 
 export async function openExamEntryWindowAction(data: {

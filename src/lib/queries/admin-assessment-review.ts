@@ -6,6 +6,8 @@ import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { getSubjectCAProgress, type SubjectCAProgress } from "@/src/lib/services/ca-activity";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 import type { Prisma } from "@/src/generated/prisma";
+import { assessmentPosition } from "@/src/lib/assessment-position";
+export { assessmentPosition } from "@/src/lib/assessment-position";
 
 const positiveId = z.string().regex(/^[1-9]\d*$/).transform(Number).pipe(z.number().int().positive().max(Number.MAX_SAFE_INTEGER));
 
@@ -15,32 +17,9 @@ const filters = z.object({
   year: z.string().trim().min(1).max(30).optional(),
   term: z.enum(["TERM_1", "TERM_2", "TERM_3"]).optional(),
   search: z.string().trim().max(100).optional(),
+  studentId: z.string().trim().min(1).max(200).optional(),
   page: z.string().regex(/^[1-9]\d*$/).transform(Number).pipe(z.number().int().max(100000)).optional().transform((value) => value ?? 1),
 });
-
-export function assessmentPosition(progress: SubjectCAProgress, examScore: number | null, examMaximum: number, futureActivities = 0) {
-  const activities = progress.buckets.flatMap((bucket) => bucket.activities);
-  const scored = activities.filter((activity) => activity.rawScore !== null).length;
-  const invalid = !Number.isFinite(progress.earnedMarks) || progress.earnedMarks < 0 || progress.earnedMarks > progress.classworkWeight ||
-    !Number.isFinite(progress.classworkWeight) || progress.classworkWeight < 0 || !Number.isFinite(examMaximum) || examMaximum < 0 ||
-    (examScore !== null && (!Number.isFinite(examScore) || examScore < 0 || (examMaximum > 0 && examScore > examMaximum))) ||
-    activities.some((activity) => !Number.isFinite(activity.rawMaxScore) || activity.rawMaxScore <= 0 ||
-      (activity.rawScore !== null && (!Number.isFinite(activity.rawScore) || activity.rawScore < 0 || activity.rawScore > activity.rawMaxScore)));
-  const allocationComplete = Math.abs(progress.totalAllocatedMarks - progress.classworkWeight) < 0.005;
-  const caComplete = activities.length > 0 && scored === activities.length && allocationComplete &&
-    progress.buckets.every((bucket) => bucket.activityCount > 0 &&
-      (bucket.aggregationMode !== "SUM_ACTIVITIES" ||
-        Math.abs(bucket.activities.reduce((sum, activity) => sum + (activity.allocationMarks ?? 0), 0) - bucket.allocationMarks) < 0.005));
-  // Zero is also the database default; it cannot prove an exam was entered.
-  const examConfirmed = examMaximum === 0 || (examScore !== null && examScore > 0 && examScore <= examMaximum);
-  const complete = !invalid && caComplete && examConfirmed && futureActivities === 0;
-  return {
-    scored, expected: activities.length, caComplete, examConfirmed,
-    ca: !invalid && scored > 0 ? progress.earnedMarks : null,
-    status: invalid ? "Needs review" : complete ? "Complete" : scored === 0 && !examScore ? "Not started" : "Incomplete",
-    total: complete ? Math.round((progress.earnedMarks + (examMaximum > 0 ? examScore ?? 0 : 0)) * 100) / 100 : null,
-  };
-}
 
 export async function getAdminAssessmentReview(params: Record<string, string | string[] | undefined>, now = new Date()) {
   const { schoolId } = await requireRole(["admin"]);
@@ -56,7 +35,7 @@ export async function getAdminAssessmentReview(params: Record<string, string | s
   const classId = selection.classId ?? classes[0]?.id;
   const currentPeriod = year === active.academicYear && term === active.currentTerm;
   const config = configs.find((item) => item.academicYear === year);
-  const base = { classes, configs, year, term, classId, currentPeriod, search: selection.search ?? "", page: selection.page, subjects: [] as { id: number; name: string }[], subjectId: selection.subjectId, teacherNames: [] as string[], rows: [] as Awaited<ReturnType<typeof loadRows>>, count: 0, pageCount: 1, error: null as string | null, config };
+  const base = { classes, configs, year, term, classId, currentPeriod, studentId: selection.studentId, search: selection.search ?? "", page: selection.page, subjects: [] as { id: number; name: string }[], subjectId: selection.subjectId, teacherNames: [] as string[], rows: [] as Awaited<ReturnType<typeof loadRows>>, count: 0, pageCount: 1, error: null as string | null, config };
   if (!parsed.success) return { ...base, error: "Some filters are invalid. Select a valid class, subject, year and term." };
   if (classId === undefined) return base;
   if (!classes.some((item) => item.id === classId)) return { ...base, error: "This class is not available in your school." };
@@ -74,6 +53,7 @@ export async function getAdminAssessmentReview(params: Record<string, string | s
   if (subjectId === undefined) return { ...base, subjects };
   const context = { schoolId, classId, subjectId, term, academicYear: year };
   const studentWhere: Prisma.StudentWhereInput = { schoolId,
+    ...(selection.studentId ? { id: selection.studentId } : {}),
     ...(currentPeriod ? { classId, status: "ACTIVE" as const } : { OR: [
       { continuousAssessments: { some: context } },
       { caActivityScores: { some: { schoolId, activity: { schoolId, classId, subjectId, bucket: context } } } },

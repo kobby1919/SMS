@@ -14,8 +14,9 @@ import { getClassTeacherOverview } from "@/src/lib/services/class-teacher-overvi
 import { TERM_LABELS } from "@/src/lib/caGrades";
 
 function parseClassId(value: string) {
-  const parsed = Number.parseInt(value, 10);
-  return Number.isFinite(parsed) ? parsed : null;
+  if (!/^[1-9]\d*$/.test(value)) return null;
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed <= 2147483647 ? parsed : null;
 }
 
 function reportTone(status: string) {
@@ -69,6 +70,9 @@ const ClassOverviewPage = async ({
             >
               <FileText size={14} />
               Reports
+            </Link>
+            <Link href={`/list/assignments?classId=${overview.class.id}`} className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 px-3 py-2.5 text-xs font-bold text-gray-700">
+              <ClipboardList size={14} /> Homework evidence
             </Link>
           </div>
         </div>
@@ -318,7 +322,7 @@ const ClassOverviewPage = async ({
                     </span>
                   </div>
                   <p className="mt-1 text-xs font-semibold text-gray-500">
-                    {item.missingCA} missing CA · {item.missingExam} missing exam
+                        {item.missingCA} CA/evidence issues · {item.missingExam} missing exam
                   </p>
                 </div>
               ))}
@@ -349,7 +353,7 @@ const ClassOverviewPage = async ({
             href={`/list/report-cards?classId=${overview.class.id}`}
             className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-edujay-ink px-3 py-3 text-xs font-black text-white transition hover:bg-edujay-primaryDark"
           >
-            Open report builder
+                {role === "admin" ? "Reports & Approval" : "Open report builder"}
             <ChevronRight size={14} />
           </Link>
         </section>

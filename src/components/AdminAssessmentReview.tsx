@@ -39,6 +39,7 @@ export default async function AdminAssessmentReview({ params }: { params: Record
     if (data.classId !== undefined) query.set("classId", String(data.classId));
     if (data.subjectId !== undefined) query.set("subjectId", String(data.subjectId));
     if (data.search) query.set("search", data.search);
+    if (data.studentId) query.set("studentId", data.studentId);
     return `/list/ca?${query}`;
   }
   return <main className="m-3 mt-0 min-w-0 flex-1 bg-white p-4 font-nunito text-sm font-semibold text-gray-700 sm:m-4 sm:mt-0 sm:p-5">
@@ -48,6 +49,7 @@ export default async function AdminAssessmentReview({ params }: { params: Record
         <Link href="/admin/ca-config" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-blue-800"><SlidersHorizontal size={16} /> Assessment settings</Link>
       </div>
       <AssessmentReviewFilters>
+        {data.studentId ? <input type="hidden" name="studentId" value={data.studentId} /> : null}
         <label className="min-w-0 text-xs font-semibold text-gray-600">Academic year<select name="year" defaultValue={data.year} className={`${inputClass} mt-1`}>
           {[...new Set([data.year, ...data.configs.map((config) => config.academicYear)])].map((year) => <option key={year}>{year}</option>)}
         </select></label>

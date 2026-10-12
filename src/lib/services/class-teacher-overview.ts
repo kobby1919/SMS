@@ -295,7 +295,7 @@ export async function getClassTeacherOverview({
     blockersBySubject.set(blocker.subjectId, rows);
   }
   const teacherFollowUp = Array.from(blockersBySubject.entries()).map(([subjectId, blockers]) => {
-    const missingCA = blockers.filter((blocker) => blocker.reason === "MISSING_CA").length;
+    const missingCA = blockers.filter((blocker) => blocker.reason !== "MISSING_EXAM").length;
     const missingExam = blockers.filter((blocker) => blocker.reason === "MISSING_EXAM").length;
     return {
       subjectId,

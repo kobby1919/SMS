@@ -471,6 +471,12 @@ export async function getSubjectCAProgress(input: CAContext & { studentId: strin
     orderBy: [{ order: "asc" }, { id: "asc" }],
   });
 
+  return buildSubjectCAProgress(config, buckets);
+}
+
+type ProgressBucket = Prisma.CABucketGetPayload<{ include: { activities: { include: { teacher: { select: { name: true; surname: true } }; scores: { select: { rawScore: true; normalizedContribution: true } } } } } }>;
+
+export function buildSubjectCAProgress(config: { classworkWeight: number }, buckets: ProgressBucket[]): SubjectCAProgress {
   const progressBuckets = buckets.map((bucket): CABucketProgress => {
     const allocationMarks = toNumber(bucket.allocationMarks);
     const activityRows = bucket.activities.map((activity) => {
@@ -480,7 +486,7 @@ export async function getSubjectCAProgress(input: CAContext & { studentId: strin
       const activityAllocation = activity.allocationMarks ? toNumber(activity.allocationMarks) : null;
       const earnedMarks = score
         ? bucket.aggregationMode === "SUM_ACTIVITIES"
-          ? toNumber(score.normalizedContribution)
+          ? calculateAllocatedMark(rawScore ?? 0, rawMaxScore, activityAllocation ?? allocationMarks)
           : calculateAllocatedMark(rawScore ?? 0, rawMaxScore, allocationMarks)
         : null;
 

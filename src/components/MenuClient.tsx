@@ -258,9 +258,9 @@ const menuItems = [
       },
       {
         icon: ClipboardList,
-        label: "Homework Review",
+        label: "Homework",
         href: "/list/assignments",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["teacher", "student", "parent"],
       },
       {
         icon: FileCheck,
@@ -270,9 +270,15 @@ const menuItems = [
       },
       {
         icon: UserCheck,
+        label: "Attendance Review",
+        href: "/list/attendance",
+        visible: ["admin"],
+      },
+      {
+        icon: UserCheck,
         label: "Attendance",
         href: "/list/attendance",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["teacher", "student", "parent"],
       },
       {
         icon: Star,
@@ -282,9 +288,15 @@ const menuItems = [
       },
       {
         icon: FileText,
+        label: "Reports & Approval",
+        href: "/list/report-cards",
+        visible: ["admin"],
+      },
+      {
+        icon: FileText,
         label: "Report Cards",
         href: "/list/report-cards",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["teacher", "student", "parent"],
       },
     ],
   },

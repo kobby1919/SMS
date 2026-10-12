@@ -25,6 +25,8 @@ import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
 import { listActiveParentChildren } from "@/src/lib/services/parent-student-relationships";
 import type { Term } from "@/src/generated/prisma";
+import AdminReportReview from "@/src/components/AdminReportReview";
+import { getAdminReportReview } from "@/src/lib/queries/admin-report-review";
 
 export const dynamic = "force-dynamic";
 
@@ -43,11 +45,15 @@ function intFromParam(value?: string) {
 const ReportCardListPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | undefined }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-  const { userId, role, schoolId } = await requirePageSession();
+  const session = await requirePageSession();
+  const { userId, schoolId } = session;
+  const role: string = session.role;
 
-  const params = await searchParams;
+  const rawParams = await searchParams;
+  if (role === "admin") return <AdminReportReview data={await getAdminReportReview(rawParams)} />;
+  const params = Object.fromEntries(Object.entries(rawParams).filter((entry): entry is [string, string] => typeof entry[1] === "string"));
   const selectedClassId = intFromParam(params.classId);
   const requestedTerm = termFromParam(params.term);
   const selectedYear = params.year ?? "";
@@ -383,7 +389,8 @@ const ReportCardListPage = async ({
 
   const studentRows: StudentRow[] = students.map((s) => {
     const records = caRecords.filter((r) => r.studentId === s.id);
-    const reportsReady = records.filter((r) => r.examScore > 0).length;
+    const position = readiness.studentPositions.find((row) => row.studentId === s.id);
+    const reportsReady = position?.ready ?? 0;
     const status =
       totalSubjects > 0 && reportsReady >= totalSubjects
         ? "ready"
@@ -396,7 +403,7 @@ const ReportCardListPage = async ({
       name: s.name,
       surname: s.surname,
       img: s.img,
-      subjectsDone: records.length,
+      subjectsDone: position?.caStarted ?? 0,
       reportsReady,
       status,
     };
@@ -489,7 +496,7 @@ const ReportCardListPage = async ({
           academicYear={activeYear}
           status={publication?.status ?? "UNSUBMITTED"}
           role="admin"
-          canSubmit={readiness.isReady}
+          canSubmit={readiness.currentPeriod && readiness.isReady}
           missingCount={missingReportEntries}
           missingCACount={readiness.missingCACount}
           missingExamCount={readiness.missingExamCount}
@@ -498,6 +505,7 @@ const ReportCardListPage = async ({
           submittedAt={publication?.submittedAt}
           submittedBy={publication?.submittedBy}
           reviewNote={publication?.reviewNote}
+          updatedAt={publication?.updatedAt}
         />
       )}
 
@@ -509,7 +517,7 @@ const ReportCardListPage = async ({
           status={publication?.status ?? "UNSUBMITTED"}
           role="teacher"
           isClassTeacher={isClassTeacher}
-          canSubmit={readiness.isReady}
+          canSubmit={readiness.currentPeriod && readiness.isReady}
           missingCount={missingReportEntries}
           missingCACount={readiness.missingCACount}
           missingExamCount={readiness.missingExamCount}
@@ -518,6 +526,7 @@ const ReportCardListPage = async ({
           submittedAt={publication?.submittedAt}
           submittedBy={publication?.submittedBy}
           reviewNote={publication?.reviewNote}
+          updatedAt={publication?.updatedAt}
         />
       )}
 
