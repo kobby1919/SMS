@@ -8,12 +8,12 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 const nodeRequire = createRequire(import.meta.url);
 function load(path, mocks = {}, extra = "") {
-  const module = { exports: {} };
+  const loadedModule = { exports: {} };
   const source = readFileSync(path, "utf8") + extra;
   const code = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true } }).outputText;
   const require = (id) => Object.hasOwn(mocks, id) ? mocks[id] : id === "server-only" ? {} : id.startsWith("@/") ? load(`${id.slice(2)}.ts`, mocks) : nodeRequire(id);
-  new Function("require", "module", "exports", code)(require, module, module.exports);
-  return module.exports;
+  new Function("require", "module", "exports", code)(require, loadedModule, loadedModule.exports);
+  return loadedModule.exports;
 }
 const now = new Date("2026-10-08T12:00:00Z");
 const duty = { id: "duty-1", schoolId: "school-a", teacherId: "teacher-a", type: "ATTENDANCE", sourceModel: "Lesson", sourceId: "1", sourceKey: "attendance:2026-10-08:lesson:1", title: "Mark attendance", status: "PENDING", priority: "NORMAL", expectedAt: new Date("2026-10-08T10:00:00Z"), completedAt: null, updatedAt: now, metadata: { date: "2026-10-08", reminderAt: "2026-10-08T10:00:00Z", missedAt: "2026-10-08T10:30:00Z" } };
@@ -92,7 +92,7 @@ function workerFixture(overrides = {}) {
     publishedTimetableLesson: { findFirst: async (q) => { assert.equal(q.where.schoolId, duty.schoolId); assert.equal(q.where.publication.schoolId, duty.schoolId); return overrides.unpublished ? null : { teacherId: duty.teacherId, classId: 1, day: "THURSDAY", startTime: new Date("2000-01-01T09:00:00Z"), publication: { publishedAt: overrides.publishedAt ?? new Date("2026-10-01T00:00:00Z") } }; } },
     schoolNotificationSetting: { findUnique: async () => ({ activeDays: overrides.activeDays ?? ["THURSDAY"] }) },
     attendance: { findMany: async () => overrides.marks ?? [] },
-    student: { findMany: async (q) => { assert.equal(q.where.status, "ACTIVE"); assert.equal(q.where.schoolId, duty.schoolId); assert.equal(q.where.classId, 1); assert.ok(q.where.createdAt.lte); return overrides.students ?? [{ id: "s1" }]; } },
+    student: { findMany: async (q) => { assert.equal(q.where.status, "ACTIVE"); assert.equal(q.where.schoolId, duty.schoolId); assert.equal(q.where.classId, 1); assert.ok(q.where.createdAt.lte); return (overrides.students ?? [{ id: "s1" }]).map((s) => ({ createdAt: new Date("2026-09-01T00:00:00Z"), ...s })); } },
     teacherEscalation: { create: async ({ data }) => { escalations.push(data); return data; } },
     teacherReminder: {
       updateMany: async () => ({ count: 1 }),
@@ -108,6 +108,13 @@ function workerFixture(overrides = {}) {
   const service = load("src/lib/services/teacher-accountability.ts", mocks, "\nexport { actionableDuty, escalateIfNeeded, queueReminderIfNeeded };\n");
   return { service, tx, row, audits, escalations, reminders };
 }
+
+test("worker does not escalate a completed morning lesson because a pupil enrolled later", async () => {
+  const f = workerFixture({ students: [{ id: "s1" }, { id: "new", createdAt: new Date("2026-10-08T11:00:00Z") }], marks: [{ studentId: "s1", updatedAt: now }] });
+  assert.equal(await f.service.escalateIfNeeded({ obligation: f.row, now }), false);
+  assert.equal(f.escalations.length, 0);
+  assert.equal(f.row.status, "COMPLETED_LATE");
+});
 test("worker skips completion, closed review, unpublished source and school closure", async () => {
   for (const overrides of [{ duty: { completedAt: now } }, { closed: true }, { unpublished: true }, { activeDays: ["MONDAY"] }, { students: [] }, { marks: [{ studentId: "s1" }] }, { publishedAt: now }, { duty: { sourceId: "1garbage" } }]) {
     const f = workerFixture(overrides);

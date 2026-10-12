@@ -4,6 +4,10 @@ export type DayPosition = "PRESENT" | "LATE" | "ABSENT" | "EXCUSED" | "UNKNOWN" 
 export type ReviewMark = { id: number; studentId: string; lessonId: number; date: Date; status: AttendanceStatus; updatedAt: Date };
 export type ReviewLesson = { sourceId: number; classId: number; className: string; subjectName: string; teacherName: string; teacherId: string; day: Day; startTime: Date; endTime: Date };
 export type ReviewPublication = { id: string; publishedAt: Date; archivedAt: Date | null; lessons: ReviewLesson[] };
+export function eligibleAttendanceStudentIds(students: { id: string; createdAt: Date }[], starts: Date, recordedIds: Iterable<string>) {
+  const recorded = new Set(recordedIds);
+  return new Set(students.filter((student) => student.createdAt <= starts || recorded.has(student.id)).map((student) => student.id));
+}
 const dateFormatters = new Map<string, Intl.DateTimeFormat>();
 function formatter(timezone: string) {
   let value = dateFormatters.get(timezone);

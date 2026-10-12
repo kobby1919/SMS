@@ -1,5 +1,6 @@
 import "server-only";
 import prisma from "@/src/lib/prisma";
+import { eligibleAttendanceStudentIds } from "@/src/lib/attendance-review";
 import { Prisma } from "@/src/generated/prisma";
 import { caPublishingDeadline } from "@/src/lib/services/teacher-ca-obligations";
 import { homeworkCheckingDeadline } from "@/src/lib/services/teacher-homework-obligations";
@@ -86,9 +87,10 @@ export async function getAdminTeacherAccountability(schoolId: string, now = new 
         marksByLessonDay.set(key, marks);
       }
       for (const duty of attendanceDuties.values()) {
-        const expected = roster(duty.lesson.classId, duty.date);
-        if (!expected.size) continue;
         const savedMarks = marksByLessonDay.get(`${duty.lesson.sourceId}:${duty.date.toISOString().slice(0, 10)}`) ?? new Set<string>();
+        const starts = dayStart(duty.date); starts.setHours(duty.lesson.startTime.getHours(), duty.lesson.startTime.getMinutes(), 0, 0);
+        const expected = eligibleAttendanceStudentIds(studentsByClass.get(duty.lesson.classId) ?? [], starts, savedMarks);
+        if (!expected.size) continue;
         const marked = new Set([...savedMarks].filter((studentId) => expected.has(studentId)));
         addDuty({ teacherId: duty.lesson.teacherId, key: duty.key, kind: "ATTENDANCE", title: `${duty.lesson.className}: ${duty.lesson.subjectName} attendance`, detail: `${marked.size} of ${expected.size} student records marked; ${duty.date.toISOString().slice(0, 10)}`, deadline: duty.deadline, complete: marked.size === expected.size });
       }

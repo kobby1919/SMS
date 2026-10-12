@@ -102,6 +102,13 @@ test("duplicate attendance rows cannot mask another student's missing mark", asy
   assert.match(result.details[0].detail, /1 of 2/);
 });
 
+test("later enrollment cannot create overdue attendance for an already marked earlier lesson", async () => {
+  const data = { students: [student, { ...student, id: "new-student", createdAt: new Date("2026-10-08T11:00:00Z") }], attendance: [{ studentId: student.id, lessonId: 1, date: now }] };
+  assert.equal((await snapshot(data)).result.totals.overdue, 0);
+  data.attendance = [];
+  assert.equal((await snapshot(data)).result.totals.overdue, 1);
+});
+
 test("homework and CA use configured school-day deadlines and published teacher scope", async () => {
   const assignment = { id: 2, title: "Reading task", lessonId: 1, dueDate: new Date("2026-10-02T00:00:00Z"), lesson: { teacherId: teacher.id, classId: 1, subjectId: 1 }, homeworkSubmissions: [] };
   const activity = { id: 3, title: "Reading activity", activityDate: new Date("2026-10-02T00:00:00Z"), teacherId: teacher.id, classId: 1, subjectId: 1, scores: [] };

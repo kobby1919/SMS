@@ -47,17 +47,20 @@ test("only effective published lessons count; schedule changes make absence unce
   assert.deepEqual(data.lessons.map((l) => l.sourceId), [2]);
   assert.equal(core.attendanceSchedule([{ ...publication, archivedAt: new Date("2026-10-12T09:30:00Z") }], "2026-10-12", "Africa/Accra", ["MONDAY"], now).ambiguous, true);
 });
-function fixture({ records, empty = false } = {}) {
+function fixture({ records, empty = false, moved = false, joined = false, inactive = false, changed = false } = {}) {
   const queries = [];
   const students = [{ id: "s1", name: "Ama", surname: "A", classId: 1, createdAt: new Date("2026-01-01") }, { id: "s2", name: "Kojo", surname: "B", classId: 1, createdAt: new Date("2026-01-01") }];
+  if (moved) students[0].classId = 2;
+  if (joined) students[1].createdAt = new Date("2026-10-12T09:30:00Z");
+  const dataRecords = records ?? [mark(1, "ABSENT"), mark(2, "ABSENT"), mark(1, "ABSENT", 5, "s2"), mark(1, "ABSENT", 6, "s2")];
   const track = (value) => async (q) => { queries.push(q); return typeof value === "function" ? value(q) : value; };
   const db = {
     schoolNotificationSetting: { findUnique: track({ timezone: "Africa/Accra", activeDays: ["MONDAY"] }) },
     teacherAccountabilitySetting: { findUnique: track({ allowEarlyAttendanceMarking: true, attendanceOpenMinutesBeforeLesson: 10, attendanceEscalateMinutesAfterLesson: 30 }) },
-    class: { findMany: track([{ id: 1, name: "Primary Six" }]) },
-    student: { findMany: track((q) => empty || q.where.id ? [] : students), findFirst: track((q) => students.find((s) => s.id === q.where.id) ?? null) },
-    timetablePublication: { findFirst: track(publication), findMany: track([]) },
-    attendance: { findMany: track(records ?? [mark(1, "ABSENT"), mark(2, "ABSENT"), mark(1, "ABSENT", 5, "s2"), mark(1, "ABSENT", 6, "s2")]) },
+    class: { findMany: track([{ id: 1, name: "Primary Six" }, { id: 2, name: "Primary Five" }]) },
+    student: { findMany: track((q) => empty || q.where.id ? [] : students.filter((s) => s.createdAt <= q.where.createdAt.lte)), findFirst: track((q) => inactive && q.where.id === "old" ? { ...students[0], id: "old", status: "WITHDRAWN" } : students.find((s) => s.id === q.where.id) ?? null) },
+    timetablePublication: { findFirst: track(changed ? { ...publication, archivedAt: new Date("2026-10-12T09:30:00Z") } : publication), findMany: track(changed ? [{ ...publication, id: "p2", publishedAt: new Date("2026-10-12T09:30:00Z") }] : []) },
+    attendance: { findMany: track((q) => dataRecords.filter((r) => (!q.where.studentId || q.where.studentId.in.includes(r.studentId)) && (!q.where.lessonId || q.where.lessonId.in.includes(r.lessonId)) && r.date >= q.where.date.gte && r.date < q.where.date.lt)) },
   };
   const query = load("src/lib/queries/admin-attendance-review.ts", { "@/src/lib/attendance-review": core, "@/src/lib/services/teacher-accountability-settings": { DEFAULT_TEACHER_ACCOUNTABILITY_SETTINGS: {} }, "@/src/lib/authz": { requireRole: async (roles) => { assert.deepEqual(roles, ["admin"]); return { schoolId: "school-a" }; } }, "@/src/lib/prisma": { $transaction: async (work, opts) => { assert.equal(opts.isolationLevel, "RepeatableRead"); return work(db); } } });
   return { query, queries };
@@ -91,6 +94,77 @@ test("invalid or foreign filters expose no attendance rows", async () => {
 test("past reviews do not claim that historical lesson rosters were complete", async () => {
   const data = await fixture().query.getAdminAttendanceReview({ date: "2026-10-05" }, now);
   assert.ok(data.lessons.every((lesson) => lesson.expected === null && lesson.state === "HISTORICAL"));
+});
+
+test("history without recorded placement never invents old lessons from today's class", async () => {
+  const data = await fixture({ records: [] }).query.getAdminAttendanceReview({ studentId: "s1", date: "2026-10-05" }, now);
+  const day = data.history.find((row) => row.date === "2026-10-05");
+  assert.equal(day.status, "UNKNOWN");
+  assert.equal(day.expected, null);
+  assert.equal(day.classId, null);
+  assert.equal(day.className, "Class not recorded");
+});
+test("intraday publication changes cannot show complete on the page but incomplete in the pulse", async () => {
+  const data = await fixture({ changed: true, records: [mark(2, "ABSENT"), mark(2, "ABSENT", 4, "s2")] }).query.getAdminAttendanceReview({}, now);
+  assert.equal(data.ambiguous, true);
+  assert.equal(data.lessons[0].state, "REVIEW");
+  assert.equal(data.totals.ABSENT, 0);
+  const pulse = load("src/lib/admin-attendance-pulse.ts").applyAttendanceReviewToPulse({ classDutySummary: [] }, data);
+  assert.equal(pulse.lessonsMarkedToday, 0);
+  assert.equal(pulse.closedUnmarkedLessons, 0);
+});
+test("opening an inactive student's history cannot alter historical lesson totals", async () => {
+  const records = [mark(1, "ABSENT", 1, "s1", "2026-10-05"), mark(1, "ABSENT", 2, "old", "2026-10-05")];
+  const f = fixture({ inactive: true, records });
+  const normal = await f.query.getAdminAttendanceReview({ date: "2026-10-05" }, now);
+  const detail = await f.query.getAdminAttendanceReview({ date: "2026-10-05", studentId: "old" }, now);
+  assert.equal(normal.lessons[0].marked, 2);
+  assert.deepEqual(detail.lessons, normal.lessons);
+  assert.equal(detail.rosterCount, normal.rosterCount);
+});
+test("moved students cannot make their old lesson roster look complete or become falsely absent", async () => {
+  const data = await fixture({ moved: true, records: [mark(1, "ABSENT"), mark(2, "ABSENT"), mark(1, "PRESENT", 3, "s2"), mark(2, "PRESENT", 4, "s2")] }).query.getAdminAttendanceReview({}, now);
+  assert.equal(data.rows.find((row) => row.student.id === "s1").status, "UNKNOWN");
+  assert.equal(data.rows.find((row) => row.student.id === "s1").classId, 2);
+  assert.ok(data.lessons.every((lesson) => lesson.state === "REVIEW"));
+  assert.equal(data.lessons[0].recorded, 2);
+  assert.equal(data.lessons[0].marked, 1);
+});
+test("later enrollment does not retroactively create missing marks for earlier lessons", async () => {
+  const data = await fixture({ joined: true, records: [mark(1, "PRESENT"), mark(2, "PRESENT")] }).query.getAdminAttendanceReview({}, now);
+  assert.equal(data.lessons[0].expected, 1);
+  assert.equal(data.lessons[0].state, "COMPLETE");
+  assert.equal(data.lessons[1].expected, 2);
+  assert.equal(data.rows.find((row) => row.student.id === "s2").expected, 1);
+  assert.equal(data.rows.find((row) => row.student.id === "s2").status, "UNKNOWN");
+});
+test("daily totals partition the roster and status filters do not change summaries or lesson totals", async () => {
+  const f = fixture();
+  const full = await f.query.getAdminAttendanceReview({}, now);
+  const filtered = await f.query.getAdminAttendanceReview({ status: "ABSENT" }, now);
+  assert.equal(Object.values(full.totals).reduce((a, b) => a + b, 0), full.rosterCount);
+  assert.deepEqual(filtered.totals, full.totals);
+  assert.deepEqual(filtered.lessons, full.lessons);
+  assert.equal(filtered.rows.length, 1);
+  assert.equal((await f.query.getAdminAttendanceReview({ status: "NO_LESSONS" }, now)).error, null);
+});
+
+test("duty synchronization uses the same per-lesson enrollment eligibility as the review", async () => {
+  const saved = [];
+  const rows = [mark(1, "PRESENT")];
+  const service = load("src/lib/services/teacher-attendance-obligations.ts", {
+    "@/src/lib/attendance-review": core,
+    "@/src/lib/prisma": { teacher: { findMany: async () => [{ id: "t1" }] }, student: { findMany: async (q) => { assert.equal(q.select.createdAt, true); return [{ id: "s1", classId: 1, createdAt: new Date("2026-01-01") }, { id: "s2", classId: 1, createdAt: new Date("2026-10-12T09:30:00Z") }]; } }, attendance: { findMany: async () => rows } },
+    "@/src/lib/services/teacher-accountability-settings": { getTeacherAccountabilitySettings: async () => ({ allowEarlyAttendanceMarking: true, attendanceOpenMinutesBeforeLesson: 10, attendanceGraceMinutesAfterLesson: 10, attendanceEscalateMinutesAfterLesson: 30 }) },
+    "@/src/lib/services/timetable": { getActiveTimetablePublication: async () => publication, listLiveTimetableLessons: async () => lessons.map((l) => ({ ...l, id: l.sourceId, subjectId: 1, teacher: { name: "Ama", surname: "A" }, class: { name: l.className }, subject: { name: l.subjectName } })) },
+    "@/src/lib/services/school-operating-hours": { getSchoolOperatingWindowStatus: async () => ({ activeDays: ["MONDAY"] }) },
+    "@/src/lib/services/teacher-obligation-store": { saveTeacherObligation: async (input) => { saved.push(input); return { id: `o${saved.length}`, ...input }; } },
+  });
+  await service.syncAttendanceObligationsForDate({ schoolId: "school-a", date: now, now });
+  assert.equal(saved[0].metadata.studentCount, 1);
+  assert.equal(saved[0].metadata.attendanceCount, 1);
+  assert.match(saved[0].status, /^COMPLETED/);
+  assert.equal(saved[1].metadata.studentCount, 2);
 });
 test("school pulse uses the same distinct daily counts and excludes upcoming lessons from overdue alerts", async () => {
   const data = await fixture().query.getAdminAttendanceReview({}, now);

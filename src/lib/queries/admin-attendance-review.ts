@@ -3,11 +3,11 @@ import { z } from "zod";
 import prisma from "@/src/lib/prisma";
 import { requireRole } from "@/src/lib/authz";
 import { DEFAULT_TEACHER_ACCOUNTABILITY_SETTINGS } from "@/src/lib/services/teacher-accountability-settings";
-import { attendanceClock, attendanceDateBounds, attendanceSchedule, latestAttendanceMarks, schoolAttendanceDate, schoolDayPosition, shiftAttendanceDate, type DayPosition } from "@/src/lib/attendance-review";
+import { attendanceClock, attendanceDateBounds, attendanceSchedule, eligibleAttendanceStudentIds, latestAttendanceMarks, schoolAttendanceDate, schoolDayPosition, shiftAttendanceDate, type DayPosition } from "@/src/lib/attendance-review";
 
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => value >= "1970-01-01" && !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value);
 const integer = z.string().regex(/^[1-9]\d*$/).transform(Number).pipe(z.number().int().max(2147483647));
-const filters = z.object({ classId: integer.optional(), date: date.optional(), studentId: z.string().trim().min(1).max(200).optional(), status: z.enum(["PRESENT", "ABSENT", "LATE", "EXCUSED", "UNKNOWN"]).optional(), page: integer.pipe(z.number().max(100000)).optional() });
+const filters = z.object({ classId: integer.optional(), date: date.optional(), studentId: z.string().trim().min(1).max(200).optional(), status: z.enum(["PRESENT", "ABSENT", "LATE", "EXCUSED", "UNKNOWN", "NO_LESSONS"]).optional(), page: integer.pipe(z.number().max(100000)).optional() });
 
 export async function getAdminAttendanceReview(params: Record<string, string | string[] | undefined>, now = new Date(), options: { includeHistory?: boolean } = {}) {
   const { schoolId } = await requireRole(["admin"]);
@@ -38,6 +38,11 @@ export async function getAdminAttendanceReview(params: Record<string, string | s
     const students = await db.student.findMany({ where: { schoolId, status: "ACTIVE", createdAt: { lte: cutoff }, class: { is: { schoolId } }, ...(selection.classId ? { OR: [{ classId: selection.classId }, { attendances: { some: { schoolId, date: { gte: bounds.start, lt: bounds.end }, lessonId: { in: selectedLessons.map((lesson) => lesson.sourceId) } } } }] } : {}), ...(error ? { id: "__invalid_selection__" } : {}) }, select: { id: true, name: true, surname: true, classId: true, createdAt: true }, orderBy: [{ name: "asc" }, { surname: "asc" }, { id: "asc" }] });
     const studentIds = [...new Set([...students.map((student) => student.id), ...(selectedStudent && !error ? [selectedStudent.id] : [])])];
     const records = studentIds.length ? await db.attendance.findMany({ where: { schoolId, studentId: { in: studentIds }, student: { is: { schoolId } }, lesson: { is: { schoolId } }, date: { gte: rangeStart, lt: bounds.end }, createdAt: { lte: now }, updatedAt: { lte: now } }, select: { id: true, studentId: true, lessonId: true, date: true, status: true, updatedAt: true } }) : [];
+    // Lesson totals must not depend on which student's history is opened.
+    const lessonRecords = selectedLessons.length && !error ? await db.attendance.findMany({
+      where: { schoolId, lessonId: { in: selectedLessons.map((lesson) => lesson.sourceId) }, student: { is: { schoolId } }, lesson: { is: { schoolId } }, date: { gte: bounds.start, lt: bounds.end }, createdAt: { lte: now }, updatedAt: { lte: now } },
+      select: { id: true, studentId: true, lessonId: true, date: true, status: true, updatedAt: true },
+    }) : [];
     const byDayStudent = new Map<string, typeof records>();
     for (const record of records) { const key = `${schoolAttendanceDate(record.date, timezone)}:${record.studentId}`; const list = byDayStudent.get(key) ?? []; list.push(record); byDayStudent.set(key, list); }
     const daySchedules = new Map<string, ReturnType<typeof attendanceSchedule>>();
@@ -47,11 +52,18 @@ export async function getAdminAttendanceReview(params: Record<string, string | s
       const marks = latestAttendanceMarks(byDayStudent.get(`${key}:${student.id}`) ?? []);
       const matched = marks.filter((mark) => day.lessons.some((lesson) => lesson.sourceId === mark.lessonId));
       const recordedClassIds = [...new Set(matched.map((mark) => day.lessons.find((lesson) => lesson.sourceId === mark.lessonId)!.classId))];
-      const recordClassId = recordedClassIds.length === 1 ? recordedClassIds[0] : student.classId;
-      const expected = day.lessons.filter((lesson) => lesson.classId === recordClassId).map((lesson) => lesson.sourceId);
-      const completeEvidence = !day.ambiguous && recordedClassIds.length <= 1 && (key === today || matched.length > 0) && student.createdAt < day.end;
-      const status = schoolDayPosition(matched, expected, completeEvidence);
-      return { date: key, status, classId: recordClassId, expected: expected.length, marked: matched.filter((mark) => expected.includes(mark.lessonId)).length, className: day.lessons.find((lesson) => lesson.classId === recordClassId)?.className ?? classes.find((cls) => cls.id === recordClassId)?.name ?? "Historical class", ambiguous: day.ambiguous, unmatched: marks.length - matched.length };
+      const placementKnown = key === today || recordedClassIds.length === 1;
+      const recordClassId = key === today ? student.classId : recordedClassIds.length === 1 ? recordedClassIds[0] : null;
+      const classLessons = day.lessons.filter((lesson) => lesson.classId === recordClassId);
+      const expected = classLessons.filter((lesson) => student.createdAt <= attendanceClock(key, lesson.startTime, timezone) || matched.some((mark) => mark.lessonId === lesson.sourceId)).map((lesson) => lesson.sourceId);
+      const placementChanged = key === today && recordedClassIds.some((id) => id !== student.classId);
+      const joinedBeforeLessons = classLessons.length > 0 && classLessons.every((lesson) => student.createdAt <= attendanceClock(key, lesson.startTime, timezone));
+      const completeEvidence = !day.ambiguous && !placementChanged && recordedClassIds.length <= 1 && placementKnown && joinedBeforeLessons;
+      // Presence is positive evidence even after a class move; negative evidence needs a known placement.
+      const evidenceIds = [...new Set([...expected, ...matched.map((mark) => mark.lessonId)])];
+      let status = schoolDayPosition(matched, evidenceIds, completeEvidence);
+      if (status === "NO_LESSONS" && (marks.length > 0 || day.ambiguous || (day.operatingDay && key !== today && !placementKnown))) status = "UNKNOWN";
+      return { date: key, status, classId: recordClassId, expected: placementKnown && !placementChanged && recordedClassIds.length <= 1 ? evidenceIds.length : null, marked: matched.length, className: recordClassId === null ? "Class not recorded" : day.lessons.find((lesson) => lesson.classId === recordClassId)?.className ?? classes.find((cls) => cls.id === recordClassId)?.name ?? "Historical class", ambiguous: day.ambiguous || placementChanged || recordedClassIds.length > 1, unmatched: marks.length - matched.length };
     }
     const roster = students.map((student) => {
       const daily = position(student, reviewDate);
@@ -62,15 +74,17 @@ export async function getAdminAttendanceReview(params: Record<string, string | s
     for (const row of roster) totals[row.status]++;
     const policy = await db.teacherAccountabilitySetting.findUnique({ where: { schoolId }, select: { allowEarlyAttendanceMarking: true, attendanceOpenMinutesBeforeLesson: true, attendanceEscalateMinutesAfterLesson: true } }) ?? DEFAULT_TEACHER_ACCOUNTABILITY_SETTINGS;
     const lessonRows = selectedLessons.map((lesson) => {
-      const rosterIds = new Set(students.filter((student) => student.classId === lesson.classId).map((student) => student.id));
-      const dayMarks = latestAttendanceMarks(records.filter((mark) => mark.lessonId === lesson.sourceId && schoolAttendanceDate(mark.date, timezone) === reviewDate));
+      const starts = attendanceClock(reviewDate, lesson.startTime, timezone);
+      const dayMarks = latestAttendanceMarks(lessonRecords.filter((mark) => mark.lessonId === lesson.sourceId));
+      const markedIds = new Set(dayMarks.map((mark) => mark.studentId));
+      const rosterIds = eligibleAttendanceStudentIds(students.filter((student) => student.classId === lesson.classId), starts, markedIds);
       const marked = reviewDate === today ? dayMarks.filter((mark) => rosterIds.has(mark.studentId)).length : dayMarks.length;
       const expected = reviewDate === today ? rosterIds.size : null;
-      const starts = attendanceClock(reviewDate, lesson.startTime, timezone);
+      const rosterChanged = reviewDate === today && dayMarks.some((mark) => !rosterIds.has(mark.studentId));
       const openAt = new Date(starts.getTime() - (policy?.allowEarlyAttendanceMarking ? policy.attendanceOpenMinutesBeforeLesson * 60000 : 0));
       const closedAt = policy ? new Date(attendanceClock(reviewDate, lesson.endTime, timezone).getTime() + policy.attendanceEscalateMinutesAfterLesson * 60000) : null;
-      const state = expected === 0 ? "NO_ROSTER" : expected === null ? "HISTORICAL" : marked === expected ? "COMPLETE" : now < openAt ? "UPCOMING" : closedAt && now > closedAt ? "WINDOW_CLOSED" : marked > 0 ? "PARTIAL" : "UNMARKED";
-      return { ...lesson, expected, marked, state, openAt, closedAt };
+      const state = expected === null ? "HISTORICAL" : schedule.ambiguous || rosterChanged ? "REVIEW" : expected === 0 ? "NO_ROSTER" : marked === expected ? "COMPLETE" : now < openAt ? "UPCOMING" : closedAt && now > closedAt ? "WINDOW_CLOSED" : marked > 0 ? "PARTIAL" : "UNMARKED";
+      return { ...lesson, expected, marked, recorded: dayMarks.length, state, openAt, closedAt };
     });
     const history = selectedStudent && !error ? [...daySchedules.keys()].filter((key) => selectedStudent.createdAt < daySchedules.get(key)!.end).reverse().map((key) => position(selectedStudent, key)) : [];
     if (selectedStudent && selection.classId && selectedStudent.classId !== selection.classId && !history.some((day) => day.marked > 0 && day.classId === selection.classId)) error = "This student has no available history for the selected class.";

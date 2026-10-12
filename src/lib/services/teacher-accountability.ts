@@ -1,4 +1,5 @@
 import prisma from "@/src/lib/prisma";
+import { eligibleAttendanceStudentIds } from "@/src/lib/attendance-review";
 import type { Prisma, TeacherObligation, TeacherReminder } from "@/src/generated/prisma";
 import { accountabilityTransaction } from "@/src/lib/services/teacher-obligation-store";
 import { syncAttendanceObligationsForDate } from "@/src/lib/services/teacher-attendance-obligations";
@@ -127,6 +128,7 @@ async function actionableDuty(tx: Prisma.TransactionClient, candidate: TeacherOb
     const start = startOfDay(date); start.setHours(lesson.startTime.getHours(), lesson.startTime.getMinutes(), 0, 0);
     if (lesson.publication.publishedAt > start) return settle("CANCELLED", "Timetable publication followed this lesson date.");
     classId = lesson.classId;
+    date = start;
     const rows = await tx.attendance.findMany({ where: { schoolId, lessonId: sourceId, date: { gte: startOfDay(date), lte: endOfDay(date) }, student: { schoolId, classId, status: "ACTIVE", createdAt: { lte: endOfDay(date) } } }, select: { studentId: true, updatedAt: true } });
     checked = rows.map((row) => row.studentId); completedAt = latest(rows.map((row) => row.updatedAt));
   } else if (duty.type === "HOMEWORK_CHECKING") {
@@ -148,10 +150,11 @@ async function actionableDuty(tx: Prisma.TransactionClient, candidate: TeacherOb
     checked = activity.scores.map((row) => row.studentId);
     completedAt = latest(activity.scores.map((row) => row.updatedAt));
   } else return null;
-  const students = await tx.student.findMany({ where: { schoolId, classId, status: "ACTIVE", createdAt: { lte: endOfDay(date) }, class: { schoolId } }, select: { id: true } });
+  const students = await tx.student.findMany({ where: { schoolId, classId, status: "ACTIVE", createdAt: { lte: endOfDay(date) }, class: { schoolId } }, select: { id: true, createdAt: true } });
   const checkedIds = new Set(checked);
-  if (!students.length) return settle("CANCELLED", "No eligible active students remain for this duty.");
-  if (students.every((student) => checkedIds.has(student.id))) {
+  const expectedIds = duty.type === "ATTENDANCE" ? eligibleAttendanceStudentIds(students, date, checkedIds) : new Set(students.map((student) => student.id));
+  if (!expectedIds.size) return settle("CANCELLED", "No eligible active students remain for this duty.");
+  if ([...expectedIds].every((id) => checkedIds.has(id))) {
     return completedAt ? settle(completedAt > duty.expectedAt ? "COMPLETED_LATE" : "COMPLETED", "Source records confirm that this duty is complete.", completedAt) : null;
   }
   return duty;

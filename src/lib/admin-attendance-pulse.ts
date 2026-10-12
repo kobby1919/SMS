@@ -9,7 +9,7 @@ export function applyAttendanceReviewToPulse(pulse: AdminOwnerDashboardData["sch
   const unmarked: AdminOwnerDashboardData["schoolPulse"]["unmarkedLessons"] = [];
   for (const lesson of relevant) {
     const previous = oldDuties.get(lesson.sourceId);
-    const isComplete = !review.ambiguous && lesson.state === "COMPLETE";
+    const isComplete = lesson.state === "COMPLETE";
     const duty = { lessonId: lesson.sourceId, subjectName: lesson.subjectName, teacherName: lesson.teacherName, expectedRecords: lesson.expected!, markedRecords: lesson.marked, isComplete, obligationId: previous?.obligationId ?? null, obligationStatus: previous?.obligationStatus ?? null, reviewHref: `/list/attendance?date=${review.date}&classId=${lesson.classId}`, startTime: lesson.startTime, endTime: lesson.endTime };
     const group = groups.get(lesson.classId) ?? { classId: lesson.classId, className: lesson.className, expectedDuties: 0, completedDuties: 0, incompleteDuties: 0, completionRate: 0, duties: [] };
     group.expectedDuties++;

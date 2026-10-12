@@ -1,4 +1,5 @@
 import prisma from "@/src/lib/prisma";
+import { eligibleAttendanceStudentIds } from "@/src/lib/attendance-review";
 import type {
   Day,
   TeacherObligationPriority,
@@ -189,7 +190,7 @@ export async function syncAttendanceObligationsForDate({
   const [students, attendanceRows] = await Promise.all([
     prisma.student.findMany({
       where: { schoolId, status: "ACTIVE", createdAt: { lte: dayEnd(date) }, classId: { in: classIds }, class: { schoolId } },
-      select: { id: true, classId: true },
+      select: { id: true, classId: true, createdAt: true },
     }),
     prisma.attendance.findMany({
       where: {
@@ -202,16 +203,12 @@ export async function syncAttendanceObligationsForDate({
     }),
   ]);
 
-  const rosterByClass = new Map<number, Set<string>>();
-  for (const student of students) {
-    const roster = rosterByClass.get(student.classId) ?? new Set<string>();
-    roster.add(student.id); rosterByClass.set(student.classId, roster);
-  }
-  const studentCountByClass = new Map([...rosterByClass].map(([classId, roster]) => [classId, roster.size]));
   const attendanceByLesson = new Map(lessons.map((lesson) => {
-    const roster = rosterByClass.get(lesson.classId) ?? new Set<string>();
-    const marks = attendanceRows.filter((row) => row.lessonId === lesson.id && roster.has(row.studentId));
+    const rows = attendanceRows.filter((row) => row.lessonId === lesson.id);
+    const roster = eligibleAttendanceStudentIds(students.filter((student) => student.classId === lesson.classId), combineDateWithLessonTime(date, lesson.startTime), rows.map((row) => row.studentId));
+    const marks = rows.filter((row) => roster.has(row.studentId));
     return [lesson.id, {
+      studentCount: roster.size,
       count: new Set(marks.map((row) => row.studentId)).size,
       completedAt: marks.reduce<Date | null>((latest, row) => !latest || row.updatedAt > latest ? row.updatedAt : latest, null),
     }];
@@ -227,10 +224,11 @@ export async function syncAttendanceObligationsForDate({
     const deadlineAt = addMinutes(endAt, settings.attendanceGraceMinutesAfterLesson);
     const missedAt = addMinutes(endAt, settings.attendanceEscalateMinutesAfterLesson);
     const attendance = attendanceByLesson.get(lesson.id) ?? {
+      studentCount: 0,
       count: 0,
       completedAt: null,
     };
-    const studentCount = studentCountByClass.get(lesson.classId) ?? 0;
+    const studentCount = attendance.studentCount;
     const status = statusForAttendanceObligation({
       now,
       deadlineAt,
