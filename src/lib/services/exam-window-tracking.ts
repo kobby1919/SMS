@@ -19,10 +19,11 @@ const labels: Record<string, string> = {
 export function buildExamWindowTracking(examWeight: number, academicYear: string, term: string, classes: ExamClassInput[]) {
   const unavailable = () => ({ state: "UNAVAILABLE" as const, totals: null, classes: [], classListLimit: 5, issues: ["Exam evidence and teaching scope do not agree. No partial exam totals are shown."] });
   if (!Number.isFinite(examWeight) || examWeight < 0 || examWeight > 100 || new Set(classes.map((cls) => cls.classId)).size !== classes.length) return unavailable();
+  if (!classes.length) return { ...unavailable(), state: "SETUP_REQUIRED" as const, issues: ["Publish subject assignments for active students before evaluating exam entry."] };
   const evaluated = [];
   for (const cls of classes) {
     const state = examWeight === 0 ? "NOT_REQUIRED" : cls.windowState;
-    if (!Object.hasOwn(labels, state) || !["UNPUBLISHED", "SUBMITTED", "PUBLISHED", "REJECTED"].includes(cls.publicationStatus) ||
+    if (!Object.hasOwn(labels, state) || examWeight > 0 && state === "NOT_REQUIRED" || !["UNPUBLISHED", "SUBMITTED", "PUBLISHED", "REJECTED"].includes(cls.publicationStatus) ||
       !Number.isSafeInteger(cls.classId) || cls.classId <= 0 || !Number.isSafeInteger(cls.studentCount) || cls.studentCount <= 0 ||
       !Number.isSafeInteger(cls.subjectCount) || cls.subjectCount <= 0 || cls.evidence.length !== cls.subjectCount || new Set(cls.evidence.map((row) => row.subjectId)).size !== cls.evidence.length ||
       cls.evidence.some((row) => ![row.expected, row.recorded, row.missing, row.invalid].every((count) => Number.isSafeInteger(count) && count >= 0) ||
@@ -43,7 +44,7 @@ export function buildExamWindowTracking(examWeight: number, academicYear: string
       reportLocked, subjects, subjectListLimit: 5,
     });
   }
-  const setupRequired = evaluated.some((cls) => cls.state === "NOT_CONFIGURED");
+  const setupRequired = evaluated.some((cls) => ["NOT_CONFIGURED", "NEEDS_REVIEW"].includes(cls.state));
   const totals = {
     expected: evaluated.reduce((sum, cls) => sum + cls.expected, 0), recorded: evaluated.reduce((sum, cls) => sum + cls.recorded, 0),
     remaining: evaluated.reduce((sum, cls) => sum + cls.remaining, 0), invalid: evaluated.reduce((sum, cls) => sum + cls.invalid, 0),
@@ -55,8 +56,10 @@ export function buildExamWindowTracking(examWeight: number, academicYear: string
     notRequiredClasses: evaluated.filter((cls) => cls.state === "NOT_REQUIRED").length,
     windowReviewClasses: evaluated.filter((cls) => cls.state === "NEEDS_REVIEW").length,
   };
+  if (!Object.values(totals).every(Number.isSafeInteger)) return unavailable();
+  const priority = (state: string) => state === "NEEDS_REVIEW" ? 3 : state === "NOT_CONFIGURED" ? 2 : state === "CLOSED" ? 1 : 0;
   return { state: setupRequired ? "SETUP_REQUIRED" as const : "AVAILABLE" as const, totals,
-    classes: evaluated.sort((a, b) => b.unresolvedAfterClose - a.unresolvedAfterClose || b.invalid - a.invalid || b.remaining - a.remaining || a.classId - b.classId).slice(0, 5),
+    classes: evaluated.sort((a, b) => priority(b.state) - priority(a.state) || b.unresolvedAfterClose - a.unresolvedAfterClose || b.invalid - a.invalid || b.remaining - a.remaining || a.classId - b.classId).slice(0, 5),
     classListLimit: 5, issues: [
       ...(setupRequired ? ["Configure exam entry windows for the listed classes. Entries are not overdue before a window has opened."] : []),
       ...(totals.windowReviewClasses ? ["Some exam window configurations require review. Ordinary entry remains locked for those classes."] : []),

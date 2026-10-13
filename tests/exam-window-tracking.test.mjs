@@ -68,3 +68,18 @@ test("full-school totals precede bounded class and subject lists", () => {
   assert.equal(result.totals.expected, 24);
   assert.equal(result.totals.unresolvedAfterClose, 16);
 });
+
+test("nonzero exams cannot accept a not-required window and empty scope is not healthy", () => {
+  assert.equal(run({ ...cls, windowState: "NOT_REQUIRED" }).state, "UNAVAILABLE");
+  assert.equal(buildExamWindowTracking(70, "2026/2027", "TERM_1", []).state, "SETUP_REQUIRED");
+  assert.equal(buildExamWindowTracking(70, "2026/2027", "TERM_1", []).totals, null);
+});
+
+test("window setup and review are prioritized before truncation", () => {
+  const classes = Array.from({ length: 8 }, (_, index) => ({ ...cls, classId: index + 1, windowState: index === 7 ? "NEEDS_REVIEW" : index === 6 ? "NOT_CONFIGURED" : "OPEN" }));
+  const result = buildExamWindowTracking(70, "2026/2027", "TERM_1", classes);
+  assert.equal(result.state, "SETUP_REQUIRED");
+  assert.equal(result.classes[0].classId, 8);
+  assert.equal(result.classes[0].ordinaryEntryWindowOpen, false);
+  assert.equal(result.classes[1].classId, 7);
+});

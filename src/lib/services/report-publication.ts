@@ -3,6 +3,7 @@ import prisma from "@/src/lib/prisma";
 import type { AuthzContext } from "@/src/lib/authz";
 import type { Prisma, Term } from "@/src/generated/prisma";
 import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
+import { examEntryState } from "@/src/lib/academic-readiness-rules";
 
 export type ReportActionInput = { classId: number; term: Term; academicYear: string; notes?: string; expectedUpdatedAt?: string };
 export type ReportActionMode = "SUBMIT" | "PUBLISH" | "REJECT" | "UNPUBLISH";
@@ -41,8 +42,8 @@ export async function transitionClassReports(mode: ReportActionMode, input: Repo
         if (!readiness.currentPeriod) throw new Error("Reports can only be submitted or published for the active academic period.");
         if (!readiness.isReady) throw new Error(`Report set is incomplete. ${readiness.missingCount} entries need attention. ${readiness.issues.join(" ")}`);
         if (mode === "PUBLISH" && readiness.examRequired) {
-          const window = await db.examEntryWindow.findUnique({ where: { schoolId_classId_term_academicYear: context }, select: { status: true } });
-          if (!window || window.status === "LOCKED") throw new Error("Exam entry must have been opened for this class period before publication.");
+          const window = await db.examEntryWindow.findUnique({ where: { schoolId_classId_term_academicYear: context }, select: { status: true, openedAt: true, closedAt: true } });
+          if (!window || window.status === "LOCKED" || !["OPEN", "CLOSED"].includes(examEntryState(100, window))) throw new Error("Exam entry must have been validly opened for this class period before publication.");
         }
       }
       const changes = mode === "SUBMIT" ? { status: "SUBMITTED" as const, submittedAt: now, submittedBy: userId, notes: input.notes ?? null, reviewedAt: null, reviewedBy: null, reviewNote: null, unpublishedAt: null, unpublishedBy: null }

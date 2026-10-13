@@ -265,7 +265,7 @@ const ClassOverviewPage = async ({
                   </p>
                 </div>
                 <p className="shrink-0 text-xs font-black text-gray-500 sm:text-right">
-                  {subject.examReady}/{subject.studentCount} ready
+                  {subject.examRequired ? `${subject.examReady}/${subject.studentCount} exam entries recorded` : "Exam entry not required"}
                 </p>
               </div>
               <div className="mt-3 space-y-2">
@@ -281,11 +281,11 @@ const ClassOverviewPage = async ({
                 <div>
                   <div className="mb-1 flex justify-between text-[10px] font-black uppercase text-gray-400">
                     <span>Exam scores</span>
-                    <span>{subject.examPct}%</span>
+                    <span>{subject.examRequired ? `${subject.examPct}%` : "Not required"}</span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+                  {subject.examRequired && <div className="h-2 overflow-hidden rounded-full bg-gray-100">
                     <div className="h-full rounded-full bg-slate-900" style={{ width: `${subject.examPct}%` }} />
-                  </div>
+                  </div>}
                 </div>
               </div>
             </div>

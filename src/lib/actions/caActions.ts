@@ -5,6 +5,7 @@
 
 import prisma from "@/src/lib/prisma";
 import { recordExamScores } from "@/src/lib/services/exam-recording";
+import { transitionExamEntryWindow } from "@/src/lib/services/exam-entry-window";
 import { recordCAActivityScores } from "@/src/lib/services/ca-score-recording";
 import { hasRecordedExam, activityEligibility } from "@/src/lib/academic-readiness-rules";
 import { claimTeacherCorrectionReview } from "@/src/lib/services/teacher-obligation-store";
@@ -1083,52 +1084,9 @@ export async function openExamEntryWindowAction(data: {
   notes?: string;
 }) {
   const parsed = parseActionInput(examEntryWindowSchema, data);
-  const { userId, schoolId } = await requireRole(["admin"]);
-
-  const cls = await prisma.class.findFirst({
-    where: { id: parsed.classId, schoolId },
-    select: { id: true, name: true },
-  });
-  if (!cls) throw new Error("Class not found.");
-
-  const window = await prisma.examEntryWindow.upsert({
-    where: {
-      schoolId_classId_term_academicYear: {
-        schoolId,
-        classId: parsed.classId,
-        term: parsed.term,
-        academicYear: parsed.academicYear,
-      },
-    },
-    create: {
-      schoolId,
-      classId: parsed.classId,
-      term: parsed.term,
-      academicYear: parsed.academicYear,
-      status: "OPEN",
-      openedAt: new Date(),
-      openedBy: userId,
-      notes: parsed.notes,
-    },
-    update: {
-      status: "OPEN",
-      openedAt: new Date(),
-      openedBy: userId,
-      closedAt: null,
-      closedBy: null,
-      notes: parsed.notes,
-    },
-  });
-
-  await logCAAudit({
-    schoolId,
-    actorId: userId,
-    action: "EXAM_ENTRY_OPENED",
-    entityType: "ExamEntryWindow",
-    entityId: window.id,
-    message: `${cls.name} exam entry was opened for ${parsed.academicYear} ${parsed.term.replace("_", " ")}.`,
-    metadata: parsed,
-  });
+  const actor = await requireRole(["admin"]);
+  const { schoolId } = actor;
+  const window = await transitionExamEntryWindow("OPEN", parsed, actor);
 
   revalidatePath("/list/ca");
   revalidatePath("/list/report-cards");
@@ -1143,40 +1101,9 @@ export async function closeExamEntryWindowAction(data: {
   notes?: string;
 }) {
   const parsed = parseActionInput(examEntryWindowSchema, data);
-  const { userId, schoolId } = await requireRole(["admin"]);
-
-  const window = await prisma.examEntryWindow.findUnique({
-    where: {
-      schoolId_classId_term_academicYear: {
-        schoolId,
-        classId: parsed.classId,
-        term: parsed.term,
-        academicYear: parsed.academicYear,
-      },
-    },
-    include: { class: { select: { name: true } } },
-  });
-  if (!window) throw new Error("Exam entry window not found.");
-
-  const updated = await prisma.examEntryWindow.update({
-    where: { id: window.id, schoolId },
-    data: {
-      status: "CLOSED",
-      closedAt: new Date(),
-      closedBy: userId,
-      notes: parsed.notes,
-    },
-  });
-
-  await logCAAudit({
-    schoolId,
-    actorId: userId,
-    action: "EXAM_ENTRY_CLOSED",
-    entityType: "ExamEntryWindow",
-    entityId: window.id,
-    message: `${window.class.name} exam entry was closed for ${parsed.academicYear} ${parsed.term.replace("_", " ")}.`,
-    metadata: parsed,
-  });
+  const actor = await requireRole(["admin"]);
+  const { schoolId } = actor;
+  const updated = await transitionExamEntryWindow("CLOSE", parsed, actor);
 
   revalidatePath("/list/ca");
   revalidatePath("/list/report-cards");

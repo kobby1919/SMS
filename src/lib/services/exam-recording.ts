@@ -1,7 +1,7 @@
 import "server-only";
 import prisma from "@/src/lib/prisma";
 import type { Term } from "@/src/generated/prisma";
-import { hasRecordedExam, examEntryState } from "@/src/lib/academic-readiness-rules";
+import { hasRecordedExam, examEntryState, examEvidenceState } from "@/src/lib/academic-readiness-rules";
 import { getSubjectCAProgress } from "@/src/lib/services/ca-activity";
 import { assertReportSetEditable } from "@/src/lib/services/report-publication";
 import { getGradeBand } from "@/src/lib/caGrades";
@@ -36,6 +36,7 @@ export async function recordExamScores(input: {
         if (!Number.isFinite(row.examScore) || row.examScore < 0 || row.examScore > config.examWeight) throw new Error(`Exam marks must be between 0 and ${config.examWeight}.`);
         const key = { ...context, studentId: row.studentId, subjectId };
         const existing = await tx.continuousAssessment.findUnique({ where: { schoolId_studentId_subjectId_classId_term_academicYear: key } });
+        if (examEvidenceState(existing, config.examWeight) === "INVALID") throw new Error("Existing exam evidence requires review through the correction workflow.");
         if (hasRecordedExam(existing) && existing!.examScore !== row.examScore) throw new Error("Saved exam scores, including zero, can only change through the correction workflow.");
         const progress = await getSubjectCAProgress(key, tx);
         if (!Number.isFinite(progress.earnedMarks) || progress.earnedMarks < 0 || progress.earnedMarks > config.classworkWeight) throw new Error("CA evidence needs reconciliation before saving the exam total.");

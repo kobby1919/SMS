@@ -4,6 +4,7 @@
 
 
 import { requirePageSession } from "@/src/lib/authz";
+import { examEntryState } from "@/src/lib/academic-readiness-rules";
 import prisma from "@/src/lib/prisma";
 import { getCanonicalReadyRecordIds } from "@/src/lib/services/report-card-readiness";
 import CAEntryForm from "@/src/components/CAEntryForm";
@@ -153,8 +154,10 @@ const CAPage = async ({
         academicYear: activePeriod.academicYear,
       },
     },
-    select: { status: true },
+    select: { status: true, openedAt: true, closedAt: true },
   });
+  const trackedExamState = examEntryState(activePeriod.examWeight, examEntryWindow);
+  const examEntryStatus = trackedExamState === "OPEN" ? "OPEN" : trackedExamState === "CLOSED" ? "CLOSED" : "LOCKED";
 
   const caBuckets = await prisma.cABucket.findMany({
     where: {
@@ -322,7 +325,7 @@ const CAPage = async ({
           className={activeClass.name}
           term={activePeriod.currentTerm}
           academicYear={activePeriod.academicYear}
-          status={examEntryWindow?.status ?? "LOCKED"}
+          status={examEntryStatus}
           role={role}
         />
       )}
@@ -391,7 +394,7 @@ const CAPage = async ({
                 academicYears={academicYears}
                 activeTerm={activePeriod.currentTerm}
                 activeYear={activePeriod.academicYear}
-                examEntryStatus={examEntryWindow?.status ?? "LOCKED"}
+                examEntryStatus={examEntryStatus}
                 scoreEntryWindowsBySubjectId={scoreEntryWindowsBySubjectId}
                 existingCA={existingCA.map((ca) => ({
                   studentId: ca.studentId,

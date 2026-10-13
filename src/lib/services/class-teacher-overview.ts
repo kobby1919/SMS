@@ -1,4 +1,3 @@
-import { hasRecordedExam } from "@/src/lib/academic-readiness-rules";
 import type { AttendanceStatus } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
@@ -277,13 +276,14 @@ export async function getClassTeacherOverview({
   }
   const academicReadiness = subjectIds.map((subjectId) => {
     const records = caBySubject.get(subjectId) ?? [];
-    const examReady = records.filter((record) => record.examScore <= activePeriod.examWeight && (activePeriod.examWeight === 0 || hasRecordedExam(record))).length;
+    const examReady = readiness.examEvidence.find((subject) => subject.subjectId === subjectId)?.recorded ?? 0;
     return {
       subjectId,
       subjectName: subjectNames.get(subjectId) ?? "Subject",
       teacher: subjectTeacherBySubject.get(subjectId) ?? null,
       caStarted: records.length,
       examReady,
+      examRequired: readiness.examRequired,
       studentCount,
       caPct: pct(records.length, studentCount),
       examPct: pct(examReady, studentCount),

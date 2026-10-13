@@ -119,6 +119,13 @@ test("zero exam weight does not require exams or fabricate recorded entries", as
   assert.equal(result.examRequired, false);
   assert.deepEqual(result.examEvidence[0], { subjectId: 2, subjectName: "Reading", expected: 0, recorded: 0, missing: 0, invalid: 0 });
 });
+
+test("malformed exam timestamps agree between report blockers and exam tracking", async () => {
+  const result = await evidence({ record: { examRecordedAt: "invalid" } }).service.getClassReportReadiness(context);
+  assert.equal(result.examEvidence[0].invalid, 1);
+  assert.equal(result.examEvidence[0].recorded, 0);
+  assert.equal(result.blockers[0].reason, "INVALID_SCORE");
+});
 test("conflicting active periods or timetable publications cannot certify reports", async () => {
   for (const options of [{ multipleConfigs: true }, { multiplePublications: true }]) {
     const r = await evidence(options).service.getClassReportReadiness(context);
@@ -216,7 +223,7 @@ function publication(options = {}) {
     class: { findFirst: async (q) => { assert.equal(q.where.schoolId, "school-a"); return options.foreign ? null : { id: 1, name: "KG1", supervisorId: "t1" }; } },
     teacher: { findFirst: async (q) => { assert.equal(q.where.schoolId, "school-a"); return options.inactive ? null : { id: q.where.id }; } },
     reportCardPublication: { findUnique: async (q) => { assert.equal(q.where.schoolId_classId_term_academicYear.schoolId, "school-a"); return row ? structuredClone(row) : null; }, updateMany: async (q) => { assert.equal(q.where.schoolId, "school-a"); if (options.lost || row.status !== q.where.status || row.updatedAt.getTime() !== q.where.updatedAt.getTime()) return { count: 0 }; row = { ...row, ...q.data, updatedAt: new Date(now.getTime() + 1) }; return { count: 1 }; }, create: async ({ data }) => { row = { id: 1, updatedAt: now, ...data }; return row; } },
-    examEntryWindow: { findUnique: async () => options.locked ? null : { status: "CLOSED" } },
+    examEntryWindow: { findUnique: async () => options.locked ? null : options.window ?? { status: "CLOSED", openedAt: now, closedAt: now } },
     cAAuditLog: { create: async ({ data }) => { if (options.auditFailure) throw new Error("Audit unavailable"); audits.push(data); } },
   };
   const prisma = { $transaction: async (fn, opts) => { assert.equal(opts.isolationLevel, "Serializable"); const before = structuredClone(row), count = audits.length; try { return await fn(db); } catch (error) { row = before; audits.splice(count); throw error; } } };
@@ -242,6 +249,16 @@ test("stale, competing and repeated review decisions cannot overwrite each other
   await assert.rejects(f.service.transitionClassReports("REJECT", input, admin, now), /changed/);
   assert.equal(f.row.status, "PUBLISHED");
   assert.equal(f.audits.length, 1);
+});
+
+test("report publication rejects unopened, malformed and contradictory window metadata", async () => {
+  for (const window of [{ status: "OPEN" }, { status: "CLOSED" }, { status: "OPEN", openedAt: now, closedAt: now },
+    { status: "CLOSED", openedAt: new Date("invalid") }, { status: "UNKNOWN", openedAt: now }]) {
+    const f = publication({ window });
+    await assert.rejects(f.service.transitionClassReports("PUBLISH", input, admin, now), /validly opened/);
+    assert.equal(f.row.status, "SUBMITTED");
+    assert.equal(f.audits.length, 0);
+  }
 });
 test("audit failure rolls back release; rejection and withdrawal require reasons and valid states", async () => {
   const f = publication({ auditFailure: true });

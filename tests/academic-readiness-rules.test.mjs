@@ -27,7 +27,8 @@ test("exam lifecycle never treats not-configured or not-opened windows as overdu
   assert.equal(rules.examEntryState(70, null), "NOT_CONFIGURED");
   assert.equal(rules.examEntryState(70, { status: "LOCKED", openedAt: null }), "NOT_OPENED");
   assert.equal(rules.examEntryState(70, { status: "CLOSED", openedAt: now }), "CLOSED");
-  assert.equal(rules.examEntryState(70, { status: "OPEN" }), "OPEN");
+  assert.equal(rules.examEntryState(70, { status: "OPEN", openedAt: now }), "OPEN");
+  assert.equal(rules.examEntryState(70, { status: "OPEN" }), "NEEDS_REVIEW");
   assert.equal(rules.examEntryState(70, { status: "UNKNOWN" }), "NEEDS_REVIEW");
   assert.equal(rules.examEntryState(70, { status: "OPEN", openedAt: new Date("invalid") }), "NEEDS_REVIEW");
 });
@@ -74,7 +75,7 @@ function fixture(options = {}) {
       class: { findFirst: async (q) => { guard(q); return { id: 1 }; } },
       subject: { findFirst: async (q) => { guard(q); return { id: 2 }; } },
       publishedTimetableLesson: { findFirst: async (q) => { guard(q); assert.equal(q.where.teacherId, "t"); assert.equal(q.where.publication.status, "ACTIVE"); return options.wrongScope ? null : { id: 1 }; } },
-      examEntryWindow: { findUnique: async (q) => { guard(q); return { status: options.closed ? "CLOSED" : "OPEN" }; } },
+      examEntryWindow: { findUnique: async (q) => { guard(q); return options.window ?? { status: options.closed ? "CLOSED" : "OPEN", openedAt: now }; } },
       student: { count: async (q) => { guard(q); assert.equal(q.where.status, "ACTIVE"); return options.otherStudent ? 0 : q.where.id.in.length; } },
       continuousAssessment: {
         findUnique: async (q) => records.get(q.where.schoolId_studentId_subjectId_classId_term_academicYear.studentId) ?? null,
@@ -115,6 +116,28 @@ test("a later invalid row rolls back the entire exam batch", async () => {
   assert.equal(f.state.commits, 0);
   assert.equal(f.state.records.size, 0);
   assert.equal(f.state.audits.length, 0);
+});
+
+test("malformed existing exam evidence cannot be silently overwritten as missing", async () => {
+  for (const existing of [{ examScore: -1 }, { examScore: Number.NaN }, { examScore: 90 }, { examScore: 0, examRecordedAt: "invalid" }]) {
+    const f = fixture({ existing });
+    await assert.rejects(f.recordExamScores(f.input, now), /correction workflow/);
+    assert.equal(f.state.commits, 0);
+    assert.equal(f.state.audits.length, 0);
+  }
+  for (const window of [{ status: "OPEN" }, { status: "OPEN", openedAt: now, closedAt: now }, { status: "OPEN", openedAt: new Date("invalid") }]) {
+    const f = fixture({ window });
+    await assert.rejects(f.recordExamScores(f.input, now), /not open/);
+    assert.equal(f.state.commits, 0);
+  }
+});
+
+test("exam evidence and window classifiers fail closed on corrupt metadata", () => {
+  assert.equal(rules.hasRecordedExam({ examScore: 20, examRecordedAt: "invalid" }), false);
+  assert.equal(rules.examEvidenceState({ examScore: 20, examRecordedAt: "invalid" }, 70), "INVALID");
+  assert.equal(rules.examEvidenceState({ examScore: 60 }, 0), "NOT_REQUIRED");
+  assert.equal(rules.examEntryState(Number.NaN, { status: "OPEN", openedAt: now }), "NEEDS_REVIEW");
+  assert.equal(rules.examEntryState(70, { status: "CLOSED", openedAt: now, closedAt: new Date(now.getTime() - 1) }), "NEEDS_REVIEW");
 });
 test("shared readiness rules use one school, reject conflicting setup and omit inactive teacher scopes", async () => {
   const config = { academicYear: "2026/27", currentTerm: "TERM_1", classworkWeight: 30, examWeight: 70 };

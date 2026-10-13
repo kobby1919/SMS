@@ -4,7 +4,7 @@ import prisma from "@/src/lib/prisma";
 import { buildSubjectCAProgress } from "@/src/lib/services/ca-activity";
 import { getGradeBand } from "@/src/lib/caGrades";
 import { assessmentPosition } from "@/src/lib/assessment-position";
-import { activityEligibility, hasRecordedExam, validAssessmentWeights } from "@/src/lib/academic-readiness-rules";
+import { activityEligibility, examEvidenceState, validAssessmentWeights } from "@/src/lib/academic-readiness-rules";
 
 export type ExamSubjectEvidence = { subjectId: number; subjectName: string; expected: number; recorded: number; missing: number; invalid: number };
 
@@ -94,8 +94,9 @@ export async function getClassReportReadiness(input: { schoolId: string; classId
     if (validAssessmentWeights(config) && config!.examWeight > 0) for (const student of students) {
       const key = `${student.id}:${subject.id}`;
       const record = recordsByStudentSubject.get(key);
-      if (duplicateRecords.has(key) || record && (!Number.isFinite(record.examScore) || record.examScore < 0 || record.examScore > config!.examWeight)) invalid++;
-      else if (hasRecordedExam(record)) recorded++;
+      const state = examEvidenceState(record, config!.examWeight);
+      if (duplicateRecords.has(key) || state === "INVALID") invalid++;
+      else if (state === "RECORDED") recorded++;
     }
     const expected = validAssessmentWeights(config) && config!.examWeight > 0 ? students.length : 0;
     return { subjectId: subject.id, subjectName: subject.name, expected, recorded, invalid, missing: expected - recorded - invalid };

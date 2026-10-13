@@ -6,15 +6,27 @@ export function validAssessmentWeights(config: { classworkWeight: number; examWe
 
 export function hasRecordedExam(record: ExamEvidence | null | undefined): boolean {
   if (!record || !Number.isFinite(record.examScore) || record.examScore < 0) return false;
+  if (record.examRecordedAt != null && !Number.isFinite(new Date(record.examRecordedAt).getTime())) return false;
   // Positive legacy marks are evidence; a default zero never is.
   return record.examScore > 0 || Boolean(record.examRecordedAt && Number.isFinite(new Date(record.examRecordedAt).getTime()));
 }
 
-export function examEntryState(examWeight: number, window: { status: string; openedAt?: Date | null } | null) {
+export function examEvidenceState(record: ExamEvidence | null | undefined, maximum: number) {
+  if (!Number.isFinite(maximum) || maximum < 0 || maximum > 100) return "INVALID";
+  if (maximum === 0) return "NOT_REQUIRED";
+  if (!record) return "MISSING";
+  if (!Number.isFinite(record.examScore) || record.examScore < 0 || record.examScore > maximum ||
+    record.examRecordedAt != null && !Number.isFinite(new Date(record.examRecordedAt).getTime())) return "INVALID";
+  return hasRecordedExam(record) ? "RECORDED" : "MISSING";
+}
+
+export function examEntryState(examWeight: number, window: { status: string; openedAt?: Date | null; closedAt?: Date | null } | null) {
   if (examWeight === 0) return "NOT_REQUIRED";
+  if (!Number.isFinite(examWeight) || examWeight < 0 || examWeight > 100) return "NEEDS_REVIEW";
   if (!window) return "NOT_CONFIGURED";
   if (!["OPEN", "CLOSED", "LOCKED"].includes(window.status) || window.openedAt && !Number.isFinite(new Date(window.openedAt).getTime())) return "NEEDS_REVIEW";
-  if (window.status === "OPEN") return "OPEN";
+  if (window.closedAt && (!Number.isFinite(new Date(window.closedAt).getTime()) || window.openedAt && window.closedAt < window.openedAt)) return "NEEDS_REVIEW";
+  if (window.status === "OPEN") return window.openedAt && !window.closedAt ? "OPEN" : "NEEDS_REVIEW";
   return window.openedAt ? "CLOSED" : "NOT_OPENED";
 }
 

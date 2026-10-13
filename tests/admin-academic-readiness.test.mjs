@@ -67,7 +67,7 @@ test("exam tracking uses canonical evidence, not report blocker precedence", asy
   assert.equal(result.examTracking.totals.recorded, 8);
   assert.equal(result.examTracking.totals.unresolvedAfterClose, 1);
   assert.equal(result.examTracking.totals.setupRequiredClasses, 7);
-  assert.equal(result.examTracking.classes[0].ordinaryEntryWindowOpen, false);
+  assert.equal(result.examTracking.classes.find((cls) => cls.classId === 1)?.ordinaryEntryWindowOpen ?? false, false);
 });
 
 test("foreign exam subject evidence cannot be returned by the snapshot", async () => {

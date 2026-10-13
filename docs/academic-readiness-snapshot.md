@@ -145,6 +145,28 @@ Dashboard presentation remains in the later UI step. Before pilot, verify actual
 authenticated open/close/reopen transitions, simultaneous close/save requests,
 explicit zero saves, report submission locks, and tenant isolation.
 
+### Step 4 hardening
+
+Exam window state requires a valid opening timestamp before OPEN is trusted.
+Unknown status, invalid timestamps, contradictory open/closed metadata and invalid
+weights fail closed. Reports cannot be published using an unaudited/unopened
+window. An admin must explicitly repair/reopen a malformed window; tracking never
+repairs it silently. A positive-weight term cannot be labelled NOT_REQUIRED, and
+an empty tracking scope is setup-required rather than a healthy zero. Setup and
+window-review classes remain visible before dashboard list truncation.
+
+One shared exam evidence classifier handles legacy positive marks, explicit
+zeros, invalid timestamps and mark limits across recording, assessment position
+and report tracking. Invalid existing marks cannot be overwritten as if missing;
+zero-weight exams are consistently not required. Class overview uses canonical
+exam counts and says entries recorded, not reports ready.
+
+Admin window transitions use a Serializable transaction with compare-and-set
+updates and atomic audit writes. Only the active exam-required period can be
+opened; submitted/published report sets cannot be reopened. Repeated open/close
+clicks are idempotent and preserve opening history. Failed audit writes roll back
+window changes. Live concurrent close/save/reopen and tenant tests remain required.
+
 ### Step 3 hardening
 
 Allocation validation is shared with report certification: SUM activities require
