@@ -131,12 +131,14 @@ test("shared readiness rules use one school, reject conflicting setup and omit i
   }
   const ready = await run();
   assert.equal(ready.scope.length, 1);
+  assert.equal(ready.invalidAssignmentCount, 0);
   assert.equal(ready.examWindows[0].state, "NOT_CONFIGURED");
   assert.equal(ready.operating.timezone, "Africa/Accra");
   assert.equal((await run({ conflict: true })).period, null);
   const empty = await run({ empty: true });
   assert.equal(empty.period, null); assert.equal(empty.publicationId, null); assert.equal(empty.scope.length, 0); assert.equal(empty.issues.length, 3);
   const inactive = await run({ inactive: true });
+  assert.equal(inactive.invalidAssignmentCount, 2);
   assert.equal(inactive.scope.length, 0); assert.match(inactive.issues[0], /assignments/);
 });
 function caFixture(options = {}) {
