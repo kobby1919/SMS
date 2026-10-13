@@ -12,6 +12,7 @@ import { getSchoolBranding } from "@/src/lib/services/school-branding";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { requireParentStudentAccess } from "@/src/lib/services/parent-student-relationships";
+import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +30,7 @@ const ReportCardPage = async ({
   params:       Promise<{ studentId: string }>;
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { userId, role, schoolId } = await requirePageSession();
+  const { userId, role, schoolId } = await requirePageSession(["admin", "teacher", "parent", "student"]);
   if (!userId) redirect("/sign-in");
 
   const { studentId } = await params;
@@ -245,7 +246,7 @@ const ReportCardPage = async ({
   const subjectPositions: Record<number, number> = {};
   for (const [subjectId] of visibleTimetableSubjects) {
     const subjectScores = classCARecords
-      .filter((r) => r.subjectId === subjectId && r.examScore > 0)
+      .filter((r) => r.subjectId === subjectId && (exWeight === 0 || r.examScore > 0))
       .sort((a, b) => b.totalScore - a.totalScore);
 
     const myIdx = subjectScores.findIndex((r) => r.studentId === studentId);
@@ -256,7 +257,7 @@ const ReportCardPage = async ({
   // Group all students' grade points by studentId
   const studentGPMap: Record<string, number[]> = {};
   for (const r of classCARecords) {
-    if (r.examScore <= 0) continue;
+    if (exWeight > 0 && r.examScore <= 0) continue;
     if (!studentGPMap[r.studentId]) studentGPMap[r.studentId] = [];
     studentGPMap[r.studentId].push(r.gradePoint);
   }
@@ -282,6 +283,7 @@ const ReportCardPage = async ({
 
   // ── Build subject rows ────────────────────────────────────────────────────
   const caRecordsBySubject = new Map(caRecords.map((ca) => [ca.subjectId, ca]));
+  const readiness = await getClassReportReadiness({ schoolId, classId: student.classId, term, academicYear: activeYear, subjectIds: timetableSubjectIds, studentId });
   const subjectRows = Array.from(visibleTimetableSubjects.entries()).map(([subjectId, subjectName]) => {
     const ca = caRecordsBySubject.get(subjectId);
     if (!ca) {
@@ -323,7 +325,7 @@ const ReportCardPage = async ({
       totalScore:     ca.totalScore,
       grade:          ca.grade,
       gradePoint:     ca.gradePoint,
-      isComplete:     ca.examScore > 0,
+      isComplete:     readiness.issues.length === 0 && !readiness.blockers.some((blocker) => blocker.subjectId === subjectId),
       caChange,
       caTrend,
       hasNewerCARecord: Boolean(

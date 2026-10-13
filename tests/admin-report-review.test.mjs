@@ -16,13 +16,17 @@ function evidence(options = {}) {
   const queries = [];
   const config = { academicYear: "2026/27", currentTerm: "TERM_1", isActive: true, classworkWeight: 30, examWeight: 70, ...options.config };
   const students = [{ id: "s1", name: "Ama", surname: "Mensah", admissionNumber: "EDJ-2026-0001", status: "ACTIVE" }, { id: "old", name: "Kojo", surname: "A", admissionNumber: null, status: "WITHDRAWN" }];
-  const record = { studentId: "s1", subjectId: 2, classworkScore: 0, examScore: 60, totalScore: 60, ...options.record };
+  const record = { id: 1, studentId: "s1", subjectId: 2, classworkScore: 0, examScore: 60, totalScore: 60, ...options.record };
   const activity = { id: 1, subjectId: options.wrongSubject ? 3 : 2, title: "Reading", rawMaxScore: 10, allocationMarks: 30, activityDate: new Date("2026-10-10"), teacher: { name: "Victoria", surname: "Mensah" }, scores: options.noScores ? [] : [{ studentId: "s1", rawScore: options.rawScore ?? 0, normalizedContribution: options.contribution ?? 0 }] };
   const bucket = { id: 1, subjectId: 2, name: "Classwork", type: "CLASSWORK", aggregationMode: options.sum ? "SUM_ACTIVITIES" : "AVERAGE_TO_BUCKET", allocationMarks: 30, activities: [activity, ...(options.future ? [{ ...activity, id: 2, activityDate: new Date("2026-10-13") }] : [])] };
   const track = (value) => async (q) => { queries.push(q); assert.equal(q.where.schoolId ?? q.where.schoolId_academicYear?.schoolId, "school-a"); return typeof value === "function" ? value(q) : value; };
   const db = { class: { findFirst: track(options.foreign ? null : { id: 1 }) }, cAConfig: { findUnique: track(options.noConfig ? null : config), findFirst: track(options.historical ? { ...config, academicYear: "2027/28" } : config) }, publishedTimetableLesson: { findMany: track(options.noSubjects ? [] : [{ subjectId: 2, subjectName: "Reading" }, { subjectId: 2, subjectName: "Reading" }]) }, subject: { findMany: track([{ id: 2, name: "Reading" }]) }, student: { findMany: track((q) => q.where.status ? students.filter((s) => s.status === q.where.status) : students) }, continuousAssessment: { findMany: track(options.noRecord ? [] : [record]) }, cABucket: { findMany: track([bucket]) } };
   const prisma = { ...db, $transaction: async (fn, opts) => { assert.equal(opts.isolationLevel, "RepeatableRead"); return fn(db); } };
-  return { service: load("src/lib/services/report-card-readiness.ts", { "@/src/lib/prisma": prisma, "@/src/lib/services/timetable": {}, "@/src/lib/caGrades": {} }), db, queries };
+  db.teacherCorrectionRequest = { count: async ({ where }) => { assert.equal(where.schoolId, "school-a"); assert.equal(where.status, "PENDING"); return options.pendingCorrections ?? 0; } };
+  const service = load("src/lib/services/report-card-readiness.ts", { "@/src/lib/prisma": prisma, "@/src/lib/services/timetable": {}, "@/src/lib/caGrades": {} });
+  const listStudents = db.student.findMany;
+  db.student.findMany = async (query) => (await listStudents(query)).filter((student) => !query.where.id || student.id === query.where.id);
+  return { service: { ...service, getClassReportReadiness: (input, reader, date = now) => service.getClassReportReadiness(input, reader, date) }, db, queries };
 }
 test("report readiness respects recorded zero CA, deduplicates published subjects and excludes inactive pupils", async () => {
   const f = evidence();
@@ -47,6 +51,22 @@ test("misfiled activity evidence blocks report readiness", async () => {
   const r = await evidence({ wrongSubject: true }).service.getClassReportReadiness(context);
   assert.equal(r.isReady, false);
   assert.equal(r.blockers[0].reason, "INVALID_SCORE");
+});
+
+test("pending score corrections block release without misrepresenting completed entry counts", async () => {
+  const r = await evidence({ pendingCorrections: 1 }).service.getClassReportReadiness(context);
+  assert.equal(r.isReady, false);
+  assert.equal(r.readyEntryCount, 1);
+  assert.match(r.issues[0], /correction.*review/);
+});
+
+test("individual report readiness preserves tenant, roster and exact student scope", async () => {
+  const f = evidence();
+  assert.equal((await f.service.getClassReportReadiness({ ...context, studentId: "s1" })).isReady, true);
+  const unknown = await f.service.getClassReportReadiness({ ...context, studentId: "other-child" });
+  assert.equal(unknown.isReady, false);
+  assert.equal(unknown.studentCount, 0);
+  assert.ok(f.queries.some((query) => query.where.schoolId === "school-a" && query.where.id === "s1" && query.where.classId === 1 && query.where.status === "ACTIVE"));
 });
 
 test("summed activities recompute contributions from raw evidence rather than trusting a corrupt cached contribution", async () => {
@@ -150,6 +170,19 @@ test("CA-only reports do not require an irrelevant exam entry window", async () 
   const f = publication({ locked: true, examRequired: false });
   await f.service.transitionClassReports("PUBLISH", input, admin, now);
   assert.equal(f.row.status, "PUBLISHED");
+});
+
+test("submitted and published reports cannot be silently changed through correction approval", async () => {
+  for (const status of ["SUBMITTED", "PUBLISHED"]) {
+    const f = publication({ status });
+    await assert.rejects(f.service.assertReportSetEditable({ reportCardPublication: { findUnique: async ({ where }) => {
+      assert.equal(where.schoolId_classId_term_academicYear.schoolId, "school-a");
+      return { status };
+    } } }, context), /Return or withdraw/);
+  }
+  await publication().service.assertReportSetEditable({ reportCardPublication: { findUnique: async () => ({ status: "REJECTED" }) } }, context);
+  const actions = readFileSync("src/lib/actions/caActions.ts", "utf8");
+  assert.equal((actions.match(/await assertReportSetEditable\(tx,/g) ?? []).length, 2);
 });
 test("academic menu has exactly five admin destinations and retains class/accountability homework evidence", () => {
   const source = readFileSync("src/components/MenuClient.tsx", "utf8");

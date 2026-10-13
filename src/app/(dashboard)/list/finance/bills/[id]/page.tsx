@@ -1,7 +1,8 @@
 // src/app/(dashboard)/list/finance/bills/[id]/page.tsx
 
 
-import { notFound } from "next/navigation";
+import UnavailablePage from "@/src/components/UnavailablePage";
+import { parseRecordId } from "@/src/lib/record-id";
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
@@ -34,10 +35,11 @@ const BillDetailPage = async ({
   const { schoolId, role } = await requirePageSession(["admin", "bursar"]);
 
   const { id } = await params;
-  const billId = parseInt(id);
+  const billId = parseRecordId(id);
+  if (billId === null) return <UnavailablePage title="Bill unavailable" href="/list/finance/bills" label="Review bills" />;
 
   const bill = await prisma.studentBill.findFirst({
-    where:   { id: billId, schoolId },
+    where:   { id: billId, schoolId, student: { schoolId }, feeStructure: { schoolId } },
     include: {
       student: {
         select: {
@@ -67,13 +69,16 @@ const BillDetailPage = async ({
         orderBy: { createdAt: "asc" },
       },
       payments: {
+        where: { schoolId },
         orderBy: { createdAt: "desc" },
         include: { reversal: true },
       },
       discounts: {
+        where: { schoolId },
         orderBy: { createdAt: "desc" },
       },
       financeQueries: {
+        where: { schoolId, parent: { schoolId } },
         orderBy: { createdAt: "desc" },
         include: {
           parent: { select: { name: true, surname: true, phone: true, email: true } },
@@ -83,7 +88,7 @@ const BillDetailPage = async ({
     },
   });
 
-  if (!bill) notFound();
+  if (!bill) return <UnavailablePage title="Bill unavailable" href="/list/finance/bills" label="Review bills" />;
 
   const statusStyle    = BILL_STATUS_STYLES[bill.status];
   const canOperatePayments = role === "bursar";
@@ -98,12 +103,12 @@ const BillDetailPage = async ({
     : 0;
 
   return (
-    <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
+    <div className="finance-bill-detail flex-1 min-w-0 m-3 mt-0 flex flex-col gap-4 sm:m-4 sm:mt-0">
 
       {/* Header */}
       <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+          <div className="flex min-w-0 flex-wrap items-center gap-3">
             <Link
               href="/list/finance/bills"
               className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors shrink-0"
@@ -116,8 +121,8 @@ const BillDetailPage = async ({
                 : `${bill.student.name[0]}${bill.student.surname[0]}`
               }
             </div>
-            <div>
-              <h1 className="text-xl font-black text-gray-800 tracking-tight">
+            <div className="min-w-0 basis-full break-words sm:basis-auto sm:flex-1">
+              <h1 className="text-base font-black text-gray-800 sm:text-xl">
                 {bill.student.surname} {bill.student.name}
               </h1>
               <p className="text-sm text-gray-400 mt-0.5 font-medium">
@@ -127,7 +132,7 @@ const BillDetailPage = async ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2">
             {/* Record payment button — placeholder until Step 4 */}
             {canRecordPayment && (
               <Link
@@ -142,7 +147,7 @@ const BillDetailPage = async ({
                 Review only
               </span>
             )}
-            {bill.status !== "PAID" && bill.status !== "WAIVED" && (
+            {canOperatePayments && bill.status !== "PAID" && bill.status !== "WAIVED" && (
               <WaiveBillButton billId={billId} studentName={`${bill.student.name} ${bill.student.surname}`} />
             )}
           </div>
@@ -161,7 +166,7 @@ const BillDetailPage = async ({
               Bill #{billId} · {bill.feeStructure.title}
             </p>
           </div>
-          <div className="flex gap-6">
+          <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="text-center">
               <p className="text-[10px] text-gray-500 font-bold uppercase">Total</p>
               <p className="text-xl font-black text-gray-800">{formatGHS(bill.totalAmount)}</p>
@@ -192,16 +197,16 @@ const BillDetailPage = async ({
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-4">
+      <div className="flex min-w-0 flex-col xl:flex-row gap-4">
 
         {/* Left — line items + discounts */}
-        <div className="flex-1 flex flex-col gap-4">
+        <div className="flex-1 min-w-0 flex flex-col gap-4">
 
           {/* Parent contact */}
           {bill.student.parent && (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center gap-3">
+            <div className="bg-white rounded-lg border border-gray-100 p-4 flex flex-wrap items-center gap-3">
               <Users size={14} className="text-gray-400 shrink-0" />
-              <div className="flex-1">
+              <div className="flex-1 min-w-0 basis-3/4">
                 <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-0.5">Parent / Guardian</p>
                 <p className="text-sm font-bold text-gray-800">
                   {bill.student.parent.name} {bill.student.parent.surname}
@@ -227,7 +232,7 @@ const BillDetailPage = async ({
               {bill.lineItems.map((line) => (
                 <div key={line.id} className="flex items-center gap-4 px-5 py-3.5">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <p className="text-sm font-bold text-gray-800">{line.feeItem.name}</p>
                       {line.feeItem.isOptional && (
                         <span className="text-[9px] font-bold px-1.5 py-0.5 bg-amber-50 text-amber-600 rounded-md">
@@ -307,12 +312,12 @@ const BillDetailPage = async ({
         </div>
 
         {/* Right — payment history */}
-        <div className="w-full lg:w-80 shrink-0 flex flex-col gap-4">
-          <BillDiscountPanel
+        <div className="w-full min-w-0 xl:w-80 shrink-0 flex flex-col gap-4">
+          {canOperatePayments && <BillDiscountPanel
             billId={bill.id}
             currentBalance={Number(bill.balance)}
-            discounts={bill.discounts}
-          />
+            discounts={bill.discounts.map((discount) => ({ ...discount, amount: discount.amount === null ? null : Number(discount.amount), percentage: discount.percentage === null ? null : Number(discount.percentage) }))}
+          />}
 
           {/* Confirmed payments */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -431,9 +436,9 @@ const BillDetailPage = async ({
                       <p className="mt-2 rounded-xl bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">
                         Response: {query.response}
                       </p>
-                    ) : (
+                    ) : canOperatePayments ? (
                       <FinanceQueryResolveForm queryId={query.id} />
-                    )}
+                    ) : <p className="mt-2 text-xs text-gray-500">Awaiting finance office response.</p>}
                   </div>
                 ))}
               </div>

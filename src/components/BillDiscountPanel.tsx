@@ -102,26 +102,26 @@ export default function BillDiscountPanel({ billId, currentBalance, discounts }:
       </div>
 
       <div className="p-5 space-y-4">
-        <div className="grid gap-3 sm:grid-cols-2">
-          <label className="flex flex-col gap-1.5">
+        <div className="grid min-w-0 gap-3">
+          <label className="flex min-w-0 flex-col gap-1.5">
             <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Type</span>
-            <select value={type} onChange={(event) => setType(event.target.value as typeof type)} className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-emerald-300">
+            <select value={type} onChange={(event) => setType(event.target.value as typeof type)} className="w-full min-w-0 rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-emerald-300">
               {DISCOUNT_TYPES.map((option) => (
                 <option key={option} value={option}>{DISCOUNT_TYPE_LABELS[option]}</option>
               ))}
             </select>
           </label>
-          <label className="flex flex-col gap-1.5">
+          <label className="flex min-w-0 flex-col gap-1.5">
             <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Mode</span>
-            <select value={mode} onChange={(event) => setMode(event.target.value as "amount" | "percentage")} className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-emerald-300">
+            <select value={mode} onChange={(event) => setMode(event.target.value as "amount" | "percentage")} className="w-full min-w-0 rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-emerald-300">
               <option value="amount">Fixed amount</option>
               <option value="percentage">Percentage</option>
             </select>
           </label>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-[160px_1fr]">
-          <label className="flex flex-col gap-1.5">
+        <div className="grid min-w-0 gap-3">
+          <label className="flex min-w-0 flex-col gap-1.5">
             <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">
               {mode === "amount" ? "Amount" : "Percentage"}
             </span>
@@ -131,16 +131,16 @@ export default function BillDiscountPanel({ billId, currentBalance, discounts }:
               step={mode === "amount" ? "0.01" : "0.1"}
               value={mode === "amount" ? amount : percentage}
               onChange={(event) => mode === "amount" ? setAmount(event.target.value) : setPercentage(event.target.value)}
-              className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-emerald-300"
+              className="w-full min-w-0 rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-emerald-300"
               placeholder={mode === "amount" ? "100.00" : "10"}
             />
           </label>
-          <label className="flex flex-col gap-1.5">
+          <label className="flex min-w-0 flex-col gap-1.5">
             <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Reason</span>
             <input
               value={description}
               onChange={(event) => setDescription(event.target.value)}
-              className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-emerald-300"
+              className="w-full min-w-0 rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-emerald-300"
               placeholder="e.g. Sibling discount approved by headmaster"
             />
           </label>

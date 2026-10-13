@@ -10,7 +10,8 @@ const Table = <T,>({
   data,
 }: TableProps<T>) => {
   return (
-    <table className="w-full mt-4">
+    <div className="mt-4 w-full min-w-0 overflow-x-auto overscroll-x-contain" tabIndex={0} role="region" aria-label="Records table">
+    <table className="w-full">
       <thead>
         <tr className="text-left text-gray-500 text-sm">
             {
@@ -28,6 +29,7 @@ const Table = <T,>({
         }
       </tbody>
     </table>
+    </div>
   );
 };
 

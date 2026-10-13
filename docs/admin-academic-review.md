@@ -46,6 +46,15 @@ reject changes to submitted/published sets until an admin returns/withdraws them
 
 ## Limits And Pilot Checks
 
+Pending score correction requests block readiness/release. Correction approvals
+check report state inside serializable transactions and require a returned or
+withdrawn set before changing submitted/published results. Exam corrections also
+respect the configured maximum. Report page/PDF roles exclude finance-only staff.
+The student report view and PDF both consult canonical readiness for the
+authorized student and displayed subjects. A positive exam score alone cannot
+certify an incomplete/stale report. Zero-exam-weight configurations use CA-only
+completion rather than an irrelevant positive-exam requirement.
+
 Historical review uses recorded students/subjects. Full old rosters and full
 historical curricula are not versioned, so recorded coverage is not certification
 of the complete original report set. New releases require the active period.

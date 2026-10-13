@@ -16,6 +16,7 @@ import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { formatMark } from "@/src/lib/formatters/marks";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import { requireParentStudentAccess } from "@/src/lib/services/parent-student-relationships";
+import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
 import {
   renderToBuffer,
   Document,
@@ -368,6 +369,7 @@ export async function GET(req: NextRequest) {
     const ctx = await getAuthzContext();
     if (!ctx) return new NextResponse("Unauthorized", { status: 401 });
     const { userId, role, schoolId } = ctx;
+    if (!["admin", "teacher", "parent", "student"].includes(role)) return new NextResponse("Forbidden", { status: 403 });
     const limited = await enforceRateLimit(req, {
       scope: "academic:report-card-pdf",
       actorId: userId,
@@ -488,7 +490,7 @@ export async function GET(req: NextRequest) {
     // Per-subject position
     const subjectPositions: Record<number, number> = {};
     for (const sid of [...new Set(classCA.map((r) => r.subjectId))]) {
-      const sorted = classCA.filter((r) => r.subjectId === sid && r.examScore > 0).sort((a, b) => b.totalScore - a.totalScore);
+      const sorted = classCA.filter((r) => r.subjectId === sid && (exWeight === 0 || r.examScore > 0)).sort((a, b) => b.totalScore - a.totalScore);
       const idx    = sorted.findIndex((r) => r.studentId === studentId);
       subjectPositions[sid] = idx >= 0 ? idx + 1 : 0;
     }
@@ -497,7 +499,7 @@ export async function GET(req: NextRequest) {
     const gpMap: Record<string, number[]> = {};
     for (const r of classCA) {
       if (!gpMap[r.studentId]) gpMap[r.studentId] = [];
-      if (r.examScore <= 0) continue;
+      if (exWeight > 0 && r.examScore <= 0) continue;
       gpMap[r.studentId].push(r.gradePoint);
     }
     const sorted          = Object.entries(gpMap).map(([sid, gps]) => ({ sid, agg: computeAggregate(gps) })).sort((a, b) => a.agg - b.agg);
@@ -531,14 +533,15 @@ export async function GET(req: NextRequest) {
     });
 
     // Stats
-    const completedCA = caRecords.filter((r) => r.examScore > 0);
+    const completedCA = caRecords.filter((r) => exWeight === 0 || r.examScore > 0);
     const gps         = completedCA.map((r) => r.gradePoint);
     const scores      = completedCA.map((r) => r.totalScore);
     const aggregate   = computeAggregate(gps);
     const avgScore    = scores.length > 0 ? Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) / 10 : 0;
     const totalRaw    = scores.reduce((a, b) => a + b, 0);
     const totalPossible = scores.length * 100;
-    const reportReady = subjectRows.length > 0 && subjectRows.every((row) => row.examScore > 0);
+    const readiness = await getClassReportReadiness({ schoolId, classId: student.classId, term, academicYear: activeYear, subjectIds: timetableSubjectIds, studentId });
+    const reportReady = readiness.isReady && readiness.subjectCount === subjectRows.length;
     const publication = await prisma.reportCardPublication.findUnique({
       where: {
         schoolId_classId_term_academicYear: {
@@ -552,7 +555,7 @@ export async function GET(req: NextRequest) {
     });
 
     if (!reportReady) {
-      return new NextResponse("Report card is not ready because one or more exam scores are missing.", { status: 409 });
+      return new NextResponse("Report evidence is incomplete or requires review. Contact the school before downloading.", { status: 409 });
     }
 
     if ((role === "parent" || role === "student") && publication?.status !== "PUBLISHED") {

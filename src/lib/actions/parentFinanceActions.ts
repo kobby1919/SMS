@@ -2,8 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import prisma from "@/src/lib/prisma";
-import { requireRole, requireResourceAccess } from "@/src/lib/authz";
-import { requireFinanceAccess } from "@/src/lib/actions/financeActions";
+import { requireFinanceOperationAccess, requireRole, requireResourceAccess } from "@/src/lib/authz";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import { parentFinanceQuerySchema, resolveFinanceQuerySchema } from "@/src/lib/validation/finance";
 import { enforceActionRateLimit } from "@/src/lib/rate-limit";
@@ -110,7 +109,7 @@ export async function openParentFinanceQuery(input: unknown) {
 }
 
 export async function resolveFinanceQuery(input: unknown) {
-  const ctx = await requireFinanceAccess();
+  const ctx = await requireFinanceOperationAccess();
   const { schoolId, userId } = ctx;
   const data = parseActionInput(resolveFinanceQuerySchema, input);
 

@@ -26,7 +26,7 @@ export default async function DashboardLayout({
         <Menu role={session.role} />
       </div>
 
-      <div className="flex-1 min-w-0 h-full bg-[#F7F8FA] overflow-y-auto overflow-x-hidden">
+      <div data-dashboard-content className="flex-1 min-w-0 h-full bg-[#F7F8FA] overflow-y-auto">
         <Navbar role={session.role} userId={session.userId} schoolId={session.schoolId} />
         <NavigationProgress />
         {children}

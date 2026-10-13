@@ -1,7 +1,9 @@
 // src/app/(dashboard)/list/finance/bills/[id]/record-payment/page.tsx
  
 
-import { redirect, notFound } from "next/navigation";
+import { redirect } from "next/navigation";
+import UnavailablePage from "@/src/components/UnavailablePage";
+import { parseRecordId } from "@/src/lib/record-id";
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
@@ -23,10 +25,11 @@ const RecordPaymentPage = async ({
   const { schoolId } = await requirePageSession(["bursar"]);
 
   const { id } = await params;
-  const billId = parseInt(id);
+  const billId = parseRecordId(id);
+  if (billId === null) return <UnavailablePage title="Bill unavailable" href="/list/finance/bills" label="Review bills" />;
 
   const bill = await prisma.studentBill.findFirst({
-    where:   { id: billId, schoolId },
+    where:   { id: billId, schoolId, student: { schoolId }, feeStructure: { schoolId } },
     include: {
       student: {
         select: {
@@ -51,7 +54,7 @@ const RecordPaymentPage = async ({
     },
   });
 
-  if (!bill) notFound();
+  if (!bill) return <UnavailablePage title="Bill unavailable" href="/list/finance/bills" label="Review bills" />;
 
   // Cannot record payments on paid or waived bills
   if (bill.status === "PAID" || bill.status === "WAIVED") {

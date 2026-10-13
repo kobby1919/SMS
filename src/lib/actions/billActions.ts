@@ -7,7 +7,7 @@ import {
   requireFinanceAccess,
   writeAuditLog,
 } from "@/src/lib/actions/financeActions";
-import { requireResourceAccess } from "@/src/lib/authz";
+import { requireFinanceOperationAccess, requireResourceAccess } from "@/src/lib/authz";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   billFiltersSchema,
@@ -281,7 +281,7 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
 
 export async function waiveBill(billId: number, reason: string) {
   ({ billId, reason } = parseActionInput(waiveBillSchema, { billId, reason }));
-  const ctx = await requireFinanceAccess();
+  const ctx = await requireFinanceOperationAccess();
   const { userId, schoolId } = ctx;
 
   const bill = requireResourceAccess(
@@ -357,7 +357,7 @@ export async function waiveBill(billId: number, reason: string) {
 // ─── Get bills (with filters) ─────────────────────────────────────────────────
 
 export async function applyBillDiscount(rawInput: unknown) {
-  const ctx = await requireFinanceAccess();
+  const ctx = await requireFinanceOperationAccess();
   const { userId, schoolId } = ctx;
   await enforceActionRateLimit({
     key: `finance:discount-apply:${schoolId}:${userId}`,
@@ -403,7 +403,7 @@ export async function applyBillDiscount(rawInput: unknown) {
 }
 
 export async function removeBillDiscount(rawInput: unknown) {
-  const ctx = await requireFinanceAccess();
+  const ctx = await requireFinanceOperationAccess();
   const { userId, schoolId } = ctx;
   await enforceActionRateLimit({
     key: `finance:discount-remove:${schoolId}:${userId}`,

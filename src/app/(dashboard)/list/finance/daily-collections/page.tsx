@@ -83,7 +83,7 @@ export default async function DailyCollectionsSetupPage() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-start gap-3">
             <Link
-              href="/list/finance"
+              href="/bursar"
               className="mt-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-gray-600 transition hover:bg-gray-200"
             >
               <ArrowLeft size={16} />

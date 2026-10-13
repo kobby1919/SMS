@@ -1,11 +1,19 @@
 import "server-only";
 import prisma from "@/src/lib/prisma";
 import type { AuthzContext } from "@/src/lib/authz";
-import type { Term } from "@/src/generated/prisma";
+import type { Prisma, Term } from "@/src/generated/prisma";
 import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
 
 export type ReportActionInput = { classId: number; term: Term; academicYear: string; notes?: string; expectedUpdatedAt?: string };
 export type ReportActionMode = "SUBMIT" | "PUBLISH" | "REJECT" | "UNPUBLISH";
+
+export async function assertReportSetEditable(
+  db: Pick<Prisma.TransactionClient, "reportCardPublication">,
+  context: { schoolId: string; classId: number; term: Term; academicYear: string },
+) {
+  const publication = await db.reportCardPublication.findUnique({ where: { schoolId_classId_term_academicYear: context }, select: { status: true } });
+  if (publication && ["SUBMITTED", "PUBLISHED"].includes(publication.status)) throw new Error("Return or withdraw this report set before approving score changes.");
+}
 
 export async function transitionClassReports(mode: ReportActionMode, input: ReportActionInput, actor: AuthzContext, now = new Date()) {
   if (actor.role !== (mode === "SUBMIT" ? "teacher" : "admin")) throw new Error("You cannot perform this report action.");

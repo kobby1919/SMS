@@ -211,3 +211,17 @@
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Keep long names/references from expanding the shared dashboard viewport. */
+[data-dashboard-content] :where(main, section, article) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.finance-bill-detail {
+  overflow-wrap: anywhere;
+}
+.finance-bill-detail :where(h1, p, a, button) {
+  min-width: 0;
+  max-width: 100%;
+}

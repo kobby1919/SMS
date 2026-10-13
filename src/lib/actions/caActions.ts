@@ -38,7 +38,7 @@ import {
 } from "@/src/lib/services/parent-daily-summary";
 import { syncCAActivityScorePublishingObligation } from "@/src/lib/services/teacher-ca-obligations";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
-import { transitionClassReports, type ReportActionInput, type ReportActionMode } from "@/src/lib/services/report-publication";
+import { assertReportSetEditable, transitionClassReports, type ReportActionInput, type ReportActionMode } from "@/src/lib/services/report-publication";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 import { recordApprovedCorrectionParentEvent } from "@/src/lib/services/correction-parent-events";
 import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
@@ -1175,6 +1175,7 @@ export async function reviewAcademicCorrectionRequest(data: {
 
     await prisma.$transaction(async (tx) => {
       if (data.action === "APPROVE") {
+        await assertReportSetEditable(tx, { schoolId, classId: score.activity.classId, term: score.activity.bucket.term, academicYear: score.activity.bucket.academicYear });
         const changed = await tx.cAActivityScore.updateMany({
           where: { id: score.id, schoolId, updatedAt: score.updatedAt },
           data: {
@@ -1201,7 +1202,7 @@ export async function reviewAcademicCorrectionRequest(data: {
             : `CA score correction rejected for ${score.student.name} ${score.student.surname}.`,
         },
       });
-    });
+    }, { isolationLevel: "Serializable" });
 
     if (data.action === "APPROVE") {
       await syncComputedCARecordsForActivity({
@@ -1257,6 +1258,9 @@ export async function reviewAcademicCorrectionRequest(data: {
 
     await prisma.$transaction(async (tx) => {
       if (data.action === "APPROVE") {
+        await assertReportSetEditable(tx, { schoolId, classId: record.classId, term: record.term, academicYear: record.academicYear });
+        const config = await tx.cAConfig.findUnique({ where: { schoolId_academicYear: { schoolId, academicYear: record.academicYear } }, select: { examWeight: true } });
+        if (!config || !Number.isFinite(config.examWeight) || newExamScore < 0 || newExamScore > config.examWeight) throw new Error("The requested exam score exceeds the configured exam maximum.");
         const changed = await tx.continuousAssessment.updateMany({
           where: { id: record.id, schoolId, updatedAt: record.updatedAt },
           data: {
@@ -1285,7 +1289,7 @@ export async function reviewAcademicCorrectionRequest(data: {
             : `Exam score correction rejected for ${record.student.name} ${record.student.surname}.`,
         },
       });
-    });
+    }, { isolationLevel: "Serializable" });
 
     if (data.action === "APPROVE") {
       const teacherName = `${record.teacher.name} ${record.teacher.surname}`.trim();

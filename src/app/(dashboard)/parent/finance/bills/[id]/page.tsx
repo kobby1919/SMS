@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import UnavailablePage from "@/src/components/UnavailablePage";
+import { parseRecordId } from "@/src/lib/record-id";
 import { ArrowLeft, CheckCircle2, Clock, Download, ReceiptText } from "lucide-react";
 import { requirePageSession } from "@/src/lib/authz";
 import { formatGHS } from "@/src/lib/constants/finance";
@@ -62,11 +63,11 @@ export default async function ParentFinanceBillPage({
 }) {
   const { userId, schoolId } = await requirePageSession(["parent"]);
   const { id } = await params;
-  const billId = Number(id);
-  if (!Number.isInteger(billId) || billId <= 0) notFound();
+  const billId = parseRecordId(id);
+  if (billId === null) return <UnavailablePage title="Bill unavailable" href="/parent/finance" label="Return to fees" />;
 
   const bill = await getParentFinanceBill(userId, schoolId, billId);
-  if (!bill) notFound();
+  if (!bill) return <UnavailablePage title="Bill unavailable" href="/parent/finance" label="Return to fees" />;
 
   return (
     <div className="flex flex-col gap-5 p-4">

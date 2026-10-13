@@ -27,7 +27,7 @@ try {
     const data = state === "EMPTY" ? { ...base, readiness: null, rows: [], publication: null } : { ...base, publication: state === "PREPARING" ? null : { ...base.publication, status: state } };
     const html = renderToStaticMarkup(React.createElement(component, { data }));
     const page = await browser.newPage({ viewport: { width, height: 1000 } });
-    await page.setContent(`<html><head><style>${css}</style></head><body class="font-nunito">${html}</body></html>`);
+    await page.setContent(`<html><head><style>${css}</style></head><body class="font-nunito"><div class="flex min-w-0"><aside class="w-14 md:w-56 lg:w-60 xl:w-64 shrink-0"></aside><div data-dashboard-content class="min-w-0 flex-1">${html}</div></div></body></html>`);
     await page.evaluate(() => document.fonts.ready);
     assert.equal(await page.evaluate(() => document.fonts.check('600 14px "Nunito"')), true);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${state} overflow at ${width}px`);
