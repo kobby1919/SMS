@@ -108,6 +108,30 @@ required. The dashboard presentation is reserved for the later UI integration st
 
 ## Before pilot
 
+### Step 5: Final report readiness
+
+Final reports reuse canonical readiness inside the same school snapshot: required
+CA allocations/scores, genuine exam evidence, reconciled totals/grades, placement
+gaps and pending corrections. Evidence completion is separate from release
+readiness and does not imply approval or publication. A pending correction can
+block release even at 100% complete evidence.
+
+Workflow remains a persisted fact: NOT_SUBMITTED, AWAITING_ADMIN_REVIEW,
+PUBLISHED, RETURNED or WITHDRAWN (UNPUBLISHED with a withdrawal timestamp).
+Stale submitted/published evidence requires reconciliation without rewriting
+publication history. No dashboard indicator grants authority to release reports.
+
+Percentages describe complete student-subject evidence entries, not teacher
+duties. They remain null before exams open unless report review has already
+started. CA-only classes show percentages once evidence is complete or review is
+underway. School percentages include only review-stage classes, exposing their
+denominator separately. Incomplete evidence cannot round to 100%.
+
+Full tracked-scope counts precede five-class/subject limits. Review URLs preserve
+class, subject, year and term; assessment views remain read-only for admins.
+Visible dashboard presentation remains the next UI step. Live submission,
+return, withdrawal, correction and tenant-isolation tests remain required.
+
 ### Step 4: Exam window tracking
 
 `examTracking` adapts `getClassReportReadiness` exam evidence in the same

@@ -34,7 +34,7 @@ function fixture(options = {}) {
       calls.reports++; assert.equal(db, tx); assert.equal(input.schoolId, "school-a"); assert.equal(input.academicYear, period.academicYear); assert.equal(input.term, period.term); assert.ok(now instanceof Date);
       assert.deepEqual(input.subjectIds, [...new Set(rules.scope.filter((scope) => scope.classId === input.classId).map((scope) => scope.subjectId))]);
       const cls = classes.find((row) => row.id === input.classId);
-      return { currentPeriod: true, studentCount: cls._count.students, subjectCount: 1, expectedEntryCount: cls._count.students, readyEntryCount: 1, readyStudentCount: 1, caStartedEntryCount: 1, examEvidence: [{ subjectId: 1, subjectName: "English", expected: cls._count.students, recorded: 1, missing: cls._count.students - 1, invalid: 0 }], isReady: false, issues: [], blockers: [{ studentId: "private-student", studentName: "Private Name", subjectId: 1, subjectName: "English", reason: "PLACEMENT_REVIEW" }], ...options.readiness };
+      return { currentPeriod: true, studentCount: cls._count.students, subjectCount: 1, expectedEntryCount: cls._count.students, readyEntryCount: 1, readyStudentCount: 1, caStartedEntryCount: 1, examRequired: true, examEvidence: [{ subjectId: 1, subjectName: "English", expected: cls._count.students, recorded: 1, missing: cls._count.students - 1, invalid: 0 }], isReady: false, issues: [], blockers: [{ studentId: "private-student", studentName: "Private Name", subjectId: 1, subjectName: "English", reason: "PLACEMENT_REVIEW" }], ...options.readiness };
     } },
     "@/src/lib/services/admin-teacher-accountability": { getAdminTeacherAccountability: async (school, now, teacher, details, opts) => { calls.accountability++; assert.equal(school, "school-a"); assert.equal(details, false); assert.equal(opts.db, tx); assert.equal(opts.academicOnly, true); return { totals: { overdue: 3, escalations: 1, corrections: 2, teachers: 2 }, followUps: [], details: [], notes: [], evaluatedAt: now.toISOString() }; } },
   };
@@ -75,6 +75,24 @@ test("foreign exam subject evidence cannot be returned by the snapshot", async (
   assert.equal(result.code, "INCONSISTENT_EXAM_SCOPE");
   assert.equal(result.totals, null);
   assert.equal(result.examTracking, null);
+});
+
+test("early reports remain preparation rather than failed review duties", async () => {
+  const f = fixture({ publications: [], rules: { examWindows: Array.from({ length: 8 }, (_, index) => ({ classId: index + 1, state: "NOT_OPENED" })) } });
+  const result = await f.getAdminAcademicReadinessSnapshot();
+  assert.equal(result.finalReports.totals.completionPercent, null);
+  assert.equal(result.finalReports.totals.preparingClasses, 8);
+  assert.equal(result.totals.classesNeedingReview, 0);
+});
+
+test("pending corrections block release despite complete evidence and preserve withdrawal", async () => {
+  const f = fixture({ publications: [{ classId: 1, status: "UNPUBLISHED", unpublishedAt: new Date("2026-10-13") }], readiness: { readyEntryCount: 2, readyStudentCount: 2, isReady: false, blockers: [], issues: ["1 score correction awaits review."] } });
+  const result = await f.getAdminAcademicReadinessSnapshot();
+  assert.equal(result.finalReports.totals.evidenceCompleteClasses, 8);
+  assert.equal(result.finalReports.totals.readyToSubmitClasses, 0);
+  assert.equal(result.finalReports.totals.withdrawnClasses, 1);
+  assert.equal(result.finalReports.classes[0].position.completionPercent, 100);
+  assert.equal(result.finalReports.classes[0].position.releaseReady, false);
 });
 
 test("non-admin rejection never opens a transaction", async () => {
