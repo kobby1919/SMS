@@ -1,4 +1,5 @@
 import prisma from "@/src/lib/prisma";
+import { activityEligibility, validAssessmentWeights } from "@/src/lib/academic-readiness-rules";
 import { eligibleAttendanceStudentIds } from "@/src/lib/attendance-review";
 import type { Prisma, TeacherObligation, TeacherReminder } from "@/src/generated/prisma";
 import { accountabilityTransaction } from "@/src/lib/services/teacher-obligation-store";
@@ -114,6 +115,7 @@ async function actionableDuty(tx: Prisma.TransactionClient, candidate: TeacherOb
   let date: Date;
   let checked: string[] = [];
   let completedAt: Date | null = null;
+  let caCompletionEvidence: { studentId: string; updatedAt: Date }[] | null = null;
   const latest = (dates: Date[]) => dates.reduce<Date | null>((value, date) => !value || date > value ? date : value, null);
   if (duty.type === "ATTENDANCE") {
     const meta = readAttendanceMetadata(duty.metadata);
@@ -140,7 +142,8 @@ async function actionableDuty(tx: Prisma.TransactionClient, candidate: TeacherOb
     checked = assignment.homeworkSubmissions.map((row) => row.studentId);
     completedAt = latest(assignment.homeworkSubmissions.flatMap((row) => row.checkedAt ? [row.checkedAt] : []));
   } else if (duty.type === "CA_SCORE_PUBLISHING") {
-    const config = await tx.cAConfig.findFirst({ where: { schoolId, isActive: true }, orderBy: [{ updatedAt: "desc" }, { id: "desc" }], select: { academicYear: true, currentTerm: true } });
+    const configs = await tx.cAConfig.findMany({ where: { schoolId, isActive: true }, take: 2, select: { academicYear: true, currentTerm: true, classworkWeight: true, examWeight: true } });
+    const config = configs.length === 1 && validAssessmentWeights(configs[0]) ? configs[0] : null;
     if (!config) return null;
     const activity = await tx.cAActivity.findFirst({ where: { schoolId, id: sourceId, teacherId: duty.teacherId, class: { schoolId }, subject: { schoolId }, bucket: { schoolId, academicYear: config.academicYear, term: config.currentTerm } }, include: { bucket: true, scores: { where: { schoolId, student: { schoolId, status: "ACTIVE" } }, select: { studentId: true, updatedAt: true } } } });
     if (!activity || activity.bucket.classId !== activity.classId || activity.bucket.subjectId !== activity.subjectId) return settle("CANCELLED", "CA duty is outside the active academic period or has an invalid bucket scope.");
@@ -148,12 +151,13 @@ async function actionableDuty(tx: Prisma.TransactionClient, candidate: TeacherOb
     if (!published) return settle("CANCELLED", "CA duty is outside the current published teaching scope.");
     classId = activity.classId; date = activity.activityDate;
     checked = activity.scores.map((row) => row.studentId);
-    completedAt = latest(activity.scores.map((row) => row.updatedAt));
+    caCompletionEvidence = activity.scores;
   } else return null;
-  const students = await tx.student.findMany({ where: { schoolId, classId, status: "ACTIVE", createdAt: { lte: endOfDay(date) }, class: { schoolId } }, select: { id: true, createdAt: true } });
+  const students = await tx.student.findMany({ where: { schoolId, classId, status: "ACTIVE", createdAt: { lte: endOfDay(date) }, class: { schoolId } }, select: { id: true, createdAt: true, classJoinedAt: true } });
   const checkedIds = new Set(checked);
-  const expectedIds = duty.type === "ATTENDANCE" ? eligibleAttendanceStudentIds(students, date, checkedIds) : new Set(students.map((student) => student.id));
+  const expectedIds = duty.type === "ATTENDANCE" ? eligibleAttendanceStudentIds(students, date, checkedIds) : new Set(students.filter((student) => duty.type !== "CA_SCORE_PUBLISHING" || activityEligibility(student, date) === "ELIGIBLE").map((student) => student.id));
   if (!expectedIds.size) return settle("CANCELLED", "No eligible active students remain for this duty.");
+  if (caCompletionEvidence) completedAt = latest(caCompletionEvidence.filter((score) => expectedIds.has(score.studentId)).map((score) => score.updatedAt));
   if ([...expectedIds].every((id) => checkedIds.has(id))) {
     return completedAt ? settle(completedAt > duty.expectedAt ? "COMPLETED_LATE" : "COMPLETED", "Source records confirm that this duty is complete.", completedAt) : null;
   }

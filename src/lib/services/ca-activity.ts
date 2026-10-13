@@ -368,8 +368,8 @@ export async function createCAActivity(input: CAActivityInput) {
   });
 }
 
-export async function upsertCAActivityScore(input: CAActivityScoreInput): Promise<CAActivityScoreWriteResult> {
-  const activity = await prisma.cAActivity.findFirst({
+export async function upsertCAActivityScore(input: CAActivityScoreInput, db = prisma as Pick<typeof prisma, "cAActivity" | "student" | "cAActivityScore">): Promise<CAActivityScoreWriteResult> {
+  const activity = await db.cAActivity.findFirst({
     where: { id: input.activityId, schoolId: input.schoolId },
     include: {
       bucket: { select: { allocationMarks: true, aggregationMode: true, isLocked: true } },
@@ -381,7 +381,7 @@ export async function upsertCAActivityScore(input: CAActivityScoreInput): Promis
     throw new Error("This CA activity is locked. Score changes require an admin correction process.");
   }
 
-  const student = await prisma.student.findFirst({
+  const student = await db.student.findFirst({
     where: { id: input.studentId, schoolId: input.schoolId, classId: activity.classId, status: "ACTIVE" },
     select: { id: true },
   });
@@ -398,7 +398,7 @@ export async function upsertCAActivityScore(input: CAActivityScoreInput): Promis
   );
   const nextComment = input.comment?.trim() || null;
 
-  const existing = await prisma.cAActivityScore.findUnique({
+  const existing = await db.cAActivityScore.findUnique({
     where: { activityId_studentId: { activityId: input.activityId, studentId: input.studentId } },
     select: {
       id: true,
@@ -418,7 +418,8 @@ export async function upsertCAActivityScore(input: CAActivityScoreInput): Promis
     return { score: existing, changed: false };
   }
 
-  const score = await prisma.cAActivityScore.upsert({
+  if (existing) throw new Error("Saved activity scores require an approved correction request.");
+  const score = await db.cAActivityScore.upsert({
     where: { activityId_studentId: { activityId: input.activityId, studentId: input.studentId } },
     create: {
       schoolId: input.schoolId,
@@ -563,6 +564,7 @@ export async function syncComputedCARecord(input: CAContext & {
   if (!db) return prisma.$transaction((tx) => syncComputedCARecord(input, tx), { isolationLevel: "Serializable", timeout: 30000 });
   const config = await getCAConfigOrThrow(input.schoolId, input.academicYear, db);
   const progress = await getSubjectCAProgress(input, db);
+  if (!Number.isFinite(progress.earnedMarks) || progress.earnedMarks < 0 || progress.earnedMarks > Number(config.classworkWeight)) throw new Error("CA evidence needs reconciliation before saving computed totals.");
   const existing = await db.continuousAssessment.findUnique({
     where: {
       schoolId_studentId_subjectId_classId_term_academicYear: {

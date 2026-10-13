@@ -92,6 +92,8 @@ function workerFixture(overrides = {}) {
     publishedTimetableLesson: { findFirst: async (q) => { assert.equal(q.where.schoolId, duty.schoolId); assert.equal(q.where.publication.schoolId, duty.schoolId); return overrides.unpublished ? null : { teacherId: duty.teacherId, classId: 1, day: "THURSDAY", startTime: new Date("2000-01-01T09:00:00Z"), publication: { publishedAt: overrides.publishedAt ?? new Date("2026-10-01T00:00:00Z") } }; } },
     schoolNotificationSetting: { findUnique: async () => ({ activeDays: overrides.activeDays ?? ["THURSDAY"] }) },
     attendance: { findMany: async () => overrides.marks ?? [] },
+    cAConfig: { findMany: async () => overrides.conflictingConfig ? [] : [{ academicYear: "2026/27", currentTerm: "TERM_1", classworkWeight: 30, examWeight: 70 }] },
+    cAActivity: { findFirst: async () => ({ id: 1, classId: 1, subjectId: 1, activityDate: new Date("2026-10-08T09:00:00Z"), bucket: { classId: 1, subjectId: 1 }, scores: overrides.marks ?? [] }) },
     student: { findMany: async (q) => { assert.equal(q.where.status, "ACTIVE"); assert.equal(q.where.schoolId, duty.schoolId); assert.equal(q.where.classId, 1); assert.ok(q.where.createdAt.lte); return (overrides.students ?? [{ id: "s1" }]).map((s) => ({ createdAt: new Date("2026-09-01T00:00:00Z"), ...s })); } },
     teacherEscalation: { create: async ({ data }) => { escalations.push(data); return data; } },
     teacherReminder: {
@@ -114,6 +116,28 @@ test("worker does not escalate a completed morning lesson because a pupil enroll
   assert.equal(await f.service.escalateIfNeeded({ obligation: f.row, now }), false);
   assert.equal(f.escalations.length, 0);
   assert.equal(f.row.status, "COMPLETED_LATE");
+});
+test("CA worker excludes transfers and later same-day admissions, just like dashboard eligibility", async () => {
+  const f = workerFixture({ duty: { type: "CA_SCORE_PUBLISHING", sourceModel: "CAActivity" }, students: [{ id: "s1", classJoinedAt: new Date("2026-09-01") }, { id: "transfer", classJoinedAt: new Date("2026-10-08T11:00:00Z") }, { id: "admitted", createdAt: new Date("2026-10-08T11:00:00Z"), classJoinedAt: new Date("2026-10-08T11:00:00Z") }], marks: [{ studentId: "s1", updatedAt: now }] });
+  assert.equal(await f.service.escalateIfNeeded({ obligation: f.row, now }), false);
+  assert.equal(f.escalations.length, 0);
+  assert.match(f.row.status, /^COMPLETED/);
+});
+test("later join score timestamps cannot falsely make an eligible completed CA duty late", async () => {
+  const f = workerFixture({ duty: { type: "CA_SCORE_PUBLISHING", sourceModel: "CAActivity" }, students: [{ id: "s1", classJoinedAt: new Date("2026-09-01") }, { id: "transfer", classJoinedAt: new Date("2026-10-08T11:00:00Z") }], marks: [{ studentId: "s1", updatedAt: new Date("2026-10-08T09:30:00Z") }, { studentId: "transfer", updatedAt: now }] });
+  assert.equal(await f.service.escalateIfNeeded({ obligation: f.row, now }), false);
+  assert.equal(f.row.status, "COMPLETED");
+});
+test("summary overall rankings wait for every displayed subject to be canonically ready", () => {
+  const Summary = load("src/components/CAClassSummary.tsx").default;
+  const students = [{ id: "s1", name: "Complete", surname: "Student" }, { id: "s2", name: "Partial", surname: "Student" }];
+  const subjects = [{ id: 1, name: "English" }, { id: 2, name: "Math" }];
+  const base = { studentName: "", studentSurname: "Student", subjectName: "", term: "TERM_1", academicYear: "2026/27", classworkScore: 30, examScore: 60, totalScore: 90, grade: "A1", gradePoint: 1, remarks: "", reportReady: true };
+  const markup = renderToStaticMarkup(React.createElement(Summary, { className: "KG1", students, subjects, caRecords: [{ ...base, id: 1, studentId: "s1", subjectId: 1 }, { ...base, id: 2, studentId: "s1", subjectId: 2 }, { ...base, id: 3, studentId: "s2", subjectId: 1 }] }));
+  const start = markup.indexOf("Partial");
+  const partial = markup.slice(start, markup.indexOf("</tr>", start));
+  assert.match(partial, /Pending/);
+  assert.doesNotMatch(partial.slice(partial.lastIndexOf("<td")), /2nd/);
 });
 test("worker skips completion, closed review, unpublished source and school closure", async () => {
   for (const overrides of [{ duty: { completedAt: now } }, { closed: true }, { unpublished: true }, { activeDays: ["MONDAY"] }, { students: [] }, { marks: [{ studentId: "s1" }] }, { publishedAt: now }, { duty: { sourceId: "1garbage" } }]) {

@@ -29,7 +29,7 @@ async function snapshot(overrides = {}, teacherId, at = now) {
     teacherAccountabilitySetting: model("policy", "findUnique", () => data.policy),
     schoolNotificationSetting: model("operating", "findUnique", () => data.operating ?? null),
     timetablePublication: model("publication", "findFirst", () => data.publication),
-    cAConfig: model("config", "findFirst", () => data.config),
+    cAConfig: model("config", "findMany", () => data.config ? [{ ...data.config, classworkWeight: 30, examWeight: 70 }] : []),
     teacher: model("teacher", "findMany", () => data.teachers),
     publishedTimetableLesson: model("lessons", "findMany", () => data.lessons),
     student: model("student", "findMany", () => data.students),

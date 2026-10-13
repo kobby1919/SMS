@@ -277,7 +277,7 @@ export async function getClassTeacherOverview({
   }
   const academicReadiness = subjectIds.map((subjectId) => {
     const records = caBySubject.get(subjectId) ?? [];
-    const examReady = records.filter((record) => activePeriod.examWeight === 0 || hasRecordedExam(record)).length;
+    const examReady = records.filter((record) => record.examScore <= activePeriod.examWeight && (activePeriod.examWeight === 0 || hasRecordedExam(record))).length;
     return {
       subjectId,
       subjectName: subjectNames.get(subjectId) ?? "Subject",

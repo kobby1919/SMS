@@ -1,4 +1,3 @@
-import { hasRecordedExam } from "@/src/lib/academic-readiness-rules";
 // src/app/(dashboard)/list/report-cards/page.tsx
  
 
@@ -23,7 +22,7 @@ import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { formatMark } from "@/src/lib/formatters/marks";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
-import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
+import { getClassReportReadiness, getCanonicalReadyRecordIds } from "@/src/lib/services/report-card-readiness";
 import { listActiveParentChildren } from "@/src/lib/services/parent-student-relationships";
 import type { Term } from "@/src/generated/prisma";
 import AdminReportReview from "@/src/components/AdminReportReview";
@@ -110,6 +109,7 @@ const ReportCardListPage = async ({
       }),
     ]);
     const publishedClassIds = new Set(publications.map((publication) => publication.classId));
+    const canonicalReadyIds = await getCanonicalReadyRecordIds(schoolId, caRecords);
 
     return (
       <div className="m-3 mt-0 flex min-w-0 flex-1 flex-col gap-4 sm:m-4 sm:mt-0">
@@ -145,7 +145,7 @@ const ReportCardListPage = async ({
                   subjectName: record.subject.name,
                   record,
                 }));
-            const reportReady = records.filter((record) => hasRecordedExam(record));
+            const reportReady = records.filter((record) => canonicalReadyIds.has(record.id));
             const caStarted = records.length;
             const subjectTotal = subjectRows.length;
             const isPublished = publishedClassIds.has(child.classId);
@@ -204,8 +204,8 @@ const ReportCardListPage = async ({
                         <div className="min-w-0">
                           <p className="break-words text-xs font-black text-gray-900">{subjectName}</p>
                           <p className="break-words text-[10px] font-semibold leading-relaxed text-gray-400">
-                            {record && (config?.examWeight === 0 || hasRecordedExam(record)) ? "Report score ready" : record ? "CA building, exam pending" : "No CA yet"}
-                            {record && (config?.examWeight === 0 || hasRecordedExam(record)) && !isPublished ? " · awaiting school approval" : ""}
+                            {record && canonicalReadyIds.has(record.id) ? "Report score ready" : record ? "Assessment recording incomplete" : "No assessment record yet"}
+                            {record && canonicalReadyIds.has(record.id) && !isPublished ? " · awaiting school approval" : ""}
                           </p>
                         </div>
                         <p className="shrink-0 text-xs font-black text-sky-700">

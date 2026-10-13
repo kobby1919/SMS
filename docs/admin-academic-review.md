@@ -67,6 +67,15 @@ Exam saves use a serializable transaction, an open exam window,
 published teacher scope, current active students, report locks and mandatory audit.
 CA lesson windows are not an extra gate for exam-only entry.
 
+Hardening: CA batch saves commit the full eligible roster, computed totals,
+activity lock and mandatory audit in one serializable transaction. Existing marks
+cannot be overwritten outside correction review. The worker uses the same class
+join cutoff as the dashboard and excludes later joins from completion timestamps.
+Teacher/parent summary certification uses canonical readiness and matching record
+versions, not just a saved exam. The teaching summary is scoped to the active
+period so scores from different terms cannot be mixed. Once CA setup or score
+records exist, that academic year's assessment weights cannot be edited in place.
+
 `Student.classJoinedAt` tracks placement changes and reactivation. Existing
 placements begin tracking at migration time, not an invented historical date.
 Earlier activities do not create overdue duties for late admissions/transfers.

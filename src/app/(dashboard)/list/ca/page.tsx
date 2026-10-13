@@ -5,6 +5,7 @@
 
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
+import { getCanonicalReadyRecordIds } from "@/src/lib/services/report-card-readiness";
 import CAEntryForm from "@/src/components/CAEntryForm";
 import CAClassSummary from "@/src/components/CAClassSummary";
 import AdminAssessmentReview from "@/src/components/AdminAssessmentReview";
@@ -116,15 +117,6 @@ const CAPage = async ({
     },
   });
 
-  // ── CA summary data (summary tab) ─────────────────────────────────────────
-  const summaryData = await prisma.continuousAssessment.findMany({
-    where: { schoolId, classId: activeClass.id, ...scopedSubjectWhere },
-    include: {
-      student: { select: { id: true, name: true, surname: true } },
-      subject: { select: { id: true, name: true } },
-    },
-    orderBy: [{ term: "asc" }, { student: { surname: "asc" } }],
-  });
 
   // ── Academic years from CA configs ────────────────────────────────────────
   const [configs, activePeriod, schoolOperatingWindow] = await Promise.all([
@@ -140,6 +132,17 @@ const CAPage = async ({
       ? configs.map((c) => c.academicYear)
       : [activePeriod.academicYear, "2026/27"];
   const activeConfig = configs.find((config) => config.academicYear === activePeriod.academicYear);
+
+  // ── CA summary data (summary tab) ─────────────────────────────────────────
+  const summaryData = await prisma.continuousAssessment.findMany({
+    where: { schoolId, classId: activeClass.id, term: activePeriod.currentTerm, academicYear: activePeriod.academicYear, student: { schoolId, status: "ACTIVE", classId: activeClass.id }, ...scopedSubjectWhere },
+    include: {
+      student: { select: { id: true, name: true, surname: true } },
+      subject: { select: { id: true, name: true } },
+    },
+    orderBy: [{ term: "asc" }, { student: { surname: "asc" } }],
+  });
+  const summaryReadyIds = await getCanonicalReadyRecordIds(schoolId, summaryData);
 
   const examEntryWindow = await prisma.examEntryWindow.findUnique({
     where: {
@@ -449,6 +452,7 @@ const CAPage = async ({
                 students={students}
                 subjects={subjects}
                 caRecords={summaryData.map((ca) => ({
+                  reportReady: summaryReadyIds.has(ca.id),
                   id: ca.id,
                   studentId: ca.student.id,
                   studentName: ca.student.name,

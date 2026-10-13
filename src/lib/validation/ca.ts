@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { nonEmptyStringSchema, positiveIntSchema, termSchema } from "./common";
 
+export const rawActivityMarkSchema = z.number().min(0).max(1000).multipleOf(0.01);
+
 export const caActivityTypeSchema = z.enum([
   "MIDTERM_EXAM",
   "CLASS_TEST",
@@ -79,7 +81,7 @@ export const caActivitySchema = z.object({
   bucketId: positiveIntSchema,
   title: z.string().trim().min(2).max(100).optional(),
   type: caActivityTypeSchema.optional(),
-  rawMaxScore: z.coerce.number().positive().max(1000),
+  rawMaxScore: z.coerce.number().positive().max(1000).multipleOf(0.01),
   allocationMarks: z.coerce.number().positive().max(100).optional().nullable(),
   activityDate: z.coerce.date().optional(),
 });
@@ -87,7 +89,7 @@ export const caActivitySchema = z.object({
 export const caActivityScoreSchema = z.object({
   activityId: positiveIntSchema,
   studentId: nonEmptyStringSchema,
-  rawScore: z.coerce.number().min(0).max(1000),
+  rawScore: rawActivityMarkSchema,
   comment: z.string().trim().max(300).optional(),
 });
 
@@ -95,7 +97,7 @@ export const caBulkActivityScoreSchema = z.object({
   activityId: positiveIntSchema,
   rows: z.array(z.object({
     studentId: nonEmptyStringSchema,
-    rawScore: z.coerce.number().min(0).max(1000),
+    rawScore: rawActivityMarkSchema,
     comment: z.string().trim().max(300).optional(),
   })).min(1).max(500),
 });

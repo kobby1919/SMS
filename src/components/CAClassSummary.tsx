@@ -1,6 +1,5 @@
 "use client";
 
-import { hasRecordedExam } from "@/src/lib/academic-readiness-rules";
 
 // src/components/CAClassSummary.tsx
 // Shows a pivot-style summary: rows = students, cols = subjects
@@ -12,6 +11,7 @@ import { formatMark } from "@/src/lib/formatters/marks";
 import { Trophy, Medal, TrendingUp, ChevronDown } from "lucide-react";
 
 type CARecord = {
+  reportReady: boolean;
   examWeight?: number;
   examRecordedAt?: Date | string | null;
   id:             number;
@@ -41,7 +41,7 @@ type Props = {
 };
 
 function isReportReady(record?: CARecord) {
-  return Boolean(record && (record.examWeight === 0 || hasRecordedExam(record)));
+  return Boolean(record?.reportReady);
 }
 
 // ─── Position badge ────────────────────────────────────────────────────────────
@@ -131,6 +131,9 @@ const CAClassSummary = ({ className, students, subjects, caRecords }: Props) => 
   const sortedStudents = [...students].sort((a, b) => {
     const aData = studentOverall[a.id];
     const bData = studentOverall[b.id];
+    const aComplete = subjects.length > 0 && aData.subjects === subjects.length;
+    const bComplete = subjects.length > 0 && bData.subjects === subjects.length;
+    if (aComplete !== bComplete) return aComplete ? -1 : 1;
     if (aData.subjects === 0 && bData.subjects > 0) return 1;
     if (bData.subjects === 0 && aData.subjects > 0) return -1;
     if (aData.aggregate !== bData.aggregate) return aData.aggregate - bData.aggregate;
@@ -139,7 +142,7 @@ const CAClassSummary = ({ className, students, subjects, caRecords }: Props) => 
 
   const overallPositions: Record<string, number> = {};
   sortedStudents.forEach((s, idx) => {
-    overallPositions[s.id] = idx + 1;
+    if (subjects.length > 0 && studentOverall[s.id].subjects === subjects.length) overallPositions[s.id] = idx + 1;
   });
 
   if (caRecords.length === 0) {
@@ -288,7 +291,7 @@ const CAClassSummary = ({ className, students, subjects, caRecords }: Props) => 
 
                   {/* Aggregate */}
                   <td className="px-4 py-3 text-center">
-                    {overall.subjects > 0 ? (
+                    {subjects.length > 0 && overall.subjects === subjects.length ? (
                       <div className="flex flex-col items-center gap-0.5">
                         <span className="text-base font-black text-gray-800">
                           {overall.aggregate}
@@ -305,7 +308,7 @@ const CAClassSummary = ({ className, students, subjects, caRecords }: Props) => 
                   {/* Overall position */}
                   <td className="px-4 py-3 text-center">
                     {overall.subjects > 0 ? (
-                      <PositionBadge pos={position} />
+                      position ? <PositionBadge pos={position} /> : <span className="text-xs text-gray-400">Pending</span>
                     ) : (
                       <span className="text-xs text-gray-200">—</span>
                     )}

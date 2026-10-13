@@ -20,7 +20,7 @@ function fixture(options = {}) {
     cAConfig: { findMany: async (q) => { queries.push(q); return [{ academicYear: "2026/27", classworkWeight: 30, examWeight: 70 }]; }, findUnique: async () => ({ academicYear: "2026/27", classworkWeight: 30, examWeight: 70 }) },
     subject: { findMany: async (q) => { queries.push(q); return [{ id: 2, name: "Math" }]; } },
     student: { count: async (q) => { queries.push(q); return 1; }, findMany: async (q) => { queries.push(q); return [{ id: "s1", name: "Student", surname: "One", admissionNumber: "EDJ-001" }]; } },
-    continuousAssessment: { findMany: async (q) => { queries.push(q); return [{ studentId: "s1", examScore: 50, updatedAt: now }]; } },
+    continuousAssessment: { findMany: async (q) => { queries.push(q); return [{ studentId: "s1", classworkScore: 0, examScore: 50, totalScore: options.staleTotal ? 90 : 50, updatedAt: now }]; } },
     cAActivityScore: { findMany: async (q) => { queries.push(q); return []; } },
     cAActivity: { count: async (q) => { queries.push(q); return 0; } },
   };
@@ -41,7 +41,8 @@ test("admin assessment totals preserve recorded zero and withhold incomplete or 
   assert.equal(service.assessmentPosition(progress, 50, 70).total, 50);
   assert.equal(service.assessmentPosition(progress, 0, 70).total, null);
   assert.equal(service.assessmentPosition(progress, 50, 70, 1).total, null);
-  assert.equal(service.assessmentPosition(progress, 50, 0).total, 0);
+  assert.equal(service.assessmentPosition(progress, 50, 0).total, null);
+  assert.equal(service.assessmentPosition({ ...progress, classworkWeight: 100, totalAllocatedMarks: 100, buckets: [{ ...progress.buckets[0], allocationMarks: 100 }] }, 0, 0).total, 0);
   progress.buckets[0].activities[0].rawScore = null;
   assert.equal(service.assessmentPosition(progress, 50, 70).ca, null);
   assert.equal(service.assessmentPosition(progress, 50, 70).status, "Incomplete");
@@ -55,6 +56,11 @@ test("all review queries use the authorized school and canonical progress with a
   assert.equal(f.calls[0].term, "TERM_1");
   assert.equal(f.calls[0].academicYear, "2026/27");
   assert.ok(f.queries.some((q) => q.take === 25));
+});
+test("assessment review refuses a stale stored total instead of disagreeing with report readiness", async () => {
+  const result = await fixture({ staleTotal: true }).service.getAdminAssessmentReview({ classId: "1", subjectId: "2" }, now);
+  assert.equal(result.rows[0].position.status, "Needs review");
+  assert.equal(result.rows[0].position.total, null);
 });
 test("foreign class, unpublished subject, unknown year and malformed filters never load student scores", async () => {
   for (const params of [{ classId: "999" }, { subjectId: "999" }, { year: "foreign-year" }, { classId: "1garbage" }, { term: "INVALID" }, { page: "-1" }, { classId: ["1"] }, { subjectId: ["2", "99"] }, { classId: "1e0" }, { page: ["1"] }]) {

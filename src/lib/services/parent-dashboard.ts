@@ -1,4 +1,4 @@
-import { hasRecordedExam } from "@/src/lib/academic-readiness-rules";
+import { getCanonicalReadyRecordIds } from "@/src/lib/services/report-card-readiness";
 import prisma from "@/src/lib/prisma";
 import { computeAggregate } from "@/src/lib/caGrades";
 import type { CalendarLesson } from "@/src/components/BigCalendar";
@@ -632,6 +632,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     payments,
   });
 
+  const canonicalReadyIds = await getCanonicalReadyRecordIds(schoolId, assessments);
   const prepared = children.map((child) => {
     const childAttendance = attendanceByStudent.get(child.id) ?? [];
     const childAssessments = assessmentsByStudent.get(child.id) ?? [];
@@ -644,7 +645,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     }
     const termGroups = Array.from(groupMap.entries()).map(([key, records]) => {
       const [year, term] = key.split("__");
-      const reportReadyRecords = records.filter((record) => caConfigs.find((config) => config.academicYear === record.academicYear)?.examWeight === 0 || hasRecordedExam(record));
+      const reportReadyRecords = records.filter((record) => canonicalReadyIds.has(record.id));
       const scores = reportReadyRecords.map((record) => record.totalScore);
       const caScores = records.map((record) => record.classworkScore);
       return {
@@ -658,7 +659,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
         avgCAMarks: caScores.length
           ? Math.round((caScores.reduce((sum, score) => sum + score, 0) / caScores.length) * 10) / 10
           : 0,
-        aggregate: computeAggregate(records.map((record) => record.gradePoint)),
+        aggregate: computeAggregate(reportReadyRecords.map((record) => record.gradePoint)),
       };
     });
     return {
@@ -678,10 +679,11 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
   const classAssessments = latestScopes.length
     ? await prisma.continuousAssessment.findMany({
         where: { schoolId, OR: latestScopes },
-        select: { classId: true, term: true, academicYear: true, studentId: true, gradePoint: true },
+        select: { id: true, updatedAt: true, subjectId: true, classId: true, term: true, academicYear: true, studentId: true, gradePoint: true },
       })
     : [];
   const classSizeById = new Map(classCounts.map((row) => [row.classId, row._count._all]));
+  const rankableRecordIds = await getCanonicalReadyRecordIds(schoolId, classAssessments, undefined, { requireCompleteStudent: true });
 
   const childrenData = prepared.map(({ child, childAttendance, termGroups, latestGroup, prevGroup }) => {
     const streak = absenceStreak(childAttendance.slice(0, 7));
@@ -720,6 +722,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     if (latestGroup) {
       const peers = classAssessments.filter(
         (row) =>
+          rankableRecordIds.has(row.id) &&
           row.classId === child.classId &&
           row.term === latestGroup.term &&
           row.academicYear === latestGroup.year,
@@ -742,9 +745,9 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     const classworkWeight = caConfigByYear.get(latestGroup?.year ?? "")?.classworkWeight ?? 30;
     const latestSubjects = (latestGroup?.records ?? []).filter((record) =>
       (expectedSubjects.size === 0 || expectedSubjects.has(record.subjectId)) &&
-      activityBackedCAKeys.has(
+      (classworkWeight === 0 || activityBackedCAKeys.has(
         `${record.studentId}__${record.subjectId}__${record.classId}__${record.term}__${record.academicYear}`,
-      ),
+      )),
     );
     const sortedByGradePoint = [...latestSubjects].sort((a, b) => a.gradePoint - b.gradePoint);
     const recordedProgressSubjects = latestSubjects
@@ -764,7 +767,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
           subjectName: record.subject.name,
           score: record.classworkScore,
           maxScore: classworkWeight,
-          grade: record.grade,
+          grade: canonicalReadyIds.has(record.id) ? record.grade : "Pending",
           trend: previous ? (change > 2 ? "up" : change < -2 ? "down" : "steady") : "new",
           change,
           status: !isMature
@@ -801,9 +804,9 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     const completedSubjects = latestSubjects.length;
     const reportReadySubjects = (latestGroup?.reportReadyRecords ?? []).filter((record) =>
       (expectedSubjects.size === 0 || expectedSubjects.has(record.subjectId)) &&
-      activityBackedCAKeys.has(
+      (classworkWeight === 0 || activityBackedCAKeys.has(
         `${record.studentId}__${record.subjectId}__${record.classId}__${record.term}__${record.academicYear}`,
-      ),
+      )),
     );
     const averageScore = reportReadySubjects.length
       ? Math.round(

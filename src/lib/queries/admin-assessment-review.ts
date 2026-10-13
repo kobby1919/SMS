@@ -80,7 +80,7 @@ async function loadRows(input: {
   const context = { schoolId: input.schoolId, classId: input.classId, subjectId: input.subjectId, term: input.term, academicYear: input.year };
   const ids = input.students.map((student) => student.id);
   const [records, updates, futureActivities] = await Promise.all([
-    db.continuousAssessment.findMany({ where: { ...context, studentId: { in: ids } }, select: { studentId: true, examScore: true, examRecordedAt: true, updatedAt: true } }),
+    db.continuousAssessment.findMany({ where: { ...context, studentId: { in: ids } }, select: { studentId: true, classworkScore: true, totalScore: true, examScore: true, examRecordedAt: true, updatedAt: true } }),
     db.cAActivityScore.findMany({ where: { schoolId: input.schoolId, studentId: { in: ids }, activity: { schoolId: input.schoolId, classId: input.classId, subjectId: input.subjectId, activityDate: { lte: input.now }, bucket: context } }, select: { studentId: true, updatedAt: true } }),
     db.cAActivity.count({ where: { schoolId: input.schoolId, classId: input.classId, subjectId: input.subjectId, bucket: context, activityDate: { gt: input.now } } }),
   ]);
@@ -101,6 +101,10 @@ async function loadRows(input: {
     const dates = [...updates.filter((item) => item.studentId === student.id).map((item) => item.updatedAt), ...(record ? [record.updatedAt] : [])];
     const position = assessmentPosition(progress, record?.examScore ?? null, input.config.examWeight, futureActivities, record?.examRecordedAt);
     if (invalidScore) position.status = "Needs review";
+    if (position.total !== null && (!record || !Number.isFinite(record.classworkScore) || !Number.isFinite(record.totalScore) || Math.abs(record.classworkScore - progress.earnedMarks) > 0.005 || Math.abs(record.totalScore - position.total) > 0.005)) {
+      position.status = "Needs review";
+      position.total = null;
+    }
     return { student, progress, examScore: record?.examScore ?? null, position, updatedAt: dates.length ? new Date(Math.max(...dates.map((date) => date.getTime()))) : null };
   }));
 }

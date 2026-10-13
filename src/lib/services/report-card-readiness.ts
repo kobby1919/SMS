@@ -2,6 +2,7 @@ import "server-only";
 import type { Prisma, Term } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { buildSubjectCAProgress } from "@/src/lib/services/ca-activity";
+import { getGradeBand } from "@/src/lib/caGrades";
 import { assessmentPosition } from "@/src/lib/assessment-position";
 import { activityEligibility, validAssessmentWeights } from "@/src/lib/academic-readiness-rules";
 
@@ -12,7 +13,27 @@ export type ClassReportReadiness = {
   issues: string[]; currentPeriod: boolean; readyStudentCount: number;
   studentPositions: { studentId: string; ready: number; caStarted: number }[];
   examRequired: boolean;
+  readyEntries: { studentId: string; subjectId: number }[];
 };
+
+// Caller snapshots must still match the record version used for certification.
+export async function getCanonicalReadyRecordIds(schoolId: string, records: { id: number; studentId: string; classId: number; academicYear: string; term: Term; subjectId: number; updatedAt: Date }[], now = new Date(), options: { requireCompleteStudent?: boolean } = {}) {
+  const groups = new Map<string, typeof records>();
+  for (const record of records) {
+    const key = JSON.stringify([record.classId, record.academicYear, record.term]);
+    groups.set(key, [...(groups.get(key) ?? []), record]);
+  }
+  const readyIds = new Set<number>();
+  for (const group of groups.values()) await prisma.$transaction(async (tx) => {
+    const first = group[0];
+    const input = { schoolId, classId: first.classId, academicYear: first.academicYear, term: first.term };
+    const readiness = await getClassReportReadiness(input, tx, now);
+    if (readiness.issues.length || readiness.subjectCount === 0 || readiness.studentCount === 0) return;
+    const live = await tx.continuousAssessment.findMany({ where: { schoolId, classId: first.classId, studentId: { in: [...new Set(group.map((r) => r.studentId))] }, academicYear: first.academicYear, term: first.term, id: { in: group.map((r) => r.id) } }, select: { id: true, subjectId: true, updatedAt: true } });
+    for (const record of group) if ((!options.requireCompleteStudent || readiness.studentPositions.some((s) => s.studentId === record.studentId && s.ready === readiness.subjectCount)) && live.some((r) => r.id === record.id && r.updatedAt.getTime() === record.updatedAt.getTime()) && readiness.readyEntries.some((entry) => entry.studentId === record.studentId && entry.subjectId === record.subjectId)) readyIds.add(record.id);
+  }, { isolationLevel: "RepeatableRead", timeout: 30000 });
+  return readyIds;
+}
 
 export async function getClassReportReadiness(input: { schoolId: string; classId: number; term: Term; academicYear: string; subjectIds?: number[]; studentId?: string }, db?: Prisma.TransactionClient, now = new Date()): Promise<ClassReportReadiness> {
   if (!db) return prisma.$transaction((tx) => getClassReportReadiness(input, tx, now), { isolationLevel: "RepeatableRead", timeout: 30000 });
@@ -31,7 +52,7 @@ export async function getClassReportReadiness(input: { schoolId: string; classId
   const students = await db.student.findMany({ where: { schoolId, ...(input.studentId ? { id: input.studentId } : {}), class: { is: { schoolId } }, ...(currentPeriod ? { classId, status: "ACTIVE" } : { OR: [{ continuousAssessments: { some: context } }, { caActivityScores: { some: { schoolId, activity: { schoolId, classId, bucket: context } } } }] }) }, select: { id: true, name: true, surname: true, admissionNumber: true, createdAt: true, classJoinedAt: true }, orderBy: [{ surname: "asc" }, { name: "asc" }, { id: "asc" }] });
   const studentIds = students.map((s) => s.id);
   const subjectIds = scopedSubjects.map((s) => s.id);
-  const records = subjectIds.length && studentIds.length ? await db.continuousAssessment.findMany({ where: { ...context, subjectId: { in: subjectIds }, studentId: { in: studentIds }, student: { schoolId }, subject: { schoolId } }, select: { id: true, studentId: true, subjectId: true, classworkScore: true, examScore: true, examRecordedAt: true, totalScore: true } }) : [];
+  const records = subjectIds.length && studentIds.length ? await db.continuousAssessment.findMany({ where: { ...context, subjectId: { in: subjectIds }, studentId: { in: studentIds }, student: { schoolId }, subject: { schoolId } }, select: { id: true, studentId: true, subjectId: true, classworkScore: true, examScore: true, examRecordedAt: true, totalScore: true, grade: true, gradePoint: true } }) : [];
   // Load class evidence once; the canonical calculator is shared with assessment review.
   const buckets = subjectIds.length ? await db.cABucket.findMany({ where: { ...context, subjectId: { in: subjectIds }, subject: { schoolId } }, include: { activities: { where: { schoolId, classId, subjectId: { in: subjectIds } }, include: { teacher: { select: { name: true, surname: true } }, scores: { where: { schoolId, studentId: { in: studentIds }, student: { schoolId } }, select: { id: true, studentId: true, rawScore: true, normalizedContribution: true } } } } } }) : [];
   const issues: string[] = [];
@@ -51,6 +72,7 @@ export async function getClassReportReadiness(input: { schoolId: string; classId
   if (!students.length) issues.push("No eligible student records are available for this class period.");
   const blockers: ReportReadinessBlocker[] = [];
   let readyEntryCount = 0, caStartedEntryCount = 0;
+  const readyEntries: ClassReportReadiness["readyEntries"] = [];
   const readyByStudent = new Map<string, number>();
   const startedByStudent = new Map<string, number>();
   const scores = new Map(buckets.flatMap((bucket) => bucket.activities.flatMap((activity) => activity.scores.map((score) => [`${activity.id}:${score.studentId}`, score] as const))));
@@ -74,13 +96,13 @@ export async function getClassReportReadiness(input: { schoolId: string; classId
       else if (currentPeriod && student.createdAt && subjectBuckets.some((bucket) => bucket.activities.some((activity) => !scores.has(`${activity.id}:${student.id}`) && activityEligibility(student, activity.activityDate) !== "ELIGIBLE"))) add("PLACEMENT_REVIEW", "Earlier CA evidence needs admission/class-placement review. This is not an overdue teacher duty and no marks are awarded automatically.");
       else if (!position.caComplete) add("MISSING_CA", `CA incomplete: ${position.scored}/${position.expected} activity scores; allocation must match the configured CA weight.`);
       else if (!position.examConfirmed) add("MISSING_EXAM", "No confirmed exam score. A legacy zero does not prove an exam was entered.");
-      else if (!record || !Number.isFinite(record.classworkScore) || !Number.isFinite(record.totalScore) || Math.abs(record.classworkScore - progress.earnedMarks) > 0.005 || position.total === null || Math.abs(record.totalScore - position.total) > 0.005) add("STALE_TOTAL", "Stored report totals do not match the assessment evidence. Teacher records need reconciliation.");
-      else { readyEntryCount++; readyByStudent.set(student.id, (readyByStudent.get(student.id) ?? 0) + 1); }
+      else if (!record || !Number.isFinite(record.classworkScore) || !Number.isFinite(record.totalScore) || Math.abs(record.classworkScore - progress.earnedMarks) > 0.005 || position.total === null || Math.abs(record.totalScore - position.total) > 0.005 || record.grade !== getGradeBand(position.total).grade || record.gradePoint !== getGradeBand(position.total).gradePoint) add("STALE_TOTAL", "Stored report totals or grades do not match the assessment evidence. Teacher records need reconciliation.");
+      else { readyEntryCount++; readyEntries.push({ studentId: student.id, subjectId: subject.id }); readyByStudent.set(student.id, (readyByStudent.get(student.id) ?? 0) + 1); }
     } catch (error) {
       if (!(error instanceof Error) || !["Raw maximum score must be greater than zero.", "Raw score cannot be negative.", "Raw score cannot exceed the activity maximum score.", "CA allocation must be greater than zero."].includes(error.message)) throw error;
       add("INVALID_SCORE", "Raw activity score or maximum requires correction.");
     }
   }
   const expectedEntryCount = students.length * subjectIds.length;
-  return { classId, currentPeriod, examRequired: (config?.examWeight ?? 0) > 0, issues, studentCount: students.length, subjectCount: subjectIds.length, expectedEntryCount, readyEntryCount, caStartedEntryCount, missingCount: blockers.length, missingCACount: blockers.filter((b) => b.reason !== "MISSING_EXAM").length, missingExamCount: blockers.filter((b) => b.reason === "MISSING_EXAM").length, readyStudentCount: [...readyByStudent.values()].filter((count) => subjectIds.length > 0 && count === subjectIds.length).length, studentPositions: students.map((s) => ({ studentId: s.id, ready: readyByStudent.get(s.id) ?? 0, caStarted: startedByStudent.get(s.id) ?? 0 })), isReady: expectedEntryCount > 0 && issues.length === 0 && blockers.length === 0, blockers };
+  return { readyEntries, classId, currentPeriod, examRequired: (config?.examWeight ?? 0) > 0, issues, studentCount: students.length, subjectCount: subjectIds.length, expectedEntryCount, readyEntryCount, caStartedEntryCount, missingCount: blockers.length, missingCACount: blockers.filter((b) => b.reason !== "MISSING_EXAM").length, missingExamCount: blockers.filter((b) => b.reason === "MISSING_EXAM").length, readyStudentCount: [...readyByStudent.values()].filter((count) => subjectIds.length > 0 && count === subjectIds.length).length, studentPositions: students.map((s) => ({ studentId: s.id, ready: readyByStudent.get(s.id) ?? 0, caStarted: startedByStudent.get(s.id) ?? 0 })), isReady: expectedEntryCount > 0 && issues.length === 0 && blockers.length === 0, blockers };
 }

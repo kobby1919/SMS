@@ -50,6 +50,11 @@ test("empty strings cannot be coerced into explicitly recorded exam zeroes", () 
   assert.equal(caBulkEntrySchema.safeParse(input).success, false);
   assert.equal(caBulkEntrySchema.safeParse({ ...input, rows: [{ ...input.rows[0], examScore: 0 }] }).success, true);
 });
+test("CA score precision matches storage and blank values never become recorded zero", () => {
+  const { rawActivityMarkSchema } = load("src/lib/validation/ca.ts");
+  for (const value of ["", "0", 0.001, NaN, Infinity]) assert.equal(rawActivityMarkSchema.safeParse(value).success, false);
+  for (const value of [0, 0.01, 9.99, 1000]) assert.equal(rawActivityMarkSchema.safeParse(value).success, true);
+});
 function fixture(options = {}) {
   const state = { records: new Map(), audits: [], commits: 0 };
   if (options.existing) state.records.set("s", options.existing);
@@ -133,4 +138,39 @@ test("shared readiness rules use one school, reject conflicting setup and omit i
   assert.equal(empty.period, null); assert.equal(empty.publicationId, null); assert.equal(empty.scope.length, 0); assert.equal(empty.issues.length, 3);
   const inactive = await run({ inactive: true });
   assert.equal(inactive.scope.length, 0); assert.match(inactive.issues[0], /assignments/);
+});
+function caFixture(options = {}) {
+  const state = { saved: [], totals: [], locked: false, audits: [] };
+  const service = load("src/lib/services/ca-score-recording.ts", {
+    "@/src/lib/prisma": { $transaction: async (work, opts) => {
+      assert.equal(opts.isolationLevel, "Serializable");
+      const pending = { saved: [], totals: [], locked: false, audits: [] };
+      const tx = {
+        cAConfig: { findMany: async () => [{ academicYear: "2026/27", currentTerm: "TERM_1", classworkWeight: 30, examWeight: 70 }] },
+        cAActivity: { findFirst: async (q) => { assert.equal(q.where.schoolId, "school-a"); assert.equal(q.where.teacherId, "t"); return { id: 1, classId: 1, subjectId: 2, rawMaxScore: 10, activityDate: new Date("2026-10-10"), updatedAt: now, isLocked: options.locked ?? false, bucket: { classId: 1, subjectId: 2, isLocked: false } }; }, updateMany: async () => { pending.locked = true; return { count: options.race ? 0 : 1 }; } },
+        timetablePublication: { findMany: async () => [{ id: "pub" }] }, publishedTimetableLesson: { findFirst: async () => options.wrongScope ? null : { id: 1 } },
+        student: { findMany: async () => [{ id: "s", createdAt: new Date("2026-09-01"), classJoinedAt: new Date("2026-09-01") }, { id: "transfer", createdAt: new Date("2020-01-01"), classJoinedAt: now }] },
+        cAAuditLog: { create: async (q) => { if (options.auditFail) throw new Error("Audit failed"); pending.audits.push(q.data); } },
+        pending,
+      };
+      const result = await work(tx); Object.assign(state, pending); return result;
+    } },
+    "@/src/lib/services/report-publication": { assertReportSetEditable: async () => { if (options.published) throw new Error("Published report locked"); } },
+    "@/src/lib/services/ca-activity": { upsertCAActivityScore: async (input, tx) => { tx.pending.saved.push(input); return { changed: true, score: { id: 1, studentId: input.studentId } }; }, syncComputedCARecord: async (input, tx) => { if (options.totalFail) throw new Error("Invalid computed total"); tx.pending.totals.push(input); } },
+  });
+  return { ...service, recordCAActivityScores: (input) => service.recordCAActivityScores(input, now), state, input: { schoolId: "school-a", teacherId: "t", activityId: 1, rows: [{ studentId: "s", rawScore: 0 }] } };
+}
+test("CA score batches save scores, totals, audit and lock atomically without inherited transfer duties", async () => {
+  const f = caFixture(); await f.recordCAActivityScores(f.input);
+  assert.equal(f.state.saved.length, 1); assert.equal(f.state.saved[0].rawScore, 0);
+  assert.equal(f.state.totals.length, 1); assert.equal(f.state.locked, true); assert.equal(f.state.audits.length, 1);
+});
+test("failed CA audit, totals, competing lock, report lock or scope leaves no partial scores", async () => {
+  for (const options of [{ auditFail: true }, { totalFail: true }, { race: true }, { published: true }, { locked: true }, { wrongScope: true }]) {
+    const f = caFixture(options); await assert.rejects(f.recordCAActivityScores(f.input));
+    assert.equal(f.state.saved.length, 0); assert.equal(f.state.totals.length, 0); assert.equal(f.state.locked, false); assert.equal(f.state.audits.length, 0);
+  }
+  for (const rows of [[{ studentId: "transfer", rawScore: 1 }], [{ studentId: "s", rawScore: 90 }], [{ studentId: "s", rawScore: NaN }], [{ studentId: "s", rawScore: 0 }, { studentId: "s", rawScore: 0 }]]) {
+    const f = caFixture(); await assert.rejects(f.recordCAActivityScores({ ...f.input, rows })); assert.equal(f.state.saved.length, 0);
+  }
 });

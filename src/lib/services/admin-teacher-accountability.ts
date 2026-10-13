@@ -1,6 +1,6 @@
 import "server-only";
 import prisma from "@/src/lib/prisma";
-import { activityEligibility } from "@/src/lib/academic-readiness-rules";
+import { activityEligibility, validAssessmentWeights } from "@/src/lib/academic-readiness-rules";
 import { eligibleAttendanceStudentIds } from "@/src/lib/attendance-review";
 import { Prisma } from "@/src/generated/prisma";
 import { caPublishingDeadline } from "@/src/lib/services/teacher-ca-obligations";
@@ -21,7 +21,8 @@ export async function getAdminTeacherAccountability(schoolId: string, now = new 
     const operating = await tx.schoolNotificationSetting.findUnique({ where: { schoolId }, select: { timezone: true, activeDays: true } });
     const activeDays = operating?.activeDays.length ? operating.activeDays : ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
     const publication = await tx.timetablePublication.findFirst({ where: { schoolId, status: "ACTIVE" }, orderBy: [{ publishedAt: "desc" }, { id: "desc" }], select: { id: true, publishedAt: true } });
-    const config = await tx.cAConfig.findFirst({ where: { schoolId, isActive: true }, orderBy: [{ updatedAt: "desc" }, { id: "desc" }], select: { academicYear: true, currentTerm: true } });
+    const configs = await tx.cAConfig.findMany({ where: { schoolId, isActive: true }, take: 2, select: { academicYear: true, currentTerm: true, classworkWeight: true, examWeight: true } });
+    const config = configs.length === 1 && validAssessmentWeights(configs[0]) ? configs[0] : null;
     const teachers = await tx.teacher.findMany({ where: { schoolId, status: "ACTIVE" }, select: { id: true, name: true, surname: true, sex: true } });
     const names = new Map(teachers.map((teacher) => [teacher.id, teacherFollowUpName(teacher)]));
     const lessons = publication ? await tx.publishedTimetableLesson.findMany({ where: { schoolId, publicationId: publication.id, teacherId: { in: teachers.map((teacher) => teacher.id) } }, select: { sourceId: true, teacherId: true, classId: true, subjectId: true, className: true, subjectName: true, day: true, startTime: true, endTime: true } }) : [];

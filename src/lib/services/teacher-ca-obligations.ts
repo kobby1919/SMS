@@ -1,5 +1,5 @@
 import prisma from "@/src/lib/prisma";
-import { activityEligibility, caRecordingDeadline } from "@/src/lib/academic-readiness-rules";
+import { activityEligibility, caRecordingDeadline, validAssessmentWeights } from "@/src/lib/academic-readiness-rules";
 import type {
   TeacherObligationPriority,
   TeacherObligationStatus,
@@ -116,10 +116,11 @@ export async function syncCAActivityScorePublishingObligation({
     prisma.schoolNotificationSetting.findUnique({ where: { schoolId }, select: { timezone: true, activeDays: true } }),
   ]);
   if (!activity) return null;
-  const [lessons, config] = await Promise.all([
+  const [lessons, configs] = await Promise.all([
     listLiveTimetableLessons(schoolId, { teacherId: activity.teacherId, classId: activity.classId }),
-    prisma.cAConfig.findFirst({ where: { schoolId, isActive: true }, orderBy: [{ updatedAt: "desc" }, { id: "desc" }], select: { academicYear: true, currentTerm: true } }),
+    prisma.cAConfig.findMany({ where: { schoolId, isActive: true }, take: 2, select: { academicYear: true, currentTerm: true, classworkWeight: true, examWeight: true } }),
   ]);
+  const config = configs.length === 1 && validAssessmentWeights(configs[0]) ? configs[0] : null;
   if (!lessons.some((lesson) => lesson.subjectId === activity.subjectId) ||
       activity.bucket.classId !== activity.classId || activity.bucket.subjectId !== activity.subjectId ||
       !config || config.academicYear !== activity.bucket.academicYear || config.currentTerm !== activity.bucket.term) return null;

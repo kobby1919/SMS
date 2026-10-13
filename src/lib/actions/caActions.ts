@@ -5,6 +5,7 @@
 
 import prisma from "@/src/lib/prisma";
 import { recordExamScores } from "@/src/lib/services/exam-recording";
+import { recordCAActivityScores } from "@/src/lib/services/ca-score-recording";
 import { hasRecordedExam, activityEligibility } from "@/src/lib/academic-readiness-rules";
 import { claimTeacherCorrectionReview } from "@/src/lib/services/teacher-obligation-store";
 import { requireRole } from "@/src/lib/authz";
@@ -21,6 +22,7 @@ import {
   caRecordUpdateSchema,
   examEntryWindowSchema,
   reportPublicationSchema,
+  rawActivityMarkSchema,
 } from "@/src/lib/validation/ca";
 import { nonEmptyStringSchema, positiveIntSchema } from "@/src/lib/validation/common";
 import type { Prisma, Term } from "@/src/generated/prisma";
@@ -31,7 +33,6 @@ import {
   createCABucket,
   logCAAudit,
   syncComputedCARecordsForActivity,
-  upsertCAActivityScore,
 } from "@/src/lib/services/ca-activity";
 import {
   recordCAActivityGivenEvents,
@@ -114,6 +115,14 @@ export async function upsertCAConfig(data: CAConfigInput) {
   const parsed = parseActionInput(caConfigSchema, data);
 
   const config = await prisma.$transaction(async (tx) => {
+    const existing = await tx.cAConfig.findUnique({ where: { schoolId_academicYear: { schoolId, academicYear: parsed.academicYear } } });
+    if (existing && (existing.classworkWeight !== parsed.classworkWeight || existing.examWeight !== parsed.examWeight)) {
+      const [buckets, records] = await Promise.all([
+        tx.cABucket.count({ where: { schoolId, academicYear: parsed.academicYear } }),
+        tx.continuousAssessment.count({ where: { schoolId, academicYear: parsed.academicYear } }),
+      ]);
+      if (buckets || records) throw new Error("Assessment weights cannot change after this year's CA setup or score records exist. Use a new academic-year configuration.");
+    }
     if (parsed.isActive) {
       await tx.cAConfig.updateMany({
         where: { schoolId, academicYear: { not: parsed.academicYear } },
@@ -138,7 +147,7 @@ export async function upsertCAConfig(data: CAConfigInput) {
         examWeight:      parsed.examWeight,
       },
     });
-  });
+  }, { isolationLevel: "Serializable" });
 
   revalidatePath("/list/ca");
   revalidatePath("/admin");
@@ -461,26 +470,9 @@ export async function bulkUpsertCAActivityScores(data: {
     throw new Error(`Raw score cannot exceed the activity maximum score of ${rawMaxScore}.`);
   }
 
-  const writeResults = await Promise.all(
-    parsed.rows.map((row) =>
-      upsertCAActivityScore({
-        schoolId,
-        activityId: parsed.activityId,
-        studentId: row.studentId,
-        rawScore: row.rawScore,
-        recordedBy: userId,
-        comment: row.comment,
-      }),
-    ),
-  );
+  const writeResults = await recordCAActivityScores({ schoolId, teacherId: userId, activityId: parsed.activityId, rows: parsed.rows });
   const changedScores = writeResults.filter((result) => result.changed).map((result) => result.score);
   const allScores = writeResults.map((result) => result.score);
-
-  await syncComputedCARecordsForActivity({
-    schoolId,
-    activityId: parsed.activityId,
-    studentIds: parsed.rows.map((row) => row.studentId),
-  });
 
   const events = changedScores.length > 0
     ? await recordCAActivityScoreEvents({
@@ -490,32 +482,11 @@ export async function bulkUpsertCAActivityScores(data: {
       })
     : [];
 
-  if (changedScores.length > 0) {
-    await prisma.cAActivity.update({
-      where: { id: parsed.activityId, schoolId },
-      data: { isLocked: true },
-    });
-  }
   await syncCAActivityScorePublishingObligation({
     schoolId,
     activityId: parsed.activityId,
   });
 
-  await logCAAudit({
-    schoolId,
-    actorId: userId,
-    action: changedScores.length > 0 ? "CA_ACTIVITY_SCORES_SUBMITTED_AND_LOCKED" : "CA_ACTIVITY_SCORES_UNCHANGED",
-    entityType: "CAActivity",
-    entityId: parsed.activityId,
-    message: changedScores.length > 0
-      ? `${allScores.length} student score${allScores.length === 1 ? "" : "s"} submitted and the CA activity was locked.`
-      : "No score changes detected for this CA activity.",
-    metadata: {
-      scoreIds: allScores.map((score) => score.id),
-      changedScoreIds: changedScores.map((score) => score.id),
-      studentIds: parsed.rows.map((row) => row.studentId),
-    },
-  });
 
   revalidatePath("/list/ca");
   revalidatePath("/list/ca", "page");
@@ -534,7 +505,7 @@ export async function requestCAActivityScoreCorrection(data: {
   reason: string;
 }) {
   const scoreId = parseActionInput(positiveIntSchema, data.scoreId);
-  const newRawScore = Number(data.newRawScore);
+  const newRawScore = parseActionInput(rawActivityMarkSchema, data.newRawScore);
   const reason = parseActionInput(nonEmptyStringSchema, data.reason);
   if (!Number.isFinite(newRawScore) || newRawScore < 0) {
     throw new Error("Enter a valid corrected CA score.");
