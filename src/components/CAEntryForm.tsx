@@ -4,6 +4,7 @@
 // Batch CA entry form — class supervisor enters scores for all students
 // in their class for one subject in one go.
 
+import { hasRecordedExam } from "@/src/lib/academic-readiness-rules";
 import { useState, useEffect, useMemo, useTransition } from "react";
 import {
   CheckCircle2, AlertCircle, Loader2, ChevronDown,
@@ -37,6 +38,7 @@ type CARow = {
 type RowEdit = Partial<Pick<CARow, "classworkScore" | "examScore" | "remarks">>;
 
 type ExistingCA = {
+  examRecordedAt?: Date | string | null;
   studentId:      string;
   subjectId:      number;
   term:           Term;
@@ -106,7 +108,7 @@ const buildRows = (
     return {
       studentId:      student.id,
       classworkScore: String(activityProgress?.classworkScore ?? 0),
-      examScore:      existing ? String(existing.examScore)      : "",
+      examScore:      hasRecordedExam(existing) ? String(existing!.examScore) : "",
       remarks:        existing ? existing.remarks                : "",
     };
   });
@@ -167,10 +169,10 @@ const CAEntryForm = ({
         setCAConfig(
           data?.classworkWeight != null
             ? { classworkWeight: data.classworkWeight, examWeight: data.examWeight }
-            : { classworkWeight: 30, examWeight: 70 } // fallback default
+            : null
         );
       })
-      .catch(() => setCAConfig({ classworkWeight: 30, examWeight: 70 }))
+      .catch(() => setCAConfig(null))
       .finally(() => setConfigLoading(false));
   }, [selectedYear]);
 
@@ -211,7 +213,7 @@ const CAEntryForm = ({
           record.subjectId === selectedSubjectId &&
           record.term === selectedTerm &&
           record.academicYear === selectedYear &&
-          record.examScore > 0,
+          hasRecordedExam(record),
       ),
     [existingCA, selectedSubjectId, selectedTerm, selectedYear],
   );
@@ -242,10 +244,6 @@ const CAEntryForm = ({
       setApiError("CA configuration not loaded. Please wait or refresh.");
       return;
     }
-    if (!scoreEntryWindow.allowed) {
-      setApiError(scoreEntryWindow.reason ?? "CA entry is locked outside the published lesson period.");
-      return;
-    }
     if (!examEntryOpen) {
       setApiError("Exam entry is locked for this class period. Ask an admin to open exam entry before saving exam scores.");
       return;
@@ -267,7 +265,7 @@ const CAEntryForm = ({
 
     // Only submit rows that have at least one score entered
     const filledRows = rows
-      .filter((r) => activityCAEnabled ? r.examScore !== "" : r.classworkScore !== "" || r.examScore !== "")
+      .filter((r) => r.examScore !== "")
       .map((r) => ({
         studentId:      r.studentId,
         classworkScore: parseFloat(r.classworkScore) || 0,
@@ -741,7 +739,7 @@ const CAEntryForm = ({
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={isPending || !selectedSubjectId || !examEntryOpen || !scoreEntryWindow.allowed}
+          disabled={isPending || !selectedSubjectId || !examEntryOpen}
           className="flex-1 bg-indigo-600 text-white py-2.5 rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {isPending ? (

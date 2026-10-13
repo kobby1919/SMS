@@ -73,6 +73,6 @@ test("missing records recover safely and finance review cannot expose operationa
   assert.match(readFileSync("src/lib/actions/parentFinanceActions.ts", "utf8"), /resolveFinanceQuery[\s\S]*requireFinanceOperationAccess/);
   assert.match(readFileSync("src/app/api/report-card/pdf/route.tsx", "utf8"), /\["admin", "teacher", "parent", "student"\]\.includes\(role\)/);
   assert.match(readFileSync("src/app/api/report-card/pdf/route.tsx", "utf8"), /reportReady = readiness\.isReady && readiness\.subjectCount === subjectRows\.length/);
-  for (const path of ["src/app/api/report-card/pdf/route.tsx", "src/app/(dashboard)/list/report-cards/[studentId]/page.tsx"]) assert.match(readFileSync(path, "utf8"), /if \(exWeight > 0 && r.examScore <= 0\) continue/);
+  for (const path of ["src/app/api/report-card/pdf/route.tsx", "src/app/(dashboard)/list/report-cards/[studentId]/page.tsx"]) assert.match(readFileSync(path, "utf8"), /if \(exWeight > 0 && !hasRecordedExam\(r\)\) continue/);
   assert.match(readFileSync("src/app/(dashboard)/list/report-cards/[studentId]/page.tsx", "utf8"), /isComplete:\s+readiness\.issues\.length === 0/);
 });

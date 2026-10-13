@@ -91,7 +91,9 @@ function hasRequiredDelegates(client: ReturnType<typeof prismaClientSingleton>) 
     teacherFieldNames.has(field),
   );
 
-  return hasDelegates && hasReportWorkflowFields && hasPeriodTemplateFields && hasTeacherLifecycleFields;
+  const hasAcademicEvidenceFields = runtimeModels?.ContinuousAssessment?.fields?.some((field) => field.name === "examRecordedAt") &&
+    runtimeModels?.Student?.fields?.some((field) => field.name === "classJoinedAt");
+  return hasDelegates && hasReportWorkflowFields && hasPeriodTemplateFields && hasTeacherLifecycleFields && hasAcademicEvidenceFields;
 }
 
 let prismaClient = customGlobal.prismaGlobal;

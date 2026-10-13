@@ -1,5 +1,7 @@
 "use client";
 
+import { hasRecordedExam } from "@/src/lib/academic-readiness-rules";
+
 // src/components/CAClassSummary.tsx
 // Shows a pivot-style summary: rows = students, cols = subjects
 // Displays grade, total score, and highlights positions for each subject.
@@ -10,6 +12,8 @@ import { formatMark } from "@/src/lib/formatters/marks";
 import { Trophy, Medal, TrendingUp, ChevronDown } from "lucide-react";
 
 type CARecord = {
+  examWeight?: number;
+  examRecordedAt?: Date | string | null;
   id:             number;
   studentId:      string;
   studentName:    string;
@@ -37,7 +41,7 @@ type Props = {
 };
 
 function isReportReady(record?: CARecord) {
-  return Boolean(record && record.examScore > 0);
+  return Boolean(record && (record.examWeight === 0 || hasRecordedExam(record)));
 }
 
 // ─── Position badge ────────────────────────────────────────────────────────────

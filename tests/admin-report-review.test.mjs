@@ -20,7 +20,7 @@ function evidence(options = {}) {
   const activity = { id: 1, subjectId: options.wrongSubject ? 3 : 2, title: "Reading", rawMaxScore: 10, allocationMarks: 30, activityDate: new Date("2026-10-10"), teacher: { name: "Victoria", surname: "Mensah" }, scores: options.noScores ? [] : [{ studentId: "s1", rawScore: options.rawScore ?? 0, normalizedContribution: options.contribution ?? 0 }] };
   const bucket = { id: 1, subjectId: 2, name: "Classwork", type: "CLASSWORK", aggregationMode: options.sum ? "SUM_ACTIVITIES" : "AVERAGE_TO_BUCKET", allocationMarks: 30, activities: [activity, ...(options.future ? [{ ...activity, id: 2, activityDate: new Date("2026-10-13") }] : [])] };
   const track = (value) => async (q) => { queries.push(q); assert.equal(q.where.schoolId ?? q.where.schoolId_academicYear?.schoolId, "school-a"); return typeof value === "function" ? value(q) : value; };
-  const db = { class: { findFirst: track(options.foreign ? null : { id: 1 }) }, cAConfig: { findUnique: track(options.noConfig ? null : config), findFirst: track(options.historical ? { ...config, academicYear: "2027/28" } : config) }, publishedTimetableLesson: { findMany: track(options.noSubjects ? [] : [{ subjectId: 2, subjectName: "Reading" }, { subjectId: 2, subjectName: "Reading" }]) }, subject: { findMany: track([{ id: 2, name: "Reading" }]) }, student: { findMany: track((q) => q.where.status ? students.filter((s) => s.status === q.where.status) : students) }, continuousAssessment: { findMany: track(options.noRecord ? [] : [record]) }, cABucket: { findMany: track([bucket]) } };
+  const db = { class: { findFirst: track(options.foreign ? null : { id: 1 }) }, cAConfig: { findUnique: track(options.noConfig ? null : config), findMany: track(options.historical ? [{ ...config, academicYear: "2027/28" }] : options.multipleConfigs ? [config, config] : [config]) }, timetablePublication: { findMany: track(options.multiplePublications ? [{ id: "p1" }, { id: "p2" }] : [{ id: "p" }]) }, publishedTimetableLesson: { findMany: track(options.noSubjects ? [] : [{ subjectId: 2, subjectName: "Reading" }, { subjectId: 2, subjectName: "Reading" }]) }, subject: { findMany: track([{ id: 2, name: "Reading" }]) }, student: { findMany: track((q) => q.where.status ? students.filter((s) => s.status === q.where.status) : students) }, continuousAssessment: { findMany: track(options.noRecord ? [] : [record]) }, cABucket: { findMany: track([bucket]) } };
   const prisma = { ...db, $transaction: async (fn, opts) => { assert.equal(opts.isolationLevel, "RepeatableRead"); return fn(db); } };
   db.teacherCorrectionRequest = { count: async ({ where }) => { assert.equal(where.schoolId, "school-a"); assert.equal(where.status, "PENDING"); return options.pendingCorrections ?? 0; } };
   const service = load("src/lib/services/report-card-readiness.ts", { "@/src/lib/prisma": prisma, "@/src/lib/services/timetable": {}, "@/src/lib/caGrades": {} });
@@ -45,6 +45,17 @@ test("positive exam alone cannot hide incomplete CA, future work, invalid raw ma
     assert.equal(r.blockers[0].reason, reason);
     assert.equal(r.blockers[0].studentId, "s1");
     assert.equal(r.blockers[0].subjectId, 2);
+  }
+});
+test("an explicitly entered exam zero permits release; a default zero remains missing", async () => {
+  assert.equal((await evidence({ record: { examScore: 0, examRecordedAt: now, totalScore: 0 } }).service.getClassReportReadiness(context)).isReady, true);
+  assert.equal((await evidence({ record: { examScore: 0, totalScore: 0 } }).service.getClassReportReadiness(context)).isReady, false);
+});
+test("conflicting active periods or timetable publications cannot certify reports", async () => {
+  for (const options of [{ multipleConfigs: true }, { multiplePublications: true }]) {
+    const r = await evidence(options).service.getClassReportReadiness(context);
+    assert.equal(r.isReady, false);
+    assert.ok(r.issues.length);
   }
 });
 test("misfiled activity evidence blocks report readiness", async () => {

@@ -18,7 +18,7 @@ const now = new Date("2026-10-08T12:00:00Z");
 const teacher = { id: "teacher-1", name: "Ama", surname: "Mensah", sex: "FEMALE" };
 const lesson = { sourceId: 1, teacherId: teacher.id, classId: 1, subjectId: 1, className: "KG1", subjectName: "Reading", day: "THURSDAY", startTime: new Date("2000-01-01T09:00:00Z"), endTime: new Date("2000-01-01T10:00:00Z") };
 const policy = { attendanceEscalateMinutesAfterLesson: 30, caScorePublishWindowSchoolDays: 3, homeworkCheckWindowSchoolDays: 2, teacherCloseoutTime: "16:00" };
-const student = { id: "student-1", classId: 1, createdAt: new Date("2026-09-01T00:00:00Z") };
+const student = { id: "student-1", classId: 1, createdAt: new Date("2026-09-01T00:00:00Z"), classJoinedAt: new Date("2026-09-01T00:00:00Z") };
 const obligation = { id: "obligation-1", teacherId: teacher.id, type: "ATTENDANCE", sourceModel: "Lesson", sourceId: "1", sourceKey: "attendance:2026-10-08:lesson:1", status: "ESCALATED", completedAt: null, expectedAt: new Date("2026-10-08T10:00:00Z"), metadata: { classId: 1, subjectId: 1, date: "2026-10-08" }, escalations: [] };
 
 async function snapshot(overrides = {}, teacherId, at = now) {

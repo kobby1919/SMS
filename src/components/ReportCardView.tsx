@@ -574,7 +574,7 @@ const ReportCardView = ({
                         <div className="rounded-xl bg-gray-50 p-3">
                           <p className="text-[10px] font-black uppercase text-gray-400">Exam</p>
                           <p className="mt-1 text-sm font-black text-gray-800">
-                            {row.examScore > 0 ? `${row.examScore.toFixed(1)} / ${formatMark(exWeight)}` : "Pending"}
+                            {row.isComplete ? `${row.examScore.toFixed(1)} / ${formatMark(exWeight)}` : "Pending"}
                           </p>
                         </div>
                         <div className="rounded-xl bg-gray-50 p-3">

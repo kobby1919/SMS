@@ -1,5 +1,6 @@
 import "server-only";
 import prisma from "@/src/lib/prisma";
+import { activityEligibility } from "@/src/lib/academic-readiness-rules";
 import { eligibleAttendanceStudentIds } from "@/src/lib/attendance-review";
 import { Prisma } from "@/src/generated/prisma";
 import { caPublishingDeadline } from "@/src/lib/services/teacher-ca-obligations";
@@ -17,7 +18,7 @@ export type AdminTeacherAccountabilitySnapshot = Omit<Awaited<ReturnType<typeof 
 export async function getAdminTeacherAccountability(schoolId: string, now = new Date(), teacherId?: string, includeDetails = false) {
   return prisma.$transaction(async (tx) => {
     const policy = await tx.teacherAccountabilitySetting.findUnique({ where: { schoolId } });
-    const operating = await tx.schoolNotificationSetting.findUnique({ where: { schoolId }, select: { activeDays: true } });
+    const operating = await tx.schoolNotificationSetting.findUnique({ where: { schoolId }, select: { timezone: true, activeDays: true } });
     const activeDays = operating?.activeDays.length ? operating.activeDays : ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
     const publication = await tx.timetablePublication.findFirst({ where: { schoolId, status: "ACTIVE" }, orderBy: [{ publishedAt: "desc" }, { id: "desc" }], select: { id: true, publishedAt: true } });
     const config = await tx.cAConfig.findFirst({ where: { schoolId, isActive: true }, orderBy: [{ updatedAt: "desc" }, { id: "desc" }], select: { academicYear: true, currentTerm: true } });
@@ -25,7 +26,7 @@ export async function getAdminTeacherAccountability(schoolId: string, now = new 
     const names = new Map(teachers.map((teacher) => [teacher.id, teacherFollowUpName(teacher)]));
     const lessons = publication ? await tx.publishedTimetableLesson.findMany({ where: { schoolId, publicationId: publication.id, teacherId: { in: teachers.map((teacher) => teacher.id) } }, select: { sourceId: true, teacherId: true, classId: true, subjectId: true, className: true, subjectName: true, day: true, startTime: true, endTime: true } }) : [];
     const classIds = [...new Set(lessons.map((lesson) => lesson.classId))];
-    const students = await tx.student.findMany({ where: { schoolId, status: "ACTIVE", classId: { in: classIds }, class: { schoolId } }, select: { id: true, classId: true, createdAt: true } });
+    const students = await tx.student.findMany({ where: { schoolId, status: "ACTIVE", classId: { in: classIds }, class: { schoolId } }, select: { id: true, classId: true, createdAt: true, classJoinedAt: true } });
     const studentsByClass = new Map<number, typeof students>();
     for (const student of students) {
       const entries = studentsByClass.get(student.classId) ?? [];
@@ -106,11 +107,11 @@ export async function getAdminTeacherAccountability(schoolId: string, now = new 
       const activities = config ? await tx.cAActivity.findMany({ where: { schoolId, activityDate: { lte: now }, class: { schoolId }, subject: { schoolId }, teacher: { schoolId }, bucket: { schoolId, term: config.currentTerm, academicYear: config.academicYear } }, select: { id: true, title: true, activityDate: true, teacherId: true, classId: true, subjectId: true, bucket: { select: { classId: true, subjectId: true } }, scores: { where: { schoolId, student: { schoolId, status: "ACTIVE" } }, select: { studentId: true } } } }) : [];
       for (const activity of activities) {
         if (activity.bucket.classId !== activity.classId || activity.bucket.subjectId !== activity.subjectId || !scopes.has(scopeKey(activity.teacherId, activity.classId, activity.subjectId))) continue;
-        const expected = roster(activity.classId, activity.activityDate);
+        const expected = new Set((studentsByClass.get(activity.classId) ?? []).filter((student) => activityEligibility(student, activity.activityDate) === "ELIGIBLE").map((student) => student.id));
         if (!expected.size) continue;
         const scored = new Set(activity.scores.filter((row) => expected.has(row.studentId)).map((row) => row.studentId));
         const lesson = lessons.find((row) => row.teacherId === activity.teacherId && row.classId === activity.classId && row.subjectId === activity.subjectId)!;
-        addDuty({ teacherId: activity.teacherId, key: `ca-score-publishing:activity:${activity.id}`, kind: "CA_SCORE_PUBLISHING", title: `${lesson.className}: ${activity.title}`, detail: `${lesson.subjectName}; ${scored.size} of ${expected.size} student scores saved`, deadline: caPublishingDeadline(activity.activityDate, policy.caScorePublishWindowSchoolDays, policy.teacherCloseoutTime), complete: scored.size === expected.size });
+        addDuty({ teacherId: activity.teacherId, key: `ca-score-publishing:activity:${activity.id}`, kind: "CA_SCORE_PUBLISHING", title: `${lesson.className}: ${activity.title}`, detail: `${lesson.subjectName}; ${scored.size} of ${expected.size} student scores saved`, deadline: caPublishingDeadline(activity.activityDate, policy.caScorePublishWindowSchoolDays, policy.teacherCloseoutTime, operating ?? undefined), complete: scored.size === expected.size });
       }
     }
     // Review queues retain history even when the timetable, roster or setup changes.

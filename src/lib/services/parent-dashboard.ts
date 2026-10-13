@@ -1,3 +1,4 @@
+import { hasRecordedExam } from "@/src/lib/academic-readiness-rules";
 import prisma from "@/src/lib/prisma";
 import { computeAggregate } from "@/src/lib/caGrades";
 import type { CalendarLesson } from "@/src/components/BigCalendar";
@@ -439,7 +440,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     }),
     prisma.cAConfig.findMany({
       where: { schoolId },
-      select: { academicYear: true, classworkWeight: true },
+      select: { academicYear: true, classworkWeight: true, examWeight: true },
     }),
     getActiveAcademicPeriod(schoolId),
     prisma.schoolCommunicationPolicy.findUnique({
@@ -643,7 +644,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     }
     const termGroups = Array.from(groupMap.entries()).map(([key, records]) => {
       const [year, term] = key.split("__");
-      const reportReadyRecords = records.filter((record) => record.examScore > 0);
+      const reportReadyRecords = records.filter((record) => caConfigs.find((config) => config.academicYear === record.academicYear)?.examWeight === 0 || hasRecordedExam(record));
       const scores = reportReadyRecords.map((record) => record.totalScore);
       const caScores = records.map((record) => record.classworkScore);
       return {

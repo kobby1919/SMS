@@ -80,7 +80,7 @@ async function loadRows(input: {
   const context = { schoolId: input.schoolId, classId: input.classId, subjectId: input.subjectId, term: input.term, academicYear: input.year };
   const ids = input.students.map((student) => student.id);
   const [records, updates, futureActivities] = await Promise.all([
-    db.continuousAssessment.findMany({ where: { ...context, studentId: { in: ids } }, select: { studentId: true, examScore: true, updatedAt: true } }),
+    db.continuousAssessment.findMany({ where: { ...context, studentId: { in: ids } }, select: { studentId: true, examScore: true, examRecordedAt: true, updatedAt: true } }),
     db.cAActivityScore.findMany({ where: { schoolId: input.schoolId, studentId: { in: ids }, activity: { schoolId: input.schoolId, classId: input.classId, subjectId: input.subjectId, activityDate: { lte: input.now }, bucket: context } }, select: { studentId: true, updatedAt: true } }),
     db.cAActivity.count({ where: { schoolId: input.schoolId, classId: input.classId, subjectId: input.subjectId, bucket: context, activityDate: { gt: input.now } } }),
   ]);
@@ -99,7 +99,7 @@ async function loadRows(input: {
     }
     const record = records.find((item) => item.studentId === student.id);
     const dates = [...updates.filter((item) => item.studentId === student.id).map((item) => item.updatedAt), ...(record ? [record.updatedAt] : [])];
-    const position = assessmentPosition(progress, record?.examScore ?? null, input.config.examWeight, futureActivities);
+    const position = assessmentPosition(progress, record?.examScore ?? null, input.config.examWeight, futureActivities, record?.examRecordedAt);
     if (invalidScore) position.status = "Needs review";
     return { student, progress, examScore: record?.examScore ?? null, position, updatedAt: dates.length ? new Date(Math.max(...dates.map((date) => date.getTime()))) : null };
   }));

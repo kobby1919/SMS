@@ -19847,6 +19847,7 @@ export namespace Prisma {
     sex: $Enums.UserSex | null
     status: $Enums.StudentStatus | null
     createdAt: Date | null
+    classJoinedAt: Date | null
     updatedAt: Date | null
     schoolId: string | null
     parentId: string | null
@@ -19868,6 +19869,7 @@ export namespace Prisma {
     sex: $Enums.UserSex | null
     status: $Enums.StudentStatus | null
     createdAt: Date | null
+    classJoinedAt: Date | null
     updatedAt: Date | null
     schoolId: string | null
     parentId: string | null
@@ -19889,6 +19891,7 @@ export namespace Prisma {
     sex: number
     status: number
     createdAt: number
+    classJoinedAt: number
     updatedAt: number
     schoolId: number
     parentId: number
@@ -19922,6 +19925,7 @@ export namespace Prisma {
     sex?: true
     status?: true
     createdAt?: true
+    classJoinedAt?: true
     updatedAt?: true
     schoolId?: true
     parentId?: true
@@ -19943,6 +19947,7 @@ export namespace Prisma {
     sex?: true
     status?: true
     createdAt?: true
+    classJoinedAt?: true
     updatedAt?: true
     schoolId?: true
     parentId?: true
@@ -19964,6 +19969,7 @@ export namespace Prisma {
     sex?: true
     status?: true
     createdAt?: true
+    classJoinedAt?: true
     updatedAt?: true
     schoolId?: true
     parentId?: true
@@ -20072,6 +20078,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status: $Enums.StudentStatus
     createdAt: Date
+    classJoinedAt: Date | null
     updatedAt: Date
     schoolId: string
     parentId: string
@@ -20112,6 +20119,7 @@ export namespace Prisma {
     sex?: boolean
     status?: boolean
     createdAt?: boolean
+    classJoinedAt?: boolean
     updatedAt?: boolean
     schoolId?: boolean
     parentId?: boolean
@@ -20155,6 +20163,7 @@ export namespace Prisma {
     sex?: boolean
     status?: boolean
     createdAt?: boolean
+    classJoinedAt?: boolean
     updatedAt?: boolean
     schoolId?: boolean
     parentId?: boolean
@@ -20180,6 +20189,7 @@ export namespace Prisma {
     sex?: boolean
     status?: boolean
     createdAt?: boolean
+    classJoinedAt?: boolean
     updatedAt?: boolean
     schoolId?: boolean
     parentId?: boolean
@@ -20205,6 +20215,7 @@ export namespace Prisma {
     sex?: boolean
     status?: boolean
     createdAt?: boolean
+    classJoinedAt?: boolean
     updatedAt?: boolean
     schoolId?: boolean
     parentId?: boolean
@@ -20212,7 +20223,7 @@ export namespace Prisma {
     gradeId?: boolean
   }
 
-  export type StudentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "admissionNumber" | "name" | "surname" | "email" | "phone" | "address" | "img" | "bloodType" | "sex" | "status" | "createdAt" | "updatedAt" | "schoolId" | "parentId" | "classId" | "gradeId", ExtArgs["result"]["student"]>
+  export type StudentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "admissionNumber" | "name" | "surname" | "email" | "phone" | "address" | "img" | "bloodType" | "sex" | "status" | "createdAt" | "classJoinedAt" | "updatedAt" | "schoolId" | "parentId" | "classId" | "gradeId", ExtArgs["result"]["student"]>
   export type StudentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     parent?: boolean | ParentDefaultArgs<ExtArgs>
@@ -20289,6 +20300,7 @@ export namespace Prisma {
       sex: $Enums.UserSex
       status: $Enums.StudentStatus
       createdAt: Date
+      classJoinedAt: Date | null
       updatedAt: Date
       schoolId: string
       parentId: string
@@ -20751,6 +20763,7 @@ export namespace Prisma {
     readonly sex: FieldRef<"Student", 'UserSex'>
     readonly status: FieldRef<"Student", 'StudentStatus'>
     readonly createdAt: FieldRef<"Student", 'DateTime'>
+    readonly classJoinedAt: FieldRef<"Student", 'DateTime'>
     readonly updatedAt: FieldRef<"Student", 'DateTime'>
     readonly schoolId: FieldRef<"Student", 'String'>
     readonly parentId: FieldRef<"Student", 'String'>
@@ -76753,6 +76766,7 @@ export namespace Prisma {
     classId: number | null
     classworkScore: number | null
     examScore: number | null
+    examRecordedAt: Date | null
     totalScore: number | null
     grade: string | null
     gradePoint: number | null
@@ -76773,6 +76787,7 @@ export namespace Prisma {
     classId: number | null
     classworkScore: number | null
     examScore: number | null
+    examRecordedAt: Date | null
     totalScore: number | null
     grade: string | null
     gradePoint: number | null
@@ -76793,6 +76808,7 @@ export namespace Prisma {
     classId: number
     classworkScore: number
     examScore: number
+    examRecordedAt: number
     totalScore: number
     grade: number
     gradePoint: number
@@ -76837,6 +76853,7 @@ export namespace Prisma {
     classId?: true
     classworkScore?: true
     examScore?: true
+    examRecordedAt?: true
     totalScore?: true
     grade?: true
     gradePoint?: true
@@ -76857,6 +76874,7 @@ export namespace Prisma {
     classId?: true
     classworkScore?: true
     examScore?: true
+    examRecordedAt?: true
     totalScore?: true
     grade?: true
     gradePoint?: true
@@ -76877,6 +76895,7 @@ export namespace Prisma {
     classId?: true
     classworkScore?: true
     examScore?: true
+    examRecordedAt?: true
     totalScore?: true
     grade?: true
     gradePoint?: true
@@ -76984,6 +77003,7 @@ export namespace Prisma {
     classId: number
     classworkScore: number
     examScore: number
+    examRecordedAt: Date | null
     totalScore: number
     grade: string
     gradePoint: number
@@ -77023,6 +77043,7 @@ export namespace Prisma {
     classId?: boolean
     classworkScore?: boolean
     examScore?: boolean
+    examRecordedAt?: boolean
     totalScore?: boolean
     grade?: boolean
     gradePoint?: boolean
@@ -77048,6 +77069,7 @@ export namespace Prisma {
     classId?: boolean
     classworkScore?: boolean
     examScore?: boolean
+    examRecordedAt?: boolean
     totalScore?: boolean
     grade?: boolean
     gradePoint?: boolean
@@ -77073,6 +77095,7 @@ export namespace Prisma {
     classId?: boolean
     classworkScore?: boolean
     examScore?: boolean
+    examRecordedAt?: boolean
     totalScore?: boolean
     grade?: boolean
     gradePoint?: boolean
@@ -77098,6 +77121,7 @@ export namespace Prisma {
     classId?: boolean
     classworkScore?: boolean
     examScore?: boolean
+    examRecordedAt?: boolean
     totalScore?: boolean
     grade?: boolean
     gradePoint?: boolean
@@ -77107,7 +77131,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ContinuousAssessmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "academicYear" | "term" | "schoolId" | "studentId" | "teacherId" | "subjectId" | "classId" | "classworkScore" | "examScore" | "totalScore" | "grade" | "gradePoint" | "remarks" | "configId" | "createdAt" | "updatedAt", ExtArgs["result"]["continuousAssessment"]>
+  export type ContinuousAssessmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "academicYear" | "term" | "schoolId" | "studentId" | "teacherId" | "subjectId" | "classId" | "classworkScore" | "examScore" | "examRecordedAt" | "totalScore" | "grade" | "gradePoint" | "remarks" | "configId" | "createdAt" | "updatedAt", ExtArgs["result"]["continuousAssessment"]>
   export type ContinuousAssessmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     student?: boolean | StudentDefaultArgs<ExtArgs>
@@ -77150,6 +77174,7 @@ export namespace Prisma {
       classId: number
       classworkScore: number
       examScore: number
+      examRecordedAt: Date | null
       totalScore: number
       grade: string
       gradePoint: number
@@ -77595,6 +77620,7 @@ export namespace Prisma {
     readonly classId: FieldRef<"ContinuousAssessment", 'Int'>
     readonly classworkScore: FieldRef<"ContinuousAssessment", 'Float'>
     readonly examScore: FieldRef<"ContinuousAssessment", 'Float'>
+    readonly examRecordedAt: FieldRef<"ContinuousAssessment", 'DateTime'>
     readonly totalScore: FieldRef<"ContinuousAssessment", 'Float'>
     readonly grade: FieldRef<"ContinuousAssessment", 'String'>
     readonly gradePoint: FieldRef<"ContinuousAssessment", 'Int'>
@@ -126590,6 +126616,7 @@ export namespace Prisma {
     sex: 'sex',
     status: 'status',
     createdAt: 'createdAt',
+    classJoinedAt: 'classJoinedAt',
     updatedAt: 'updatedAt',
     schoolId: 'schoolId',
     parentId: 'parentId',
@@ -127441,6 +127468,7 @@ export namespace Prisma {
     classId: 'classId',
     classworkScore: 'classworkScore',
     examScore: 'examScore',
+    examRecordedAt: 'examRecordedAt',
     totalScore: 'totalScore',
     grade: 'grade',
     gradePoint: 'gradePoint',
@@ -130101,6 +130129,7 @@ export namespace Prisma {
     sex?: EnumUserSexFilter<"Student"> | $Enums.UserSex
     status?: EnumStudentStatusFilter<"Student"> | $Enums.StudentStatus
     createdAt?: DateTimeFilter<"Student"> | Date | string
+    classJoinedAt?: DateTimeNullableFilter<"Student"> | Date | string | null
     updatedAt?: DateTimeFilter<"Student"> | Date | string
     schoolId?: StringFilter<"Student"> | string
     parentId?: StringFilter<"Student"> | string
@@ -130143,6 +130172,7 @@ export namespace Prisma {
     sex?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
+    classJoinedAt?: SortOrderInput | SortOrder
     updatedAt?: SortOrder
     schoolId?: SortOrder
     parentId?: SortOrder
@@ -130189,6 +130219,7 @@ export namespace Prisma {
     sex?: EnumUserSexFilter<"Student"> | $Enums.UserSex
     status?: EnumStudentStatusFilter<"Student"> | $Enums.StudentStatus
     createdAt?: DateTimeFilter<"Student"> | Date | string
+    classJoinedAt?: DateTimeNullableFilter<"Student"> | Date | string | null
     updatedAt?: DateTimeFilter<"Student"> | Date | string
     schoolId?: StringFilter<"Student"> | string
     parentId?: StringFilter<"Student"> | string
@@ -130231,6 +130262,7 @@ export namespace Prisma {
     sex?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
+    classJoinedAt?: SortOrderInput | SortOrder
     updatedAt?: SortOrder
     schoolId?: SortOrder
     parentId?: SortOrder
@@ -130260,6 +130292,7 @@ export namespace Prisma {
     sex?: EnumUserSexWithAggregatesFilter<"Student"> | $Enums.UserSex
     status?: EnumStudentStatusWithAggregatesFilter<"Student"> | $Enums.StudentStatus
     createdAt?: DateTimeWithAggregatesFilter<"Student"> | Date | string
+    classJoinedAt?: DateTimeNullableWithAggregatesFilter<"Student"> | Date | string | null
     updatedAt?: DateTimeWithAggregatesFilter<"Student"> | Date | string
     schoolId?: StringWithAggregatesFilter<"Student"> | string
     parentId?: StringWithAggregatesFilter<"Student"> | string
@@ -134899,6 +134932,7 @@ export namespace Prisma {
     classId?: IntFilter<"ContinuousAssessment"> | number
     classworkScore?: FloatFilter<"ContinuousAssessment"> | number
     examScore?: FloatFilter<"ContinuousAssessment"> | number
+    examRecordedAt?: DateTimeNullableFilter<"ContinuousAssessment"> | Date | string | null
     totalScore?: FloatFilter<"ContinuousAssessment"> | number
     grade?: StringFilter<"ContinuousAssessment"> | string
     gradePoint?: IntFilter<"ContinuousAssessment"> | number
@@ -134924,6 +134958,7 @@ export namespace Prisma {
     classId?: SortOrder
     classworkScore?: SortOrder
     examScore?: SortOrder
+    examRecordedAt?: SortOrderInput | SortOrder
     totalScore?: SortOrder
     grade?: SortOrder
     gradePoint?: SortOrder
@@ -134953,6 +134988,7 @@ export namespace Prisma {
     classId?: IntFilter<"ContinuousAssessment"> | number
     classworkScore?: FloatFilter<"ContinuousAssessment"> | number
     examScore?: FloatFilter<"ContinuousAssessment"> | number
+    examRecordedAt?: DateTimeNullableFilter<"ContinuousAssessment"> | Date | string | null
     totalScore?: FloatFilter<"ContinuousAssessment"> | number
     grade?: StringFilter<"ContinuousAssessment"> | string
     gradePoint?: IntFilter<"ContinuousAssessment"> | number
@@ -134978,6 +135014,7 @@ export namespace Prisma {
     classId?: SortOrder
     classworkScore?: SortOrder
     examScore?: SortOrder
+    examRecordedAt?: SortOrderInput | SortOrder
     totalScore?: SortOrder
     grade?: SortOrder
     gradePoint?: SortOrder
@@ -135006,6 +135043,7 @@ export namespace Prisma {
     classId?: IntWithAggregatesFilter<"ContinuousAssessment"> | number
     classworkScore?: FloatWithAggregatesFilter<"ContinuousAssessment"> | number
     examScore?: FloatWithAggregatesFilter<"ContinuousAssessment"> | number
+    examRecordedAt?: DateTimeNullableWithAggregatesFilter<"ContinuousAssessment"> | Date | string | null
     totalScore?: FloatWithAggregatesFilter<"ContinuousAssessment"> | number
     grade?: StringWithAggregatesFilter<"ContinuousAssessment"> | string
     gradePoint?: IntWithAggregatesFilter<"ContinuousAssessment"> | number
@@ -139635,6 +139673,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -139673,6 +139712,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -139711,6 +139751,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -139749,6 +139790,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -139787,6 +139829,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -139808,6 +139851,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -139825,6 +139869,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -144855,6 +144900,7 @@ export namespace Prisma {
     term: $Enums.Term
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -144880,6 +144926,7 @@ export namespace Prisma {
     classId: number
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -144894,6 +144941,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -144919,6 +144967,7 @@ export namespace Prisma {
     classId?: IntFieldUpdateOperationsInput | number
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -144939,6 +144988,7 @@ export namespace Prisma {
     classId: number
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -144953,6 +145003,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -144973,6 +145024,7 @@ export namespace Prisma {
     classId?: IntFieldUpdateOperationsInput | number
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -150354,6 +150406,7 @@ export namespace Prisma {
     sex?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
+    classJoinedAt?: SortOrder
     updatedAt?: SortOrder
     schoolId?: SortOrder
     parentId?: SortOrder
@@ -150380,6 +150433,7 @@ export namespace Prisma {
     sex?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
+    classJoinedAt?: SortOrder
     updatedAt?: SortOrder
     schoolId?: SortOrder
     parentId?: SortOrder
@@ -150401,6 +150455,7 @@ export namespace Prisma {
     sex?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
+    classJoinedAt?: SortOrder
     updatedAt?: SortOrder
     schoolId?: SortOrder
     parentId?: SortOrder
@@ -154023,6 +154078,7 @@ export namespace Prisma {
     classId?: SortOrder
     classworkScore?: SortOrder
     examScore?: SortOrder
+    examRecordedAt?: SortOrder
     totalScore?: SortOrder
     grade?: SortOrder
     gradePoint?: SortOrder
@@ -154054,6 +154110,7 @@ export namespace Prisma {
     classId?: SortOrder
     classworkScore?: SortOrder
     examScore?: SortOrder
+    examRecordedAt?: SortOrder
     totalScore?: SortOrder
     grade?: SortOrder
     gradePoint?: SortOrder
@@ -154074,6 +154131,7 @@ export namespace Prisma {
     classId?: SortOrder
     classworkScore?: SortOrder
     examScore?: SortOrder
+    examRecordedAt?: SortOrder
     totalScore?: SortOrder
     grade?: SortOrder
     gradePoint?: SortOrder
@@ -170821,6 +170879,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     parent: ParentCreateNestedOneWithoutStudentsInput
     class: ClassCreateNestedOneWithoutStudentsInput
@@ -170858,6 +170917,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     parentId: string
     classId: number
@@ -171816,6 +171876,7 @@ export namespace Prisma {
     term: $Enums.Term
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -171839,6 +171900,7 @@ export namespace Prisma {
     classId: number
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -174279,6 +174341,7 @@ export namespace Prisma {
     sex?: EnumUserSexFilter<"Student"> | $Enums.UserSex
     status?: EnumStudentStatusFilter<"Student"> | $Enums.StudentStatus
     createdAt?: DateTimeFilter<"Student"> | Date | string
+    classJoinedAt?: DateTimeNullableFilter<"Student"> | Date | string | null
     updatedAt?: DateTimeFilter<"Student"> | Date | string
     schoolId?: StringFilter<"Student"> | string
     parentId?: StringFilter<"Student"> | string
@@ -175061,6 +175124,7 @@ export namespace Prisma {
     classId?: IntFilter<"ContinuousAssessment"> | number
     classworkScore?: FloatFilter<"ContinuousAssessment"> | number
     examScore?: FloatFilter<"ContinuousAssessment"> | number
+    examRecordedAt?: DateTimeNullableFilter<"ContinuousAssessment"> | Date | string | null
     totalScore?: FloatFilter<"ContinuousAssessment"> | number
     grade?: StringFilter<"ContinuousAssessment"> | string
     gradePoint?: IntFilter<"ContinuousAssessment"> | number
@@ -179230,6 +179294,7 @@ export namespace Prisma {
     term: $Enums.Term
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -179253,6 +179318,7 @@ export namespace Prisma {
     classId: number
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -180785,6 +180851,7 @@ export namespace Prisma {
     term: $Enums.Term
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -180808,6 +180875,7 @@ export namespace Prisma {
     classId: number
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -182198,6 +182266,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     class: ClassCreateNestedOneWithoutStudentsInput
@@ -182235,6 +182304,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     classId: number
@@ -183474,6 +183544,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -183511,6 +183582,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -183872,6 +183944,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -183909,6 +183982,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -194333,6 +194407,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -194370,6 +194445,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -194737,6 +194813,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -194774,6 +194851,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -195721,6 +195799,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -195758,6 +195837,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -196198,6 +196278,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -196235,6 +196316,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -196763,6 +196845,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -196800,6 +196883,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -197269,6 +197353,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -197306,6 +197391,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -197605,6 +197691,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -197642,6 +197729,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -198046,6 +198134,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -198083,6 +198172,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -198412,6 +198502,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -198449,6 +198540,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -199227,6 +199319,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -199264,6 +199357,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -199472,6 +199566,7 @@ export namespace Prisma {
     term: $Enums.Term
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -199495,6 +199590,7 @@ export namespace Prisma {
     subjectId: number
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -200451,6 +200547,7 @@ export namespace Prisma {
     term: $Enums.Term
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -200474,6 +200571,7 @@ export namespace Prisma {
     classId: number
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -203338,6 +203436,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -203375,6 +203474,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -203752,6 +203852,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -203789,6 +203890,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -204166,6 +204268,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -204203,6 +204306,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -204531,6 +204635,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -204568,6 +204673,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -204814,6 +204920,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -204851,6 +204958,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -205203,6 +205311,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -205240,6 +205349,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -205584,6 +205694,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -205621,6 +205732,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -205971,6 +206083,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -206008,6 +206121,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -209448,6 +209562,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -209485,6 +209600,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -209876,6 +209992,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -209913,6 +210030,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -210666,6 +210784,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -210703,6 +210822,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -211116,6 +211236,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -211153,6 +211274,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -216276,6 +216398,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -216313,6 +216436,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -216673,6 +216797,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -216710,6 +216835,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -217609,6 +217735,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -217646,6 +217773,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -218195,6 +218323,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -218232,6 +218361,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -218846,6 +218976,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -218883,6 +219014,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -219234,6 +219366,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -219271,6 +219404,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -223255,6 +223389,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -223292,6 +223427,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -223717,6 +223853,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -223754,6 +223891,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -227054,6 +227192,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -227091,6 +227230,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -227203,6 +227343,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -227240,6 +227381,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -230243,6 +230385,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutStudentsInput
     parent: ParentCreateNestedOneWithoutStudentsInput
@@ -230280,6 +230423,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -230703,6 +230847,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -230740,6 +230885,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -232278,6 +232424,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     parentId: string
     classId: number
@@ -232579,6 +232726,7 @@ export namespace Prisma {
     classId: number
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -233401,6 +233549,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
     class?: ClassUpdateOneRequiredWithoutStudentsNestedInput
@@ -233438,6 +233587,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     parentId?: StringFieldUpdateOperationsInput | string
     classId?: IntFieldUpdateOperationsInput | number
@@ -233475,6 +233625,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     parentId?: StringFieldUpdateOperationsInput | string
     classId?: IntFieldUpdateOperationsInput | number
@@ -234461,6 +234612,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -234484,6 +234636,7 @@ export namespace Prisma {
     classId?: IntFieldUpdateOperationsInput | number
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -234503,6 +234656,7 @@ export namespace Prisma {
     classId?: IntFieldUpdateOperationsInput | number
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -237368,6 +237522,7 @@ export namespace Prisma {
     classId: number
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -237722,6 +237877,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -237745,6 +237901,7 @@ export namespace Prisma {
     classId?: IntFieldUpdateOperationsInput | number
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -237764,6 +237921,7 @@ export namespace Prisma {
     classId?: IntFieldUpdateOperationsInput | number
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -238426,6 +238584,7 @@ export namespace Prisma {
     classId: number
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -238792,6 +238951,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -238815,6 +238975,7 @@ export namespace Prisma {
     classId?: IntFieldUpdateOperationsInput | number
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -238834,6 +238995,7 @@ export namespace Prisma {
     classId?: IntFieldUpdateOperationsInput | number
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -239572,6 +239734,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     classId: number
@@ -239767,6 +239930,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     class?: ClassUpdateOneRequiredWithoutStudentsNestedInput
@@ -239804,6 +239968,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     classId?: IntFieldUpdateOperationsInput | number
@@ -239841,6 +240006,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     classId?: IntFieldUpdateOperationsInput | number
@@ -241026,6 +241192,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -241082,6 +241249,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -241119,6 +241287,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -241156,6 +241325,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -241319,6 +241489,7 @@ export namespace Prisma {
     sex: $Enums.UserSex
     status?: $Enums.StudentStatus
     createdAt?: Date | string
+    classJoinedAt?: Date | string | null
     updatedAt?: Date | string
     schoolId?: string
     parentId: string
@@ -241388,6 +241559,7 @@ export namespace Prisma {
     subjectId: number
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -241499,6 +241671,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
     parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
@@ -241536,6 +241709,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -241573,6 +241747,7 @@ export namespace Prisma {
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     status?: EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    classJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
@@ -241743,6 +241918,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -241766,6 +241942,7 @@ export namespace Prisma {
     subjectId?: IntFieldUpdateOperationsInput | number
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -241785,6 +241962,7 @@ export namespace Prisma {
     subjectId?: IntFieldUpdateOperationsInput | number
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -241948,6 +242126,7 @@ export namespace Prisma {
     classId: number
     classworkScore?: number
     examScore?: number
+    examRecordedAt?: Date | string | null
     totalScore?: number
     grade?: string
     gradePoint?: number
@@ -242141,6 +242320,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -242164,6 +242344,7 @@ export namespace Prisma {
     classId?: IntFieldUpdateOperationsInput | number
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number
@@ -242183,6 +242364,7 @@ export namespace Prisma {
     classId?: IntFieldUpdateOperationsInput | number
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
+    examRecordedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     totalScore?: FloatFieldUpdateOperationsInput | number
     grade?: StringFieldUpdateOperationsInput | string
     gradePoint?: IntFieldUpdateOperationsInput | number

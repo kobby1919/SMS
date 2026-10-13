@@ -1,3 +1,4 @@
+import { hasRecordedExam } from "@/src/lib/academic-readiness-rules";
 // src/app/(dashboard)/list/report-cards/page.tsx
  
 
@@ -144,7 +145,7 @@ const ReportCardListPage = async ({
                   subjectName: record.subject.name,
                   record,
                 }));
-            const reportReady = records.filter((record) => record.examScore > 0);
+            const reportReady = records.filter((record) => hasRecordedExam(record));
             const caStarted = records.length;
             const subjectTotal = subjectRows.length;
             const isPublished = publishedClassIds.has(child.classId);
@@ -203,8 +204,8 @@ const ReportCardListPage = async ({
                         <div className="min-w-0">
                           <p className="break-words text-xs font-black text-gray-900">{subjectName}</p>
                           <p className="break-words text-[10px] font-semibold leading-relaxed text-gray-400">
-                            {record?.examScore && record.examScore > 0 ? "Report score ready" : record ? "CA building, exam pending" : "No CA yet"}
-                            {record?.examScore && record.examScore > 0 && !isPublished ? " · awaiting school approval" : ""}
+                            {record && (config?.examWeight === 0 || hasRecordedExam(record)) ? "Report score ready" : record ? "CA building, exam pending" : "No CA yet"}
+                            {record && (config?.examWeight === 0 || hasRecordedExam(record)) && !isPublished ? " · awaiting school approval" : ""}
                           </p>
                         </div>
                         <p className="shrink-0 text-xs font-black text-sky-700">
@@ -355,6 +356,7 @@ const ReportCardListPage = async ({
         subjectId: true,
         classworkScore: true,
         examScore: true,
+        examRecordedAt: true,
       },
     }),
     prisma.reportCardPublication.findUnique({

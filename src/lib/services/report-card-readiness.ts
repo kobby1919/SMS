@@ -3,8 +3,9 @@ import type { Prisma, Term } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { buildSubjectCAProgress } from "@/src/lib/services/ca-activity";
 import { assessmentPosition } from "@/src/lib/assessment-position";
+import { activityEligibility, validAssessmentWeights } from "@/src/lib/academic-readiness-rules";
 
-export type ReportReadinessBlocker = { studentId: string; studentName: string; admissionNumber: string | null; subjectId: number; subjectName: string; reason: "MISSING_CA" | "MISSING_EXAM" | "INVALID_SCORE" | "STALE_TOTAL" | "FUTURE_ACTIVITY"; detail: string };
+export type ReportReadinessBlocker = { studentId: string; studentName: string; admissionNumber: string | null; subjectId: number; subjectName: string; reason: "MISSING_CA" | "MISSING_EXAM" | "INVALID_SCORE" | "STALE_TOTAL" | "FUTURE_ACTIVITY" | "PLACEMENT_REVIEW"; detail: string };
 export type ClassReportReadiness = {
   classId: number; studentCount: number; subjectCount: number; expectedEntryCount: number; readyEntryCount: number; caStartedEntryCount: number;
   missingCount: number; missingCACount: number; missingExamCount: number; isReady: boolean; blockers: ReportReadinessBlocker[];
@@ -20,19 +21,22 @@ export async function getClassReportReadiness(input: { schoolId: string; classId
   const cls = await db.class.findFirst({ where: { id: classId, schoolId }, select: { id: true } });
   if (!cls) throw new Error("This class is not available in your school.");
   const config = await db.cAConfig.findUnique({ where: { schoolId_academicYear: { schoolId, academicYear } } });
-  const active = await db.cAConfig.findFirst({ where: { schoolId, isActive: true }, orderBy: [{ updatedAt: "desc" }, { id: "desc" }], select: { academicYear: true, currentTerm: true } });
-  const currentPeriod = active?.academicYear === academicYear && active.currentTerm === term;
+  const activeConfigs = await db.cAConfig.findMany({ where: { schoolId, isActive: true }, take: 2, select: { academicYear: true, currentTerm: true } });
+  const currentPeriod = activeConfigs.some((active) => active.academicYear === academicYear && active.currentTerm === term);
+  const publications = currentPeriod ? await db.timetablePublication.findMany({ where: { schoolId, status: "ACTIVE" }, take: 2, select: { id: true } }) : [];
   const subjects = currentPeriod
-    ? (await db.publishedTimetableLesson.findMany({ where: { schoolId, classId, publication: { schoolId, status: "ACTIVE" } }, select: { subjectId: true, subjectName: true } })).map((s) => ({ id: s.subjectId, name: s.subjectName }))
+    ? (publications.length === 1 ? await db.publishedTimetableLesson.findMany({ where: { schoolId, classId, publicationId: publications[0].id, publication: { schoolId, status: "ACTIVE" } }, select: { subjectId: true, subjectName: true } }) : []).map((s) => ({ id: s.subjectId, name: s.subjectName }))
     : await db.subject.findMany({ where: { schoolId, OR: [{ caBuckets: { some: context } }, { continuousAssessments: { some: context } }] }, select: { id: true, name: true } });
   const scopedSubjects = [...new Map(subjects.filter((s) => input.subjectIds === undefined || input.subjectIds.includes(s.id)).map((s) => [s.id, s])).values()].sort((a, b) => a.name.localeCompare(b.name));
-  const students = await db.student.findMany({ where: { schoolId, ...(input.studentId ? { id: input.studentId } : {}), class: { is: { schoolId } }, ...(currentPeriod ? { classId, status: "ACTIVE" } : { OR: [{ continuousAssessments: { some: context } }, { caActivityScores: { some: { schoolId, activity: { schoolId, classId, bucket: context } } } }] }) }, select: { id: true, name: true, surname: true, admissionNumber: true }, orderBy: [{ surname: "asc" }, { name: "asc" }, { id: "asc" }] });
+  const students = await db.student.findMany({ where: { schoolId, ...(input.studentId ? { id: input.studentId } : {}), class: { is: { schoolId } }, ...(currentPeriod ? { classId, status: "ACTIVE" } : { OR: [{ continuousAssessments: { some: context } }, { caActivityScores: { some: { schoolId, activity: { schoolId, classId, bucket: context } } } }] }) }, select: { id: true, name: true, surname: true, admissionNumber: true, createdAt: true, classJoinedAt: true }, orderBy: [{ surname: "asc" }, { name: "asc" }, { id: "asc" }] });
   const studentIds = students.map((s) => s.id);
   const subjectIds = scopedSubjects.map((s) => s.id);
-  const records = subjectIds.length && studentIds.length ? await db.continuousAssessment.findMany({ where: { ...context, subjectId: { in: subjectIds }, studentId: { in: studentIds }, student: { schoolId }, subject: { schoolId } }, select: { id: true, studentId: true, subjectId: true, classworkScore: true, examScore: true, totalScore: true } }) : [];
+  const records = subjectIds.length && studentIds.length ? await db.continuousAssessment.findMany({ where: { ...context, subjectId: { in: subjectIds }, studentId: { in: studentIds }, student: { schoolId }, subject: { schoolId } }, select: { id: true, studentId: true, subjectId: true, classworkScore: true, examScore: true, examRecordedAt: true, totalScore: true } }) : [];
   // Load class evidence once; the canonical calculator is shared with assessment review.
   const buckets = subjectIds.length ? await db.cABucket.findMany({ where: { ...context, subjectId: { in: subjectIds }, subject: { schoolId } }, include: { activities: { where: { schoolId, classId, subjectId: { in: subjectIds } }, include: { teacher: { select: { name: true, surname: true } }, scores: { where: { schoolId, studentId: { in: studentIds }, student: { schoolId } }, select: { id: true, studentId: true, rawScore: true, normalizedContribution: true } } } } } }) : [];
   const issues: string[] = [];
+  if (currentPeriod && activeConfigs.length !== 1) issues.push("Multiple active academic periods need review before reports can be released.");
+  if (currentPeriod && publications.length !== 1) issues.push("One active published timetable is required before reports can be released.");
   const scoreIds = buckets.flatMap((bucket) => bucket.activities.flatMap((activity) => activity.scores.map((score) => String(score.id))));
   const recordIds = records.map((record) => String(record.id));
   const pendingCorrections = scoreIds.length || recordIds.length ? await db.teacherCorrectionRequest.count({
@@ -42,7 +46,7 @@ export async function getClassReportReadiness(input: { schoolId: string; classId
     ] },
   }) : 0;
   if (pendingCorrections) issues.push(`${pendingCorrections} score correction request${pendingCorrections === 1 ? "" : "s"} await review before release.`);
-  if (!config || !Number.isFinite(config.classworkWeight) || !Number.isFinite(config.examWeight) || config.classworkWeight <= 0 || config.examWeight < 0 || Math.abs(config.classworkWeight + config.examWeight - 100) > 0.005) issues.push("A valid assessment configuration is required for this academic year.");
+  if (!validAssessmentWeights(config)) issues.push("A valid assessment configuration is required for this academic year.");
   if (!subjectIds.length) issues.push(currentPeriod ? "No subjects are available from the active published timetable." : "No subject evidence is available for this historical period.");
   if (!students.length) issues.push("No eligible student records are available for this class period.");
   const blockers: ReportReadinessBlocker[] = [];
@@ -63,10 +67,11 @@ export async function getClassReportReadiness(input: { schoolId: string; classId
     }
     try {
       const progress = buildSubjectCAProgress(config, subjectBuckets.map((bucket) => ({ ...bucket, activities: bucket.activities.filter((activity) => activity.activityDate <= now).map((activity) => ({ ...activity, scores: scores.has(`${activity.id}:${student.id}`) ? [scores.get(`${activity.id}:${student.id}`)!] : [] })) })));
-      const position = assessmentPosition(progress, record?.examScore ?? null, config.examWeight, future);
+      const position = assessmentPosition(progress, record?.examScore ?? null, config.examWeight, future, record?.examRecordedAt);
       if (position.scored > 0) { caStartedEntryCount++; startedByStudent.set(student.id, (startedByStudent.get(student.id) ?? 0) + 1); }
       if (position.status === "Needs review") add("INVALID_SCORE", "Score or allocation data is invalid.");
       else if (future > 0) add("FUTURE_ACTIVITY", `${future} planned CA activit${future === 1 ? "y has" : "ies have"} not taken place yet.`);
+      else if (currentPeriod && student.createdAt && subjectBuckets.some((bucket) => bucket.activities.some((activity) => !scores.has(`${activity.id}:${student.id}`) && activityEligibility(student, activity.activityDate) !== "ELIGIBLE"))) add("PLACEMENT_REVIEW", "Earlier CA evidence needs admission/class-placement review. This is not an overdue teacher duty and no marks are awarded automatically.");
       else if (!position.caComplete) add("MISSING_CA", `CA incomplete: ${position.scored}/${position.expected} activity scores; allocation must match the configured CA weight.`);
       else if (!position.examConfirmed) add("MISSING_EXAM", "No confirmed exam score. A legacy zero does not prove an exam was entered.");
       else if (!record || !Number.isFinite(record.classworkScore) || !Number.isFinite(record.totalScore) || Math.abs(record.classworkScore - progress.earnedMarks) > 0.005 || position.total === null || Math.abs(record.totalScore - position.total) > 0.005) add("STALE_TOTAL", "Stored report totals do not match the assessment evidence. Teacher records need reconciliation.");

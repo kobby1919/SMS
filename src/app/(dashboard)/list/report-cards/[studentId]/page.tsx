@@ -1,3 +1,4 @@
+import { hasRecordedExam } from "@/src/lib/academic-readiness-rules";
 // src/app/(dashboard)/list/report-cards/[studentId]/page.tsx
 
 
@@ -239,6 +240,7 @@ const ReportCardPage = async ({
       totalScore: true,
       gradePoint: true,
       examScore: true,
+      examRecordedAt: true,
     },
   });
 
@@ -246,7 +248,7 @@ const ReportCardPage = async ({
   const subjectPositions: Record<number, number> = {};
   for (const [subjectId] of visibleTimetableSubjects) {
     const subjectScores = classCARecords
-      .filter((r) => r.subjectId === subjectId && (exWeight === 0 || r.examScore > 0))
+      .filter((r) => r.subjectId === subjectId && (exWeight === 0 || hasRecordedExam(r)))
       .sort((a, b) => b.totalScore - a.totalScore);
 
     const myIdx = subjectScores.findIndex((r) => r.studentId === studentId);
@@ -257,7 +259,7 @@ const ReportCardPage = async ({
   // Group all students' grade points by studentId
   const studentGPMap: Record<string, number[]> = {};
   for (const r of classCARecords) {
-    if (exWeight > 0 && r.examScore <= 0) continue;
+    if (exWeight > 0 && !hasRecordedExam(r)) continue;
     if (!studentGPMap[r.studentId]) studentGPMap[r.studentId] = [];
     studentGPMap[r.studentId].push(r.gradePoint);
   }

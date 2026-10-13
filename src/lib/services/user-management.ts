@@ -552,8 +552,10 @@ export async function updateStudent(
 
   try {
     const updated = await prisma.$transaction(async (tx) => {
+      const placement = await tx.student.findFirst({ where: { id: studentId, schoolId }, select: { classId: true, status: true } });
+      if (!placement) throw new UserManagementError("Student not found.", 404);
       const row = await tx.student.update({
-        where: { id: studentId },
+        where: { id: studentId, schoolId, classId: placement.classId, status: placement.status },
         data: {
           username: studentRecordUsername(schoolId, admissionNumber),
           admissionNumber,
@@ -565,10 +567,15 @@ export async function updateStudent(
           sex: input.sex,
           status: input.status,
           classId: input.classId,
+          ...(placement.classId !== input.classId || (placement.status !== "ACTIVE" && input.status === "ACTIVE") ? { classJoinedAt: new Date() } : {}),
           gradeId: studentClass.gradeId,
           parentId,
         },
       });
+
+      if (placement.classId !== row.classId || (placement.status !== "ACTIVE" && row.status === "ACTIVE")) {
+        await tx.cAAuditLog.create({ data: { schoolId, actorId: actor.userId, action: "STUDENT_CLASS_PLACEMENT_STARTED", entityType: "Student", entityId: studentId, message: "Student class placement start recorded for academic eligibility.", metadata: { previousClassId: placement.classId, classId: row.classId, previousStatus: placement.status, status: row.status, classJoinedAt: row.classJoinedAt?.toISOString() ?? null } } });
+      }
 
       await syncParentRelationshipsForStudentLifecycle(tx, {
         schoolId,

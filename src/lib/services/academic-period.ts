@@ -1,5 +1,13 @@
-import type { Term } from "@/src/generated/prisma";
+import type { Prisma, Term } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
+import { validAssessmentWeights } from "@/src/lib/academic-readiness-rules";
+
+export async function requireActiveAcademicConfig(schoolId: string, db: Pick<Prisma.TransactionClient, "cAConfig"> = prisma) {
+  const configs = await db.cAConfig.findMany({ where: { schoolId, isActive: true }, take: 2 });
+  const config = configs.length === 1 ? configs[0] : null;
+  if (!config || !validAssessmentWeights(config)) throw new Error("Activate one valid academic year and term before recording scores.");
+  return config;
+}
 
 export type ActiveAcademicPeriod = {
   academicYear: string;

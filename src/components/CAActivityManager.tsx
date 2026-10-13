@@ -27,8 +27,11 @@ import {
   requestCAActivityScoreCorrection,
 } from "@/src/lib/actions/caActions";
 import { TERM_LABELS } from "@/src/lib/caGrades";
+import { activityEligibility } from "@/src/lib/academic-readiness-rules";
 
 type Student = {
+  createdAt: Date;
+  classJoinedAt: Date | null;
   id: string;
   name: string;
   surname: string;
@@ -165,6 +168,7 @@ const CAActivityManager = ({
   const selectedBucket = scopedBuckets.find((bucket) => bucket.id === selectedBucketId) ?? scopedBuckets[0];
   const activities = selectedBucket?.activities ?? [];
   const selectedActivity = activities.find((activity) => activity.id === selectedActivityId) ?? activities[0];
+  const requiredStudentIds = new Set(selectedActivity ? students.filter((student) => activityEligibility(student, selectedActivity.activityDate) === "ELIGIBLE").map((student) => student.id) : []);
   const selectedActivityHasScores = Boolean(selectedActivity && selectedActivity.scores.length > 0);
   const selectedActivityLockedForEntry = Boolean(
     selectedActivity?.isLocked ||
@@ -356,7 +360,7 @@ const CAActivityManager = ({
     }
 
     const rows = Object.entries(scoreEdits)
-      .filter(([, rawScore]) => rawScore !== "")
+      .filter(([studentId, rawScore]) => rawScore !== "" && requiredStudentIds.has(studentId))
       .map(([studentId, rawScore]) => ({ studentId, rawScore: Number(rawScore) }));
 
     if (rows.length === 0) {
@@ -736,7 +740,7 @@ const CAActivityManager = ({
                   </span>
                 </span>
                 <span className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-end">
-                  <span className="text-xs font-black text-slate-600">{activity.scores.length}/{students.length}</span>
+                  <span className="text-xs font-black text-slate-600">{activity.scores.filter((score) => students.some((student) => student.id === score.studentId && activityEligibility(student, activity.activityDate) === "ELIGIBLE")).length}/{students.filter((student) => activityEligibility(student, activity.activityDate) === "ELIGIBLE").length}</span>
                   {canLock && !activity.isLocked && (
                     <span
                       role="button"
@@ -818,6 +822,7 @@ const CAActivityManager = ({
                       <div className="min-w-0">
                         <p className="truncate text-sm font-black text-gray-800">{student.name} {student.surname}</p>
                         <p className="text-[10px] font-semibold text-gray-400">{student.id}</p>
+                        {!requiredStudentIds.has(student.id) && <p className="break-words text-[11px] text-gray-500">No score required for this earlier activity. Check class placement if needed.</p>}
                       </div>
                       <p className="shrink-0 rounded-full bg-indigo-50 px-2 py-1 text-[11px] font-black text-indigo-600">
                         {formatMark(currentSubjectCA)} CA
@@ -833,7 +838,7 @@ const CAActivityManager = ({
                         max={selectedActivity.rawMaxScore}
                         step={0.5}
                         value={value}
-                        disabled={selectedActivityLockedForEntry || !scoreEntryWindow.allowed}
+                        disabled={selectedActivityLockedForEntry || !scoreEntryWindow.allowed || !requiredStudentIds.has(student.id)}
                         onChange={(event) =>
                           setScoreEdits((prev) => ({ ...prev, [student.id]: event.target.value }))
                         }
@@ -866,6 +871,7 @@ const CAActivityManager = ({
                       <div className="min-w-0">
                         <p className="truncate text-sm font-black text-gray-800">{student.name} {student.surname}</p>
                         <p className="text-[10px] font-semibold text-gray-400">{student.id}</p>
+                        {!requiredStudentIds.has(student.id) && <p className="break-words text-[11px] text-gray-500">No score required for this earlier activity. Check class placement if needed.</p>}
                       </div>
                       <input
                         type="number"
@@ -873,7 +879,7 @@ const CAActivityManager = ({
                         max={selectedActivity.rawMaxScore}
                         step={0.5}
                         value={value}
-                        disabled={selectedActivityLockedForEntry || !scoreEntryWindow.allowed}
+                        disabled={selectedActivityLockedForEntry || !scoreEntryWindow.allowed || !requiredStudentIds.has(student.id)}
                         onChange={(event) =>
                           setScoreEdits((prev) => ({ ...prev, [student.id]: event.target.value }))
                         }

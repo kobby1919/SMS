@@ -4,6 +4,8 @@
 // Server actions for Continuous Assessment feature
 
 import prisma from "@/src/lib/prisma";
+import { recordExamScores } from "@/src/lib/services/exam-recording";
+import { hasRecordedExam, activityEligibility } from "@/src/lib/academic-readiness-rules";
 import { claimTeacherCorrectionReview } from "@/src/lib/services/teacher-obligation-store";
 import { requireRole } from "@/src/lib/authz";
 import { revalidatePath } from "next/cache";
@@ -27,7 +29,6 @@ import {
   calculateAllocatedMark,
   createCAActivity,
   createCABucket,
-  getSubjectCAProgress,
   logCAAudit,
   syncComputedCARecordsForActivity,
   upsertCAActivityScore,
@@ -37,9 +38,8 @@ import {
   recordCAActivityScoreEvents,
 } from "@/src/lib/services/parent-daily-summary";
 import { syncCAActivityScorePublishingObligation } from "@/src/lib/services/teacher-ca-obligations";
-import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
+import { requireActiveAcademicConfig } from "@/src/lib/services/academic-period";
 import { assertReportSetEditable, transitionClassReports, type ReportActionInput, type ReportActionMode } from "@/src/lib/services/report-publication";
-import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 import { recordApprovedCorrectionParentEvent } from "@/src/lib/services/correction-parent-events";
 import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
 import { assertTeacherCAEntryWindowOpen } from "@/src/lib/services/teacher-ca-entry-window";
@@ -72,30 +72,6 @@ export async function getGradeLabel(grade: string): Promise<string> {
 }
 
 // Score entry is teacher work; admins review corrections and configure windows.
-async function requireCAAccess(classId: number): Promise<{ userId: string; role: string; schoolId: string }> {
-  const { userId, role, schoolId } = await requireRole(["teacher"]);
-
-  if (role === "teacher") {
-    const scope = await getTeacherScope({ schoolId, teacherId: userId });
-    if (!scope.accessibleClassIds.includes(classId)) {
-      throw new Error("This class is outside your published teaching or class-teacher scope.");
-    }
-    return { userId, role, schoolId };
-  }
-
-  throw new Error("Unauthorized");
-}
-
-async function assertCAStudents(schoolId: string, classId: number, studentIds: string[]) {
-  const uniqueIds = [...new Set(studentIds)];
-  const count = await prisma.student.count({
-    where: { schoolId, classId, status: "ACTIVE", id: { in: uniqueIds } },
-  });
-  if (count !== uniqueIds.length) {
-    throw new Error("Every assessment student must be active in this school and class.");
-  }
-}
-
 async function assertTeacherUsesActivePeriod({
   schoolId,
   classId,
@@ -111,7 +87,7 @@ async function assertTeacherUsesActivePeriod({
 }) {
   if (role !== "teacher") return;
 
-  const activePeriod = await getActiveAcademicPeriod(schoolId);
+  const activePeriod = await requireActiveAcademicConfig(schoolId);
   if (term !== activePeriod.currentTerm || academicYear !== activePeriod.academicYear) {
     throw new Error(
       `Teachers can only work in the active academic period: ${activePeriod.academicYear} ${activePeriod.currentTerm.replace("_", " ")}. Ask an admin to change the school period if needed.`,
@@ -119,29 +95,6 @@ async function assertTeacherUsesActivePeriod({
   }
   const release = await prisma.reportCardPublication.findUnique({ where: { schoolId_classId_term_academicYear: { schoolId, classId, term, academicYear } }, select: { status: true } });
   if (release && ["SUBMITTED", "PUBLISHED"].includes(release.status)) throw new Error("This report set is submitted or published. Ask an admin to return or withdraw it before changing assessment records.");
-}
-
-async function assertExamEntryOpen(input: {
-  schoolId: string;
-  classId: number;
-  term: Term;
-  academicYear: string;
-}) {
-  const window = await prisma.examEntryWindow.findUnique({
-    where: {
-      schoolId_classId_term_academicYear: {
-        schoolId: input.schoolId,
-        classId: input.classId,
-        term: input.term,
-        academicYear: input.academicYear,
-      },
-    },
-    select: { status: true },
-  });
-
-  if (window?.status !== "OPEN") {
-    throw new Error("Exam entry is locked for this class period. Ask an admin to open exam entry before saving exam scores.");
-  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -224,157 +177,23 @@ export type CAInput = {
 };
 
 /** Calculate weighted total and derive grade */
-async function computeCA(
-  classworkScore: number,
-  examScore: number,
-  classworkWeight: number,
-  examWeight: number
-): Promise<{ totalScore: number; grade: string; gradePoint: number }> { 
-  const totalScore =
-    (classworkScore * classworkWeight) / 100 +
-    (examScore * examWeight) / 100;
 
-  const rounded = Math.round(totalScore * 100) / 100;
-  
-  const { grade, gradePoint } = await getBECEGrade(rounded); 
-  
-  return { totalScore: rounded, grade, gradePoint };
-}
 
 export async function createCA(data: CAInput) {
   const parsed = parseActionInput(caRecordSchema, data);
-  const { userId: teacherId, role, schoolId } = await requireCAAccess(parsed.classId);
-  await assertCAStudents(schoolId, parsed.classId, [parsed.studentId]);
-  await assertClassSubjectInPublishedTimetable({ schoolId, classId: parsed.classId, subjectId: parsed.subjectId });
-  await assertTeacherUsesActivePeriod({ schoolId, classId: parsed.classId, role, term: parsed.term, academicYear: parsed.academicYear });
-  if (role === "teacher") {
-    await assertTeacherCAEntryWindowOpen({
-      schoolId,
-      teacherId,
-      classId: parsed.classId,
-      subjectId: parsed.subjectId,
-      actionLabel: "Creating an assessment record",
-    });
-  }
-
-  // Get active config
-  const config = await prisma.cAConfig.findUnique({
-    where: { schoolId_academicYear: { schoolId, academicYear: parsed.academicYear } },
-  });
-  if (!config) {
-    throw new Error(
-      `No CA configuration found for ${parsed.academicYear}. Ask your admin to set it up.`
-    );
-  }
-  if (parsed.examScore > 0) {
-    await assertExamEntryOpen({
-      schoolId,
-      classId: parsed.classId,
-      term: parsed.term,
-      academicYear: parsed.academicYear,
-    });
-  }
-
-  const { totalScore, grade, gradePoint } = await computeCA(
-    parsed.classworkScore,
-    parsed.examScore,
-    config.classworkWeight,
-    config.examWeight
-  );
-
-  const ca = await prisma.continuousAssessment.create({
-    data: {
-      classworkScore: parsed.classworkScore,
-      schoolId,
-      examScore:      parsed.examScore,
-      totalScore,
-      grade,
-      gradePoint,
-      remarks:     parsed.remarks ?? "",
-      term:        parsed.term,
-      academicYear: parsed.academicYear,
-      studentId:   parsed.studentId,
-      subjectId:   parsed.subjectId,
-      classId:     parsed.classId,
-      teacherId,
-      configId:    config.id,
-    },
-  });
-
-  revalidatePath("/list/ca");
-  revalidatePath("/teacher");
-  revalidateDashboard(schoolId);
-  revalidateDocument(schoolId, "report-card", parsed.studentId);
-  return ca;
+  const results = await bulkUpsertCA([parsed], parsed.subjectId, parsed.classId, parsed.term, parsed.academicYear);
+  return results[0];
 }
 
 export async function updateCA(data: CAInput) {
-  if (!data.id) throw new Error("CA ID required for update.");
   const parsed = parseActionInput(caRecordUpdateSchema, data);
-  const { userId: teacherId, role, schoolId } = await requireCAAccess(parsed.classId);
-  await assertCAStudents(schoolId, parsed.classId, [parsed.studentId]);
+  const { schoolId } = await requireRole(["teacher"]);
   const existing = await prisma.continuousAssessment.findFirst({
-    where: {
-      id: parsed.id, schoolId, teacherId, studentId: parsed.studentId,
-      classId: parsed.classId, subjectId: parsed.subjectId,
-      term: parsed.term, academicYear: parsed.academicYear,
-    },
-    select: { id: true, examScore: true },
+    where: { id: parsed.id, schoolId, studentId: parsed.studentId, classId: parsed.classId, subjectId: parsed.subjectId, term: parsed.term, academicYear: parsed.academicYear },
+    select: { id: true },
   });
-  if (!existing) throw new Error("Assessment record does not match your authorized student and subject.");
-  if (existing.examScore > 0 && existing.examScore !== parsed.examScore) {
-    throw new Error("Saved exam scores require an approved correction request.");
-  }
-  await assertClassSubjectInPublishedTimetable({ schoolId, classId: parsed.classId, subjectId: parsed.subjectId });
-  await assertTeacherUsesActivePeriod({ schoolId, classId: parsed.classId, role, term: parsed.term, academicYear: parsed.academicYear });
-  if (role === "teacher") {
-    await assertTeacherCAEntryWindowOpen({
-      schoolId,
-      teacherId,
-      classId: parsed.classId,
-      subjectId: parsed.subjectId,
-      actionLabel: "Updating an assessment record",
-    });
-  }
-
-  const config = await prisma.cAConfig.findUnique({
-    where: { schoolId_academicYear: { schoolId, academicYear: parsed.academicYear } },
-  });
-  if (!config) throw new Error(`No CA configuration found for ${parsed.academicYear}.`);
-  if (parsed.examScore > 0) {
-    await assertExamEntryOpen({
-      schoolId,
-      classId: parsed.classId,
-      term: parsed.term,
-      academicYear: parsed.academicYear,
-    });
-  }
-
-  const { totalScore, grade, gradePoint } = await computeCA(
-    parsed.classworkScore,
-    parsed.examScore,
-    config.classworkWeight,
-    config.examWeight
-  );
-
-  await prisma.continuousAssessment.update({
-    where: { id: existing.id, schoolId, teacherId },
-    data: {
-      classworkScore: parsed.classworkScore,
-      examScore:      parsed.examScore,
-      totalScore,
-      grade,
-      gradePoint,
-      remarks:  parsed.remarks ?? "",
-      teacherId,
-      configId: config.id,
-    },
-  });
-
-  revalidatePath("/list/ca");
-  revalidatePath("/teacher");
-  revalidateDashboard(schoolId);
-  revalidateDocument(schoolId, "report-card", parsed.studentId);
+  if (!existing) throw new Error("Assessment record does not match the selected student and subject.");
+  await bulkUpsertCA([parsed], parsed.subjectId, parsed.classId, parsed.term, parsed.academicYear);
 }
 
 export async function deleteCA(id: number) {
@@ -406,141 +225,16 @@ function formatAcademicMark(value: number, maximum?: number | null) {
 }
 
 export async function bulkUpsertCA(
-  rows: BulkCARow[],
-  subjectId:    number,
-  classId:      number,
-  term:          Term,
-  academicYear: string
+  rows: BulkCARow[], subjectId: number, classId: number, term: Term, academicYear: string,
 ) {
-  const parsed = parseActionInput(caBulkEntrySchema, {
-    rows,
-    subjectId,
-    classId,
-    term,
-    academicYear,
-  });
-  rows = parsed.rows;
-  subjectId = parsed.subjectId;
-  classId = parsed.classId;
-  term = parsed.term;
-  academicYear = parsed.academicYear;
-  const { userId: teacherId, role, schoolId } = await requireCAAccess(classId);
-  await assertCAStudents(schoolId, classId, rows.map((row) => row.studentId));
-  await assertClassSubjectInPublishedTimetable({ schoolId, classId, subjectId });
-  await assertTeacherUsesActivePeriod({ schoolId, classId, role, term, academicYear });
-  if (role === "teacher") {
-    await assertTeacherCAEntryWindowOpen({
-      schoolId,
-      teacherId,
-      classId,
-      subjectId,
-      actionLabel: "Saving assessment scores",
-    });
-  }
-
-  const config = await prisma.cAConfig.findUnique({
-    where: { schoolId_academicYear: { schoolId, academicYear } },
-  });
-  if (!config) {
-    throw new Error(`No CA configuration found for ${academicYear}. Ask your admin to set it up.`);
-  }
-  if (rows.some((row) => row.examScore > 0)) {
-    await assertExamEntryOpen({ schoolId, classId, term, academicYear });
-  }
-
-  const submittedStudentIds = rows.map((row) => row.studentId);
-  const existingExamRecords = await prisma.continuousAssessment.findMany({
-    where: {
-      schoolId,
-      classId,
-      subjectId,
-      term,
-      academicYear,
-      studentId: { in: submittedStudentIds },
-      examScore: { gt: 0 },
-    },
-    select: {
-      studentId: true,
-      examScore: true,
-      student: { select: { name: true, surname: true } },
-    },
-  });
-  const existingExamByStudentId = new Map(existingExamRecords.map((record) => [record.studentId, record]));
-  const attemptedOverwrite = rows.find((row) => {
-    const existing = existingExamByStudentId.get(row.studentId);
-    return existing && Math.round(existing.examScore * 100) / 100 !== Math.round(row.examScore * 100) / 100;
-  });
-  if (attemptedOverwrite) {
-    const existing = existingExamByStudentId.get(attemptedOverwrite.studentId);
-    throw new Error(
-      existing
-        ? `${existing.student.name} ${existing.student.surname} already has a saved exam score. Use the correction request workflow for changes.`
-        : "Saved exam scores can only be changed through the correction request workflow.",
-    );
-  }
-
-  const results = await Promise.all(
-    rows.map(async (row) => {
-      const progress = await getSubjectCAProgress({
-        schoolId,
-        studentId: row.studentId,
-        classId,
-        subjectId,
-        term,
-        academicYear,
-      });
-      const classworkScore = progress.earnedMarks;
-      const examScore = Math.min(row.examScore, config.examWeight);
-      const totalScore = Math.round((classworkScore + examScore) * 100) / 100;
-      const { grade, gradePoint } = await getBECEGrade(totalScore);
-
-      return prisma.continuousAssessment.upsert({
-        where: {
-          schoolId_studentId_subjectId_classId_term_academicYear: {
-            schoolId,
-            studentId:    row.studentId,
-            subjectId,
-            classId,
-            term,
-            academicYear,
-          },
-        },
-        create: {
-          classworkScore,
-          schoolId,
-          examScore,
-          totalScore,
-          grade,
-          gradePoint,
-          remarks:     row.remarks ?? "",
-          term,
-          academicYear,
-          studentId:   row.studentId,
-          subjectId,
-          classId,
-          teacherId,
-          configId:    config.id,
-        },
-        update: {
-          classworkScore,
-          examScore,
-          totalScore,
-          grade,
-          gradePoint,
-          remarks:  row.remarks ?? "",
-          teacherId,
-          configId: config.id,
-        },
-      });
-    })
-  );
-
+  const parsed = parseActionInput(caBulkEntrySchema, { rows, subjectId, classId, term, academicYear });
+  const { schoolId, userId: teacherId } = await requireRole(["teacher"]);
+  const results = await recordExamScores({ ...parsed, schoolId, teacherId });
   revalidatePath("/list/ca");
   revalidatePath("/teacher");
+  revalidatePath("/admin");
   revalidateDashboard(schoolId);
-  for (const studentId of new Set(parsed.rows.map((row) => row.studentId))) {
-    revalidateDocument(schoolId, "report-card", studentId);
-  }
+  for (const row of parsed.rows) revalidateDocument(schoolId, "report-card", row.studentId);
   return results;
 }
 
@@ -709,11 +403,11 @@ export async function bulkUpsertCAActivityScores(data: {
       subjectId: true,
       rawMaxScore: true,
       isLocked: true,
+      activityDate: true,
       bucket: { select: { term: true, academicYear: true } },
       class: {
         select: {
-          students: { select: { id: true } },
-          _count: { select: { students: true } },
+          students: { where: { schoolId, status: "ACTIVE" }, select: { id: true, createdAt: true, classJoinedAt: true } },
         },
       },
     },
@@ -750,9 +444,10 @@ export async function bulkUpsertCAActivityScores(data: {
   if (uniqueStudentIds.size !== studentIds.length) {
     throw new Error("Each student may appear only once when publishing CA scores.");
   }
-  if (uniqueStudentIds.size !== activity.class._count.students) {
+  const eligibleStudents = activity.class.students.filter((student) => activityEligibility(student, activity.activityDate) === "ELIGIBLE");
+  if (eligibleStudents.some((student) => !uniqueStudentIds.has(student.id))) {
     throw new Error(
-      `Publish scores for all ${activity.class._count.students} students before locking this CA activity.`,
+      `Publish scores for all ${eligibleStudents.length} eligible students before locking this CA activity.`,
     );
   }
   const rosterStudentIds = new Set(activity.class.students.map((student) => student.id));
@@ -1029,7 +724,7 @@ export async function requestExamScoreCorrection(data: {
       class: { select: { name: true } },
     },
   });
-  if (!record || record.examScore <= 0) {
+  if (!record || !hasRecordedExam(record)) {
     throw new Error("No saved exam score exists yet. Use normal exam entry for the first save.");
   }
   if (Math.round(record.examScore * 100) / 100 === Math.round(parsed.newExamScore * 100) / 100) {
@@ -1265,6 +960,7 @@ export async function reviewAcademicCorrectionRequest(data: {
           where: { id: record.id, schoolId, updatedAt: record.updatedAt },
           data: {
             examScore: newExamScore,
+            examRecordedAt: record.examRecordedAt ?? new Date(),
             totalScore,
             grade,
             gradePoint,

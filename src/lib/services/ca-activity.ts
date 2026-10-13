@@ -559,10 +559,11 @@ export function buildSubjectCAProgress(config: { classworkWeight: number }, buck
 export async function syncComputedCARecord(input: CAContext & {
   studentId: string;
   teacherId: string;
-}) {
-  const config = await getCAConfigOrThrow(input.schoolId, input.academicYear);
-  const progress = await getSubjectCAProgress(input);
-  const existing = await prisma.continuousAssessment.findUnique({
+}, db?: Prisma.TransactionClient): Promise<Prisma.ContinuousAssessmentGetPayload<Record<string, never>>> {
+  if (!db) return prisma.$transaction((tx) => syncComputedCARecord(input, tx), { isolationLevel: "Serializable", timeout: 30000 });
+  const config = await getCAConfigOrThrow(input.schoolId, input.academicYear, db);
+  const progress = await getSubjectCAProgress(input, db);
+  const existing = await db.continuousAssessment.findUnique({
     where: {
       schoolId_studentId_subjectId_classId_term_academicYear: {
         schoolId: input.schoolId,
@@ -575,11 +576,12 @@ export async function syncComputedCARecord(input: CAContext & {
     },
     select: { examScore: true, remarks: true },
   });
-  const examScore = Math.min(existing?.examScore ?? 0, Number(config.examWeight));
+  const examScore = existing?.examScore ?? 0;
+  if (!Number.isFinite(examScore) || examScore < 0 || examScore > Number(config.examWeight)) throw new Error("Saved exam marks exceed the configured maximum; request a correction instead of changing them automatically.");
   const totalScore = roundScore(progress.earnedMarks + examScore);
   const band = getGradeBand(totalScore);
 
-  return prisma.continuousAssessment.upsert({
+  return db.continuousAssessment.upsert({
     where: {
       schoolId_studentId_subjectId_classId_term_academicYear: {
         schoolId: input.schoolId,

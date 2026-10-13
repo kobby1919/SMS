@@ -1,3 +1,4 @@
+import { hasRecordedExam } from "@/src/lib/academic-readiness-rules";
 // src/app/api/report-card/pdf/route.tsx
 
 
@@ -484,13 +485,13 @@ export async function GET(req: NextRequest) {
           ? { subjectId: { in: timetableSubjectIds } }
           : {}),
       },
-      select: { studentId: true, subjectId: true, totalScore: true, gradePoint: true, examScore: true },
+      select: { studentId: true, subjectId: true, totalScore: true, gradePoint: true, examScore: true, examRecordedAt: true },
     });
 
     // Per-subject position
     const subjectPositions: Record<number, number> = {};
     for (const sid of [...new Set(classCA.map((r) => r.subjectId))]) {
-      const sorted = classCA.filter((r) => r.subjectId === sid && (exWeight === 0 || r.examScore > 0)).sort((a, b) => b.totalScore - a.totalScore);
+      const sorted = classCA.filter((r) => r.subjectId === sid && (exWeight === 0 || hasRecordedExam(r))).sort((a, b) => b.totalScore - a.totalScore);
       const idx    = sorted.findIndex((r) => r.studentId === studentId);
       subjectPositions[sid] = idx >= 0 ? idx + 1 : 0;
     }
@@ -499,7 +500,7 @@ export async function GET(req: NextRequest) {
     const gpMap: Record<string, number[]> = {};
     for (const r of classCA) {
       if (!gpMap[r.studentId]) gpMap[r.studentId] = [];
-      if (exWeight > 0 && r.examScore <= 0) continue;
+      if (exWeight > 0 && !hasRecordedExam(r)) continue;
       gpMap[r.studentId].push(r.gradePoint);
     }
     const sorted          = Object.entries(gpMap).map(([sid, gps]) => ({ sid, agg: computeAggregate(gps) })).sort((a, b) => a.agg - b.agg);
@@ -533,7 +534,7 @@ export async function GET(req: NextRequest) {
     });
 
     // Stats
-    const completedCA = caRecords.filter((r) => exWeight === 0 || r.examScore > 0);
+    const completedCA = caRecords.filter((r) => exWeight === 0 || hasRecordedExam(r));
     const gps         = completedCA.map((r) => r.gradePoint);
     const scores      = completedCA.map((r) => r.totalScore);
     const aggregate   = computeAggregate(gps);

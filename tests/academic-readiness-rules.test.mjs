@@ -1,0 +1,136 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import ts from "typescript";
+import { dirname, resolve } from "node:path";
+const nodeRequire = createRequire(import.meta.url);
+function load(path, mocks = {}) {
+  const m = { exports: {} };
+  const code = ts.transpileModule(readFileSync(path, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true } }).outputText;
+  new Function("require", "module", "exports", code)((id) => Object.hasOwn(mocks, id) ? mocks[id] : id === "server-only" ? {} : id.startsWith("@/") ? load(`${id.slice(2)}.ts`, mocks) : id.startsWith(".") ? load(`${resolve(dirname(path), id)}.ts`, mocks) : nodeRequire(id), m, m.exports);
+  return m.exports;
+}
+const rules = load("src/lib/academic-readiness-rules.ts");
+const now = new Date("2026-10-13T12:00:00Z");
+test("explicit zero is recorded; default zero, invalid marks and invalid timestamps are not", () => {
+  assert.equal(rules.hasRecordedExam({ examScore: 0 }), false);
+  assert.equal(rules.hasRecordedExam({ examScore: 0, examRecordedAt: now }), true);
+  assert.equal(rules.hasRecordedExam({ examScore: 0, examRecordedAt: "invalid" }), false);
+  assert.equal(rules.hasRecordedExam({ examScore: -1, examRecordedAt: now }), false);
+  assert.equal(rules.hasRecordedExam({ examScore: NaN, examRecordedAt: now }), false);
+  assert.equal(rules.hasRecordedExam({ examScore: 10 }), true);
+});
+test("exam lifecycle never treats not-configured or not-opened windows as overdue", () => {
+  assert.equal(rules.examEntryState(0, null), "NOT_REQUIRED");
+  assert.equal(rules.examEntryState(70, null), "NOT_CONFIGURED");
+  assert.equal(rules.examEntryState(70, { status: "LOCKED", openedAt: null }), "NOT_OPENED");
+  assert.equal(rules.examEntryState(70, { status: "CLOSED", openedAt: now }), "CLOSED");
+  assert.equal(rules.examEntryState(70, { status: "OPEN" }), "OPEN");
+});
+test("late admissions and transfers do not inherit earlier CA duties", () => {
+  const oldAccount = new Date("2020-01-01");
+  const before = new Date(now.getTime() - 1);
+  const after = new Date(now.getTime() + 1);
+  assert.equal(rules.activityEligibility({ createdAt: oldAccount, classJoinedAt: now }, before), "NOT_YET_JOINED");
+  assert.equal(rules.activityEligibility({ createdAt: now, classJoinedAt: oldAccount }, before), "NOT_YET_JOINED");
+  assert.equal(rules.activityEligibility({ createdAt: oldAccount, classJoinedAt: now }, after), "ELIGIBLE");
+  assert.equal(rules.activityEligibility({ createdAt: oldAccount, classJoinedAt: null }, before), "PLACEMENT_UNKNOWN");
+});
+test("CA deadlines respect school operating days and timezone, not the server timezone", () => {
+  assert.equal(rules.caRecordingDeadline(new Date("2026-10-09T10:00:00Z"), 3, "16:00").toISOString(), "2026-10-14T16:00:00.000Z");
+  assert.equal(rules.caRecordingDeadline(new Date("2026-10-09T10:00:00Z"), 1, "16:00", { timezone: "America/New_York", activeDays: ["SATURDAY"] }).toISOString(), "2026-10-10T20:00:00.000Z");
+  assert.throws(() => rules.caRecordingDeadline(now, -1, "16:00"), /invalid/);
+  assert.throws(() => rules.caRecordingDeadline(now, 1, "24:00"), /invalid/);
+  assert.throws(() => rules.caRecordingDeadline(now, 1, "16:00", { activeDays: ["BAD"] }), /valid school/);
+});
+test("empty strings cannot be coerced into explicitly recorded exam zeroes", () => {
+  const { caBulkEntrySchema } = load("src/lib/validation/ca.ts");
+  const input = { rows: [{ studentId: "s", classworkScore: 0, examScore: "" }], classId: 1, subjectId: 1, term: "TERM_1", academicYear: "2026/27" };
+  assert.equal(caBulkEntrySchema.safeParse(input).success, false);
+  assert.equal(caBulkEntrySchema.safeParse({ ...input, rows: [{ ...input.rows[0], examScore: 0 }] }).success, true);
+});
+function fixture(options = {}) {
+  const state = { records: new Map(), audits: [], commits: 0 };
+  if (options.existing) state.records.set("s", options.existing);
+  const config = { id: 1, academicYear: "2026/27", currentTerm: "TERM_1", classworkWeight: 30, examWeight: 70 };
+  const guard = (q) => { assert.equal(q.where.schoolId ?? q.where.schoolId_classId_term_academicYear?.schoolId, "school-a"); };
+  const prisma = { $transaction: async (work, opts) => {
+    assert.equal(opts.isolationLevel, "Serializable");
+    const records = new Map(state.records), audits = [];
+    const tx = {
+      cAConfig: { findMany: async (q) => { guard(q); return options.noConfig ? [] : options.multipleConfigs ? [config, config] : [config]; } },
+      teacher: { findFirst: async (q) => { guard(q); assert.equal(q.where.status, "ACTIVE"); return options.inactive ? null : { id: "t" }; } },
+      timetablePublication: { findMany: async (q) => { guard(q); return options.noPublication ? [] : options.multiplePublications ? [{ id: "p1" }, { id: "p2" }] : [{ id: "pub" }]; } },
+      class: { findFirst: async (q) => { guard(q); return { id: 1 }; } },
+      subject: { findFirst: async (q) => { guard(q); return { id: 2 }; } },
+      publishedTimetableLesson: { findFirst: async (q) => { guard(q); assert.equal(q.where.teacherId, "t"); assert.equal(q.where.publication.status, "ACTIVE"); return options.wrongScope ? null : { id: 1 }; } },
+      examEntryWindow: { findUnique: async (q) => { guard(q); return { status: options.closed ? "CLOSED" : "OPEN" }; } },
+      student: { count: async (q) => { guard(q); assert.equal(q.where.status, "ACTIVE"); return options.otherStudent ? 0 : q.where.id.in.length; } },
+      continuousAssessment: {
+        findUnique: async (q) => records.get(q.where.schoolId_studentId_subjectId_classId_term_academicYear.studentId) ?? null,
+        upsert: async (q) => { const key = q.where.schoolId_studentId_subjectId_classId_term_academicYear.studentId; const row = { id: 1, ...(records.has(key) ? q.update : q.create) }; records.set(key, row); return row; },
+      },
+      cAAuditLog: { create: async (q) => { if (options.auditFail) throw new Error("Audit unavailable"); audits.push(q.data); } },
+    };
+    const result = await work(tx);
+    state.records = records; state.audits.push(...audits); state.commits++; return result;
+  } };
+  const service = load("src/lib/services/exam-recording.ts", { "@/src/lib/prisma": prisma, "@/src/lib/services/report-publication": { assertReportSetEditable: async () => { if (options.published) throw new Error("Report locked"); } }, "@/src/lib/services/ca-activity": { getSubjectCAProgress: async () => ({ earnedMarks: options.invalidCA ? NaN : 20 }) } });
+  return { ...service, state, input: { schoolId: "school-a", teacherId: "t", classId: 1, subjectId: 2, term: "TERM_1", academicYear: "2026/27", rows: [{ studentId: "s", examScore: 0 }] } };
+}
+test("zero recording is atomic, auditable, idempotent, and cannot be overwritten without correction", async () => {
+  const f = fixture();
+  await f.recordExamScores(f.input, now);
+  assert.equal(f.state.records.get("s").examRecordedAt, now);
+  assert.equal(f.state.records.get("s").totalScore, 20);
+  assert.equal(f.state.audits.length, 1);
+  await f.recordExamScores(f.input, new Date(now.getTime() + 1000));
+  assert.equal(f.state.audits.length, 1);
+  assert.equal(f.state.records.get("s").examRecordedAt, now);
+  await assert.rejects(f.recordExamScores({ ...f.input, rows: [{ studentId: "s", examScore: 1 }] }), /correction/);
+});
+test("invalid scope, windows, roster, periods, release locks and audit failures roll back exam writes", async () => {
+  for (const opts of [{ noConfig: true }, { multipleConfigs: true }, { invalidCA: true }, { inactive: true }, { noPublication: true }, { multiplePublications: true }, { wrongScope: true }, { otherStudent: true }, { closed: true }, { published: true }, { auditFail: true }]) {
+    const f = fixture(opts); await assert.rejects(f.recordExamScores(f.input)); assert.equal(f.state.commits, 0); assert.equal(f.state.records.size, 0);
+  }
+  const f = fixture();
+  await assert.rejects(f.recordExamScores({ ...f.input, academicYear: "2025/26" }), /active/);
+  await assert.rejects(f.recordExamScores({ ...f.input, rows: [...f.input.rows, ...f.input.rows] }), /once/);
+  for (const examScore of [71, -1, Infinity, NaN]) await assert.rejects(f.recordExamScores({ ...f.input, rows: [{ studentId: "s", examScore }] }), /between/);
+  assert.equal(f.state.commits, 0);
+});
+test("a later invalid row rolls back the entire exam batch", async () => {
+  const f = fixture();
+  await assert.rejects(f.recordExamScores({ ...f.input, rows: [...f.input.rows, { studentId: "s2", examScore: 71 }] }), /between/);
+  assert.equal(f.state.commits, 0);
+  assert.equal(f.state.records.size, 0);
+  assert.equal(f.state.audits.length, 0);
+});
+test("shared readiness rules use one school, reject conflicting setup and omit inactive teacher scopes", async () => {
+  const config = { academicYear: "2026/27", currentTerm: "TERM_1", classworkWeight: 30, examWeight: 70 };
+  async function run(options = {}) {
+    const scoped = (result) => async (query) => { assert.equal(query.where.schoolId, "school-a"); return result; };
+    const db = {
+      cAConfig: { findMany: scoped(options.conflict ? [config, config] : options.empty ? [] : [config]) },
+      timetablePublication: { findMany: scoped(options.empty ? [] : [{ id: "pub" }]) },
+      teacherAccountabilitySetting: { findUnique: scoped(options.empty ? null : { caScorePublishWindowSchoolDays: 3 }) },
+      schoolNotificationSetting: { findUnique: scoped({ timezone: "Africa/Accra", activeDays: ["MONDAY"] }) },
+      publishedTimetableLesson: { findMany: scoped([{ classId: 1, subjectId: 2, teacherId: "t" }, { classId: 1, subjectId: 2, teacherId: "t" }]) },
+      teacher: { findMany: scoped(options.inactive ? [] : [{ id: "t" }]) },
+      class: { findMany: scoped([{ id: 1 }]) }, subject: { findMany: scoped([{ id: 2 }]) },
+      examEntryWindow: { findMany: scoped([]) },
+    };
+    const { getAcademicReadinessRules } = load("src/lib/services/academic-readiness-rules.ts", { "@/src/lib/prisma": { $transaction: async (work, opts) => { assert.equal(opts.isolationLevel, "RepeatableRead"); return work(db); } } });
+    return getAcademicReadinessRules("school-a");
+  }
+  const ready = await run();
+  assert.equal(ready.scope.length, 1);
+  assert.equal(ready.examWindows[0].state, "NOT_CONFIGURED");
+  assert.equal(ready.operating.timezone, "Africa/Accra");
+  assert.equal((await run({ conflict: true })).period, null);
+  const empty = await run({ empty: true });
+  assert.equal(empty.period, null); assert.equal(empty.publicationId, null); assert.equal(empty.scope.length, 0); assert.equal(empty.issues.length, 3);
+  const inactive = await run({ inactive: true });
+  assert.equal(inactive.scope.length, 0); assert.match(inactive.issues[0], /assignments/);
+});

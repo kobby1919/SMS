@@ -82,7 +82,7 @@ const CAPage = async ({
   const students = await prisma.student.findMany({
     where: { schoolId, classId: activeClass.id },
     orderBy: [{ surname: "asc" }, { name: "asc" }],
-    select: { id: true, name: true, surname: true },
+    select: { id: true, name: true, surname: true, createdAt: true, classJoinedAt: true },
   });
 
   // ── Subjects for this class — ONLY from the timetable (Lesson table) ─────
@@ -108,6 +108,7 @@ const CAPage = async ({
       academicYear: true,
       classworkScore: true,
       examScore: true,
+      examRecordedAt: true,
       totalScore: true,
       grade: true,
       gradePoint: true,
@@ -396,6 +397,7 @@ const CAPage = async ({
                   academicYear: ca.academicYear,
                   classworkScore: ca.classworkScore,
                   examScore: ca.examScore,
+                  examRecordedAt: ca.examRecordedAt,
                   remarks: ca.remarks,
                 }))}
                 activityCAProgress={activityCAProgress}
@@ -453,6 +455,8 @@ const CAPage = async ({
                   studentSurname: ca.student.surname,
                   subjectId: ca.subject.id,
                   subjectName: ca.subject.name,
+                  examRecordedAt: ca.examRecordedAt,
+                  examWeight: configs.find((config) => config.academicYear === ca.academicYear)?.examWeight,
                   term: ca.term,
                   academicYear: ca.academicYear,
                   classworkScore: ca.classworkScore,

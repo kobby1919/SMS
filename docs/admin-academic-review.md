@@ -59,11 +59,19 @@ Historical review uses recorded students/subjects. Full old rosters and full
 historical curricula are not versioned, so recorded coverage is not certification
 of the complete original report set. New releases require the active period.
 
-The legacy exam model stores zero by default and has no exam-entry marker. A
-positive exam score is therefore required where exam weight is positive; a legacy
-zero is shown as unconfirmed rather than silently certified. An explicit exam-entry
-marker is still needed to distinguish a genuine entered zero from missing input
-before schools rely on zero-exam report release.
+Exam entries now have `examRecordedAt`. A deliberately saved zero counts; an
+untouched legacy default zero stays unconfirmed. Positive legacy marks retain
+their evidence. Backfilled legacy timestamps use the last record update as known
+evidence, not a reconstructed original entry time or proof of teacher lateness.
+Exam saves use a serializable transaction, an open exam window,
+published teacher scope, current active students, report locks and mandatory audit.
+CA lesson windows are not an extra gate for exam-only entry.
+
+`Student.classJoinedAt` tracks placement changes and reactivation. Existing
+placements begin tracking at migration time, not an invented historical date.
+Earlier activities do not create overdue duties for late admissions/transfers.
+Missing earlier report evidence requires placement review, not automatic marks or
+silent exemption. CA deadlines use the configured school days and timezone.
 
 Before pilot, test authenticated admin/class-teacher/subject-teacher/parent flows,
 same-school and cross-school denials, reject/resubmit, withdraw/release, real

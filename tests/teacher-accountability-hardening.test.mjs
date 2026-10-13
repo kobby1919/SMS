@@ -173,16 +173,19 @@ test("admin entry bypasses are blocked by server guards, not menu hiding alone",
 
 test("legacy CA writes validate the roster and cannot disguise a different assessment or delete history", () => {
   const actions = readFileSync("src/lib/actions/caActions.ts", "utf8");
-  const roster = actions.slice(actions.indexOf("async function assertCAStudents"), actions.indexOf("async function assertTeacherUsesActivePeriod"));
-  assert.match(roster, /schoolId, classId, status: "ACTIVE"/);
-  for (const name of ["createCA", "updateCA", "bulkUpsertCA"]) {
+  const service = readFileSync("src/lib/services/exam-recording.ts", "utf8");
+  assert.match(service, /schoolId, classId, status: "ACTIVE"/);
+  assert.match(service, /isolationLevel: "Serializable"/);
+  assert.match(service, /examEntryState/);
+  for (const name of ["createCA", "updateCA"]) {
     const start = actions.indexOf(`export async function ${name}`);
-    assert.match(actions.slice(start, actions.indexOf("\nexport async function", start + 1)), /await assertCAStudents/);
+    assert.match(actions.slice(start, actions.indexOf("\nexport async function", start + 1)), /await bulkUpsertCA/);
   }
   const update = actions.slice(actions.indexOf("export async function updateCA"), actions.indexOf("export async function deleteCA"));
-  assert.match(update, /teacherId, studentId: parsed.studentId/);
+  assert.match(update, /schoolId, studentId: parsed.studentId/);
   assert.match(update, /subjectId: parsed.subjectId/);
-  assert.match(update, /Saved exam scores require an approved correction request/);
+  assert.match(service, /Saved exam scores, including zero, can only change through the correction workflow/);
+  assert.match(actions.slice(actions.indexOf("export async function bulkUpsertCA"), actions.indexOf("export async function createCABucketAction")), /await recordExamScores/);
   const deletion = actions.slice(actions.indexOf("export async function deleteCA"), actions.indexOf("export type BulkCARow"));
   assert.match(deletion, /history cannot be deleted/);
   assert.doesNotMatch(deletion, /continuousAssessment.delete/);

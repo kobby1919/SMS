@@ -1,4 +1,5 @@
 import prisma from "@/src/lib/prisma";
+import { activityEligibility, caRecordingDeadline } from "@/src/lib/academic-readiness-rules";
 import type {
   TeacherObligationPriority,
   TeacherObligationStatus,
@@ -19,32 +20,6 @@ type CAObligationSnapshot = {
 
 type CAActivityForObligation = Awaited<ReturnType<typeof getCAActivityForObligation>>;
 
-function startOfDay(date: Date) {
-  const value = new Date(date);
-  value.setHours(0, 0, 0, 0);
-  return value;
-}
-
-function addSchoolDays(date: Date, days: number) {
-  const value = startOfDay(date);
-  let remaining = days;
-
-  while (remaining > 0) {
-    value.setDate(value.getDate() + 1);
-    const day = value.getDay();
-    if (day !== 0 && day !== 6) remaining -= 1;
-  }
-
-  return value;
-}
-
-function applyTime(date: Date, time: string) {
-  const [hours, minutes] = time.split(":").map(Number);
-  const value = new Date(date);
-  value.setHours(hours || 0, minutes || 0, 0, 0);
-  return value;
-}
-
 function priorityForStatus(status: TeacherObligationStatus): TeacherObligationPriority {
   if (status === "MISSED" || status === "ESCALATED") return "HIGH";
   return "NORMAL";
@@ -54,8 +29,8 @@ function caActivitySourceKey(activityId: number) {
   return `ca-score-publishing:activity:${activityId}`;
 }
 
-export function caPublishingDeadline(activityDate: Date, days: number, closeoutTime: string) {
-  return applyTime(addSchoolDays(activityDate, days), closeoutTime);
+export function caPublishingDeadline(activityDate: Date, days: number, closeoutTime: string, options?: { timezone?: string; activeDays?: readonly string[] }) {
+  return caRecordingDeadline(activityDate, days, closeoutTime, options);
 }
 
 async function getCAActivityForObligation(schoolId: string, activityId: number) {
@@ -67,7 +42,7 @@ async function getCAActivityForObligation(schoolId: string, activityId: number) 
         select: {
           id: true,
           name: true,
-          students: { where: { schoolId, status: "ACTIVE" }, select: { id: true, createdAt: true } },
+          students: { where: { schoolId, status: "ACTIVE" }, select: { id: true, createdAt: true, classJoinedAt: true } },
         },
       },
       subject: { select: { id: true, name: true } },
@@ -84,6 +59,7 @@ function buildCAObligationState({
   reminderAfterDays,
   escalateAfterDays,
   now,
+  operating,
 }: {
   activity: NonNullable<CAActivityForObligation>;
   closeoutTime: string;
@@ -91,9 +67,9 @@ function buildCAObligationState({
   reminderAfterDays: number;
   escalateAfterDays: number;
   now: Date;
+  operating?: { timezone: string; activeDays: string[] } | null;
 }) {
-  const cutoff = new Date(activity.activityDate); cutoff.setHours(23, 59, 59, 999);
-  const classStudentIds = new Set(activity.class.students.filter((student) => student.createdAt <= cutoff).map((student) => student.id));
+  const classStudentIds = new Set(activity.class.students.filter((student) => activityEligibility(student, activity.activityDate) === "ELIGIBLE").map((student) => student.id));
   const studentCount = classStudentIds.size;
   const validScores = activity.scores.filter((score) => classStudentIds.has(score.studentId));
   const scoreCount = new Set(validScores.map((score) => score.studentId)).size;
@@ -101,15 +77,9 @@ function buildCAObligationState({
     (latest, score) => (!latest || score.updatedAt > latest ? score.updatedAt : latest),
     null,
   );
-  const expectedAt = caPublishingDeadline(activity.activityDate, publishWindowDays, closeoutTime);
-  const reminderAt = applyTime(
-    addSchoolDays(activity.activityDate, reminderAfterDays),
-    closeoutTime,
-  );
-  const missedAt = applyTime(
-    addSchoolDays(activity.activityDate, escalateAfterDays),
-    closeoutTime,
-  );
+  const expectedAt = caPublishingDeadline(activity.activityDate, publishWindowDays, closeoutTime, operating ?? undefined);
+  const reminderAt = caPublishingDeadline(activity.activityDate, reminderAfterDays, closeoutTime, operating ?? undefined);
+  const missedAt = caPublishingDeadline(activity.activityDate, escalateAfterDays, closeoutTime, operating ?? undefined);
   const completed = studentCount > 0 && scoreCount >= studentCount && Boolean(latestScoreAt);
   const status: TeacherObligationStatus = studentCount === 0 ? "CANCELLED" : completed
     ? latestScoreAt! > expectedAt
@@ -140,9 +110,10 @@ export async function syncCAActivityScorePublishingObligation({
   activityId: number;
   now?: Date;
 }): Promise<CAObligationSnapshot | null> {
-  const [settings, activity] = await Promise.all([
+  const [settings, activity, operating] = await Promise.all([
     getTeacherAccountabilitySettings(schoolId),
     getCAActivityForObligation(schoolId, activityId),
+    prisma.schoolNotificationSetting.findUnique({ where: { schoolId }, select: { timezone: true, activeDays: true } }),
   ]);
   if (!activity) return null;
   const [lessons, config] = await Promise.all([
@@ -160,6 +131,7 @@ export async function syncCAActivityScorePublishingObligation({
     reminderAfterDays: settings.caReminderAfterSchoolDays,
     escalateAfterDays: settings.caEscalateAfterSchoolDays,
     now,
+    operating,
   });
   const sourceKey = caActivitySourceKey(activity.id);
   const teacherName = `${activity.teacher.name} ${activity.teacher.surname}`.trim();
