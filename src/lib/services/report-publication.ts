@@ -41,9 +41,9 @@ export async function transitionClassReports(mode: ReportActionMode, input: Repo
         readiness = await getClassReportReadiness(context, db, now);
         if (!readiness.currentPeriod) throw new Error("Reports can only be submitted or published for the active academic period.");
         if (!readiness.isReady) throw new Error(`Report set is incomplete. ${readiness.missingCount} entries need attention. ${readiness.issues.join(" ")}`);
-        if (mode === "PUBLISH" && readiness.examRequired) {
+        if (readiness.examRequired) {
           const window = await db.examEntryWindow.findUnique({ where: { schoolId_classId_term_academicYear: context }, select: { status: true, openedAt: true, closedAt: true } });
-          if (!window || window.status === "LOCKED" || !["OPEN", "CLOSED"].includes(examEntryState(100, window))) throw new Error("Exam entry must have been validly opened for this class period before publication.");
+          if (!window || window.status === "LOCKED" || !["OPEN", "CLOSED"].includes(examEntryState(100, window))) throw new Error("Exam entry must have been validly opened for this class period before report submission or publication.");
         }
       }
       const changes = mode === "SUBMIT" ? { status: "SUBMITTED" as const, submittedAt: now, submittedBy: userId, notes: input.notes ?? null, reviewedAt: null, reviewedBy: null, reviewNote: null, unpublishedAt: null, unpublishedBy: null }

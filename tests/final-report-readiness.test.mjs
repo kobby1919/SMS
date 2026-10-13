@@ -6,7 +6,7 @@ const loaded = { exports: {} };
 const code = ts.transpileModule(readFileSync("src/lib/services/final-report-readiness.ts", "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 new Function("require", "module", "exports", code)((id) => { assert.equal(id, "server-only"); return {}; }, loaded, loaded.exports);
 const { getFinalReportPosition, buildFinalReportTracking } = loaded.exports;
-const evidence = { expectedEntryCount: 10, readyEntryCount: 7, studentCount: 5, subjectCount: 2, isReady: false, issues: [], examRequired: true };
+const evidence = { expectedEntryCount: 10, readyEntryCount: 7, studentCount: 5, subjectCount: 2, isReady: false, issues: [], examRequired: true, currentPeriod: true };
 const complete = { ...evidence, readyEntryCount: 10, isReady: true };
 const run = (overrides = {}) => getFinalReportPosition({ readiness: evidence, examState: "OPEN", publicationStatus: "UNPUBLISHED", ...overrides });
 
@@ -70,4 +70,29 @@ test("school percentages exclude preparation classes and retain exact bounded re
   assert.equal(url.searchParams.get("subjectId"), "2");
   assert.equal(url.searchParams.get("classId"), "1");
   assert.equal(url.searchParams.get("year"), "2026/2027");
+});
+
+test("historical complete publication is not a new release or an automatic reconciliation failure", () => {
+  const result = run({ readiness: { ...complete, currentPeriod: false }, publicationStatus: "PUBLISHED" });
+  assert.equal(result.workflowState, "PUBLISHED");
+  assert.equal(result.evidenceComplete, true);
+  assert.equal(result.releaseReady, false);
+  assert.equal(result.canSubmitForReview, false);
+  assert.equal(result.needsReconciliation, false);
+});
+
+test("malformed exam states, contradictory readiness and duplicate classes cannot certify results", () => {
+  for (const overrides of [{ examState: "UNKNOWN" }, { examState: "NOT_REQUIRED" }, { readiness: { ...complete, isReady: false } }]) assert.throws(() => run(overrides), /inconsistent/);
+  const cls = { classId: 1, className: "KG1", position: run(), blockingSubjects: [] };
+  assert.throws(() => buildFinalReportTracking([cls, cls], "2026/2027", "TERM_1"), /scope is inconsistent/);
+});
+
+test("healthy published classes cannot crowd out admin-review and resubmission work", () => {
+  const classes = Array.from({ length: 8 }, (_, index) => ({ classId: index + 1, className: `Class ${index + 1}`, blockingSubjects: [], position: run({ readiness: complete, publicationStatus: index === 7 ? "SUBMITTED" : "PUBLISHED" }) }));
+  const result = buildFinalReportTracking(classes, "2026/2027", "TERM_1");
+  assert.equal(result.totals.publishedClasses, 7);
+  assert.equal(result.totals.awaitingReviewClasses, 1);
+  assert.equal(result.classes.length, 1);
+  assert.equal(result.classes[0].classId, 8);
+  assert.equal(result.classListTotal, 1);
 });

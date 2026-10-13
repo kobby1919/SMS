@@ -195,11 +195,11 @@ test("historical reports use recorded period subjects and placements, not today'
   assert.ok(f.queries.some((q) => q.where.OR?.[0]?.continuousAssessments));
   assert.ok(!f.queries.some((q) => q.where.publication));
 });
-function review() {
+function review(options = {}) {
   const calls = [];
   const track = (value) => async (q) => { calls.push(q); return value; };
-  const db = { class: { findMany: track([{ id: 1, name: "KG1" }]) }, cAConfig: { findMany: track([{ academicYear: "2026/27", currentTerm: "TERM_1", isActive: true }]) }, reportCardPublication: { findUnique: track({ id: 1, status: "SUBMITTED", updatedAt: now, submittedBy: "t1" }) }, examEntryWindow: { findUnique: track({ status: "OPEN" }) }, cAAuditLog: { findMany: track([]) }, teacher: { findFirst: track({ name: "Victoria", surname: "Mensah" }) } };
-  const readiness = { isReady: false, currentPeriod: true, issues: [], blockers: Array.from({ length: 26 }, (_, i) => ({ studentId: `s${i}`, subjectId: 2, reason: "MISSING_CA" })) };
+  const db = { class: { findMany: track([{ id: 1, name: "KG1" }]) }, cAConfig: { findMany: track([{ academicYear: "2026/27", currentTerm: "TERM_1", isActive: true }]) }, reportCardPublication: { findUnique: track(options.publication ?? { id: 1, status: "SUBMITTED", updatedAt: now, submittedBy: "t1" }) }, examEntryWindow: { findUnique: track(options.window ?? { status: "OPEN", openedAt: now }) }, cAAuditLog: { findMany: track([]) }, teacher: { findFirst: track({ name: "Victoria", surname: "Mensah" }) } };
+  const readiness = { isReady: false, currentPeriod: true, expectedEntryCount: 26, readyEntryCount: 0, studentCount: 13, subjectCount: 2, examRequired: true, issues: [], blockers: Array.from({ length: 26 }, (_, i) => ({ studentId: `s${i}`, subjectId: 2, reason: "MISSING_CA" })), ...options.readiness };
   const service = load("src/lib/queries/admin-report-review.ts", { "@/src/lib/authz": { requireRole: async (roles) => { assert.deepEqual(roles, ["admin"]); return { schoolId: "school-a" }; } }, "@/src/lib/prisma": { $transaction: async (fn, opts) => { assert.equal(opts.isolationLevel, "RepeatableRead"); return fn(db); } }, "@/src/lib/services/report-card-readiness": { getClassReportReadiness: async (input, reader) => { assert.equal(input.schoolId, "school-a"); assert.equal(reader, db); return readiness; } } });
   return { service, calls };
 }
@@ -215,6 +215,18 @@ test("report review rejects malformed and foreign selections and paginates actua
   assert.equal(r.pageCount, 2);
   assert.equal(r.submittedByName, "Victoria Mensah");
   assert.ok(f.calls.every((q) => (q.where.schoolId ?? q.where.schoolId_classId_term_academicYear?.schoolId) === "school-a"));
+});
+
+test("report review uses shared lifecycle and release gates instead of raw OPEN flags", async () => {
+  const complete = { readyEntryCount: 26, isReady: true, blockers: [] };
+  const locked = await review({ window: { status: "LOCKED", openedAt: now }, readiness: complete }).service.getAdminReportReview({}, now);
+  assert.equal(locked.examStatus, "LOCKED");
+  assert.equal(locked.reportPosition.releaseReady, false);
+  assert.equal(locked.reportPosition.workflowState, "AWAITING_ADMIN_REVIEW");
+  const historical = await review({ publication: { status: "PUBLISHED" }, readiness: { ...complete, currentPeriod: false } }).service.getAdminReportReview({}, now);
+  assert.equal(historical.reportPosition.needsReconciliation, false);
+  assert.equal(historical.reportPosition.releaseReady, false);
+  assert.equal(historical.reportPosition.workflowState, "PUBLISHED");
 });
 function publication(options = {}) {
   let row = options.status === null ? null : { id: 1, status: options.status ?? "SUBMITTED", updatedAt: now, ...context };
@@ -275,6 +287,13 @@ test("only an active assigned class teacher can submit a complete set", async ()
   await f.service.transitionClassReports("SUBMIT", input, teacher, now);
   assert.equal(f.row.status, "SUBMITTED");
   assert.equal(f.audits[0].actorId, "t1");
+});
+
+test("direct report submission cannot bypass the valid exam window requirement", async () => {
+  const f = publication({ status: null, window: { status: "LOCKED", openedAt: now } });
+  await assert.rejects(f.service.transitionClassReports("SUBMIT", input, { ...admin, role: "teacher", userId: "t1" }, now), /validly opened/);
+  assert.equal(f.row, null);
+  assert.equal(f.audits.length, 0);
 });
 
 test("CA-only reports do not require an irrelevant exam entry window", async () => {

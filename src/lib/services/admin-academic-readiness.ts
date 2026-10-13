@@ -182,6 +182,10 @@ export async function getAdminAcademicReadinessSnapshot() {
   }, { isolationLevel: "RepeatableRead", maxWait: 15000, timeout: 45000 }).catch((error: unknown) => {
     const databaseError = error instanceof Error ? error as Error & { code?: unknown; errorCode?: unknown } : null;
     const code = databaseError?.code ?? databaseError?.errorCode;
+    if (code === "ACADEMIC_EVIDENCE_INCONSISTENT") {
+      console.error("Academic report evidence requires reconciliation", { code });
+      return unavailable("UNAVAILABLE", "INCONSISTENT_REPORT_EVIDENCE", ["Report evidence requires reconciliation. No partial totals are shown."]);
+    }
     if (typeof code !== "string" || !["P1001", "P1002", "P1017", "P2024", "P2028", "P2034"].includes(code)) throw error;
     console.error("Academic readiness snapshot temporarily unavailable", { code });
     return unavailable("UNAVAILABLE", "DATABASE_UNAVAILABLE", ["Academic readiness could not be evaluated right now. Please try again. No partial totals are shown."]);

@@ -95,6 +95,14 @@ test("pending corrections block release despite complete evidence and preserve w
   assert.equal(result.finalReports.classes[0].position.releaseReady, false);
 });
 
+test("inconsistent canonical report data returns unavailable, not partial readiness", async () => {
+  const f = fixture({ readiness: { readyEntryCount: 99 } });
+  const result = await f.getAdminAcademicReadinessSnapshot();
+  assert.equal(result.code, "INCONSISTENT_REPORT_EVIDENCE");
+  assert.equal(result.totals, null);
+  assert.equal(result.finalReports, null);
+});
+
 test("non-admin rejection never opens a transaction", async () => {
   const f = fixture({ denied: true });
   await assert.rejects(f.getAdminAcademicReadinessSnapshot(), /Forbidden/);

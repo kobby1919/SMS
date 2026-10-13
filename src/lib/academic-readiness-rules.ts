@@ -26,6 +26,7 @@ export function examEntryState(examWeight: number, window: { status: string; ope
   if (!window) return "NOT_CONFIGURED";
   if (!["OPEN", "CLOSED", "LOCKED"].includes(window.status) || window.openedAt && !Number.isFinite(new Date(window.openedAt).getTime())) return "NEEDS_REVIEW";
   if (window.closedAt && (!Number.isFinite(new Date(window.closedAt).getTime()) || window.openedAt && window.closedAt < window.openedAt)) return "NEEDS_REVIEW";
+  if (window.status === "LOCKED") return window.openedAt || window.closedAt ? "NEEDS_REVIEW" : "NOT_OPENED";
   if (window.status === "OPEN") return window.openedAt && !window.closedAt ? "OPEN" : "NEEDS_REVIEW";
   return window.openedAt ? "CLOSED" : "NOT_OPENED";
 }

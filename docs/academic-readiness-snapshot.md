@@ -110,6 +110,16 @@ required. The dashboard presentation is reserved for the later UI integration st
 
 ### Step 5: Final report readiness
 
+Hardening: report scope/count inconsistencies fail closed with an explicit
+unavailable school snapshot. Historical complete publications retain their
+workflow without being offered for new release or falsely marked for correction
+solely because their period ended. Locked windows with prior opening metadata
+require review, not release. Direct submission and publication both verify genuine
+exam opening history. Reports & Approval uses the same workflow/evidence adapter
+as the dashboard. Healthy published classes remain in totals but do not displace
+actionable review/resubmission classes from the bounded list. Duplicate class
+scope and unsafe aggregate counts cannot certify readiness.
+
 Final reports reuse canonical readiness inside the same school snapshot: required
 CA allocations/scores, genuine exam evidence, reconciled totals/grades, placement
 gaps and pending corrections. Evidence completion is separate from release

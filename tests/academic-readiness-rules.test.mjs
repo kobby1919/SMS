@@ -26,6 +26,7 @@ test("exam lifecycle never treats not-configured or not-opened windows as overdu
   assert.equal(rules.examEntryState(0, null), "NOT_REQUIRED");
   assert.equal(rules.examEntryState(70, null), "NOT_CONFIGURED");
   assert.equal(rules.examEntryState(70, { status: "LOCKED", openedAt: null }), "NOT_OPENED");
+  assert.equal(rules.examEntryState(70, { status: "LOCKED", openedAt: now }), "NEEDS_REVIEW");
   assert.equal(rules.examEntryState(70, { status: "CLOSED", openedAt: now }), "CLOSED");
   assert.equal(rules.examEntryState(70, { status: "OPEN", openedAt: now }), "OPEN");
   assert.equal(rules.examEntryState(70, { status: "OPEN" }), "NEEDS_REVIEW");
