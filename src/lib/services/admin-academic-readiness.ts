@@ -5,6 +5,7 @@ import { caRecordingDeadline } from "@/src/lib/academic-readiness-rules";
 import { getAcademicReadinessRules } from "@/src/lib/services/academic-readiness-rules";
 import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
 import { getAdminTeacherAccountability } from "@/src/lib/services/admin-teacher-accountability";
+import { getCARecordingTracking } from "@/src/lib/services/ca-recording-tracking";
 
 type SnapshotState = "AVAILABLE" | "SETUP_REQUIRED" | "UNAVAILABLE";
 type ReadinessClass = {
@@ -42,6 +43,7 @@ export async function getAdminAcademicReadinessSnapshot() {
   const unavailable = (state: SnapshotState, code: string, issues: string[]) => ({
     ...base, state, code, issues, totals: null, classes: [] as ReadinessClass[],
     classListLimit: 5, accountability: null as Awaited<ReturnType<typeof getAdminTeacherAccountability>> | null,
+    caRecording: null as Awaited<ReturnType<typeof getCARecordingTracking>> | null,
     accountabilityState: "UNAVAILABLE" as SnapshotState,
     accountabilityIssues: issues,
   });
@@ -139,6 +141,7 @@ export async function getAdminAcademicReadinessSnapshot() {
       }
     }
     const accountability = accountabilityState === "AVAILABLE" ? await getAdminTeacherAccountability(schoolId, now, undefined, false, { db: tx, academicOnly: true }) : null;
+    const caRecording = await getCARecordingTracking({ schoolId, rules, now, db: tx, reportPublications: publications });
     const issues = [...rules.issues];
     if (missingScopeClasses) issues.push(`${missingScopeClasses} class(es) with active students have no published subject scope. They are not counted as report-ready.`);
     const totals = {
@@ -160,7 +163,7 @@ export async function getAdminAcademicReadinessSnapshot() {
       ...base, state: (missingScopeClasses ? "SETUP_REQUIRED" : "AVAILABLE") as SnapshotState,
       code: missingScopeClasses ? "INCOMPLETE_TEACHING_SCOPE" : "EVALUATED", issues, totals,
       classes: evaluated.filter((cls) => cls.reportState !== "PUBLISHED").sort((a, b) => Number(a.evidenceComplete) - Number(b.evidenceComplete) || (b.expectedEntries - b.readyEntries) - (a.expectedEntries - a.readyEntries) || a.classId - b.classId).slice(0, 5),
-      classListLimit: 5, accountability, accountabilityState, accountabilityIssues,
+      classListLimit: 5, accountability, accountabilityState, accountabilityIssues, caRecording,
     };
   }, { isolationLevel: "RepeatableRead", maxWait: 15000, timeout: 45000 }).catch((error: unknown) => {
     const databaseError = error instanceof Error ? error as Error & { code?: unknown; errorCode?: unknown } : null;

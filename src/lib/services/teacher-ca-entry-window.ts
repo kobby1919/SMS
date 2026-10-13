@@ -64,8 +64,21 @@ export async function getTeacherCAEntryWindowStatus({
     getTeacherAccountabilitySettings(schoolId),
     listLiveTimetableLessons(schoolId, { day, teacherId, classId }),
   ]);
+  return evaluateTeacherCAEntryWindowStatus({ settings, lessons, subjectId, now });
+}
+
+// The dashboard supplies already-scoped snapshot evidence; no settings writes or queries.
+export function evaluateTeacherCAEntryWindowStatus({ settings, lessons, subjectId, now }: {
+  settings: Pick<Awaited<ReturnType<typeof getTeacherAccountabilitySettings>>, "allowEarlyAttendanceMarking" | "attendanceOpenMinutesBeforeLesson" | "attendanceGraceMinutesAfterLesson" | "attendanceEscalateMinutesAfterLesson">;
+  lessons: readonly { day: Day; subjectId: number; startTime: Date; endTime: Date; subject: { name: string } }[];
+  subjectId: number;
+  now: Date;
+}): CAEntryWindowStatus {
+  const day = DAY_BY_INDEX[dayStart(now).getDay()];
+  if (!day) return { allowed: false, label: "your published lesson period", reason: "CA entry opens only on a school day with a published lesson for this class and subject." };
   const subjectLessons = lessons
-    .filter((lesson) => lesson.subjectId === subjectId)
+    .filter((lesson) => lesson.day === day && lesson.subjectId === subjectId)
+    .slice().sort((a, b) => (a.startTime.getHours() * 60 + a.startTime.getMinutes()) - (b.startTime.getHours() * 60 + b.startTime.getMinutes()))
     .map((lesson) => {
       const startAt = combineDateWithLessonTime(now, lesson.startTime);
       const endAt = combineDateWithLessonTime(now, lesson.endTime);

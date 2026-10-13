@@ -25,6 +25,7 @@ function fixture(options = {}) {
   tx.cABucket.groupBy = async (query) => { guard(query); return []; };
   tx.reportCardPublication = { findMany: async (query) => { guard(query); return options.publications ?? [{ classId: 1, status: "SUBMITTED" }]; } };
   const mocks = {
+    "@/src/lib/services/ca-recording-tracking": { getCARecordingTracking: async (input) => { assert.equal(input.schoolId, "school-a"); assert.equal(input.db, tx); assert.equal(input.rules, rules); assert.ok(input.now instanceof Date); return { state: "AVAILABLE", totals: { activities: 0 }, activities: [], subjects: [], issues: [] }; } },
     console: { error: (...args) => { calls.logs.push(args); } },
     "@/src/lib/authz": { requireRole: async (roles) => { calls.auth++; assert.deepEqual(roles, ["admin"]); if (options.denied) throw new Error("Forbidden"); return { schoolId: "school-a", role: "admin", userId: "admin-a" }; } },
     "@/src/lib/prisma": { $transaction: async (work, config) => { calls.transactions++; assert.equal(calls.auth, 1); assert.equal(config.isolationLevel, "RepeatableRead"); if (options.databaseError) throw options.databaseError instanceof Error ? options.databaseError : new Error("Database unavailable"); return work(tx); } },

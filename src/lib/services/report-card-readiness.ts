@@ -54,7 +54,7 @@ export async function getClassReportReadiness(input: { schoolId: string; classId
   const subjectIds = scopedSubjects.map((s) => s.id);
   const records = subjectIds.length && studentIds.length ? await db.continuousAssessment.findMany({ where: { ...context, subjectId: { in: subjectIds }, studentId: { in: studentIds }, student: { schoolId }, subject: { schoolId } }, select: { id: true, studentId: true, subjectId: true, classworkScore: true, examScore: true, examRecordedAt: true, totalScore: true, grade: true, gradePoint: true } }) : [];
   // Load class evidence once; the canonical calculator is shared with assessment review.
-  const buckets = subjectIds.length ? await db.cABucket.findMany({ where: { ...context, subjectId: { in: subjectIds }, subject: { schoolId } }, include: { activities: { where: { schoolId, classId, subjectId: { in: subjectIds } }, include: { teacher: { select: { name: true, surname: true } }, scores: { where: { schoolId, studentId: { in: studentIds }, student: { schoolId } }, select: { id: true, studentId: true, rawScore: true, normalizedContribution: true } } } } } }) : [];
+  const buckets = subjectIds.length ? await db.cABucket.findMany({ where: { ...context, subjectId: { in: subjectIds }, subject: { schoolId } }, include: { activities: { where: { schoolId, classId, subjectId: { in: subjectIds } }, include: { teacher: { select: { id: true, schoolId: true, name: true, surname: true } }, scores: { where: { schoolId, studentId: { in: studentIds }, student: { schoolId } }, select: { id: true, studentId: true, rawScore: true, normalizedContribution: true } } } } } }) : [];
   const issues: string[] = [];
   if (currentPeriod && activeConfigs.length !== 1) issues.push("Multiple active academic periods need review before reports can be released.");
   if (currentPeriod && publications.length !== 1) issues.push("One active published timetable is required before reports can be released.");
@@ -83,8 +83,8 @@ export async function getClassReportReadiness(input: { schoolId: string; classId
     const record = recordsByStudentSubject.get(`${student.id}:${subject.id}`);
     const add = (reason: ReportReadinessBlocker["reason"], detail: string) => blockers.push({ studentId: student.id, studentName: `${student.name} ${student.surname}`, admissionNumber: student.admissionNumber, subjectId: subject.id, subjectName: subject.name, reason, detail });
     if (!config || issues.some((issue) => issue.startsWith("A valid"))) { add("MISSING_CA", "Assessment configuration is missing or invalid."); continue; }
-    if (subjectBuckets.some((bucket) => bucket.activities.some((activity) => activity.subjectId !== bucket.subjectId))) {
-      add("INVALID_SCORE", "Activity subject does not match its assessment bucket. Records need reconciliation.");
+    if (subjectBuckets.some((bucket) => bucket.activities.some((activity) => activity.subjectId !== bucket.subjectId || activity.teacher.schoolId !== schoolId || activity.teacher.id !== activity.teacherId))) {
+      add("INVALID_SCORE", "Activity subject or teacher does not match its school assessment scope. Records need reconciliation.");
       continue;
     }
     try {

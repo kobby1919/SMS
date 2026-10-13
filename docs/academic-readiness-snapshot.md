@@ -64,6 +64,48 @@ guard against expensive in-memory canonical evaluation. Exceeding a limit return
 `UNAVAILABLE/EVALUATION_LIMIT`, never truncated totals. Larger schools/history
 need a separately designed batch/materialized snapshot before raising limits.
 
+## CA recording tracking (Step 3)
+
+The snapshot's `caRecording` reader uses the same transaction, active period,
+published class/subject/teacher scope, current active roster, and admission/class
+join eligibility. It loads evidence in five batched queries, never per student.
+Five activity/subject details are returned after full evaluated counts.
+
+- No actual activity: **No CA activity recorded yet**, not an overdue duty.
+- Missing eligible scores before/on the deadline: **Scores remaining**.
+- Missing eligible scores after the deadline: **Scores overdue**, unless an
+  accepted follow-up exception closes the duty.
+- Every eligible score row is present and valid: **Activity scores complete**.
+
+An explicit raw zero score row is recorded evidence. Invalid marks, duplicate
+rows, premature future scores, locks with incomplete records, and stale completed
+obligations require review rather than being silently certified. Future activities
+do not count as today's required/overdue scores. Later joins do not inherit earlier
+teacher duties; missing earlier academic evidence remains placement review.
+
+`recordingPermittedNow` is independent of the score deadline. The shared teacher
+lesson-window evaluator determines whether normal entry is currently open; activity,
+bucket and submitted/published report locks still block entry. An overdue activity
+may be entered late during a permitted lesson window. The reader never opens a
+window, unlocks data, or grants authority to save marks.
+
+Allocation uses `buildSubjectCAProgress` and `assessmentPosition`. Bucket totals
+must fulfill the configured CA weight; SUM activities must fulfill their bucket
+allocation. Complete existing activity scores do not prove term CA completion.
+Term CA additionally requires complete canonical student CA evidence, no pending
+CA score correction, no future/foreign/misfiled/invalid evidence, and no unresolved earlier
+placement gap. Exam entry is deliberately not part of this CA-only measure. Final
+report release still uses the report approval safeguards, including exam evidence.
+
+Valid earlier teacher scores remain canonical academic evidence after assignment
+or employment changes. `ignoredActivities` means not part of current teacher-duty
+tracking, not erased from term marks. Such historical activities never become
+overdue duties for the newly assigned teacher.
+
+Missing/invalid deadlines leave recorded/remaining counts visible and overdue totals
+null, never a fabricated healthy zero. A zero-CA-weight period is explicitly not
+required. The dashboard presentation is reserved for the later UI integration step.
+
 ## Before pilot
 
 Run real authenticated multi-school tests, simultaneous assessment/import and

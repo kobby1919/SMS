@@ -20,7 +20,7 @@ function evidence(options = {}) {
   const record = { id: 1, studentId: "s1", classId: 1, academicYear: context.academicYear, term: context.term, updatedAt: now, subjectId: 2, classworkScore: 0, examScore: 60, totalScore: 60, ...options.record };
   record.grade = options.record?.grade ?? getGradeBand(record.totalScore).grade;
   record.gradePoint = options.record?.gradePoint ?? getGradeBand(record.totalScore).gradePoint;
-  const activity = { id: 1, subjectId: options.wrongSubject ? 3 : 2, title: "Reading", rawMaxScore: 10, allocationMarks: 30, activityDate: new Date("2026-10-10"), teacher: { name: "Victoria", surname: "Mensah" }, scores: options.noScores ? [] : [{ studentId: "s1", rawScore: options.rawScore ?? 0, normalizedContribution: options.contribution ?? 0 }] };
+  const activity = { id: 1, teacherId: "t1", subjectId: options.wrongSubject ? 3 : 2, title: "Reading", rawMaxScore: 10, allocationMarks: 30, activityDate: new Date("2026-10-10"), teacher: { id: "t1", schoolId: options.foreignTeacher ? "school-b" : "school-a", name: "Victoria", surname: "Mensah" }, scores: options.noScores ? [] : [{ studentId: "s1", rawScore: options.rawScore ?? 0, normalizedContribution: options.contribution ?? 0 }] };
   const bucket = { id: 1, subjectId: 2, name: "Classwork", type: "CLASSWORK", aggregationMode: options.sum ? "SUM_ACTIVITIES" : "AVERAGE_TO_BUCKET", allocationMarks: 30, activities: [activity, ...(options.future ? [{ ...activity, id: 2, activityDate: new Date("2026-10-13") }] : [])] };
   const track = (value) => async (q) => { queries.push(q); assert.equal(q.where.schoolId ?? q.where.schoolId_academicYear?.schoolId, "school-a"); return typeof value === "function" ? value(q) : value; };
   const db = { class: { findFirst: track(options.foreign ? null : { id: 1 }) }, cAConfig: { findUnique: track(options.noConfig ? null : config), findMany: track(options.historical ? [{ ...config, academicYear: "2027/28" }] : options.multipleConfigs ? [config, config] : [config]) }, timetablePublication: { findMany: track(options.multiplePublications ? [{ id: "p1" }, { id: "p2" }] : [{ id: "p" }]) }, publishedTimetableLesson: { findMany: track(options.noSubjects ? [] : [{ subjectId: 2, subjectName: "Reading" }, { subjectId: 2, subjectName: "Reading" }]) }, subject: { findMany: track([{ id: 2, name: "Reading" }]) }, student: { findMany: track((q) => q.where.status ? students.filter((s) => s.status === q.where.status) : students) }, continuousAssessment: { findMany: track(options.noRecord ? [] : [record]) }, cABucket: { findMany: track([bucket]) } };
@@ -40,6 +40,13 @@ test("report readiness respects recorded zero CA, deduplicates published subject
   assert.equal(r.readyStudentCount, 1);
   assert.equal(r.studentCount, 1);
   assert.equal(r.caStartedEntryCount, 1);
+});
+
+test("a foreign-school activity teacher cannot certify canonical report readiness", async () => {
+  const r = await evidence({ foreignTeacher: true }).service.getClassReportReadiness(context);
+  assert.equal(r.isReady, false);
+  assert.equal(r.readyEntryCount, 0);
+  assert.equal(r.blockers[0].reason, "INVALID_SCORE");
 });
 test("positive exam alone cannot hide incomplete CA, future work, invalid raw marks or stale totals", async () => {
   for (const [options, reason] of [[{ noScores: true }, "MISSING_CA"], [{ future: true }, "FUTURE_ACTIVITY"], [{ rawScore: 90 }, "INVALID_SCORE"], [{ record: { totalScore: 99 } }, "STALE_TOTAL"], [{ record: { classworkScore: 30, totalScore: 90 } }, "STALE_TOTAL"], [{ record: { examScore: 0, totalScore: 0 } }, "MISSING_EXAM"], [{ record: { examScore: 90, totalScore: 90 } }, "INVALID_SCORE"]]) {

@@ -10,13 +10,13 @@ export function assessmentPosition(progress: SubjectCAProgress, examScore: numbe
     activities.some((activity) => !Number.isFinite(activity.rawMaxScore) || activity.rawMaxScore <= 0 ||
       (activity.rawScore !== null && (!Number.isFinite(activity.rawScore) || activity.rawScore < 0 || activity.rawScore > activity.rawMaxScore)));
   const allocationComplete = Math.abs(progress.totalAllocatedMarks - progress.classworkWeight) < 0.005;
-  const caComplete = progress.classworkWeight === 0 || activities.length > 0 && scored === activities.length && allocationComplete &&
-    progress.buckets.every((bucket) => bucket.activityCount > 0 &&
+  const activityAllocationComplete = progress.buckets.every((bucket) => bucket.activityCount > 0 &&
       (bucket.aggregationMode !== "SUM_ACTIVITIES" ||
         Math.abs(bucket.activities.reduce((sum, activity) => sum + (activity.allocationMarks ?? 0), 0) - bucket.allocationMarks) < 0.005));
+  const caComplete = progress.classworkWeight === 0 || activities.length > 0 && scored === activities.length && allocationComplete && activityAllocationComplete;
   const examConfirmed = examMaximum === 0 || (examScore !== null && hasRecordedExam({ examScore, examRecordedAt }) && examScore <= examMaximum);
   const complete = !invalid && caComplete && examConfirmed && futureActivities === 0;
-  return { scored, expected: activities.length, caComplete, examConfirmed,
+  return { scored, expected: activities.length, caComplete, allocationComplete, activityAllocationComplete, examConfirmed,
     ca: !invalid && scored > 0 ? progress.earnedMarks : null,
     status: invalid ? "Needs review" : complete ? "Complete" : scored === 0 && !examConfirmed ? "Not started" : "Incomplete",
     total: complete ? Math.round((progress.earnedMarks + (examMaximum > 0 ? examScore ?? 0 : 0)) * 100) / 100 : null };
