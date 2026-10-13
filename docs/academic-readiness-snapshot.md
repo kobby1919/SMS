@@ -108,6 +108,33 @@ required. The dashboard presentation is reserved for the later UI integration st
 
 ## Before pilot
 
+### Step 3 hardening
+
+Allocation validation is shared with report certification: SUM activities require
+positive explicit allocations, cannot exceed their bucket, and cannot rely on
+capped totals to conceal extra/unallocated activities. Invalid bucket modes,
+negative/oversized allocations, null marks, and duplicate score evidence cannot
+certify CA or reports. A null mark is never converted into a genuine zero.
+
+Normal-recording permission is false for zero eligible rosters, invalid saved
+marks, or invalid subject setup. Valid recorded activity scores can still be
+complete while term allocation/evidence needs review; those remain separate axes.
+Resolved/dismissed follow-ups must match both the teacher and obligation before
+they suppress another overdue accusation.
+
+Teacher status checks, snapshot permission, and transactional score saves share
+the same school-clock lesson-window evaluator. The school timezone defaults to
+Africa/Accra only when no stored timezone exists. Invalid policies/timezones fail
+closed. Deployment host timezone cannot change CA window permission. Score saves
+recheck the active published lessons, school policy/timezone, source scope,
+allocation structure and publication lock inside their Serializable transaction;
+an earlier page check is never sufficient authority to write.
+
+Mixed invalid operating-day values make deadline tracking unavailable rather
+than silently dropping the unknown days. Before pilot, test delayed entry with
+the actual weekly timetable/deadline configuration and real simultaneous policy,
+publication, roster and score changes.
+
 Run real authenticated multi-school tests, simultaneous assessment/import and
 snapshot reads, and representative maximum-size latency tests against the actual
 production database. Passing mocked tests, typecheck, or build is not production

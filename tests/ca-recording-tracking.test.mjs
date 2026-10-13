@@ -24,7 +24,7 @@ function fixture(options = {}) {
     student: { findMany: read("student", options.students ?? [student]) },
     cABucket: { findMany: read("bucket", options.buckets ?? [bucket(options.activities ?? [activity()])]) },
     publishedTimetableLesson: { findMany: read("lesson", options.lessons ?? [{ classId: 1, subjectId: 1, teacherId: "t1", day: "TUESDAY", startTime: new Date("2000-01-01T09:00:00Z"), endTime: new Date("2000-01-01T10:00:00Z"), subjectName: "Reading" }]) },
-    teacherObligation: { findMany: read("obligation", options.obligations ?? []) },
+    teacherObligation: { findMany: read("obligation", (options.obligations ?? []).map((row) => ({ id: "obligation-a", ...row, escalations: row.escalations.map((esc) => ({ teacherId: row.teacherId, obligationId: row.id ?? "obligation-a", ...esc })) }))) },
     teacherCorrectionRequest: { findMany: read("correction", options.corrections ?? []) },
   };
   const mocks = {
@@ -218,4 +218,63 @@ test("valid former-teacher scores stay in canonical term evidence, but are never
   assert.equal(result.totals.overdueActivities, 0);
   assert.equal(result.subjects[0].termCAComplete, true);
   assert.equal(result.subjects[0].completeStudentCAEntries, 1);
+});
+
+test("zero eligible roster and invalid saved marks never advertise normal recording permission", async () => {
+  for (const options of [{ students: [{ ...student, classJoinedAt: new Date("2026-10-12") }] }, { activities: [activity({ scores: [score("s1", 90)] })] }]) {
+    const result = await fixture(options).run();
+    assert.equal(result.activities[0].recordingPermittedNow, false);
+    assert.ok(result.activities[0].recordingBlockReason);
+  }
+});
+
+test("SUM allocation gaps and overflow cannot be hidden behind capped marks", async () => {
+  for (const activities of [
+    [activity({ allocationMarks: null, scores: [score("s1", 10)] }), activity({ id: 4, allocationMarks: 30, scores: [score("s1", 0)] })],
+    [activity({ allocationMarks: 30, scores: [score("s1", 10)] }), activity({ id: 4, allocationMarks: 30, scores: [score("s1", 10)] })],
+    [activity({ allocationMarks: -10, scores: [score("s1", 0)] }), activity({ id: 4, allocationMarks: 40, scores: [score("s1", 0)] })],
+  ]) {
+    const result = await fixture({ buckets: [bucket(activities, { aggregationMode: "SUM_ACTIVITIES" })] }).run();
+    assert.equal(result.subjects[0].state, "NEEDS_REVIEW");
+    assert.equal(result.subjects[0].termCAComplete, false);
+    assert.equal(result.activities[0].recordingPermittedNow, false);
+    assert.equal(result.subjects[0].allocation.activitiesFulfilled, false);
+  }
+});
+
+test("null or duplicate historical marks cannot turn into genuine zero evidence", async () => {
+  for (const scores of [[score("s1", null)], [score("s1", 0), score("s1", 0)]]) {
+    const result = await fixture({ activities: [activity({ teacherId: "old-teacher", teacher: { ...teacher, id: "old-teacher", status: "LEFT_SCHOOL" }, scores })] }).run();
+    assert.equal(result.subjects[0].state, "NEEDS_REVIEW");
+    assert.equal(result.subjects[0].termCAComplete, false);
+  }
+});
+
+test("CA permission uses school timezone, not deployment host timezone", async () => {
+  const oldTZ = process.env.TZ;
+  try {
+    process.env.TZ = "Asia/Tokyo";
+    const result = await fixture().run();
+    assert.equal(result.activities[0].recordingPermittedNow, true);
+    const rules = { operating: { timezone: "America/New_York", activeDays: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"] } };
+    assert.equal((await fixture({ rules }).run()).activities[0].recordingPermittedNow, false);
+    assert.equal((await fixture({ rules, now: new Date("2026-10-13T13:30:00Z") }).run()).activities[0].recordingPermittedNow, true);
+  } finally { if (oldTZ === undefined) delete process.env.TZ; else process.env.TZ = oldTZ; }
+});
+
+test("invalid grace/close policy fails closed in both shared permission and tracking", async () => {
+  const caPolicy = { ...policy, attendanceEscalateMinutesAfterLesson: 5, attendanceGraceMinutesAfterLesson: 10 };
+  const result = await fixture({ rules: { caPolicy } }).run();
+  assert.equal(result.activities[0].recordingPermittedNow, null);
+  const { evaluateTeacherCAEntryWindowStatus } = load("src/lib/services/teacher-ca-entry-window.ts", { "@/src/lib/prisma": {}, "@/src/lib/services/timetable": {}, "@/src/lib/services/teacher-accountability-settings": {} });
+  const status = evaluateTeacherCAEntryWindowStatus({ now: at, settings: caPolicy, subjectId: 1, lessons: [] });
+  assert.equal(status.allowed, false);
+  assert.equal(status.unavailable, true);
+});
+
+test("another teacher's exception cannot silently close this activity's follow-up", async () => {
+  const row = { id: "obligation-a", teacherId: "t1", sourceKey: "ca-score-publishing:activity:3", sourceModel: "CAActivity", sourceId: "3", status: "ESCALATED", completedAt: null, escalations: [{ status: "DISMISSED", teacherId: "another-teacher" }] };
+  const result = await fixture({ now: new Date("2026-10-14"), obligations: [row] }).run();
+  assert.equal(result.activities[0].followUpClosed, false);
+  assert.equal(result.activities[0].state, "OVERDUE");
 });

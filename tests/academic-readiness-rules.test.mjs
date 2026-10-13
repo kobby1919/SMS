@@ -13,6 +13,7 @@ function load(path, mocks = {}) {
 }
 const rules = load("src/lib/academic-readiness-rules.ts");
 const now = new Date("2026-10-13T12:00:00Z");
+const caCalculator = load("src/lib/services/ca-activity.ts", { "@/src/lib/prisma": {}, "@/src/lib/services/timetable": {} }).buildSubjectCAProgress;
 test("explicit zero is recorded; default zero, invalid marks and invalid timestamps are not", () => {
   assert.equal(rules.hasRecordedExam({ examScore: 0 }), false);
   assert.equal(rules.hasRecordedExam({ examScore: 0, examRecordedAt: now }), true);
@@ -43,6 +44,7 @@ test("CA deadlines respect school operating days and timezone, not the server ti
   assert.throws(() => rules.caRecordingDeadline(now, -1, "16:00"), /invalid/);
   assert.throws(() => rules.caRecordingDeadline(now, 1, "24:00"), /invalid/);
   assert.throws(() => rules.caRecordingDeadline(now, 1, "16:00", { activeDays: ["BAD"] }), /valid school/);
+  assert.throws(() => rules.caRecordingDeadline(now, 1, "16:00", { activeDays: ["MONDAY", "BAD"] }), /valid school/);
 });
 test("empty strings cannot be coerced into explicitly recorded exam zeroes", () => {
   const { caBulkEntrySchema } = load("src/lib/validation/ca.ts");
@@ -144,13 +146,18 @@ test("shared readiness rules use one school, reject conflicting setup and omit i
 function caFixture(options = {}) {
   const state = { saved: [], totals: [], locked: false, audits: [] };
   const service = load("src/lib/services/ca-score-recording.ts", {
+    "@/src/lib/services/teacher-accountability-settings": {},
+    "@/src/lib/services/timetable": {},
     "@/src/lib/prisma": { $transaction: async (work, opts) => {
       assert.equal(opts.isolationLevel, "Serializable");
       const pending = { saved: [], totals: [], locked: false, audits: [] };
       const tx = {
         cAConfig: { findMany: async () => [{ academicYear: "2026/27", currentTerm: "TERM_1", classworkWeight: 30, examWeight: 70 }] },
         cAActivity: { findFirst: async (q) => { assert.equal(q.where.schoolId, "school-a"); assert.equal(q.where.teacherId, "t"); return { id: 1, classId: 1, subjectId: 2, rawMaxScore: 10, activityDate: new Date("2026-10-10"), updatedAt: now, isLocked: options.locked ?? false, bucket: { classId: 1, subjectId: 2, isLocked: false } }; }, updateMany: async () => { pending.locked = true; return { count: options.race ? 0 : 1 }; } },
-        timetablePublication: { findMany: async () => [{ id: "pub" }] }, publishedTimetableLesson: { findFirst: async () => options.wrongScope ? null : { id: 1 } },
+        timetablePublication: { findMany: async () => [{ id: "pub" }] }, publishedTimetableLesson: { findMany: async () => options.wrongScope ? [] : [{ subjectId: 2, subjectName: "Reading", day: "TUESDAY", startTime: new Date(options.closedWindow ? "2000-01-01T14:00:00Z" : "2000-01-01T11:30:00Z"), endTime: new Date(options.closedWindow ? "2000-01-01T15:00:00Z" : "2000-01-01T12:30:00Z") }] },
+        teacherAccountabilitySetting: { findUnique: async () => options.noPolicy ? null : { allowEarlyAttendanceMarking: true, attendanceOpenMinutesBeforeLesson: 10, attendanceGraceMinutesAfterLesson: 10, attendanceEscalateMinutesAfterLesson: 30 } },
+        schoolNotificationSetting: { findUnique: async () => ({ timezone: options.timezone ?? "Africa/Accra" }) },
+        cABucket: { findMany: async () => [{ id: 1, name: "Classwork", type: "CLASSWORK", subjectId: 2, classId: 1, aggregationMode: "AVERAGE_TO_BUCKET", allocationMarks: options.allocation ?? 30, activities: [{ id: 1, teacherId: "t", subjectId: 2, rawMaxScore: 10, activityDate: new Date("2026-10-10"), teacher: { id: "t", schoolId: "school-a", name: "Teacher", surname: "A" } }] }] },
         student: { findMany: async () => [{ id: "s", createdAt: new Date("2026-09-01"), classJoinedAt: new Date("2026-09-01") }, { id: "transfer", createdAt: new Date("2020-01-01"), classJoinedAt: now }] },
         cAAuditLog: { create: async (q) => { if (options.auditFail) throw new Error("Audit failed"); pending.audits.push(q.data); } },
         pending,
@@ -158,7 +165,7 @@ function caFixture(options = {}) {
       const result = await work(tx); Object.assign(state, pending); return result;
     } },
     "@/src/lib/services/report-publication": { assertReportSetEditable: async () => { if (options.published) throw new Error("Published report locked"); } },
-    "@/src/lib/services/ca-activity": { upsertCAActivityScore: async (input, tx) => { tx.pending.saved.push(input); return { changed: true, score: { id: 1, studentId: input.studentId } }; }, syncComputedCARecord: async (input, tx) => { if (options.totalFail) throw new Error("Invalid computed total"); tx.pending.totals.push(input); } },
+    "@/src/lib/services/ca-activity": { buildSubjectCAProgress: caCalculator, upsertCAActivityScore: async (input, tx) => { tx.pending.saved.push(input); return { changed: true, score: { id: 1, studentId: input.studentId } }; }, syncComputedCARecord: async (input, tx) => { if (options.totalFail) throw new Error("Invalid computed total"); tx.pending.totals.push(input); } },
   });
   return { ...service, recordCAActivityScores: (input) => service.recordCAActivityScores(input, now), state, input: { schoolId: "school-a", teacherId: "t", activityId: 1, rows: [{ studentId: "s", rawScore: 0 }] } };
 }
@@ -174,5 +181,15 @@ test("failed CA audit, totals, competing lock, report lock or scope leaves no pa
   }
   for (const rows of [[{ studentId: "transfer", rawScore: 1 }], [{ studentId: "s", rawScore: 90 }], [{ studentId: "s", rawScore: NaN }], [{ studentId: "s", rawScore: 0 }, { studentId: "s", rawScore: 0 }]]) {
     const f = caFixture(); await assert.rejects(f.recordCAActivityScores({ ...f.input, rows })); assert.equal(f.state.saved.length, 0);
+  }
+});
+
+test("CA writes independently recheck lesson window, school clock and allocation inside the transaction", async () => {
+  for (const options of [{ closedWindow: true }, { noPolicy: true }, { timezone: "America/New_York" }, { timezone: "Bad/Zone" }, { allocation: 40 }, { allocation: -1 }]) {
+    const f = caFixture(options);
+    await assert.rejects(f.recordCAActivityScores(f.input));
+    assert.equal(f.state.saved.length, 0);
+    assert.equal(f.state.audits.length, 0);
+    assert.equal(f.state.locked, false);
   }
 });

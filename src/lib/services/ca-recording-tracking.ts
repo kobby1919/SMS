@@ -4,7 +4,7 @@ import type { getAcademicReadinessRules } from "@/src/lib/services/academic-read
 import { activityEligibility, caRecordingDeadline } from "@/src/lib/academic-readiness-rules";
 import { buildSubjectCAProgress } from "@/src/lib/services/ca-activity";
 import { assessmentPosition } from "@/src/lib/assessment-position";
-import { evaluateTeacherCAEntryWindowStatus } from "@/src/lib/services/teacher-ca-entry-window";
+import { evaluateTeacherCAEntryWindowStatus, isValidCAEntryWindowPolicy } from "@/src/lib/services/teacher-ca-entry-window";
 import { isOutstandingDuty, teacherFollowUpName } from "@/src/lib/queries/admin-teacher-follow-up";
 
 type Rules = Awaited<ReturnType<typeof getAcademicReadinessRules>>;
@@ -49,7 +49,7 @@ export async function getCARecordingTracking(input: {
     } },
   } });
   const lessons = await db.publishedTimetableLesson.findMany({ where: { schoolId, publicationId: rules.publicationId, publication: { schoolId, status: "ACTIVE" } }, select: { classId: true, subjectId: true, teacherId: true, day: true, startTime: true, endTime: true, subjectName: true } });
-  const obligations = await db.teacherObligation.findMany({ where: { schoolId, type: "CA_SCORE_PUBLISHING", teacher: { schoolId } }, select: { teacherId: true, sourceKey: true, sourceModel: true, sourceId: true, status: true, completedAt: true, escalations: { where: { schoolId }, select: { status: true } } } });
+  const obligations = await db.teacherObligation.findMany({ where: { schoolId, type: "CA_SCORE_PUBLISHING", teacher: { schoolId } }, select: { id: true, teacherId: true, sourceKey: true, sourceModel: true, sourceId: true, status: true, completedAt: true, escalations: { where: { schoolId }, select: { status: true, teacherId: true, obligationId: true } } } });
   const pendingCorrections = await db.teacherCorrectionRequest.findMany({ where: { schoolId, status: "PENDING", sourceModel: "CAActivityScore", fieldName: "rawScore", teacher: { schoolId } }, select: { sourceId: true } });
   const pendingBySource = new Map<string, number>();
   for (const request of pendingCorrections) pendingBySource.set(request.sourceId, (pendingBySource.get(request.sourceId) ?? 0) + 1);
@@ -85,7 +85,7 @@ export async function getCARecordingTracking(input: {
     catch { deadlineAvailable = false; }
   }
   if (!deadlineAvailable && period.classworkWeight > 0) issues.push("CA recording deadlines are missing or invalid. Remaining scores are visible, but overdue tracking is unavailable.");
-  const permissionPolicyValid = Boolean(rules.caPolicy && typeof rules.caPolicy.allowEarlyAttendanceMarking === "boolean" && [rules.caPolicy.attendanceOpenMinutesBeforeLesson, rules.caPolicy.attendanceGraceMinutesAfterLesson, rules.caPolicy.attendanceEscalateMinutesAfterLesson].every((minutes) => Number.isInteger(minutes) && minutes >= 0));
+  const permissionPolicyValid = isValidCAEntryWindowPolicy(rules.caPolicy);
   if (!permissionPolicyValid && period.classworkWeight > 0) issues.push("CA lesson-window settings need review before current recording permission can be evaluated.");
 
   for (const pair of pairs) {
@@ -100,6 +100,12 @@ export async function getCARecordingTracking(input: {
     ignoredActivities += excluded;
     const scoreIds = new Set(allActivities.flatMap((activity) => activity.scores.filter((score) => rosterIds.has(score.studentId)).map((score) => String(score.id))));
     const pendingScoreCorrections = [...scoreIds].reduce((sum, id) => sum + (pendingBySource.get(id) ?? 0), 0);
+    const duplicateEvidence = allActivities.some((activity) => {
+      const ids = activity.scores.filter((score) => rosterIds.has(score.studentId)).map((score) => score.studentId);
+      return new Set(ids).size !== ids.length;
+    });
+    const planningProgress = buildSubjectCAProgress(period, subjectBuckets.map((bucket) => ({ ...bucket, activities: bucket.activities.map((activity) => ({ ...activity, scores: [] })) })));
+    const planningPosition = assessmentPosition(planningProgress, null, period.examWeight);
     for (const activity of scoped) {
       const eligible = new Set(roster.filter((student) => activityEligibility(student, activity.activityDate) === "ELIGIBLE").map((student) => student.id));
       const unknown = roster.filter((student) => activityEligibility(student, activity.activityDate) === "PLACEMENT_UNKNOWN").length;
@@ -115,26 +121,28 @@ export async function getCARecordingTracking(input: {
       const scoresRemaining = eligible.size - valid.size;
       const obligation = obligationMap.get(`${activity.teacherId}:ca-score-publishing:activity:${activity.id}`);
       const matchingObligation = obligation?.sourceModel === "CAActivity" && obligation.sourceId === String(activity.id) ? obligation : null;
-      const followUpClosed = Boolean(matchingObligation && (matchingObligation.status === "CANCELLED" || matchingObligation.escalations.some((row) => ["RESOLVED", "DISMISSED"].includes(row.status))));
+      const followUpClosed = Boolean(matchingObligation && (matchingObligation.status === "CANCELLED" || matchingObligation.escalations.some((row) => row.teacherId === matchingObligation.teacherId && row.obligationId === matchingObligation.id && ["RESOLVED", "DISMISSED"].includes(row.status))));
       const deadline = deadlineAvailable ? caRecordingDeadline(activity.activityDate, rules.caPolicy!.caScorePublishWindowSchoolDays, rules.caPolicy!.teacherCloseoutTime, rules.operating ?? undefined) : null;
       const reportLocked = reportPublications.some((row) => row.classId === pair.classId && ["SUBMITTED", "PUBLISHED"].includes(row.status));
       const bucketLocked = subjectBuckets.find((bucket) => bucket.id === activity.bucketId)?.isLocked;
       let recordingPermittedNow: boolean | null = null;
       let recordingBlockReason: string | null = null;
-      if (reportLocked || bucketLocked || activity.isLocked) { recordingPermittedNow = false; recordingBlockReason = "Locked records require the correction/review workflow."; }
+      if (misfiledEvidence || duplicateEvidence || planningPosition.status === "Needs review" || invalidScores) { recordingPermittedNow = false; recordingBlockReason = "Invalid saved marks or CA setup must be reviewed before normal recording."; }
+      else if (!eligible.size) { recordingPermittedNow = false; recordingBlockReason = "There are no confirmed eligible students for this activity."; }
+      else if (reportLocked || bucketLocked || activity.isLocked) { recordingPermittedNow = false; recordingBlockReason = "Locked records require the correction/review workflow."; }
       else if (activity.activityDate > now) { recordingPermittedNow = false; recordingBlockReason = "The activity has not taken place yet."; }
       else if (period.classworkWeight === 0) { recordingPermittedNow = false; recordingBlockReason = "CA is not required for this academic period."; }
       else if (rules.caPolicy && permissionPolicyValid) {
         const scope = `${pair.classId}:${pair.subjectId}:${activity.teacherId}`;
-        const status = permissionCache.get(scope) ?? evaluateTeacherCAEntryWindowStatus({ now, subjectId: pair.subjectId, settings: rules.caPolicy, lessons: (lessonsByScope.get(scope) ?? []).map((lesson) => ({ ...lesson, subject: { name: lesson.subjectName } })) });
+        const status = permissionCache.get(scope) ?? evaluateTeacherCAEntryWindowStatus({ now, timezone: rules.operating?.timezone, subjectId: pair.subjectId, settings: rules.caPolicy, lessons: (lessonsByScope.get(scope) ?? []).map((lesson) => ({ ...lesson, subject: { name: lesson.subjectName } })) });
         permissionCache.set(scope, status);
-        recordingPermittedNow = status.allowed;
+        recordingPermittedNow = status.unavailable ? null : status.allowed;
         recordingBlockReason = status.allowed ? null : status.reason;
       } else recordingBlockReason = "Recording permission cannot be evaluated without valid school lesson-window settings.";
       let state: ActivityState;
       const prematureScores = activity.activityDate > now && activity.scores.some((score) => rosterIds.has(score.studentId));
       const staleCompletion = matchingObligation?.completedAt || ["COMPLETED", "COMPLETED_LATE"].includes(matchingObligation?.status ?? "");
-      if (period.classworkWeight === 0 || !Number.isFinite(maximum) || maximum <= 0 || invalidScores || prematureScores || scoresRemaining > 0 && (activity.isLocked || bucketLocked || reportLocked || staleCompletion)) state = "NEEDS_REVIEW";
+      if (period.classworkWeight === 0 || !Number.isFinite(maximum) || maximum <= 0 || invalidScores || prematureScores || scoresRemaining > 0 && (duplicateEvidence || planningPosition.status === "Needs review" || activity.isLocked || bucketLocked || reportLocked || staleCompletion)) state = "NEEDS_REVIEW";
       else if (activity.activityDate > now) state = "PLANNED";
       else if (unknown) state = "PLACEMENT_REVIEW";
       else if (!eligible.size) state = "NO_ELIGIBLE_STUDENTS";
@@ -145,10 +153,8 @@ export async function getCARecordingTracking(input: {
       rows.push({ activityId: activity.id, classId: pair.classId, subjectId: pair.subjectId, teacherId: activity.teacherId, title: activity.title, teacherName: teacherFollowUpName(activity.teacher), activityDate: activity.activityDate.toISOString(), hasTakenPlace: activity.activityDate <= now, deadline: deadline?.toISOString() ?? null, eligibleStudents: eligible.size, scoresRecorded: valid.size, scoresRemaining, placementUnknownStudents: unknown, invalidScores, state, label: labels[state], recordingPermittedNow, recordingBlockReason, followUpClosed });
     }
     // Allocation uses the canonical calculator, not activity-count percentages.
-    const planningProgress = buildSubjectCAProgress(period, subjectBuckets.map((bucket) => ({ ...bucket, activities: bucket.activities.map((activity) => ({ ...activity, scores: [] })) })));
-    const planningPosition = assessmentPosition(planningProgress, null, period.examWeight);
     let completeStudentCAEntries = 0, placementReviewEntries = 0;
-    let invalidEvidence = planningPosition.status === "Needs review" || misfiledEvidence || pendingScoreCorrections > 0 || rows.some((row) => row.classId === pair.classId && row.subjectId === pair.subjectId && row.state === "NEEDS_REVIEW");
+    let invalidEvidence = planningPosition.status === "Needs review" || misfiledEvidence || duplicateEvidence || pendingScoreCorrections > 0 || rows.some((row) => row.classId === pair.classId && row.subjectId === pair.subjectId && row.state === "NEEDS_REVIEW");
     const scores = new Map(allActivities.flatMap((activity) => activity.scores.map((score) => [`${activity.id}:${score.studentId}`, score] as const)));
     for (const student of roster) {
       const placementReview = allActivities.some((activity) => activity.activityDate <= now && activityEligibility(student, activity.activityDate) !== "ELIGIBLE" && !scores.has(`${activity.id}:${student.id}`));
@@ -157,7 +163,7 @@ export async function getCARecordingTracking(input: {
         const progress = buildSubjectCAProgress(period, subjectBuckets.map((bucket) => ({ ...bucket, activities: bucket.activities.filter((activity) => activity.activityDate <= now).map((activity) => ({ ...activity, scores: scores.has(`${activity.id}:${student.id}`) ? [scores.get(`${activity.id}:${student.id}`)!] : [] })) })));
         const position = assessmentPosition(progress, null, period.examWeight);
         if (position.status === "Needs review") invalidEvidence = true;
-        if (!misfiledEvidence && !placementReview && position.status !== "Needs review" && position.caComplete && !allActivities.some((activity) => activity.activityDate > now)) completeStudentCAEntries++;
+        if (!misfiledEvidence && !duplicateEvidence && !placementReview && position.status !== "Needs review" && position.caComplete && !allActivities.some((activity) => activity.activityDate > now)) completeStudentCAEntries++;
       } catch (error) {
         if (!(error instanceof Error) || !["Raw maximum score must be greater than zero.", "Raw score cannot be negative.", "Raw score cannot exceed the activity maximum score.", "CA allocation must be greater than zero."].includes(error.message)) throw error;
         invalidEvidence = true;

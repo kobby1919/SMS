@@ -20,7 +20,7 @@ function evidence(options = {}) {
   const record = { id: 1, studentId: "s1", classId: 1, academicYear: context.academicYear, term: context.term, updatedAt: now, subjectId: 2, classworkScore: 0, examScore: 60, totalScore: 60, ...options.record };
   record.grade = options.record?.grade ?? getGradeBand(record.totalScore).grade;
   record.gradePoint = options.record?.gradePoint ?? getGradeBand(record.totalScore).gradePoint;
-  const activity = { id: 1, teacherId: "t1", subjectId: options.wrongSubject ? 3 : 2, title: "Reading", rawMaxScore: 10, allocationMarks: 30, activityDate: new Date("2026-10-10"), teacher: { id: "t1", schoolId: options.foreignTeacher ? "school-b" : "school-a", name: "Victoria", surname: "Mensah" }, scores: options.noScores ? [] : [{ studentId: "s1", rawScore: options.rawScore ?? 0, normalizedContribution: options.contribution ?? 0 }] };
+  const activity = { id: 1, teacherId: "t1", subjectId: options.wrongSubject ? 3 : 2, title: "Reading", rawMaxScore: 10, allocationMarks: 30, activityDate: new Date("2026-10-10"), teacher: { id: "t1", schoolId: options.foreignTeacher ? "school-b" : "school-a", name: "Victoria", surname: "Mensah" }, scores: options.noScores ? [] : [{ studentId: "s1", rawScore: Object.hasOwn(options, "rawScore") ? options.rawScore : 0, normalizedContribution: options.contribution ?? 0 }] };
   const bucket = { id: 1, subjectId: 2, name: "Classwork", type: "CLASSWORK", aggregationMode: options.sum ? "SUM_ACTIVITIES" : "AVERAGE_TO_BUCKET", allocationMarks: 30, activities: [activity, ...(options.future ? [{ ...activity, id: 2, activityDate: new Date("2026-10-13") }] : [])] };
   const track = (value) => async (q) => { queries.push(q); assert.equal(q.where.schoolId ?? q.where.schoolId_academicYear?.schoolId, "school-a"); return typeof value === "function" ? value(q) : value; };
   const db = { class: { findFirst: track(options.foreign ? null : { id: 1 }) }, cAConfig: { findUnique: track(options.noConfig ? null : config), findMany: track(options.historical ? [{ ...config, academicYear: "2027/28" }] : options.multipleConfigs ? [config, config] : [config]) }, timetablePublication: { findMany: track(options.multiplePublications ? [{ id: "p1" }, { id: "p2" }] : [{ id: "p" }]) }, publishedTimetableLesson: { findMany: track(options.noSubjects ? [] : [{ subjectId: 2, subjectName: "Reading" }, { subjectId: 2, subjectName: "Reading" }]) }, subject: { findMany: track([{ id: 2, name: "Reading" }]) }, student: { findMany: track((q) => q.where.status ? students.filter((s) => s.status === q.where.status) : students) }, continuousAssessment: { findMany: track(options.noRecord ? [] : [record]) }, cABucket: { findMany: track([bucket]) } };
@@ -46,6 +46,31 @@ test("a foreign-school activity teacher cannot certify canonical report readines
   const r = await evidence({ foreignTeacher: true }).service.getClassReportReadiness(context);
   assert.equal(r.isReady, false);
   assert.equal(r.readyEntryCount, 0);
+  assert.equal(r.blockers[0].reason, "INVALID_SCORE");
+});
+
+test("a missing raw mark cannot be certified as an explicit zero", async () => {
+  const r = await evidence({ rawScore: null }).service.getClassReportReadiness(context);
+  assert.equal(r.isReady, false);
+  assert.equal(r.readyEntryCount, 0);
+  assert.equal(r.blockers[0].reason, "INVALID_SCORE");
+});
+
+test("SUM allocations cannot certify capped totals with an unallocated extra activity", async () => {
+  const f = evidence({ sum: true, record: { classworkScore: 30, totalScore: 90 }, rawScore: 10 });
+  const read = f.db.cABucket.findMany;
+  f.db.cABucket.findMany = async (q) => (await read(q)).map((bucket) => ({ ...bucket, activities: [...bucket.activities, { ...bucket.activities[0], id: 2, allocationMarks: null }] }));
+  const r = await f.service.getClassReportReadiness(context);
+  assert.equal(r.isReady, false);
+  assert.equal(r.blockers[0].reason, "INVALID_SCORE");
+});
+
+test("duplicate score evidence cannot silently overwrite another row during report certification", async () => {
+  const f = evidence();
+  const read = f.db.cABucket.findMany;
+  f.db.cABucket.findMany = async (q) => (await read(q)).map((bucket) => ({ ...bucket, activities: bucket.activities.map((activity) => ({ ...activity, scores: [...activity.scores, ...activity.scores] })) }));
+  const r = await f.service.getClassReportReadiness(context);
+  assert.equal(r.isReady, false);
   assert.equal(r.blockers[0].reason, "INVALID_SCORE");
 });
 test("positive exam alone cannot hide incomplete CA, future work, invalid raw marks or stale totals", async () => {

@@ -483,7 +483,7 @@ export function buildSubjectCAProgress(config: { classworkWeight: number }, buck
     const activityRows = bucket.activities.map((activity) => {
       const score = activity.scores[0];
       const rawMaxScore = toNumber(activity.rawMaxScore);
-      const rawScore = score ? toNumber(score.rawScore) : null;
+      const rawScore = score ? score.rawScore == null ? Number.NaN : toNumber(score.rawScore) : null;
       const activityAllocation = activity.allocationMarks ? toNumber(activity.allocationMarks) : null;
       const earnedMarks = score
         ? bucket.aggregationMode === "SUM_ACTIVITIES"

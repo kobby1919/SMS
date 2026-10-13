@@ -52,12 +52,12 @@ async function readTeacherAccountability(tx: Prisma.TransactionClient, schoolId:
     const scopeKey = (teacher: string, classId: number, subjectId: number) => `${teacher}:${classId}:${subjectId}`;
     const scopes = new Set(lessons.map((lesson) => scopeKey(lesson.teacherId, lesson.classId, lesson.subjectId)));
     const lessonMap = new Map(lessons.map((lesson) => [lesson.sourceId, lesson]));
-    const obligations = await tx.teacherObligation.findMany({ where: { schoolId, teacher: { schoolId }, teacherId: { in: teachers.map((teacher) => teacher.id) }, type: { in: academicOnly ? ["CA_SCORE_PUBLISHING"] : ["ATTENDANCE", "HOMEWORK_CHECKING", "CA_SCORE_PUBLISHING"] } }, select: { id: true, teacherId: true, type: true, sourceModel: true, sourceId: true, sourceKey: true, status: true, completedAt: true, expectedAt: true, metadata: true, escalations: { where: { schoolId }, select: { id: true, status: true, escalatedAt: true, reason: true } } } });
+    const obligations = await tx.teacherObligation.findMany({ where: { schoolId, teacher: { schoolId }, teacherId: { in: teachers.map((teacher) => teacher.id) }, type: { in: academicOnly ? ["CA_SCORE_PUBLISHING"] : ["ATTENDANCE", "HOMEWORK_CHECKING", "CA_SCORE_PUBLISHING"] } }, select: { id: true, teacherId: true, type: true, sourceModel: true, sourceId: true, sourceKey: true, status: true, completedAt: true, expectedAt: true, metadata: true, escalations: { where: { schoolId }, select: { id: true, status: true, teacherId: true, obligationId: true, escalatedAt: true, reason: true } } } });
     const obligationMap = new Map(obligations.map((row) => [`${row.teacherId}:${row.sourceKey}`, row]));
     const items: TeacherFollowUpItem[] = [];
     const addDuty = (input: { teacherId: string; key: string; kind: "ATTENDANCE" | "HOMEWORK_CHECKING" | "CA_SCORE_PUBLISHING"; title: string; detail: string; deadline: Date; complete: boolean }) => {
       const row = obligationMap.get(`${input.teacherId}:${input.key}`);
-      const exception = row?.escalations.some((escalation) => ["RESOLVED", "DISMISSED"].includes(escalation.status));
+      const exception = row?.escalations.some((escalation) => escalation.teacherId === row.teacherId && escalation.obligationId === row.id && ["RESOLVED", "DISMISSED"].includes(escalation.status));
       if (!isOutstandingDuty({ deadline: input.deadline, complete: input.complete, status: row?.status, completedAt: row?.completedAt, exception }, now)) return;
       items.push({ id: `duty:${input.teacherId}:${input.key}`, teacherId: input.teacherId, teacherName: names.get(input.teacherId)!, kind: input.kind, title: input.title, detail: input.detail, at: input.deadline.toISOString(), reviewId: row?.id ?? null, correctionKind: null });
     };

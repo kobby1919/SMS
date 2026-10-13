@@ -3,7 +3,9 @@ import prisma from "@/src/lib/prisma";
 import { activityEligibility } from "@/src/lib/academic-readiness-rules";
 import { requireActiveAcademicConfig } from "@/src/lib/services/academic-period";
 import { assertReportSetEditable } from "@/src/lib/services/report-publication";
-import { upsertCAActivityScore, syncComputedCARecord } from "@/src/lib/services/ca-activity";
+import { upsertCAActivityScore, syncComputedCARecord, buildSubjectCAProgress } from "@/src/lib/services/ca-activity";
+import { assessmentPosition } from "@/src/lib/assessment-position";
+import { evaluateTeacherCAEntryWindowStatus } from "@/src/lib/services/teacher-ca-entry-window";
 
 export async function recordCAActivityScores(input: { schoolId: string; teacherId: string; activityId: number; rows: { studentId: string; rawScore: number; comment?: string }[] }, now = new Date()) {
   const { schoolId, teacherId, activityId, rows } = input;
@@ -18,10 +20,19 @@ export async function recordCAActivityScores(input: { schoolId: string; teacherI
       if (activity.isLocked || activity.bucket.isLocked) throw new Error("This activity is locked. Use the correction workflow.");
       const publications = await tx.timetablePublication.findMany({ where: { schoolId, status: "ACTIVE" }, take: 2, select: { id: true } });
       const publication = publications.length === 1 ? publications[0] : null;
-      const lesson = publication ? await tx.publishedTimetableLesson.findFirst({ where: { schoolId, publicationId: publication.id, classId: activity.classId, subjectId: activity.subjectId, teacherId }, select: { id: true } }) : null;
-      if (!lesson) throw new Error("This activity is outside your published teaching assignment.");
+      const lessons = publication ? await tx.publishedTimetableLesson.findMany({ where: { schoolId, publicationId: publication.id, classId: activity.classId, subjectId: activity.subjectId, teacherId }, select: { day: true, startTime: true, endTime: true, subjectId: true, subjectName: true } }) : [];
+      if (!lessons.length) throw new Error("This activity is outside your published teaching assignment.");
+      const policy = await tx.teacherAccountabilitySetting.findUnique({ where: { schoolId } });
+      const operating = await tx.schoolNotificationSetting.findUnique({ where: { schoolId }, select: { timezone: true } });
+      if (!policy) throw new Error("Configure CA recording policy before saving scores.");
+      const window = evaluateTeacherCAEntryWindowStatus({ settings: policy, now, timezone: operating?.timezone, subjectId: activity.subjectId, lessons: lessons.map((lesson) => ({ ...lesson, subject: { name: lesson.subjectName } })) });
+      if (!window.allowed) throw new Error(window.reason ?? "CA entry is outside the published lesson window.");
       const context = { schoolId, classId: activity.classId, subjectId: activity.subjectId, term: config.currentTerm, academicYear: config.academicYear };
       await assertReportSetEditable(tx, context);
+      const buckets = await tx.cABucket.findMany({ where: context, include: { activities: { where: { schoolId, classId: activity.classId }, include: { teacher: { select: { id: true, schoolId: true, name: true, surname: true } } } } } });
+      if (buckets.some((bucket) => bucket.activities.some((entry) => entry.subjectId !== bucket.subjectId || entry.teacher.schoolId !== schoolId || entry.teacher.id !== entry.teacherId))) throw new Error("CA evidence is outside this school's assessment scope.");
+      const planning = buildSubjectCAProgress(config, buckets.map((bucket) => ({ ...bucket, activities: bucket.activities.map((entry) => ({ ...entry, scores: [] })) })));
+      if (assessmentPosition(planning, null, config.examWeight).status === "Needs review") throw new Error("Invalid CA allocation or activity setup must be reviewed before recording scores.");
       const students = await tx.student.findMany({ where: { schoolId, classId: activity.classId, status: "ACTIVE" }, select: { id: true, createdAt: true, classJoinedAt: true } });
       const eligible = new Set(students.filter((s) => activityEligibility(s, activity.activityDate) === "ELIGIBLE").map((s) => s.id));
       if (rows.length !== eligible.size || rows.some((r) => !eligible.has(r.studentId))) throw new Error("Save one score for every eligible student, without earlier duties for later class joins.");

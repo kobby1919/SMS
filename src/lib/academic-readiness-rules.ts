@@ -35,7 +35,7 @@ export function caRecordingDeadline(activityDate: Date, schoolDays: number, clos
   const calendar = new Date(Date.UTC(p.year, p.month - 1, p.day));
   const dayNames = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
   const activeDays = options.activeDays?.length ? options.activeDays : dayNames.slice(1, 6);
-  if (!activeDays.some((d) => dayNames.includes(d))) throw new Error("CA deadlines require valid school operating days.");
+  if (!activeDays.every((d) => dayNames.includes(d))) throw new Error("CA deadlines require valid school operating days.");
   let remaining = schoolDays;
   while (remaining > 0) {
     calendar.setUTCDate(calendar.getUTCDate() + 1);

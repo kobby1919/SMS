@@ -33,7 +33,7 @@ async function snapshot(overrides = {}, teacherId, at = now, options = {}) {
     teacher: model("teacher", "findMany", () => data.teachers),
     publishedTimetableLesson: model("lessons", "findMany", () => data.lessons),
     student: model("student", "findMany", () => data.students),
-    teacherObligation: model("obligation", "findMany", () => data.obligations),
+    teacherObligation: model("obligation", "findMany", () => data.obligations.map((row) => ({ ...row, escalations: row.escalations.map((esc) => ({ teacherId: row.teacherId, obligationId: row.id, ...esc })) }))),
     teacherEscalation: model("escalation", "findMany", () => data.escalations ?? data.obligations.filter((row) => row.status !== "CANCELLED").flatMap((row) => row.escalations.filter((esc) => ["OPEN", "ACKNOWLEDGED"].includes(esc.status)).map((esc) => ({ ...esc, teacherId: row.teacherId, teacher, obligation: { title: "Attendance", teacherId: row.teacherId } })))),
     attendance: model("attendance", "findMany", (q) => q.select.studentId ? data.attendance : data.attendanceSources ?? []),
     assignment: model("assignment", "findMany", () => data.assignments),
@@ -93,6 +93,11 @@ test("actual completion overrides stale escalated status but preserves managemen
 test("cancelled and dismissed duties do not reappear", async () => {
   assert.equal((await snapshot({ obligations: [{ ...obligation, status: "CANCELLED" }] })).result.totals.overdue, 0);
   assert.equal((await snapshot({ obligations: [{ ...obligation, escalations: [{ id: "closed", status: "DISMISSED", escalatedAt: now, reason: "Approved exception" }] }] })).result.totals.overdue, 0);
+});
+
+test("mismatched teacher exceptions do not close another teacher's real overdue duty", async () => {
+  const row = { ...obligation, escalations: [{ id: "mismatch", status: "DISMISSED", escalatedAt: now, reason: "Wrong teacher", teacherId: "other-teacher" }] };
+  assert.equal((await snapshot({ obligations: [row] })).result.totals.overdue, 1);
 });
 
 test("no policy, no published timetable and empty rosters are not false healthy evaluations", async () => {

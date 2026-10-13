@@ -71,6 +71,7 @@ export async function getClassReportReadiness(input: { schoolId: string; classId
   if (!subjectIds.length) issues.push(currentPeriod ? "No subjects are available from the active published timetable." : "No subject evidence is available for this historical period.");
   if (!students.length) issues.push("No eligible student records are available for this class period.");
   const blockers: ReportReadinessBlocker[] = [];
+  const duplicateActivities = new Set(buckets.flatMap((bucket) => bucket.activities.filter((activity) => new Set(activity.scores.map((score) => score.studentId)).size !== activity.scores.length).map((activity) => activity.id)));
   let readyEntryCount = 0, caStartedEntryCount = 0;
   const readyEntries: ClassReportReadiness["readyEntries"] = [];
   const readyByStudent = new Map<string, number>();
@@ -83,7 +84,7 @@ export async function getClassReportReadiness(input: { schoolId: string; classId
     const record = recordsByStudentSubject.get(`${student.id}:${subject.id}`);
     const add = (reason: ReportReadinessBlocker["reason"], detail: string) => blockers.push({ studentId: student.id, studentName: `${student.name} ${student.surname}`, admissionNumber: student.admissionNumber, subjectId: subject.id, subjectName: subject.name, reason, detail });
     if (!config || issues.some((issue) => issue.startsWith("A valid"))) { add("MISSING_CA", "Assessment configuration is missing or invalid."); continue; }
-    if (subjectBuckets.some((bucket) => bucket.activities.some((activity) => activity.subjectId !== bucket.subjectId || activity.teacher.schoolId !== schoolId || activity.teacher.id !== activity.teacherId))) {
+    if (subjectBuckets.some((bucket) => bucket.activities.some((activity) => activity.subjectId !== bucket.subjectId || activity.teacher.schoolId !== schoolId || activity.teacher.id !== activity.teacherId || duplicateActivities.has(activity.id)))) {
       add("INVALID_SCORE", "Activity subject or teacher does not match its school assessment scope. Records need reconciliation.");
       continue;
     }
