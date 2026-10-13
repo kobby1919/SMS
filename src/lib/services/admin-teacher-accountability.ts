@@ -15,8 +15,13 @@ const dayEnd = (date: Date) => { const value = new Date(date); value.setHours(23
 
 export type AdminTeacherAccountabilitySnapshot = Omit<Awaited<ReturnType<typeof getAdminTeacherAccountability>>, "details">;
 
-export async function getAdminTeacherAccountability(schoolId: string, now = new Date(), teacherId?: string, includeDetails = false) {
-  return prisma.$transaction(async (tx) => {
+export async function getAdminTeacherAccountability(schoolId: string, now = new Date(), teacherId?: string, includeDetails = false, options: { db?: Prisma.TransactionClient; academicOnly?: boolean } = {}) {
+  if (!schoolId.trim()) throw new Error("School scope is required.");
+  const read = (tx: Prisma.TransactionClient) => readTeacherAccountability(tx, schoolId, now, teacherId, includeDetails, options.academicOnly ?? false);
+  return options.db ? read(options.db) : prisma.$transaction(read, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead, maxWait: 15000, timeout: 45000 });
+}
+
+async function readTeacherAccountability(tx: Prisma.TransactionClient, schoolId: string, now: Date, teacherId: string | undefined, includeDetails: boolean, academicOnly: boolean) {
     const policy = await tx.teacherAccountabilitySetting.findUnique({ where: { schoolId } });
     const operating = await tx.schoolNotificationSetting.findUnique({ where: { schoolId }, select: { timezone: true, activeDays: true } });
     const activeDays = operating?.activeDays.length ? operating.activeDays : ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
@@ -47,7 +52,7 @@ export async function getAdminTeacherAccountability(schoolId: string, now = new 
     const scopeKey = (teacher: string, classId: number, subjectId: number) => `${teacher}:${classId}:${subjectId}`;
     const scopes = new Set(lessons.map((lesson) => scopeKey(lesson.teacherId, lesson.classId, lesson.subjectId)));
     const lessonMap = new Map(lessons.map((lesson) => [lesson.sourceId, lesson]));
-    const obligations = await tx.teacherObligation.findMany({ where: { schoolId, teacher: { schoolId }, teacherId: { in: teachers.map((teacher) => teacher.id) }, type: { in: ["ATTENDANCE", "HOMEWORK_CHECKING", "CA_SCORE_PUBLISHING"] } }, select: { id: true, teacherId: true, type: true, sourceModel: true, sourceId: true, sourceKey: true, status: true, completedAt: true, expectedAt: true, metadata: true, escalations: { where: { schoolId }, select: { id: true, status: true, escalatedAt: true, reason: true } } } });
+    const obligations = await tx.teacherObligation.findMany({ where: { schoolId, teacher: { schoolId }, teacherId: { in: teachers.map((teacher) => teacher.id) }, type: { in: academicOnly ? ["CA_SCORE_PUBLISHING"] : ["ATTENDANCE", "HOMEWORK_CHECKING", "CA_SCORE_PUBLISHING"] } }, select: { id: true, teacherId: true, type: true, sourceModel: true, sourceId: true, sourceKey: true, status: true, completedAt: true, expectedAt: true, metadata: true, escalations: { where: { schoolId }, select: { id: true, status: true, escalatedAt: true, reason: true } } } });
     const obligationMap = new Map(obligations.map((row) => [`${row.teacherId}:${row.sourceKey}`, row]));
     const items: TeacherFollowUpItem[] = [];
     const addDuty = (input: { teacherId: string; key: string; kind: "ATTENDANCE" | "HOMEWORK_CHECKING" | "CA_SCORE_PUBLISHING"; title: string; detail: string; deadline: Date; complete: boolean }) => {
@@ -62,6 +67,7 @@ export async function getAdminTeacherAccountability(schoolId: string, now = new 
     if (!config) notes.push("Activate the academic period before CA publication duties can be evaluated.");
 
     if (policy && lessons.length) {
+      if (!academicOnly) {
       const attendanceDuties = new Map<string, { lesson: typeof lessons[number]; date: Date; deadline: Date; key: string }>();
       for (const row of obligations.filter((row) => row.type === "ATTENDANCE" && row.sourceModel === "Lesson")) {
         const lesson = lessonMap.get(numericId(row.sourceId));
@@ -105,6 +111,7 @@ export async function getAdminTeacherAccountability(schoolId: string, now = new 
         const checked = new Set(assignment.homeworkSubmissions.filter((row) => expected.has(row.studentId) && row.status !== "PENDING" && row.checkedAt).map((row) => row.studentId));
         addDuty({ teacherId: lesson.teacherId, key: `homework-checking:assignment:${assignment.id}`, kind: "HOMEWORK_CHECKING", title: `${lesson.className}: ${assignment.title}`, detail: `${lesson.subjectName}; ${checked.size} of ${expected.size} homework records checked`, deadline: homeworkCheckingDeadline(assignment.dueDate, policy.homeworkCheckWindowSchoolDays, policy.teacherCloseoutTime), complete: checked.size === expected.size });
       }
+      }
       const activities = config ? await tx.cAActivity.findMany({ where: { schoolId, activityDate: { lte: now }, class: { schoolId }, subject: { schoolId }, teacher: { schoolId }, bucket: { schoolId, term: config.currentTerm, academicYear: config.academicYear } }, select: { id: true, title: true, activityDate: true, teacherId: true, classId: true, subjectId: true, bucket: { select: { classId: true, subjectId: true } }, scores: { where: { schoolId, student: { schoolId, status: "ACTIVE" } }, select: { studentId: true } } } }) : [];
       for (const activity of activities) {
         if (activity.bucket.classId !== activity.classId || activity.bucket.subjectId !== activity.subjectId || !scopes.has(scopeKey(activity.teacherId, activity.classId, activity.subjectId))) continue;
@@ -117,7 +124,7 @@ export async function getAdminTeacherAccountability(schoolId: string, now = new 
     }
     // Review queues retain history even when the timetable, roster or setup changes.
     const escalations = await tx.teacherEscalation.findMany({
-      where: { schoolId, status: { in: ["OPEN", "ACKNOWLEDGED"] }, teacher: { schoolId }, obligation: { schoolId, status: { not: "CANCELLED" } } },
+      where: { schoolId, status: { in: ["OPEN", "ACKNOWLEDGED"] }, teacher: { schoolId }, obligation: { schoolId, status: { not: "CANCELLED" }, ...(academicOnly ? { type: "CA_SCORE_PUBLISHING" as const } : {}) } },
       select: { id: true, teacherId: true, reason: true, escalatedAt: true, teacher: { select: { name: true, surname: true, sex: true } }, obligation: { select: { title: true, teacherId: true } } },
     });
     for (const row of escalations) {
@@ -125,7 +132,7 @@ export async function getAdminTeacherAccountability(schoolId: string, now = new 
       items.push({ id: `escalation:${row.id}`, teacherId: row.teacherId, teacherName: teacherFollowUpName(row.teacher), kind: "ESCALATION", title: `Escalation review: ${row.obligation.title}`, detail: row.reason, at: row.escalatedAt.toISOString(), reviewId: row.id, correctionKind: null });
     }
 
-    const corrections = await tx.teacherCorrectionRequest.findMany({ where: { schoolId, teacher: { schoolId }, status: "PENDING", OR: [{ sourceModel: "Attendance", fieldName: "attendanceStatus" }, { sourceModel: "HomeworkSubmission", fieldName: "homeworkSubmissionStatus" }, { sourceModel: "CAActivityScore", fieldName: "rawScore" }, { sourceModel: "ContinuousAssessment", fieldName: "examScore" }] }, select: { id: true, teacherId: true, sourceModel: true, sourceId: true, reason: true, createdAt: true, teacher: { select: { name: true, surname: true, sex: true } } } });
+    const corrections = await tx.teacherCorrectionRequest.findMany({ where: { schoolId, teacher: { schoolId }, status: "PENDING", OR: academicOnly ? [{ sourceModel: "CAActivityScore", fieldName: "rawScore" }, { sourceModel: "ContinuousAssessment", fieldName: "examScore" }] : [{ sourceModel: "Attendance", fieldName: "attendanceStatus" }, { sourceModel: "HomeworkSubmission", fieldName: "homeworkSubmissionStatus" }, { sourceModel: "CAActivityScore", fieldName: "rawScore" }, { sourceModel: "ContinuousAssessment", fieldName: "examScore" }] }, select: { id: true, teacherId: true, sourceModel: true, sourceId: true, reason: true, createdAt: true, teacher: { select: { name: true, surname: true, sex: true } } } });
     const sourceIds = (model: string) => corrections.filter((row) => row.sourceModel === model).map((row) => numericId(row.sourceId));
     const correctionSources = {
       Attendance: new Set((await tx.attendance.findMany({ where: { schoolId, id: { in: sourceIds("Attendance") }, student: { schoolId }, lesson: { schoolId } }, select: { id: true } })).map((row) => row.id)),
@@ -140,5 +147,4 @@ export async function getAdminTeacherAccountability(schoolId: string, now = new 
     }
     const summary = summarizeTeacherFollowUps(items);
     return { ...summary, notes, evaluatedAt: now.toISOString(), details: teacherId || includeDetails ? items.filter((item) => !teacherId || item.teacherId === teacherId).sort((a, b) => a.at.localeCompare(b.at) || a.id.localeCompare(b.id)) : [] };
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead, maxWait: 15000, timeout: 45000 });
 }

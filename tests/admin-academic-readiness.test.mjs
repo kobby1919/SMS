@@ -1,0 +1,142 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import ts from "typescript";
+const nodeRequire = createRequire(import.meta.url);
+function load(path, mocks = {}) {
+  const loadedModule = { exports: {} };
+  const code = ts.transpileModule(readFileSync(path, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true } }).outputText;
+  new Function("require", "module", "exports", code)((id) => Object.hasOwn(mocks, id) ? mocks[id] : id === "server-only" ? {} : id.startsWith("@/") ? load(`${id.slice(2)}.ts`, mocks) : nodeRequire(id), loadedModule, loadedModule.exports);
+  return loadedModule.exports;
+}
+function fixture(options = {}) {
+  const calls = { auth: 0, transactions: 0, rules: 0, reports: 0, accountability: 0, queries: [] };
+  const classes = options.classes ?? Array.from({ length: 8 }, (_, i) => ({ id: i + 1, name: `Class ${i + 1}`, _count: { students: options.students ?? 2 } }));
+  const period = { academicYear: "2026/2027", term: "TERM_1", classworkWeight: 30, examWeight: 70 };
+  const rules = { period, publicationId: "published", caPolicy: { caScorePublishWindowSchoolDays: 3, teacherCloseoutTime: "16:00" }, operating: null, issues: [], scope: classes.map((cls) => ({ classId: cls.id, subjectId: 1, teacherId: "teacher-a" })), examWindows: classes.map((cls) => ({ classId: cls.id, state: "OPEN" })), ...options.rules };
+  const guard = (query) => { assert.equal(query.where.schoolId, "school-a"); calls.queries.push(query); };
+  const tx = {};
+  for (const model of ["class", "student", "teacher", "subject", "publishedTimetableLesson", "cABucket", "cAActivity", "cAActivityScore", "continuousAssessment", "teacherObligation", "teacherEscalation", "teacherCorrectionRequest"]) {
+    tx[model] = { count: async (query) => { guard(query); return options.counts?.[model] ?? (model === "class" ? classes.length : 0); } };
+  }
+  tx.class.findMany = async (query) => { guard(query); return classes; };
+  tx.cAActivity.groupBy = async (query) => { guard(query); return options.activityCounts ?? []; };
+  tx.cABucket.groupBy = async (query) => { guard(query); return []; };
+  tx.reportCardPublication = { findMany: async (query) => { guard(query); return [{ classId: 1, status: "SUBMITTED" }]; } };
+  const mocks = {
+    "@/src/lib/authz": { requireRole: async (roles) => { calls.auth++; assert.deepEqual(roles, ["admin"]); if (options.denied) throw new Error("Forbidden"); return { schoolId: "school-a", role: "admin", userId: "admin-a" }; } },
+    "@/src/lib/prisma": { $transaction: async (work, config) => { calls.transactions++; assert.equal(calls.auth, 1); assert.equal(config.isolationLevel, "RepeatableRead"); if (options.databaseError) throw new Error("Database unavailable"); return work(tx); } },
+    "@/src/lib/services/academic-readiness-rules": { getAcademicReadinessRules: async (school, db) => { calls.rules++; assert.equal(school, "school-a"); assert.equal(db, tx); return rules; } },
+    "@/src/lib/services/report-card-readiness": { getClassReportReadiness: async (input, db, now) => {
+      calls.reports++; assert.equal(db, tx); assert.equal(input.schoolId, "school-a"); assert.equal(input.academicYear, period.academicYear); assert.equal(input.term, period.term); assert.ok(now instanceof Date);
+      const cls = classes.find((row) => row.id === input.classId);
+      return { studentCount: cls._count.students, subjectCount: 1, expectedEntryCount: cls._count.students, readyEntryCount: 1, readyStudentCount: 1, caStartedEntryCount: 1, isReady: false, issues: [], blockers: [{ studentId: "private-student", studentName: "Private Name", subjectId: 1, subjectName: "English", reason: "PLACEMENT_REVIEW" }] };
+    } },
+    "@/src/lib/services/admin-teacher-accountability": { getAdminTeacherAccountability: async (school, now, teacher, details, opts) => { calls.accountability++; assert.equal(school, "school-a"); assert.equal(details, false); assert.equal(opts.db, tx); assert.equal(opts.academicOnly, true); return { totals: { overdue: 3, escalations: 1, corrections: 2, teachers: 2 }, followUps: [], details: [], notes: [], evaluatedAt: now.toISOString() }; } },
+  };
+  return { ...load("src/lib/services/admin-academic-readiness.ts", mocks), calls, tx };
+}
+
+test("snapshot authenticates before reading; every reader shares one school and transaction", async () => {
+  const f = fixture();
+  const result = await f.getAdminAcademicReadinessSnapshot({ schoolId: "school-b" });
+  assert.equal(f.calls.transactions, 1);
+  assert.equal(result.state, "AVAILABLE");
+  assert.equal(result.totals.expectedEntries, 16);
+  assert.equal(result.totals.readyEntries, 8);
+  assert.equal(result.accountability.totals.overdue, 3);
+  assert.equal(f.calls.reports, 8);
+  assert.equal(result.classes.length, 5);
+  assert.equal(result.totals.awaitingApprovalClasses, 1);
+  assert.equal(JSON.stringify(result).includes("Private Name"), false);
+  assert.equal(JSON.stringify(result).includes("private-student"), false);
+  assert.equal(result.classes[0].blockerCounts.PLACEMENT_REVIEW, 1);
+});
+
+test("non-admin rejection never opens a transaction", async () => {
+  const f = fixture({ denied: true });
+  await assert.rejects(f.getAdminAcademicReadinessSnapshot(), /Forbidden/);
+  assert.equal(f.calls.transactions, 0);
+});
+
+test("missing and ambiguous setup produces unavailable totals, not healthy zeros", async () => {
+  for (const rules of [{ period: null }, { publicationId: null }, { scope: [] }, { issues: ["Some published teaching assignments need review."] }]) {
+    const f = fixture({ rules });
+    const result = await f.getAdminAcademicReadinessSnapshot();
+    assert.notEqual(result.state, "AVAILABLE");
+    assert.equal(result.totals, null);
+    assert.equal(f.calls.reports, 0);
+    assert.equal(f.calls.accountability, 0);
+  }
+});
+
+test("budget overflow stops evidence loading and never shows partial totals", async () => {
+  for (const counts of [{ cAActivityScore: 100001 }, { teacherObligation: 20001 }, { publishedTimetableLesson: 10001 }, { student: 3001 }]) {
+    const f = fixture({ counts });
+    const result = await f.getAdminAcademicReadinessSnapshot();
+    assert.equal(result.code, "EVALUATION_LIMIT");
+    assert.equal(result.totals, null);
+    assert.equal(f.calls.rules, 0);
+    assert.equal(f.calls.reports, 0);
+  }
+  const f = fixture({ students: 5000 });
+  assert.equal((await f.getAdminAcademicReadinessSnapshot()).code, "EVALUATION_LIMIT");
+  assert.equal(f.calls.reports, 0);
+});
+
+test("report reads scale with classes, not students", async () => {
+  const f = fixture({ students: 300 });
+  assert.equal((await f.getAdminAcademicReadinessSnapshot()).totals.expectedEntries, 2400);
+  assert.equal(f.calls.reports, 8);
+});
+
+test("dense histories are refused before loading canonical student evidence", async () => {
+  const f = fixture({ students: 300, activityCounts: [{ classId: 1, _count: { _all: 10000 } }] });
+  const result = await f.getAdminAcademicReadinessSnapshot();
+  assert.equal(result.code, "EVALUATION_LIMIT");
+  assert.equal(result.totals, null);
+  assert.equal(f.calls.reports, 0);
+});
+
+test("missing or invalid CA deadlines do not manufacture zero overdue duties", async () => {
+  for (const caPolicy of [null, { caScorePublishWindowSchoolDays: -1, teacherCloseoutTime: "16:00" }, { caScorePublishWindowSchoolDays: 3, teacherCloseoutTime: "24:00" }]) {
+    const f = fixture({ rules: { caPolicy } });
+    const result = await f.getAdminAcademicReadinessSnapshot();
+    assert.equal(result.state, "AVAILABLE");
+    assert.equal(result.accountability, null);
+    assert.notEqual(result.accountabilityState, "AVAILABLE");
+    assert.ok(result.accountabilityIssues.length);
+    assert.equal(f.calls.accountability, 0);
+  }
+});
+
+test("classes without published subjects cannot disappear into a school-ready result", async () => {
+  const f = fixture({ rules: { scope: [{ classId: 1, subjectId: 1, teacherId: "teacher-a" }] } });
+  const result = await f.getAdminAcademicReadinessSnapshot();
+  assert.equal(result.state, "SETUP_REQUIRED");
+  assert.equal(result.totals.classesWithoutTeachingScope, 7);
+  assert.equal(result.totals.trackedClasses, 1);
+  assert.equal(f.calls.reports, 1);
+});
+
+test("empty roster is setup-required, and database failure is never a successful empty result", async () => {
+  const f = fixture({ students: 0 });
+  const result = await f.getAdminAcademicReadinessSnapshot();
+  assert.equal(result.code, "NO_ELIGIBLE_STUDENTS");
+  assert.equal(result.totals, null);
+  await assert.rejects(fixture({ databaseError: true }).getAdminAcademicReadinessSnapshot(), /Database unavailable/);
+});
+
+test("rules reader accepts the caller's transaction without opening another snapshot", async () => {
+  const query = (value) => async (input) => { assert.equal(input.where.schoolId, "school-a"); return value; };
+  const tx = {
+    cAConfig: { findMany: query([]) }, timetablePublication: { findMany: query([]) },
+    teacherAccountabilitySetting: { findUnique: query(null) }, schoolNotificationSetting: { findUnique: query(null) },
+    teacher: { findMany: query([]) }, class: { findMany: query([]) }, subject: { findMany: query([]) },
+  };
+  const service = load("src/lib/services/academic-readiness-rules.ts", { "@/src/lib/prisma": { $transaction: () => { throw new Error("Nested transaction"); } } });
+  const result = await service.getAcademicReadinessRules("school-a", tx);
+  assert.equal(result.period, null);
+  assert.equal(result.publicationId, null);
+});

@@ -1,11 +1,15 @@
 import "server-only";
+import type { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { examEntryState, validAssessmentWeights } from "@/src/lib/academic-readiness-rules";
 
 // This is configuration/scope evidence, not readiness totals or a release action.
-export async function getAcademicReadinessRules(schoolId: string) {
+export async function getAcademicReadinessRules(schoolId: string, db?: Prisma.TransactionClient) {
   if (!schoolId.trim()) throw new Error("School scope is required.");
-  return prisma.$transaction(async (tx) => {
+  return db ? readAcademicReadinessRules(schoolId, db) : prisma.$transaction((tx) => readAcademicReadinessRules(schoolId, tx), { isolationLevel: "RepeatableRead", timeout: 30000 });
+}
+
+async function readAcademicReadinessRules(schoolId: string, tx: Prisma.TransactionClient) {
     const configs = await tx.cAConfig.findMany({ where: { schoolId, isActive: true }, take: 2 });
     const publications = await tx.timetablePublication.findMany({ where: { schoolId, status: "ACTIVE" }, take: 2 });
     const policy = await tx.teacherAccountabilitySetting.findUnique({ where: { schoolId } });
@@ -26,5 +30,4 @@ export async function getAcademicReadinessRules(schoolId: string) {
     const scope = [...new Map(valid.map((l) => [`${l.classId}:${l.subjectId}:${l.teacherId}`, l])).values()];
     const windows = config ? await tx.examEntryWindow.findMany({ where: { schoolId, academicYear: config.academicYear, term: config.currentTerm, classId: { in: [...classIds] } } }) : [];
     return { period: config ? { academicYear: config.academicYear, term: config.currentTerm, classworkWeight: config.classworkWeight, examWeight: config.examWeight } : null, publicationId: publication?.id ?? null, scope, caPolicy: policy, operating, examWindows: [...classIds].map((classId) => ({ classId, state: examEntryState(config?.examWeight ?? Number.NaN, windows.find((w) => w.classId === classId) ?? null) })), issues };
-  }, { isolationLevel: "RepeatableRead", timeout: 30000 });
 }

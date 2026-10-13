@@ -21,7 +21,7 @@ const policy = { attendanceEscalateMinutesAfterLesson: 30, caScorePublishWindowS
 const student = { id: "student-1", classId: 1, createdAt: new Date("2026-09-01T00:00:00Z"), classJoinedAt: new Date("2026-09-01T00:00:00Z") };
 const obligation = { id: "obligation-1", teacherId: teacher.id, type: "ATTENDANCE", sourceModel: "Lesson", sourceId: "1", sourceKey: "attendance:2026-10-08:lesson:1", status: "ESCALATED", completedAt: null, expectedAt: new Date("2026-10-08T10:00:00Z"), metadata: { classId: 1, subjectId: 1, date: "2026-10-08" }, escalations: [] };
 
-async function snapshot(overrides = {}, teacherId, at = now) {
+async function snapshot(overrides = {}, teacherId, at = now, options = {}) {
   const queries = [];
   const data = { policy, publication: { id: "publication-1", publishedAt: new Date("2026-10-01T00:00:00Z") }, config: { academicYear: "2026/2027", currentTerm: "TERM_1" }, teachers: [teacher], lessons: [lesson], students: [student], obligations: [], assignments: [], activities: [], corrections: [], attendance: [], ...overrides };
   const model = (name, method, get) => ({ [method]: async (query) => { queries.push({ name, query }); return get(query); } });
@@ -43,10 +43,24 @@ async function snapshot(overrides = {}, teacherId, at = now) {
     cAActivityScore: model("caSource", "findMany", () => []),
     continuousAssessment: model("examSource", "findMany", () => []),
   };
-  const prisma = { $transaction: async (fn, options) => { assert.equal(options.isolationLevel, "RepeatableRead"); return fn(tx); } };
+  const prisma = { $transaction: async (fn, config) => { assert.equal(options.sharedSnapshot, undefined); assert.equal(config.isolationLevel, "RepeatableRead"); return fn(tx); } };
   const service = load("src/lib/services/admin-teacher-accountability.ts", { "@/src/lib/prisma": prisma, "@/src/generated/prisma": { Prisma: { TransactionIsolationLevel: { RepeatableRead: "RepeatableRead" } } } });
-  return { result: await service.getAdminTeacherAccountability("school-a", at, teacherId, true), queries };
+  return { result: await service.getAdminTeacherAccountability("school-a", at, teacherId, true, { academicOnly: options.academicOnly, ...(options.sharedSnapshot ? { db: tx } : {}) }), queries };
 }
+
+test("academic-only accountability reuses the supplied snapshot without reading attendance or homework duties", async () => {
+  const activity = { id: 3, title: "Reading activity", activityDate: new Date("2026-10-02T00:00:00Z"), teacherId: teacher.id, classId: 1, subjectId: 1, scores: [] };
+  const { result, queries } = await snapshot({ activities: [activity] }, undefined, now, { sharedSnapshot: true, academicOnly: true });
+  assert.equal(result.totals.overdue, 1);
+  assert.equal(result.followUps[0].ca, 1);
+  assert.equal(result.followUps[0].attendance, 0);
+  assert.equal(result.followUps[0].homework, 0);
+  assert.equal(queries.some((q) => q.name === "assignment"), false);
+  assert.equal(queries.some((q) => q.name === "attendance" && q.query.select.studentId), false);
+  assert.deepEqual(queries.find((q) => q.name === "obligation").query.where.type.in, ["CA_SCORE_PUBLISHING"]);
+  assert.equal(queries.find((q) => q.name === "escalation").query.where.obligation.type, "CA_SCORE_PUBLISHING");
+  assert.deepEqual(queries.find((q) => q.name === "correction").query.where.OR.map((q) => q.sourceModel), ["CAActivityScore", "ContinuousAssessment"]);
+});
 
 test("overdue excludes open windows, completed work, cancelled duties and accepted exceptions", () => {
   const base = { deadline: new Date("2026-10-08T11:59:00Z"), complete: false };
