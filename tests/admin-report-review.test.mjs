@@ -86,6 +86,39 @@ test("an explicitly entered exam zero permits release; a default zero remains mi
   assert.equal((await evidence({ record: { examScore: 0, examRecordedAt: now, totalScore: 0 } }).service.getClassReportReadiness(context)).isReady, true);
   assert.equal((await evidence({ record: { examScore: 0, totalScore: 0 } }).service.getClassReportReadiness(context)).isReady, false);
 });
+
+test("exam tracking counts genuine zero and legacy positive marks independently of incomplete CA", async () => {
+  for (const record of [{ examScore: 0, examRecordedAt: now }, { examScore: 60 }]) {
+    const result = await evidence({ noScores: true, record }).service.getClassReportReadiness(context);
+    assert.equal(result.isReady, false);
+    assert.equal(result.examEvidence[0].recorded, 1);
+    assert.equal(result.examEvidence[0].missing, 0);
+  }
+  const result = await evidence({ noScores: true, record: { examScore: 0 } }).service.getClassReportReadiness(context);
+  assert.equal(result.examEvidence[0].recorded, 0);
+  assert.equal(result.examEvidence[0].missing, 1);
+});
+
+test("invalid and duplicate exams never inflate recorded exam counts", async () => {
+  for (const examScore of [-1, 71, Number.NaN, Number.POSITIVE_INFINITY, null]) {
+    const result = await evidence({ record: { examScore } }).service.getClassReportReadiness(context);
+    assert.equal(result.examEvidence[0].recorded, 0);
+    assert.equal(result.examEvidence[0].invalid, 1);
+    assert.equal(result.examEvidence[0].missing, 0);
+    assert.equal(result.isReady, false);
+  }
+  const f = evidence();
+  f.db.continuousAssessment.findMany = async () => [f.record, { ...f.record, id: 2 }];
+  const result = await f.service.getClassReportReadiness(context);
+  assert.equal(result.examEvidence[0].invalid, 1);
+  assert.equal(result.isReady, false);
+});
+
+test("zero exam weight does not require exams or fabricate recorded entries", async () => {
+  const result = await evidence({ config: { classworkWeight: 100, examWeight: 0 } }).service.getClassReportReadiness(context);
+  assert.equal(result.examRequired, false);
+  assert.deepEqual(result.examEvidence[0], { subjectId: 2, subjectName: "Reading", expected: 0, recorded: 0, missing: 0, invalid: 0 });
+});
 test("conflicting active periods or timetable publications cannot certify reports", async () => {
   for (const options of [{ multipleConfigs: true }, { multiplePublications: true }]) {
     const r = await evidence(options).service.getClassReportReadiness(context);

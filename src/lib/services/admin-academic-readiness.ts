@@ -6,6 +6,7 @@ import { getAcademicReadinessRules } from "@/src/lib/services/academic-readiness
 import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
 import { getAdminTeacherAccountability } from "@/src/lib/services/admin-teacher-accountability";
 import { getCARecordingTracking } from "@/src/lib/services/ca-recording-tracking";
+import { buildExamWindowTracking } from "@/src/lib/services/exam-window-tracking";
 
 type SnapshotState = "AVAILABLE" | "SETUP_REQUIRED" | "UNAVAILABLE";
 type ReadinessClass = {
@@ -44,6 +45,7 @@ export async function getAdminAcademicReadinessSnapshot() {
     ...base, state, code, issues, totals: null, classes: [] as ReadinessClass[],
     classListLimit: 5, accountability: null as Awaited<ReturnType<typeof getAdminTeacherAccountability>> | null,
     caRecording: null as Awaited<ReturnType<typeof getCARecordingTracking>> | null,
+    examTracking: null as ReturnType<typeof buildExamWindowTracking> | null,
     accountabilityState: "UNAVAILABLE" as SnapshotState,
     accountabilityIssues: issues,
   });
@@ -98,11 +100,15 @@ export async function getAdminAcademicReadinessSnapshot() {
     if (evaluationWork > budgets.evaluationWork) return unavailable("UNAVAILABLE", "EVALUATION_LIMIT", ["The assessment history is too dense for this dashboard evaluation. No partial readiness totals are shown."]);
     const publications = await tx.reportCardPublication.findMany({ where: { schoolId, academicYear: rules.period.academicYear, term: rules.period.term, classId: { in: scopedClasses.map((cls) => cls.id) }, class: { schoolId } }, select: { classId: true, status: true } });
     const evaluated: ReadinessClass[] = [];
+    const examClasses: Parameters<typeof buildExamWindowTracking>[3] = [];
     for (const cls of scopedClasses) {
       const subjectIds = [...new Set(rules.scope.filter((scope) => scope.classId === cls.id).map((scope) => scope.subjectId))];
       const readiness = await getClassReportReadiness({ schoolId, classId: cls.id, academicYear: rules.period.academicYear, term: rules.period.term, subjectIds }, tx, now);
       if (!readiness.currentPeriod || readiness.studentCount !== cls._count.students || readiness.subjectCount !== new Set(rules.scope.filter((scope) => scope.classId === cls.id).map((scope) => scope.subjectId)).size) return unavailable("UNAVAILABLE", "INCONSISTENT_SOURCE_SCOPE", ["Report readiness and published teaching scope do not agree. No partial totals are shown."]);
       const publicationStatus = publications.find((publication) => publication.classId === cls.id)?.status ?? "UNPUBLISHED";
+      if (readiness.examEvidence.length !== subjectIds.length || readiness.examEvidence.some((row) => !subjectIds.includes(row.subjectId))) return unavailable("UNAVAILABLE", "INCONSISTENT_EXAM_SCOPE", ["Exam evidence and published subjects do not agree. No partial totals are shown."]);
+      examClasses.push({ classId: cls.id, className: cls.name, studentCount: readiness.studentCount, subjectCount: readiness.subjectCount,
+        windowState: rules.examWindows.find((window) => window.classId === cls.id)?.state ?? "NOT_CONFIGURED", publicationStatus, evidence: readiness.examEvidence });
       const reviewed = publicationStatus === "PUBLISHED" || publicationStatus === "SUBMITTED";
       const reportState: ReadinessClass["reportState"] = reviewed
         ? (!readiness.isReady ? "NEEDS_RECONCILIATION" : publicationStatus === "PUBLISHED" ? "PUBLISHED" : "AWAITING_REVIEW")
@@ -142,6 +148,7 @@ export async function getAdminAcademicReadinessSnapshot() {
     }
     const accountability = accountabilityState === "AVAILABLE" ? await getAdminTeacherAccountability(schoolId, now, undefined, false, { db: tx, academicOnly: true }) : null;
     const caRecording = await getCARecordingTracking({ schoolId, rules, now, db: tx, reportPublications: publications });
+    const examTracking = buildExamWindowTracking(rules.period.examWeight, rules.period.academicYear, rules.period.term, examClasses);
     const issues = [...rules.issues];
     if (missingScopeClasses) issues.push(`${missingScopeClasses} class(es) with active students have no published subject scope. They are not counted as report-ready.`);
     const totals = {
@@ -163,7 +170,7 @@ export async function getAdminAcademicReadinessSnapshot() {
       ...base, state: (missingScopeClasses ? "SETUP_REQUIRED" : "AVAILABLE") as SnapshotState,
       code: missingScopeClasses ? "INCOMPLETE_TEACHING_SCOPE" : "EVALUATED", issues, totals,
       classes: evaluated.filter((cls) => cls.reportState !== "PUBLISHED").sort((a, b) => Number(a.evidenceComplete) - Number(b.evidenceComplete) || (b.expectedEntries - b.readyEntries) - (a.expectedEntries - a.readyEntries) || a.classId - b.classId).slice(0, 5),
-      classListLimit: 5, accountability, accountabilityState, accountabilityIssues, caRecording,
+      classListLimit: 5, accountability, accountabilityState, accountabilityIssues, caRecording, examTracking,
     };
   }, { isolationLevel: "RepeatableRead", maxWait: 15000, timeout: 45000 }).catch((error: unknown) => {
     const databaseError = error instanceof Error ? error as Error & { code?: unknown; errorCode?: unknown } : null;

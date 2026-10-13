@@ -13,6 +13,7 @@ export function hasRecordedExam(record: ExamEvidence | null | undefined): boolea
 export function examEntryState(examWeight: number, window: { status: string; openedAt?: Date | null } | null) {
   if (examWeight === 0) return "NOT_REQUIRED";
   if (!window) return "NOT_CONFIGURED";
+  if (!["OPEN", "CLOSED", "LOCKED"].includes(window.status) || window.openedAt && !Number.isFinite(new Date(window.openedAt).getTime())) return "NEEDS_REVIEW";
   if (window.status === "OPEN") return "OPEN";
   return window.openedAt ? "CLOSED" : "NOT_OPENED";
 }

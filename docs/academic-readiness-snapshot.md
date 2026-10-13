@@ -108,6 +108,43 @@ required. The dashboard presentation is reserved for the later UI integration st
 
 ## Before pilot
 
+### Step 4: Exam window tracking
+
+`examTracking` adapts `getClassReportReadiness` exam evidence in the same
+school-scoped RepeatableRead snapshot, without new per-student database reads.
+The roster is active students currently placed in a published class; subjects are
+deduplicated active published timetable subjects. Exam eligibility is current
+term/class eligibility, not retroactive CA activity eligibility. Late admissions
+are included in current exam counts, never accused of earlier missed CA duties.
+
+Exam counts are evaluated independently of CA and final-report blocker precedence:
+a valid recorded exam still counts when CA is incomplete. Genuine zero requires
+the explicit recording marker; legacy positive marks remain supported. Default
+zero is missing. Invalid/out-of-range and duplicate evidence requires review,
+never counts as recorded. Expected = recorded + missing + invalid.
+
+- No window: setup required, no overdue accusation.
+- Locked/closed without an opening: entry not started, no overdue accusation.
+- Open: recorded and remaining counts.
+- Closed after opening: remaining entries require review, not an overdue teacher
+  accusation or automatic reopening.
+- Zero exam weight: no exams required and no fabricated required counts.
+- Unknown/invalid window evidence: review required; normal entry stays locked.
+
+Full tracked-scope totals are computed before returning at most five classes and
+five subjects per class. Missing timetable scope remains explicitly reported by
+the school snapshot. Review links use the exact class/subject/year/term filters on
+the read-only admin assessment page. `ordinaryEntryWindowOpen` is only a
+window/report-lock indicator, not authority to edit an existing mark, bypass
+teacher authorization, or release a report. Actual writes retain Serializable
+window checks, published teacher scope, active roster, report locks and saved-mark
+correction safeguards. Pending corrections still block report release without
+erasing recorded exam evidence. No window or mark is changed by the reader.
+
+Dashboard presentation remains in the later UI step. Before pilot, verify actual
+authenticated open/close/reopen transitions, simultaneous close/save requests,
+explicit zero saves, report submission locks, and tenant isolation.
+
 ### Step 3 hardening
 
 Allocation validation is shared with report certification: SUM activities require

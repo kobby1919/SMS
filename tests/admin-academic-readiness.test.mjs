@@ -34,7 +34,7 @@ function fixture(options = {}) {
       calls.reports++; assert.equal(db, tx); assert.equal(input.schoolId, "school-a"); assert.equal(input.academicYear, period.academicYear); assert.equal(input.term, period.term); assert.ok(now instanceof Date);
       assert.deepEqual(input.subjectIds, [...new Set(rules.scope.filter((scope) => scope.classId === input.classId).map((scope) => scope.subjectId))]);
       const cls = classes.find((row) => row.id === input.classId);
-      return { currentPeriod: true, studentCount: cls._count.students, subjectCount: 1, expectedEntryCount: cls._count.students, readyEntryCount: 1, readyStudentCount: 1, caStartedEntryCount: 1, isReady: false, issues: [], blockers: [{ studentId: "private-student", studentName: "Private Name", subjectId: 1, subjectName: "English", reason: "PLACEMENT_REVIEW" }], ...options.readiness };
+      return { currentPeriod: true, studentCount: cls._count.students, subjectCount: 1, expectedEntryCount: cls._count.students, readyEntryCount: 1, readyStudentCount: 1, caStartedEntryCount: 1, examEvidence: [{ subjectId: 1, subjectName: "English", expected: cls._count.students, recorded: 1, missing: cls._count.students - 1, invalid: 0 }], isReady: false, issues: [], blockers: [{ studentId: "private-student", studentName: "Private Name", subjectId: 1, subjectName: "English", reason: "PLACEMENT_REVIEW" }], ...options.readiness };
     } },
     "@/src/lib/services/admin-teacher-accountability": { getAdminTeacherAccountability: async (school, now, teacher, details, opts) => { calls.accountability++; assert.equal(school, "school-a"); assert.equal(details, false); assert.equal(opts.db, tx); assert.equal(opts.academicOnly, true); return { totals: { overdue: 3, escalations: 1, corrections: 2, teachers: 2 }, followUps: [], details: [], notes: [], evaluatedAt: now.toISOString() }; } },
   };
@@ -55,6 +55,26 @@ test("snapshot authenticates before reading; every reader shares one school and 
   assert.equal(JSON.stringify(result).includes("Private Name"), false);
   assert.equal(JSON.stringify(result).includes("private-student"), false);
   assert.equal(result.classes[0].blockerCounts.PLACEMENT_REVIEW, 1);
+  assert.equal(result.examTracking.totals.expected, 16);
+  assert.equal(result.examTracking.totals.recorded, 8);
+  assert.equal(result.examTracking.classes.length, 5);
+});
+
+test("exam tracking uses canonical evidence, not report blocker precedence", async () => {
+  const f = fixture({ rules: { examWindows: [{ classId: 1, state: "CLOSED" }] },
+    readiness: { examEvidence: [{ subjectId: 1, subjectName: "English", expected: 2, recorded: 1, missing: 1, invalid: 0 }] } });
+  const result = await f.getAdminAcademicReadinessSnapshot();
+  assert.equal(result.examTracking.totals.recorded, 8);
+  assert.equal(result.examTracking.totals.unresolvedAfterClose, 1);
+  assert.equal(result.examTracking.totals.setupRequiredClasses, 7);
+  assert.equal(result.examTracking.classes[0].ordinaryEntryWindowOpen, false);
+});
+
+test("foreign exam subject evidence cannot be returned by the snapshot", async () => {
+  const result = await fixture({ readiness: { examEvidence: [{ subjectId: 999, subjectName: "Foreign", expected: 2, recorded: 2, missing: 0, invalid: 0 }] } }).getAdminAcademicReadinessSnapshot();
+  assert.equal(result.code, "INCONSISTENT_EXAM_SCOPE");
+  assert.equal(result.totals, null);
+  assert.equal(result.examTracking, null);
 });
 
 test("non-admin rejection never opens a transaction", async () => {

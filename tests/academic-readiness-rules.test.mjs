@@ -28,6 +28,8 @@ test("exam lifecycle never treats not-configured or not-opened windows as overdu
   assert.equal(rules.examEntryState(70, { status: "LOCKED", openedAt: null }), "NOT_OPENED");
   assert.equal(rules.examEntryState(70, { status: "CLOSED", openedAt: now }), "CLOSED");
   assert.equal(rules.examEntryState(70, { status: "OPEN" }), "OPEN");
+  assert.equal(rules.examEntryState(70, { status: "UNKNOWN" }), "NEEDS_REVIEW");
+  assert.equal(rules.examEntryState(70, { status: "OPEN", openedAt: new Date("invalid") }), "NEEDS_REVIEW");
 });
 test("late admissions and transfers do not inherit earlier CA duties", () => {
   const oldAccount = new Date("2020-01-01");

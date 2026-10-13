@@ -4,7 +4,9 @@ import prisma from "@/src/lib/prisma";
 import { buildSubjectCAProgress } from "@/src/lib/services/ca-activity";
 import { getGradeBand } from "@/src/lib/caGrades";
 import { assessmentPosition } from "@/src/lib/assessment-position";
-import { activityEligibility, validAssessmentWeights } from "@/src/lib/academic-readiness-rules";
+import { activityEligibility, hasRecordedExam, validAssessmentWeights } from "@/src/lib/academic-readiness-rules";
+
+export type ExamSubjectEvidence = { subjectId: number; subjectName: string; expected: number; recorded: number; missing: number; invalid: number };
 
 export type ReportReadinessBlocker = { studentId: string; studentName: string; admissionNumber: string | null; subjectId: number; subjectName: string; reason: "MISSING_CA" | "MISSING_EXAM" | "INVALID_SCORE" | "STALE_TOTAL" | "FUTURE_ACTIVITY" | "PLACEMENT_REVIEW"; detail: string };
 export type ClassReportReadiness = {
@@ -14,6 +16,7 @@ export type ClassReportReadiness = {
   studentPositions: { studentId: string; ready: number; caStarted: number }[];
   examRequired: boolean;
   readyEntries: { studentId: string; subjectId: number }[];
+  examEvidence: ExamSubjectEvidence[];
 };
 
 // Caller snapshots must still match the record version used for certification.
@@ -78,11 +81,31 @@ export async function getClassReportReadiness(input: { schoolId: string; classId
   const startedByStudent = new Map<string, number>();
   const scores = new Map(buckets.flatMap((bucket) => bucket.activities.flatMap((activity) => activity.scores.map((score) => [`${activity.id}:${score.studentId}`, score] as const))));
   const recordsByStudentSubject = new Map(records.map((record) => [`${record.studentId}:${record.subjectId}`, record]));
+  const duplicateRecords = new Set<string>();
+  const seenRecords = new Set<string>();
+  for (const record of records) {
+    const key = `${record.studentId}:${record.subjectId}`;
+    if (seenRecords.has(key)) duplicateRecords.add(key);
+    seenRecords.add(key);
+  }
+  // Exam counts are independent of CA blockers and do not certify report release.
+  const examEvidence: ExamSubjectEvidence[] = scopedSubjects.map((subject) => {
+    let recorded = 0, invalid = 0;
+    if (validAssessmentWeights(config) && config!.examWeight > 0) for (const student of students) {
+      const key = `${student.id}:${subject.id}`;
+      const record = recordsByStudentSubject.get(key);
+      if (duplicateRecords.has(key) || record && (!Number.isFinite(record.examScore) || record.examScore < 0 || record.examScore > config!.examWeight)) invalid++;
+      else if (hasRecordedExam(record)) recorded++;
+    }
+    const expected = validAssessmentWeights(config) && config!.examWeight > 0 ? students.length : 0;
+    return { subjectId: subject.id, subjectName: subject.name, expected, recorded, invalid, missing: expected - recorded - invalid };
+  });
   for (const student of students) for (const subject of scopedSubjects) {
     const subjectBuckets = buckets.filter((bucket) => bucket.subjectId === subject.id);
     const future = subjectBuckets.flatMap((bucket) => bucket.activities).filter((activity) => activity.activityDate > now).length;
     const record = recordsByStudentSubject.get(`${student.id}:${subject.id}`);
     const add = (reason: ReportReadinessBlocker["reason"], detail: string) => blockers.push({ studentId: student.id, studentName: `${student.name} ${student.surname}`, admissionNumber: student.admissionNumber, subjectId: subject.id, subjectName: subject.name, reason, detail });
+    if (duplicateRecords.has(`${student.id}:${subject.id}`)) { add("INVALID_SCORE", "Duplicate assessment records require reconciliation."); continue; }
     if (!config || issues.some((issue) => issue.startsWith("A valid"))) { add("MISSING_CA", "Assessment configuration is missing or invalid."); continue; }
     if (subjectBuckets.some((bucket) => bucket.activities.some((activity) => activity.subjectId !== bucket.subjectId || activity.teacher.schoolId !== schoolId || activity.teacher.id !== activity.teacherId || duplicateActivities.has(activity.id)))) {
       add("INVALID_SCORE", "Activity subject or teacher does not match its school assessment scope. Records need reconciliation.");
@@ -105,5 +128,5 @@ export async function getClassReportReadiness(input: { schoolId: string; classId
     }
   }
   const expectedEntryCount = students.length * subjectIds.length;
-  return { readyEntries, classId, currentPeriod, examRequired: (config?.examWeight ?? 0) > 0, issues, studentCount: students.length, subjectCount: subjectIds.length, expectedEntryCount, readyEntryCount, caStartedEntryCount, missingCount: blockers.length, missingCACount: blockers.filter((b) => b.reason !== "MISSING_EXAM").length, missingExamCount: blockers.filter((b) => b.reason === "MISSING_EXAM").length, readyStudentCount: [...readyByStudent.values()].filter((count) => subjectIds.length > 0 && count === subjectIds.length).length, studentPositions: students.map((s) => ({ studentId: s.id, ready: readyByStudent.get(s.id) ?? 0, caStarted: startedByStudent.get(s.id) ?? 0 })), isReady: expectedEntryCount > 0 && issues.length === 0 && blockers.length === 0, blockers };
+  return { examEvidence, readyEntries, classId, currentPeriod, examRequired: (config?.examWeight ?? 0) > 0, issues, studentCount: students.length, subjectCount: subjectIds.length, expectedEntryCount, readyEntryCount, caStartedEntryCount, missingCount: blockers.length, missingCACount: blockers.filter((b) => b.reason !== "MISSING_EXAM").length, missingExamCount: blockers.filter((b) => b.reason === "MISSING_EXAM").length, readyStudentCount: [...readyByStudent.values()].filter((count) => subjectIds.length > 0 && count === subjectIds.length).length, studentPositions: students.map((s) => ({ studentId: s.id, ready: readyByStudent.get(s.id) ?? 0, caStarted: startedByStudent.get(s.id) ?? 0 })), isReady: expectedEntryCount > 0 && issues.length === 0 && blockers.length === 0, blockers };
 }
