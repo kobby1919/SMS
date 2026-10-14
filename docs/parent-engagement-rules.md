@@ -85,8 +85,11 @@ only; no provider calls, setting upserts, notification generation or delivery wr
 
 The current cohort is ACTIVE same-school students and authorised guardian links.
 Legacy Student.parentId is used only when that parent has no relationship rows.
-Stored permission checks apply to request inclusion. Messaging disabled means new
-messaging is disabled; existing eligible unresolved requests remain counted.
+Current ward/guardian access applies to request inclusion. A canMessageSchool
+change governs new messages, not whether management can see an existing eligible
+unanswered request. Messaging disabled means new messaging is disabled; existing
+eligible unresolved requests remain counted. Revoked links stay excluded from the
+current cohort without deleting their historical request records.
 Summary schedule/configuration states are independent of messaging policy.
 
 The snapshot returns aggregate counts, not bodies, raw destinations or provider
@@ -96,11 +99,22 @@ with null totals, never truncated healthy results. Known database interruptions
 and inconsistent evidence have explicit unavailable codes; auth failures and
 unexpected bugs are not hidden behind successful empty states.
 
-Accepted portal activation requires acceptedParentId to match acceptedBy exactly;
-absence of that evidence remains unknown, not automatically inactive. Old parent
+Recorded invite activation requires acceptedParentId to match acceptedBy exactly,
+with same-school ACCEPTED status and a valid, non-future acceptance time. This is
+historical activation evidence, not proof of current Clerk login availability.
+The DTO explicitly returns portalAccessVerified=false and recorded/unknown
+activation counts; absence remains unknown, not automatically inactive. Old parent
 summary records without a central bridge remain tracking-unavailable rather than
 being claimed never sent. New channel expectations and richer follow-up details
 will be wired in Steps 3/4; this service is not yet displayed on the dashboard.
 
 Before pilot, test authenticated two-school access, true PostgreSQL snapshot
 isolation under concurrent updates, and representative maximum-size latency.
+
+Step 2 hardening restricts parent reads to current active-ward candidates rather
+than loading every retired/unlinked profile. Counters still examine all stored
+relationships for each candidate, so legacy fallback cannot revive removed access.
+Relationship flags, preference ownership/role and acceptance evidence are validated
+before use. Opaque ward/parent IDs are joined with nested sets, not delimiter keys.
+Incomplete per-lane evidence has explicit unavailable tracking states; known partial
+counts must not be presented as complete healthy totals.
