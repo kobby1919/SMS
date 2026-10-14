@@ -108,6 +108,37 @@ required. The dashboard presentation is reserved for the later UI integration st
 
 ## Before pilot
 
+### Step 6: Compact admin dashboard
+
+Step 6 hardening separates missing open-window exam entries from invalid stored
+marks requiring review. Open score issues link to read-only assessment review;
+window setup/closure issues link to guarded report/window controls. Invalid marks
+remain reviewable before opening, without being labelled overdue or closed.
+Attention subject/teacher evidence must match published scope, future work and
+healthy publications cannot create follow-up rows, and student setup directs to
+student management. Pending CA corrections remain visible when scores are filled.
+
+The authenticated `/admin` page now reads the academic snapshot and renders three
+lanes: CA Recording, Exam Entry and Report Release. Period and setup status are
+explicit; database unavailability is not presented as a configuration failure or
+healthy zero. Exam remaining counts in the lane cover open windows only; closed
+unresolved entries and windows not started remain separate.
+
+Attention candidates are selected per class before source-list truncation, then
+merged into at most five distinct classes. Each representative issue states its
+activity/subject/class count scope, current assigned teacher where applicable and
+one action. Only genuinely overdue CA work with outstanding scores and no closed
+follow-up exception links to teacher follow-up. Missing activities, setup gaps,
+placement reviews, pending scores and exam/report issues use read-only academic
+or guarded report-review destinations instead. Section 3 retains its full teacher
+accountability list; this section does not reproduce it.
+
+SSR fixture checks and headless browser previews cover populated, empty, setup,
+unavailable and CA-only states at 320, 390, 768 and 1440 pixels with real application
+CSS and Nunito. These synthetic layout checks are not live authenticated testing;
+verify actual school data, clicks, role isolation and maximum-size latency before
+pilot. No new score entry or report-release permission is granted by this UI.
+
 ### Step 5: Final report readiness
 
 Hardening: report scope/count inconsistencies fail closed with an explicit

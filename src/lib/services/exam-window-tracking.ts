@@ -17,10 +17,12 @@ const labels: Record<string, string> = {
 
 /** Adapts canonical counts only. Never opens windows, records marks, or releases reports. */
 export function buildExamWindowTracking(examWeight: number, academicYear: string, term: string, classes: ExamClassInput[]) {
-  const unavailable = () => ({ state: "UNAVAILABLE" as const, totals: null, classes: [], classListLimit: 5, issues: ["Exam evidence and teaching scope do not agree. No partial exam totals are shown."] });
+  const unavailable = () => ({ state: "UNAVAILABLE" as const, totals: null, classes: [], attentionClasses: [] as typeof evaluated, classListLimit: 5, issues: ["Exam evidence and teaching scope do not agree. No partial exam totals are shown."] });
+  const evaluated: { classId: number; className: string; state: string; label: string; expected: number; recorded: number; missing: number; invalid: number; remaining: number;
+    unresolvedAfterClose: number; ordinaryEntryWindowOpen: boolean; reportLocked: boolean; subjects: (ExamSubjectEvidence & { reviewUrl: string })[]; subjectListLimit: number;
+  }[] = [];
   if (!Number.isFinite(examWeight) || examWeight < 0 || examWeight > 100 || new Set(classes.map((cls) => cls.classId)).size !== classes.length) return unavailable();
   if (!classes.length) return { ...unavailable(), state: "SETUP_REQUIRED" as const, issues: ["Publish subject assignments for active students before evaluating exam entry."] };
-  const evaluated = [];
   for (const cls of classes) {
     const state = examWeight === 0 ? "NOT_REQUIRED" : cls.windowState;
     if (!Object.hasOwn(labels, state) || examWeight > 0 && state === "NOT_REQUIRED" || !["UNPUBLISHED", "SUBMITTED", "PUBLISHED", "REJECTED"].includes(cls.publicationStatus) ||
@@ -37,7 +39,7 @@ export function buildExamWindowTracking(examWeight: number, academicYear: string
     const label = state === "CLOSED" && remaining > 0 ? "Closed exam entries require review" : labels[state];
     const subjects = cls.evidence.map((row) => ({ ...row,
       reviewUrl: `/list/ca?${new URLSearchParams({ classId: String(cls.classId), subjectId: String(row.subjectId), year: academicYear, term })}`,
-    })).sort((a, b) => (b.missing + b.invalid) - (a.missing + a.invalid) || a.subjectId - b.subjectId).slice(0, 5);
+    })).sort((a, b) => b.invalid - a.invalid || (b.missing + b.invalid) - (a.missing + a.invalid) || a.subjectId - b.subjectId).slice(0, 5);
     evaluated.push({ classId: cls.classId, className: cls.className, state, label, expected: recorded + remaining, recorded, missing, invalid, remaining,
       unresolvedAfterClose: state === "CLOSED" ? remaining : 0,
       ordinaryEntryWindowOpen: state === "OPEN" && !reportLocked,
@@ -49,6 +51,9 @@ export function buildExamWindowTracking(examWeight: number, academicYear: string
     expected: evaluated.reduce((sum, cls) => sum + cls.expected, 0), recorded: evaluated.reduce((sum, cls) => sum + cls.recorded, 0),
     remaining: evaluated.reduce((sum, cls) => sum + cls.remaining, 0), invalid: evaluated.reduce((sum, cls) => sum + cls.invalid, 0),
     unresolvedAfterClose: evaluated.reduce((sum, cls) => sum + cls.unresolvedAfterClose, 0),
+    openRemainingEntries: evaluated.filter((cls) => cls.state === "OPEN").reduce((sum, cls) => sum + cls.remaining, 0),
+    openMissingEntries: evaluated.filter((cls) => cls.state === "OPEN").reduce((sum, cls) => sum + cls.missing, 0),
+    openInvalidEntries: evaluated.filter((cls) => cls.state === "OPEN").reduce((sum, cls) => sum + cls.invalid, 0),
     setupRequiredClasses: evaluated.filter((cls) => cls.state === "NOT_CONFIGURED").length,
     notOpenedClasses: evaluated.filter((cls) => cls.state === "NOT_OPENED").length,
     openClasses: evaluated.filter((cls) => cls.state === "OPEN").length,
@@ -59,6 +64,7 @@ export function buildExamWindowTracking(examWeight: number, academicYear: string
   if (!Object.values(totals).every(Number.isSafeInteger)) return unavailable();
   const priority = (state: string) => state === "NEEDS_REVIEW" ? 3 : state === "NOT_CONFIGURED" ? 2 : state === "CLOSED" ? 1 : 0;
   return { state: setupRequired ? "SETUP_REQUIRED" as const : "AVAILABLE" as const, totals,
+    attentionClasses: evaluated.filter((cls) => cls.invalid > 0 || ["NOT_CONFIGURED", "NEEDS_REVIEW"].includes(cls.state) || ["OPEN", "CLOSED"].includes(cls.state) && cls.remaining > 0),
     classes: evaluated.sort((a, b) => priority(b.state) - priority(a.state) || b.unresolvedAfterClose - a.unresolvedAfterClose || b.invalid - a.invalid || b.remaining - a.remaining || a.classId - b.classId).slice(0, 5),
     classListLimit: 5, issues: [
       ...(setupRequired ? ["Configure exam entry windows for the listed classes. Entries are not overdue before a window has opened."] : []),

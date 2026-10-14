@@ -34,7 +34,7 @@ export async function getCARecordingTracking(input: {
   reportPublications: { classId: number; status: string }[];
 }) {
   const { schoolId, rules, now, db, reportPublications } = input;
-  const unavailable = (state: "SETUP_REQUIRED" | "UNAVAILABLE", issues: string[]) => ({ state, issues, totals: null, activities: [] as ActivityTracking[], subjects: [] as SubjectTracking[], listLimit: 5 });
+  const unavailable = (state: "SETUP_REQUIRED" | "UNAVAILABLE", issues: string[]) => ({ state, issues, totals: null, activities: [] as ActivityTracking[], subjects: [] as SubjectTracking[], attentionActivities: [] as ActivityTracking[], attentionSubjects: [] as SubjectTracking[], listLimit: 5 });
   if (!schoolId.trim() || !rules.period || !rules.publicationId || rules.invalidAssignmentCount || !rules.scope.length) return unavailable("SETUP_REQUIRED", ["A valid active academic period and published teaching scope are required for CA tracking."]);
   if (!Number.isFinite(now.getTime())) throw new Error("A valid CA evaluation time is required.");
   const period = rules.period;
@@ -190,8 +190,12 @@ export async function getCARecordingTracking(input: {
     pendingScoreCorrections: subjectRows.reduce((sum, row) => sum + row.pendingScoreCorrections, 0),
   };
   const rank: Record<ActivityState, number> = { NEEDS_REVIEW: 0, PLACEMENT_REVIEW: 1, OVERDUE: 2, DEADLINE_UNAVAILABLE: 3, REMAINING: 4, PLANNED: 5, NO_ELIGIBLE_STUDENTS: 6, COMPLETE: 7 };
+  const sortedActivities = rows.sort((a, b) => rank[a.state] - rank[b.state] || (a.deadline ?? a.activityDate).localeCompare(b.deadline ?? b.activityDate) || a.activityId - b.activityId);
+  const attentionActivities = [...new Map([...sortedActivities].reverse().filter((row) => row.hasTakenPlace && !["COMPLETE", "NO_ELIGIBLE_STUDENTS"].includes(row.state)).map((row) => [row.classId, row])).values()];
+  const attentionSubjects = [...new Map(subjectRows.filter((row) => ["NEEDS_REVIEW", "NO_ACTIVITIES"].includes(row.state)).sort((a, b) => Number(a.state !== "NEEDS_REVIEW") - Number(b.state !== "NEEDS_REVIEW") || a.subjectId - b.subjectId).reverse().map((row) => [row.classId, row])).values()];
   return { state: "AVAILABLE" as const, issues, totals, listLimit: 5,
-    activities: rows.sort((a, b) => rank[a.state] - rank[b.state] || (a.deadline ?? a.activityDate).localeCompare(b.deadline ?? b.activityDate) || a.activityId - b.activityId).slice(0, 5),
+    attentionActivities, attentionSubjects,
+    activities: sortedActivities.slice(0, 5),
     subjects: subjectRows.sort((a, b) => Number(a.termCAComplete) - Number(b.termCAComplete) || a.classId - b.classId || a.subjectId - b.subjectId).slice(0, 5),
   };
 }

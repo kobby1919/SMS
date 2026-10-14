@@ -8,6 +8,7 @@ import { getAdminTeacherAccountability } from "@/src/lib/services/admin-teacher-
 import { getCARecordingTracking } from "@/src/lib/services/ca-recording-tracking";
 import { buildExamWindowTracking } from "@/src/lib/services/exam-window-tracking";
 import { getFinalReportPosition, buildFinalReportTracking } from "@/src/lib/services/final-report-readiness";
+import { buildAcademicAttention } from "@/src/lib/services/academic-readiness-attention";
 
 type SnapshotState = "AVAILABLE" | "SETUP_REQUIRED" | "UNAVAILABLE";
 type ReadinessClass = {
@@ -49,6 +50,7 @@ export async function getAdminAcademicReadinessSnapshot() {
     caRecording: null as Awaited<ReturnType<typeof getCARecordingTracking>> | null,
     examTracking: null as ReturnType<typeof buildExamWindowTracking> | null,
     finalReports: null as ReturnType<typeof buildFinalReportTracking> | null,
+    attention: null as ReturnType<typeof buildAcademicAttention> | null,
     accountabilityState: "UNAVAILABLE" as SnapshotState,
     accountabilityIssues: issues,
   });
@@ -156,6 +158,7 @@ export async function getAdminAcademicReadinessSnapshot() {
     const caRecording = await getCARecordingTracking({ schoolId, rules, now, db: tx, reportPublications: publications });
     const examTracking = buildExamWindowTracking(rules.period.examWeight, rules.period.academicYear, rules.period.term, examClasses);
     const finalReports = buildFinalReportTracking(evaluated.map((cls) => ({ classId: cls.classId, className: cls.className, position: cls.reportPosition, blockingSubjects: cls.blockingSubjects })), rules.period.academicYear, rules.period.term);
+    const attention = buildAcademicAttention({ period: rules.period, classes: evaluated, scope: rules.scope, ca: caRecording, exams: examTracking, reports: finalReports });
     const issues = [...rules.issues];
     if (missingScopeClasses) issues.push(`${missingScopeClasses} class(es) with active students have no published subject scope. They are not counted as report-ready.`);
     const totals = {
@@ -177,7 +180,7 @@ export async function getAdminAcademicReadinessSnapshot() {
       ...base, state: (missingScopeClasses ? "SETUP_REQUIRED" : "AVAILABLE") as SnapshotState,
       code: missingScopeClasses ? "INCOMPLETE_TEACHING_SCOPE" : "EVALUATED", issues, totals,
       classes: evaluated.filter((cls) => cls.reportState !== "PUBLISHED").sort((a, b) => Number(a.evidenceComplete) - Number(b.evidenceComplete) || (b.expectedEntries - b.readyEntries) - (a.expectedEntries - a.readyEntries) || a.classId - b.classId).slice(0, 5),
-      classListLimit: 5, accountability, accountabilityState, accountabilityIssues, caRecording, examTracking, finalReports,
+      classListLimit: 5, accountability, accountabilityState, accountabilityIssues, caRecording, examTracking, finalReports, attention,
     };
   }, { isolationLevel: "RepeatableRead", maxWait: 15000, timeout: 45000 }).catch((error: unknown) => {
     const databaseError = error instanceof Error ? error as Error & { code?: unknown; errorCode?: unknown } : null;

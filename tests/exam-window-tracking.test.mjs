@@ -69,6 +69,28 @@ test("full-school totals precede bounded class and subject lists", () => {
   assert.equal(result.totals.unresolvedAfterClose, 16);
 });
 
+test("open missing and invalid counts are separate and corrupt unopened marks stay reviewable", () => {
+  const open = run();
+  assert.equal(open.totals.openMissingEntries, 1);
+  assert.equal(open.totals.openInvalidEntries, 1);
+  assert.equal(open.totals.openRemainingEntries, 2);
+  const unopened = run({ ...cls, windowState: "NOT_OPENED" });
+  assert.equal(unopened.totals.openMissingEntries, 0);
+  assert.equal(unopened.totals.openInvalidEntries, 0);
+  assert.equal(unopened.attentionClasses.length, 1);
+  assert.equal(unopened.totals.unresolvedAfterClose, 0);
+});
+
+test("invalid exam evidence is not hidden behind another subject's missing marks", () => {
+  const result = run({ ...cls, studentCount: 30, subjectCount: 2, windowState: "NOT_OPENED", evidence: [
+    { subjectId: 2, subjectName: "English", expected: 30, recorded: 0, missing: 30, invalid: 0 },
+    { subjectId: 3, subjectName: "Mathematics", expected: 30, recorded: 27, missing: 0, invalid: 3 },
+  ] });
+  assert.equal(result.attentionClasses[0].subjects[0].subjectId, 3);
+  assert.equal(result.attentionClasses[0].subjects[0].invalid, 3);
+  assert.equal(result.totals.unresolvedAfterClose, 0);
+});
+
 test("nonzero exams cannot accept a not-required window and empty scope is not healthy", () => {
   assert.equal(run({ ...cls, windowState: "NOT_REQUIRED" }).state, "UNAVAILABLE");
   assert.equal(buildExamWindowTracking(70, "2026/2027", "TERM_1", []).state, "SETUP_REQUIRED");

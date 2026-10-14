@@ -59,6 +59,7 @@ export function buildFinalReportTracking(classes: ({ classId: number; className:
   const actionableClasses = classes.filter((cls) => cls.position.workflowState !== "PUBLISHED" || cls.position.needsReconciliation);
   const priority = (position: ReturnType<typeof getFinalReportPosition>) => position.needsReconciliation ? 4 : position.workflowState === "AWAITING_ADMIN_REVIEW" ? 3 : position.canSubmitForReview ? 2 : position.phase === "REPORT_REVIEW" ? 1 : 0;
   return {
+    attentionClasses: actionableClasses,
     totals: {
       trackedClasses: classes.length, preparingClasses: classes.length - reviewClasses.length, approachingReviewClasses: reviewClasses.length,
       evidenceCompleteClasses: classes.filter((cls) => cls.position.evidenceComplete).length,

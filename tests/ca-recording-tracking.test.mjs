@@ -45,6 +45,18 @@ test("no activities is not missing or overdue teacher work", async () => {
   assert.equal(result.subjects[0].termCAComplete, false);
   assert.equal(f.queries.length, 5);
 });
+
+test("per-class attention is selected before activity list truncation", async () => {
+  const students = Array.from({ length: 8 }, (_, index) => ({ ...student, id: `s${index + 1}`, classId: index + 1 }));
+  const buckets = students.map((row) => bucket(Array.from({ length: row.classId === 1 ? 7 : 1 }, (_, index) => activity({ id: row.classId === 1 ? index + 1 : row.classId * 20, classId: row.classId, bucketId: row.classId })), { id: row.classId, classId: row.classId }));
+  const result = await fixture({ students, buckets, rules: { scope: students.map((row) => ({ classId: row.classId, subjectId: 1, teacherId: "t1" })) },
+    lessons: students.map((row) => ({ classId: row.classId, subjectId: 1, teacherId: "t1", day: "TUESDAY", startTime: new Date("2000-01-01T09:00:00Z"), endTime: new Date("2000-01-01T10:00:00Z"), subjectName: "English" })) }).run();
+  assert.equal(result.activities.length, 5);
+  assert.equal(result.attentionActivities.length, 8);
+  assert.equal(new Set(result.attentionActivities.map((row) => row.classId)).size, 8);
+  assert.equal(result.totals.activities, 14);
+  assert.equal(result.totals.scoresRemaining, 14);
+});
 test("saved zero counts; no score row does not, and cached contributions are ignored", async () => {
   const f = fixture({ students: [student, { ...student, id: "s2" }], activities: [activity({ scores: [score("s1", 0)] })] });
   const result = await f.run();
