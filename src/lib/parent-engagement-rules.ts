@@ -141,18 +141,20 @@ export function emailDeliveryPosition(deliveries: EngagementDelivery[], now = ne
 }
 
 /** Use canonical ParentNotification rows and central deliveries only, not legacy attempt logs. */
-export function countWeeklyParentSummaryStates(input: { schoolId: string; rangeKey: string; eligibleParentIds: ReadonlySet<string>; summaries: { id: string; schoolId: string; parentId: string; sourceModel: string; sourceKey: string; deliveries: EngagementDelivery[] }[]; now: Date }) {
+export function countWeeklyParentSummaryStates(input: { schoolId: string; rangeKey: string; eligibleParentIds: ReadonlySet<string>; summaries: { id: string; schoolId: string; parentId: string; sourceModel: string; sourceKey: string; centralTracked?: boolean; deliveries: EngagementDelivery[] }[]; now: Date }) {
   const range = /^\d{4}-\d{2}-\d{2}:\d{4}-\d{2}-\d{2}$/.test(input.rangeKey) ? input.rangeKey.split(":") : [];
   const start = new Date(`${range[0]}T00:00:00Z`);
   if (!input.schoolId.trim() || !Number.isFinite(input.now.getTime()) || !Number.isFinite(start.getTime()) || isoDay(start) !== range[0] || start.getUTCDay() !== 1 || isoDay(shift(start, 6)) !== range[1]) throw inconsistent("A valid school, evaluation time and Monday-Sunday summary period are required.");
-  const unique = new Map<string, { id: string; deliveries: EngagementDelivery[] }>();
+  const unique = new Map<string, { id: string; centralTracked: boolean; deliveries: EngagementDelivery[] }>();
   for (const row of input.summaries) {
     if (row.schoolId !== input.schoolId || !input.eligibleParentIds.has(row.parentId) || row.sourceModel !== "ParentWeeklySummary" || row.sourceKey !== `weekly-summary:${row.parentId}:${input.rangeKey}`) continue;
     const previous = unique.get(row.parentId);
     if (!row.id.trim() || !row.parentId.trim()) throw inconsistent("Parent summary identity requires review.");
     if (previous && previous.id !== row.id) throw inconsistent("Conflicting parent summaries require review.");
-    unique.set(row.parentId, { id: row.id, deliveries: [...(previous?.deliveries ?? []), ...row.deliveries] });
+    const centralTracked = row.centralTracked ?? true;
+    if (typeof centralTracked !== "boolean" || previous && previous.centralTracked !== centralTracked) throw inconsistent("Conflicting central tracking evidence requires review.");
+    unique.set(row.parentId, { id: row.id, centralTracked, deliveries: [...(previous?.deliveries ?? []), ...row.deliveries] });
   }
-  const states = [...unique.values()].map((row) => emailDeliveryPosition(row.deliveries, input.now));
+  const states = [...unique.values()].map((row) => row.centralTracked ? emailDeliveryPosition(row.deliveries, input.now) : "UNAVAILABLE");
   return { summariesAvailable: unique.size, queuedOrRetrying: states.filter((state) => state === "PENDING" || state === "RETRYING").length, sent: states.filter((state) => state === "SENT").length, delivered: states.filter((state) => state === "DELIVERED").length, failed: states.filter((state) => state === "FAILED").length, cancelled: states.filter((state) => state === "CANCELLED").length, notQueued: states.filter((state) => state === "NOT_QUEUED").length, unavailable: states.filter((state) => state === "UNAVAILABLE").length };
 }

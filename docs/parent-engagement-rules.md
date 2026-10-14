@@ -76,3 +76,31 @@ Both nonexistent and ambiguous daylight-saving local send times require setup.
 All equal-time email evidence must have valid proof; unrelated SMS/WhatsApp
 records cannot poison email status. Neither successful provider delivery nor
 usable contact details establishes read status or verified human reachability.
+
+## Step 2 Snapshot Service
+
+`getAdminParentEngagementSnapshot` authenticates admins before opening a
+RepeatableRead transaction. It accepts no caller tenant and uses existing records
+only; no provider calls, setting upserts, notification generation or delivery writes.
+
+The current cohort is ACTIVE same-school students and authorised guardian links.
+Legacy Student.parentId is used only when that parent has no relationship rows.
+Stored permission checks apply to request inclusion. Messaging disabled means new
+messaging is disabled; existing eligible unresolved requests remain counted.
+Summary schedule/configuration states are independent of messaging policy.
+
+The snapshot returns aggregate counts, not bodies, raw destinations or provider
+IDs. Counts/read agreement and exact parent/source/delivery tenant binding are
+checked. Histories exceeding bounded synchronous evaluation return unavailable
+with null totals, never truncated healthy results. Known database interruptions
+and inconsistent evidence have explicit unavailable codes; auth failures and
+unexpected bugs are not hidden behind successful empty states.
+
+Accepted portal activation requires acceptedParentId to match acceptedBy exactly;
+absence of that evidence remains unknown, not automatically inactive. Old parent
+summary records without a central bridge remain tracking-unavailable rather than
+being claimed never sent. New channel expectations and richer follow-up details
+will be wired in Steps 3/4; this service is not yet displayed on the dashboard.
+
+Before pilot, test authenticated two-school access, true PostgreSQL snapshot
+isolation under concurrent updates, and representative maximum-size latency.
