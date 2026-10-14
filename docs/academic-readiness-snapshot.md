@@ -262,5 +262,27 @@ publication, roster and score changes.
 Run real authenticated multi-school tests, simultaneous assessment/import and
 snapshot reads, and representative maximum-size latency tests against the actual
 production database. Passing mocked tests, typecheck, or build is not production
-certification. The service is the Step 2 foundation; CA/exam lane presentation and
-dashboard integration follow in the subsequent steps.
+certification.
+
+### Step 7: exact read-only navigation
+
+Activity review includes classId, subjectId, activityId, year and term. The
+authorized admin assessment query validates the activity against its school,
+class, subject and period inside the read transaction, excludes future activity,
+and refuses missing context or stale sources without loading student scores.
+Both desktop and mobile evidence focus on that activity; subject totals remain
+canonical, not recalculated from one activity. Pagination retains the selection,
+and changing the class, subject or period clears it.
+
+Genuine overdue CA work links to the exact teacher/activity duty in the
+school-scoped accountability review. Resolved or unavailable duties show an
+empty state; they never substitute another activity. Missing deadline setup goes
+to accountability settings. Exam windows needing setup/review go to the existing
+guarded Reports & Approval window controls; open exam gaps go to read-only
+assessment review. Report blockers go to Reports & Approval with class/year/term
+filters; its missing-entry links retain the specific subject and student.
+
+Route-contract and service tests cover route existence, exact parameters,
+invalid/repeated identifiers, foreign/missing source rejection, stale duties,
+canonical totals and separation from teacher grading controls. Real authenticated
+navigation and cross-school testing remain required before pilot.

@@ -9,18 +9,19 @@ const termLabel = (value: string) => value.replace("TERM_", "Term ");
 const dateLabel = (value: Date | null) => value ? value.toLocaleString("en-GH", { timeZone: "Africa/Accra", dateStyle: "medium", timeStyle: "short" }) : "No score recorded";
 type Row = Awaited<ReturnType<typeof getAdminAssessmentReview>>["rows"][number];
 
-function Evidence({ row }: { row: Row }) {
+function Evidence({ row, activityId }: { row: Row; activityId?: number }) {
   if (row.position.status === "Needs review") return <p className="mt-3 text-sm text-amber-800">Score data requires review before this result can be used.</p>;
-  return <details className="mt-3 border-t border-gray-100 pt-3">
+  return <details open={activityId !== undefined} className="mt-3 border-t border-gray-100 pt-3">
     <summary className="cursor-pointer text-sm font-semibold text-blue-800">Activity scores</summary>
     <div className="mt-3 space-y-4">
+      {activityId !== undefined && !row.progress.buckets.some((bucket) => bucket.activities.some((activity) => activity.id === activityId)) && <p className="text-sm text-gray-600">No activity evidence is available for this student. Review placement and score records.</p>}
       {row.progress.buckets.length === 0 && <p className="text-sm text-gray-500">No CA structure has been recorded for this subject.</p>}
-      {row.progress.buckets.map((bucket) => <section key={bucket.bucketId}>
+      {row.progress.buckets.filter((bucket) => activityId === undefined || bucket.activities.some((activity) => activity.id === activityId)).map((bucket) => <section key={bucket.bucketId}>
         <h3 className="break-words text-sm font-semibold text-gray-900">{bucket.name}</h3>
         <p className="mt-1 text-xs text-gray-600">{mark(bucket.earnedMarks)} / {mark(bucket.allocationMarks)} CA marks · {bucket.aggregationMode === "AVERAGE_TO_BUCKET" ? "Average of recorded activities" : "Sum of activity contributions"}</p>
         {bucket.activities.length === 0 && <p className="mt-2 text-sm text-gray-500">No activities have taken place yet.</p>}
         <ul className="mt-2 divide-y divide-gray-100">
-          {bucket.activities.map((activity) => <li key={activity.id} className="flex flex-col gap-1 py-2 text-sm sm:flex-row sm:justify-between sm:gap-4">
+          {bucket.activities.filter((activity) => activityId === undefined || activity.id === activityId).map((activity) => <li key={activity.id} className="flex flex-col gap-1 py-2 text-sm sm:flex-row sm:justify-between sm:gap-4">
             <div className="min-w-0"><p className="break-words font-medium">{activity.title}</p><p className="break-words text-xs text-gray-500">{activity.teacherName} · {activity.activityDate.toLocaleDateString("en-GH", { timeZone: "Africa/Accra" })}</p></div>
             <div className="shrink-0 text-gray-700 sm:text-right"><p>{activity.rawScore === null ? "Not recorded" : `${mark(activity.rawScore)} / ${mark(activity.rawMaxScore)}`}</p><p className="text-xs text-gray-500">{activity.earnedMarks === null ? "Contribution pending" : `${mark(activity.earnedMarks)} ${bucket.aggregationMode === "AVERAGE_TO_BUCKET" ? "before bucket averaging" : "CA contribution"}`}</p></div>
           </li>)}
@@ -40,6 +41,7 @@ export default async function AdminAssessmentReview({ params }: { params: Record
     if (data.subjectId !== undefined) query.set("subjectId", String(data.subjectId));
     if (data.search) query.set("search", data.search);
     if (data.studentId) query.set("studentId", data.studentId);
+    if (data.activityId !== undefined) query.set("activityId", String(data.activityId));
     return `/list/ca?${query}`;
   }
   return <main className="m-3 mt-0 min-w-0 flex-1 bg-white p-4 font-nunito text-sm font-semibold text-gray-700 sm:m-4 sm:mt-0 sm:p-5">
@@ -49,6 +51,7 @@ export default async function AdminAssessmentReview({ params }: { params: Record
         <Link href="/admin/ca-config" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-blue-800"><SlidersHorizontal size={16} /> Assessment settings</Link>
       </div>
       <AssessmentReviewFilters>
+        {data.activityId !== undefined ? <input type="hidden" name="activityId" value={data.activityId} /> : null}
         {data.studentId ? <input type="hidden" name="studentId" value={data.studentId} /> : null}
         <label className="min-w-0 text-xs font-semibold text-gray-600">Academic year<select name="year" defaultValue={data.year} className={`${inputClass} mt-1`}>
           {[...new Set([data.year, ...data.configs.map((config) => config.academicYear)])].map((year) => <option key={year}>{year}</option>)}
@@ -62,10 +65,12 @@ export default async function AdminAssessmentReview({ params }: { params: Record
     </header>
     {data.error ? <p role="alert" className="my-5 border-l-4 border-amber-500 bg-amber-50 p-4 text-sm text-amber-900">{data.error}</p> : data.classes.length === 0 ? <p className="py-8 text-sm text-gray-600">No classes have been created yet.</p> : !selectedSubject ? <p className="py-8 text-sm text-gray-600">No subjects are available for this class and period. Current-term subjects appear after the timetable is published.</p> : <>
       <section className="border-b border-gray-200 py-4">
+        {data.selectedActivity && <p className="mb-3 break-words text-sm font-bold text-blue-900">Activity: {data.selectedActivity.title} · Raw maximum: {mark(data.selectedActivity.rawMaxScore)}</p>}
+        {data.selectedActivity && <p className="mb-3 text-xs text-gray-600">Totals below cover the whole subject. Activity scores show only the selected activity.</p>}
         <h2 className="break-words text-sm font-black text-gray-950">{data.classes.find((item) => item.id === data.classId)?.name} · {selectedSubject.name}</h2>
         <p className="mt-1 break-words text-sm text-gray-600">{data.teacherNames.length ? `Assigned teacher: ${data.teacherNames.join(", ")}` : "Teacher names appear in the activity history."}</p>
         <p className="mt-2 text-xs text-gray-500">CA maximum: {mark(data.config?.classworkWeight)} · Exam maximum: {mark(data.config?.examWeight)} · {data.count} matching students</p>
-        <p className="mt-2 text-xs text-gray-500">{data.config?.examWeight === 0 ? "No exam component is required." : "Exam zero: entry not confirmed. Partial totals are not final results."} Future activities are excluded.</p>
+        <p className="mt-2 text-xs text-gray-500">{data.config?.examWeight === 0 ? "No exam component is required." : "A confirmed zero counts as a recorded exam entry. Partial totals are not final results."} Future activities are excluded.</p>
         <p className="mt-1 text-xs text-gray-500">{data.currentPeriod ? "Active students in this class." : "Students with assessment records for this class and period, including those who have moved class."} Activity completeness is not an overdue-duty count.</p>
       </section>
       {data.rows.length === 0 ? <p className="py-8 text-sm text-gray-600">No students match this selection.</p> : <>
@@ -79,7 +84,7 @@ export default async function AdminAssessmentReview({ params }: { params: Record
               <td className="py-4 pr-3">{row.position.total === null ? "Incomplete" : mark(row.position.total)}</td>
               <td className="py-4 pr-3"><span className={row.position.status === "Complete" ? "font-medium text-emerald-800" : "font-medium text-amber-800"}>{row.position.status}</span></td>
               <td className="break-words py-4 text-xs text-gray-500">{dateLabel(row.updatedAt)}</td>
-            </tr><tr className="border-b border-gray-100"><td colSpan={7} className="pb-4"><Evidence row={row} /></td></tr></Fragment>)}</tbody>
+            </tr><tr className="border-b border-gray-100"><td colSpan={7} className="pb-4"><Evidence row={row} activityId={data.activityId} /></td></tr></Fragment>)}</tbody>
           </table>
         </div>
         <div className="divide-y divide-gray-200 xl:hidden">{data.rows.map((row) => <section key={row.student.id} className="py-5">
@@ -90,7 +95,7 @@ export default async function AdminAssessmentReview({ params }: { params: Record
             ["Exam", data.config?.examWeight === 0 ? "Not required" : row.position.examConfirmed ? mark(row.examScore) : "Unconfirmed"],
             ["Overall", row.position.total === null ? "Incomplete" : mark(row.position.total)],
           ].map(([label, value]) => <div key={label} className="min-w-0"><dt className="text-xs text-gray-500">{label}</dt><dd className="mt-1 break-words font-medium">{value}</dd></div>)}</dl>
-          <p className="mt-3 text-xs text-gray-500">Last update: {dateLabel(row.updatedAt)}</p><Evidence row={row} />
+          <p className="mt-3 text-xs text-gray-500">Last update: {dateLabel(row.updatedAt)}</p><Evidence row={row} activityId={data.activityId} />
         </section>)}</div>
       </>}
       <nav aria-label="Assessment pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 py-4 text-sm">

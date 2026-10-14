@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { z } from "zod";
 import { requireCompletedAdminSchoolSetup, requirePageSession } from "@/src/lib/authz";
@@ -8,21 +7,23 @@ import { getAdminTeacherAccountability } from "@/src/lib/services/admin-teacher-
 export const dynamic = "force-dynamic";
 const paramsSchema = z.object({
   teacherId: z.string().trim().min(1).max(128).optional(),
+  activityId: z.string().regex(/^[1-9]\d*$/).transform(Number).pipe(z.number().int().positive().max(Number.MAX_SAFE_INTEGER)).optional(),
   page: z.string().regex(/^[1-9]\d{0,5}$/).transform(Number).optional(),
 });
 const labels = { ATTENDANCE: "Overdue attendance", HOMEWORK_CHECKING: "Overdue homework checks", CA_SCORE_PUBLISHING: "Overdue CA publication", ESCALATION: "Escalation review", CORRECTION: "Correction review" };
 
-export default async function TeacherFollowUpPage({ searchParams }: { searchParams: Promise<{ teacherId?: string; page?: string }> }) {
+export default async function TeacherFollowUpPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const session = await requirePageSession(["admin"]);
   await requireCompletedAdminSchoolSetup(session);
   const parsed = paramsSchema.safeParse(await searchParams);
-  if (!parsed.success) notFound();
-  const { teacherId } = parsed.data;
+  if (!parsed.success || parsed.data.activityId !== undefined && !parsed.data.teacherId) return <main className="min-w-0 p-4"><p role="alert">This follow-up selection is invalid. Return to the dashboard and select a current duty.</p><Link href="/admin">Admin dashboard</Link></main>;
+  const { teacherId, activityId } = parsed.data;
   const snapshot = await getAdminTeacherAccountability(session.schoolId, new Date(), teacherId, true);
-  const pageCount = Math.max(1, Math.ceil(snapshot.details.length / 50));
+  const details = activityId === undefined ? snapshot.details : snapshot.details.filter((item) => item.teacherId === teacherId && item.kind === "CA_SCORE_PUBLISHING" && item.id === `duty:${teacherId}:ca-score-publishing:activity:${activityId}`);
+  const pageCount = Math.max(1, Math.ceil(details.length / 50));
   const page = Math.min(parsed.data.page ?? 1, pageCount);
-  const entries = snapshot.details.slice((page - 1) * 50, page * 50);
-  const pageHref = (number: number) => `/admin/accountability/follow-up?${new URLSearchParams({ ...(teacherId ? { teacherId } : {}), page: String(number) })}`;
+  const entries = details.slice((page - 1) * 50, page * 50);
+  const pageHref = (number: number) => `/admin/accountability/follow-up?${new URLSearchParams({ ...(teacherId ? { teacherId } : {}), ...(activityId === undefined ? {} : { activityId: String(activityId) }), page: String(number) })}`;
   return (
     <main className="min-w-0 space-y-5 p-4 md:p-6">
       <Link href="/admin" className="inline-flex items-center gap-2 text-sm font-medium text-blue-800"><ArrowLeft size={16} aria-hidden="true" /> Admin dashboard</Link>

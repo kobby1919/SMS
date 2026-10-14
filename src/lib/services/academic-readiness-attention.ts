@@ -25,7 +25,7 @@ export function buildAcademicAttention(input: {
   };
   const subjectName = (classId: number, subjectId: number) => input.scope.find((scope) => scope.classId === classId && scope.subjectId === subjectId)?.subjectName ?? "Subject";
   const teacherName = (classId: number, subjectId: number) => [...new Set(input.scope.filter((scope) => scope.classId === classId && scope.subjectId === subjectId).map((scope) => scope.teacherName).filter(Boolean))].join("; ") || null;
-  const assessment = (classId: number, subjectId: number) => `/list/ca?${new URLSearchParams({ classId: String(classId), subjectId: String(subjectId), year: input.period.academicYear, term: input.period.term })}`;
+  const assessment = (classId: number, subjectId: number, activityId?: number) => `/list/ca?${new URLSearchParams({ classId: String(classId), subjectId: String(subjectId), year: input.period.academicYear, term: input.period.term, ...(activityId === undefined ? {} : { activityId: String(activityId) }) })}`;
   const add = (row: Omit<AcademicAttentionRow, "className">) => { if (classNames.has(row.classId)) rows.push({ ...row, className: classNames.get(row.classId)! }); };
   for (const row of input.ca.attentionActivities ?? []) {
     if (!checkScope(row.classId, row.subjectId, row.teacherId) || row.hasTakenPlace === false || ["PLANNED", "COMPLETE", "NO_ELIGIBLE_STUDENTS"].includes(row.state)) continue;
@@ -35,9 +35,10 @@ export function buildAcademicAttention(input: {
         : `${row.scoresRemaining} scores ${overdue ? "overdue" : "remaining"}`;
     const window = row.recordingPermittedNow === true ? "Recording period open" : row.recordingPermittedNow === null ? "Recording permission unavailable" : "Normal recording closed";
     const review = row.state === "NEEDS_REVIEW" ? " · Activity records need review" : row.state === "DEADLINE_UNAVAILABLE" ? " · Deadline unavailable" : "";
+    const needsDeadlineSetup = row.state === "DEADLINE_UNAVAILABLE";
     add({ classId: row.classId, title: `${subjectName(row.classId, row.subjectId)} · ${row.title}`, detail: `${count}${review} · ${window}`, teacherName: row.teacherName,
       lane: "CA Recording", priority: ["NEEDS_REVIEW", "PLACEMENT_REVIEW"].includes(row.state) ? 0 : overdue ? 1 : 4,
-      action: overdue ? "Review follow-up" : "Review assessment", href: overdue ? `/admin/accountability/follow-up?${new URLSearchParams({ teacherId: row.teacherId })}` : assessment(row.classId, row.subjectId) });
+      action: needsDeadlineSetup ? "Review deadline settings" : overdue ? "Review follow-up" : "Review assessment", href: needsDeadlineSetup ? "/admin/accountability-settings" : overdue ? `/admin/accountability/follow-up?${new URLSearchParams({ teacherId: row.teacherId, activityId: String(row.activityId) })}` : assessment(row.classId, row.subjectId, row.activityId) });
   }
   for (const row of input.ca.attentionSubjects ?? []) { if (!checkScope(row.classId, row.subjectId)) continue; add({ classId: row.classId, title: `${subjectName(row.classId, row.subjectId)} · CA setup`,
     detail: row.label, teacherName: teacherName(row.classId, row.subjectId), lane: "CA Recording", priority: row.state === "NEEDS_REVIEW" ? 2 : 7,
@@ -64,8 +65,8 @@ export function buildAcademicAttention(input: {
             : position.remainingEntries ? `${position.remainingEntries} class report entries require complete evidence` : position.releaseBlockers[0] ?? "Report release requires review",
       teacherName: subject ? teacherName(cls.classId, subject.subjectId) : null, lane: "Report Release",
       priority: position.needsReconciliation ? 0 : position.workflowState === "AWAITING_ADMIN_REVIEW" ? 2 : position.canSubmitForReview ? 3 : 6,
-      action: subject && !position.needsReconciliation ? "Review assessment" : "Review reports",
-      href: subject && !position.needsReconciliation ? assessment(cls.classId, subject.subjectId) : `/list/report-cards?${new URLSearchParams({ classId: String(cls.classId), year: input.period.academicYear, term: input.period.term })}` });
+      action: "Review reports",
+      href: `/list/report-cards?${new URLSearchParams({ classId: String(cls.classId), year: input.period.academicYear, term: input.period.term })}` });
   }
   rows.sort((a, b) => a.priority - b.priority || a.classId - b.classId || a.title.localeCompare(b.title));
   const uniqueClasses = new Map<number, AcademicAttentionRow>();

@@ -12,6 +12,31 @@ function load(path, mocks = {}) {
   return loadedModule.exports;
 }
 const now = new Date("2026-10-09T12:00:00Z");
+test("activity navigation requires explicit context and rejects malformed identifiers without reading scores", async () => {
+  for (const params of [{ activityId: "17" }, { classId: "1", subjectId: "2", activityId: "17" }, { classId: "1", subjectId: "2", year: "2026/27", term: "TERM_1", activityId: "17x" }, { activityId: ["17", "18"] }, { activityId: "9007199254740992" }]) {
+    const f = fixture();
+    const result = await f.service.getAdminAssessmentReview(params, now);
+    assert.ok(result.error);
+    assert.equal(f.calls.length, 0);
+  }
+});
+test("activity review validates the authenticated school, exact period and source before reading students", async () => {
+  const params = { classId: "1", subjectId: "2", year: "2026/27", term: "TERM_1", activityId: "17" };
+  const f = fixture();
+  const result = await f.service.getAdminAssessmentReview(params, now);
+  assert.equal(result.activityId, 17);
+  assert.equal(result.selectedActivity.title, "Spelling test");
+  const query = f.queries.find((q) => q.where.id === 17);
+  assert.deepEqual(query.where.bucket, { schoolId: "school-a", classId: 1, subjectId: 2, term: "TERM_1", academicYear: "2026/27" });
+  assert.equal(query.where.schoolId, "school-a");
+  assert.equal(query.where.activityDate.lte, now);
+  assert.equal(result.rows[0].position.total, 50, "Focusing an activity must not change subject totals");
+  const missing = fixture({ missingActivity: true });
+  const refused = await missing.service.getAdminAssessmentReview(params, now);
+  assert.ok(refused.error);
+  assert.equal(missing.calls.length, 0);
+  assert.equal(missing.queries.some((q) => q.take === 25), false);
+});
 function fixture(options = {}) {
   const queries = [];
   const progress = { classworkWeight: 30, earnedMarks: 0, totalAllocatedMarks: 30, buckets: [{ allocationMarks: 30, aggregationMode: "AVERAGE_TO_BUCKET", activityCount: 1, activities: [{ rawScore: 0, rawMaxScore: 10 }] }] };
@@ -22,7 +47,7 @@ function fixture(options = {}) {
     student: { count: async (q) => { queries.push(q); return 1; }, findMany: async (q) => { queries.push(q); return [{ id: "s1", name: "Student", surname: "One", admissionNumber: "EDJ-001" }]; } },
     continuousAssessment: { findMany: async (q) => { queries.push(q); return [{ studentId: "s1", classworkScore: 0, examScore: 50, totalScore: options.staleTotal ? 90 : 50, updatedAt: now }]; } },
     cAActivityScore: { findMany: async (q) => { queries.push(q); return []; } },
-    cAActivity: { count: async (q) => { queries.push(q); return 0; } },
+    cAActivity: { count: async (q) => { queries.push(q); return 0; }, findFirst: async (q) => { queries.push(q); return options.missingActivity ? null : { id: 17, title: "Spelling test", rawMaxScore: 10 }; } },
   };
   prisma.$transaction = async (work, options) => { assert.equal(options.isolationLevel, "RepeatableRead"); return work(prisma); };
   const calls = [];

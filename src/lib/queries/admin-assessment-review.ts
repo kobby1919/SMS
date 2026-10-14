@@ -14,6 +14,7 @@ const positiveId = z.string().regex(/^[1-9]\d*$/).transform(Number).pipe(z.numbe
 const filters = z.object({
   classId: positiveId.optional(),
   subjectId: positiveId.optional(),
+  activityId: positiveId.optional(),
   year: z.string().trim().min(1).max(30).optional(),
   term: z.enum(["TERM_1", "TERM_2", "TERM_3"]).optional(),
   search: z.string().trim().max(100).optional(),
@@ -30,13 +31,15 @@ export async function getAdminAssessmentReview(params: Record<string, string | s
     getActiveAcademicPeriod(schoolId),
   ]);
   const selection = parsed.success ? parsed.data : { page: 1 };
+  const activityId = selection.activityId;
   const year = selection.year ?? active.academicYear;
   const term = selection.term ?? active.currentTerm;
   const classId = selection.classId ?? classes[0]?.id;
   const currentPeriod = year === active.academicYear && term === active.currentTerm;
   const config = configs.find((item) => item.academicYear === year);
-  const base = { classes, configs, year, term, classId, currentPeriod, studentId: selection.studentId, search: selection.search ?? "", page: selection.page, subjects: [] as { id: number; name: string }[], subjectId: selection.subjectId, teacherNames: [] as string[], rows: [] as Awaited<ReturnType<typeof loadRows>>, count: 0, pageCount: 1, error: null as string | null, config };
+  const base = { classes, configs, year, term, classId, currentPeriod, activityId, selectedActivity: null as { id: number; title: string; rawMaxScore: number } | null, studentId: selection.studentId, search: selection.search ?? "", page: selection.page, subjects: [] as { id: number; name: string }[], subjectId: selection.subjectId, teacherNames: [] as string[], rows: [] as Awaited<ReturnType<typeof loadRows>>, count: 0, pageCount: 1, error: null as string | null, config };
   if (!parsed.success) return { ...base, error: "Some filters are invalid. Select a valid class, subject, year and term." };
+  if (activityId !== undefined && (selection.classId === undefined || selection.subjectId === undefined || selection.year === undefined || selection.term === undefined)) return { ...base, error: "Activity review requires its class, subject, year and term." };
   if (classId === undefined) return base;
   if (!classes.some((item) => item.id === classId)) return { ...base, error: "This class is not available in your school." };
   if (!config) return { ...base, error: "Assessment configuration is not available for this academic year." };
@@ -60,6 +63,12 @@ export async function getAdminAssessmentReview(params: Record<string, string | s
     ] }),
     ...(base.search ? { AND: [{ OR: ["name", "surname", "admissionNumber"].map((field) => ({ [field]: { contains: base.search, mode: "insensitive" as const } })) }] } : {}) };
   return prisma.$transaction(async (db) => {
+  const activity = activityId === undefined ? null : await db.cAActivity.findFirst({
+    where: { id: activityId, schoolId, classId, subjectId, activityDate: { lte: now }, bucket: context, class: { schoolId }, subject: { schoolId }, teacher: { schoolId } },
+    select: { id: true, title: true, rawMaxScore: true },
+  });
+  if (activityId !== undefined && !activity) return { ...base, subjects, subjectId, error: "This activity is not available for the selected class and period. Refresh the dashboard to review current records." };
+  const selectedActivity = activity ? { ...activity, rawMaxScore: Number(activity.rawMaxScore) } : null;
   const count = await db.student.count({ where: studentWhere });
   const pageCount = Math.max(1, Math.ceil(count / 25));
   const page = Math.min(selection.page, pageCount);
@@ -68,7 +77,7 @@ export async function getAdminAssessmentReview(params: Record<string, string | s
   if (!snapshotConfig) return { ...base, subjects, subjectId, error: "Assessment configuration changed. Refresh this review." };
   const rows = await loadRows({ schoolId, classId, subjectId, term, year, now, config: snapshotConfig, students }, db);
   const teacherNames = currentPeriod ? [...new Set(lessons.filter((lesson) => lesson.subjectId === subjectId).map((lesson) => `${lesson.teacher.name} ${lesson.teacher.surname}`))] : [];
-  return { ...base, config: snapshotConfig, subjects, subjectId, teacherNames, rows, count, page, pageCount };
+  return { ...base, selectedActivity, config: snapshotConfig, subjects, subjectId, teacherNames, rows, count, page, pageCount };
   }, { isolationLevel: "RepeatableRead", timeout: 30000 });
 }
 
