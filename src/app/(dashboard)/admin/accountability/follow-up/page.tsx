@@ -7,7 +7,7 @@ import { getAdminTeacherAccountability } from "@/src/lib/services/admin-teacher-
 export const dynamic = "force-dynamic";
 const paramsSchema = z.object({
   teacherId: z.string().trim().min(1).max(128).optional(),
-  activityId: z.string().regex(/^[1-9]\d*$/).transform(Number).pipe(z.number().int().positive().max(Number.MAX_SAFE_INTEGER)).optional(),
+  activityId: z.string().regex(/^[1-9]\d*$/).transform(Number).pipe(z.number().int().positive().max(2147483647)).optional(),
   page: z.string().regex(/^[1-9]\d{0,5}$/).transform(Number).optional(),
 });
 const labels = { ATTENDANCE: "Overdue attendance", HOMEWORK_CHECKING: "Overdue homework checks", CA_SCORE_PUBLISHING: "Overdue CA publication", ESCALATION: "Escalation review", CORRECTION: "Correction review" };

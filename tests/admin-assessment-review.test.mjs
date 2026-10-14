@@ -13,7 +13,7 @@ function load(path, mocks = {}) {
 }
 const now = new Date("2026-10-09T12:00:00Z");
 test("activity navigation requires explicit context and rejects malformed identifiers without reading scores", async () => {
-  for (const params of [{ activityId: "17" }, { classId: "1", subjectId: "2", activityId: "17" }, { classId: "1", subjectId: "2", year: "2026/27", term: "TERM_1", activityId: "17x" }, { activityId: ["17", "18"] }, { activityId: "9007199254740992" }]) {
+  for (const params of [{ activityId: "17" }, { classId: "1", subjectId: "2", activityId: "17" }, { classId: "1", subjectId: "2", year: "2026/27", term: "TERM_1", activityId: "17x" }, { activityId: ["17", "18"] }, { activityId: "9007199254740992" }, { classId: "2147483648" }, { subjectId: "2147483648" }, { activityId: "2147483648" }]) {
     const f = fixture();
     const result = await f.service.getAdminAssessmentReview(params, now);
     assert.ok(result.error);
@@ -42,24 +42,65 @@ function fixture(options = {}) {
   const progress = { classworkWeight: 30, earnedMarks: 0, totalAllocatedMarks: 30, buckets: [{ allocationMarks: 30, aggregationMode: "AVERAGE_TO_BUCKET", activityCount: 1, activities: [{ rawScore: 0, rawMaxScore: 10 }] }] };
   const prisma = {
     class: { findMany: async (q) => { queries.push(q); return [{ id: 1, name: "Class 1" }]; } },
-    cAConfig: { findMany: async (q) => { queries.push(q); return [{ academicYear: "2026/27", classworkWeight: 30, examWeight: 70 }]; }, findUnique: async () => ({ academicYear: "2026/27", classworkWeight: 30, examWeight: 70 }) },
+    cAConfig: { findMany: async (q) => { queries.push(q); return [{ academicYear: "2026/27", classworkWeight: options.invalidWeights ? 130 : 30, examWeight: 70 }]; }, findUnique: async () => ({ academicYear: "2026/27", classworkWeight: 30, examWeight: 70 }) },
     subject: { findMany: async (q) => { queries.push(q); return [{ id: 2, name: "Math" }]; } },
-    student: { count: async (q) => { queries.push(q); return 1; }, findMany: async (q) => { queries.push(q); return [{ id: "s1", name: "Student", surname: "One", admissionNumber: "EDJ-001" }]; } },
+    student: { count: async (q) => { queries.push(q); return 1; }, findMany: async (q) => { queries.push(q); return [{ id: "s1", name: "Student", surname: "One", admissionNumber: "EDJ-001", createdAt: new Date("2026-09-01"), classJoinedAt: options.unknownPlacement ? null : options.lateAdmission ? new Date("2026-10-10") : new Date("2026-09-01") }]; } },
     continuousAssessment: { findMany: async (q) => { queries.push(q); return [{ studentId: "s1", classworkScore: 0, examScore: 50, totalScore: options.staleTotal ? 90 : 50, updatedAt: now }]; } },
     cAActivityScore: { findMany: async (q) => { queries.push(q); return []; } },
-    cAActivity: { count: async (q) => { queries.push(q); return 0; }, findFirst: async (q) => { queries.push(q); return options.missingActivity ? null : { id: 17, title: "Spelling test", rawMaxScore: 10 }; } },
+    cAActivity: { count: async (q) => { queries.push(q); return 0; }, findFirst: async (q) => { queries.push(q); return options.missingActivity ? null : { id: 17, title: "Spelling test", rawMaxScore: options.invalidMaximum ? 0 : 10, activityDate: now }; } },
   };
-  prisma.$transaction = async (work, options) => { assert.equal(options.isolationLevel, "RepeatableRead"); return work(prisma); };
+  let insideTransaction = false;
+  prisma.$transaction = async (work, options) => { assert.equal(options.isolationLevel, "RepeatableRead"); insideTransaction = true; try { return await work(prisma); } finally { insideTransaction = false; } };
   const calls = [];
   const service = load("src/lib/queries/admin-assessment-review.ts", {
     "@/src/lib/prisma": prisma,
     "@/src/lib/authz": { requireRole: async (roles) => { assert.deepEqual(roles, ["admin"]); return { schoolId: "school-a" }; } },
-    "@/src/lib/services/academic-period": { getActiveAcademicPeriod: async () => ({ academicYear: "2026/27", currentTerm: "TERM_1" }) },
-    "@/src/lib/services/timetable": { listLiveTimetableLessons: async (schoolId) => { assert.equal(schoolId, "school-a"); return [{ subjectId: 2, subject: { id: 2, name: "Math" }, teacher: { name: "Teacher", surname: "One" } }]; } },
+    "@/src/lib/services/academic-period": { getActiveAcademicPeriod: async (schoolId, db) => { assert.ok(insideTransaction); assert.equal(db, prisma); return { academicYear: "2026/27", currentTerm: "TERM_1" }; } },
+    "@/src/lib/services/timetable": { listLiveTimetableLessons: async (schoolId, filters, db) => { assert.ok(insideTransaction); assert.equal(db, prisma); assert.equal(schoolId, "school-a"); return [{ subjectId: 2, subject: { id: 2, name: "Math" }, teacher: { name: "Teacher", surname: "One" } }]; } },
     "@/src/lib/services/ca-activity": { getSubjectCAProgress: async (input) => { calls.push(input); if (options.progressError) throw new Error(options.progressError); return progress; } },
   });
   return { service, queries, calls, progress };
 }
+test("focused activity eligibility agrees with dashboard late-admission and placement rules", async () => {
+  const params = { classId: "1", subjectId: "2", year: "2026/27", term: "TERM_1", activityId: "17" };
+  for (const [options, expected] of [[{}, "ELIGIBLE"], [{ lateAdmission: true }, "NOT_YET_JOINED"], [{ unknownPlacement: true }, "PLACEMENT_UNKNOWN"]]) {
+    const result = await fixture(options).service.getAdminAssessmentReview(params, now);
+    assert.equal(result.rows[0].activityEligibilityState, expected);
+  }
+});
+test("invalid CA evidence withholds totals even when an exam mark exists", async () => {
+  const f = fixture({ progressError: "Raw score cannot exceed the activity maximum score." });
+  const result = await f.service.getAdminAssessmentReview({ classId: "1", subjectId: "2" }, now);
+  assert.equal(result.rows[0].position.status, "Needs review");
+  assert.equal(result.rows[0].position.total, null);
+  assert.equal(result.rows[0].position.ca, null);
+});
+test("historical activity review does not infer original eligibility from current placement dates", async () => {
+  const result = await fixture({ lateAdmission: true }).service.getAdminAssessmentReview({ classId: "1", subjectId: "2", year: "2026/27", term: "TERM_2", activityId: "17" }, now);
+  assert.equal(result.currentPeriod, false);
+  assert.equal(result.rows[0].activityEligibilityState, null);
+});
+test("invalid activity maxima and assessment weights cannot produce a focused review", async () => {
+  for (const options of [{ invalidMaximum: true }, { invalidWeights: true }]) {
+    const f = fixture(options);
+    const result = await f.service.getAdminAssessmentReview({ classId: "1", subjectId: "2", year: "2026/27", term: "TERM_1", activityId: "17" }, now);
+    assert.ok(result.error);
+    assert.equal(f.calls.length, 0);
+    assert.equal(f.queries.some((q) => q.take === 25), false);
+  }
+});
+test("academic period and timetable helpers use the caller's snapshot rather than the global client", async () => {
+  let periodReads = 0;
+  const period = load("src/lib/services/academic-period.ts", { "@/src/lib/prisma": {} });
+  const active = await period.getActiveAcademicPeriod("school-a", { cAConfig: { findFirst: async (q) => { assert.equal(q.where.schoolId, "school-a"); periodReads++; return { academicYear: "2026/27", currentTerm: "TERM_1", classworkWeight: 30, examWeight: 70, id: 1 }; } } });
+  assert.equal(active.configId, 1);
+  assert.equal(periodReads, 1);
+  const timetable = load("src/lib/services/timetable.ts", { "@/src/lib/prisma": {}, "@/src/generated/prisma": {}, "@/src/lib/cacheTags": {}, "@/src/lib/services/school-operating-hours": {}, "@/src/lib/services/timetable-health": {} });
+  let query;
+  assert.deepEqual(await timetable.listLiveTimetableLessons("school-a", { classId: 1 }, { publishedTimetableLesson: { findMany: async (q) => { query = q; return []; } } }), []);
+  assert.equal(query.where.schoolId, "school-a");
+  assert.deepEqual(query.where.publication, { schoolId: "school-a", status: "ACTIVE" });
+});
 test("admin assessment totals preserve recorded zero and withhold incomplete or future results", () => {
   const { service, progress } = fixture();
   assert.equal(service.assessmentPosition(progress, 50, 70).ca, 0);

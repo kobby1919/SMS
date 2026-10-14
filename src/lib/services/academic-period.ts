@@ -17,13 +17,13 @@ export type ActiveAcademicPeriod = {
   configId: number | null;
 };
 
-export async function getActiveAcademicPeriod(schoolId: string): Promise<ActiveAcademicPeriod> {
-  const activeConfig = await prisma.cAConfig.findFirst({
+export async function getActiveAcademicPeriod(schoolId: string, db: Pick<Prisma.TransactionClient, "cAConfig"> = prisma): Promise<ActiveAcademicPeriod> {
+  const activeConfig = await db.cAConfig.findFirst({
     where: { schoolId, isActive: true },
     orderBy: [{ updatedAt: "desc" }, { academicYear: "desc" }],
   });
 
-  const fallbackConfig = activeConfig ?? await prisma.cAConfig.findFirst({
+  const fallbackConfig = activeConfig ?? await db.cAConfig.findFirst({
     where: { schoolId },
     orderBy: [{ academicYear: "desc" }, { id: "desc" }],
   });

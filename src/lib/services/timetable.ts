@@ -133,11 +133,12 @@ function mapPublishedLessonToLiveLesson(lesson: {
 export async function listLiveTimetableLessons(
   schoolId: string,
   filters: { classId?: number; teacherId?: string; day?: Day } = {},
+  db: Pick<Prisma.TransactionClient, "publishedTimetableLesson"> = prisma,
 ) {
-  const rows = await prisma.publishedTimetableLesson.findMany({
+  const rows = await db.publishedTimetableLesson.findMany({
     where: {
       schoolId,
-      publication: { status: "ACTIVE" },
+      publication: { schoolId, status: "ACTIVE" },
       ...(filters.classId ? { classId: filters.classId } : {}),
       ...(filters.teacherId ? { teacherId: filters.teacherId } : {}),
       ...(filters.day ? { day: filters.day } : {}),

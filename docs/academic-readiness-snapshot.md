@@ -286,3 +286,13 @@ Route-contract and service tests cover route existence, exact parameters,
 invalid/repeated identifiers, foreign/missing source rejection, stale duties,
 canonical totals and separation from teacher grading controls. Real authenticated
 navigation and cross-school testing remain required before pilot.
+
+Step 7 hardening moves period, class, configuration, published timetable scope,
+activity and student-score reads into one RepeatableRead transaction. The period
+and timetable helpers accept its reader without changing other callers. Focused
+activity evidence uses the shared admission/class-placement eligibility rule:
+late joins do not owe earlier activity scores, and missing placement dates require
+review instead of being labelled missing marks. Invalid CA evidence withholds
+both CA and final totals; invalid weights or activity maxima refuse score review.
+Class, subject and activity identifiers are bounded to database Int limits, not
+JavaScript safe-integer limits, so malformed links cannot trigger integer overflow.

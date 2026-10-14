@@ -7,9 +7,10 @@ import { getSubjectCAProgress, type SubjectCAProgress } from "@/src/lib/services
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 import type { Prisma } from "@/src/generated/prisma";
 import { assessmentPosition } from "@/src/lib/assessment-position";
+import { activityEligibility, validAssessmentWeights } from "@/src/lib/academic-readiness-rules";
 export { assessmentPosition } from "@/src/lib/assessment-position";
 
-const positiveId = z.string().regex(/^[1-9]\d*$/).transform(Number).pipe(z.number().int().positive().max(Number.MAX_SAFE_INTEGER));
+const positiveId = z.string().regex(/^[1-9]\d*$/).transform(Number).pipe(z.number().int().positive().max(2147483647));
 
 const filters = z.object({
   classId: positiveId.optional(),
@@ -24,11 +25,15 @@ const filters = z.object({
 
 export async function getAdminAssessmentReview(params: Record<string, string | string[] | undefined>, now = new Date()) {
   const { schoolId } = await requireRole(["admin"]);
-  const parsed = filters.safeParse(Object.fromEntries(Object.entries(params).filter(([key, value]) => key in filters.shape && value !== undefined && value !== "")));
+  return prisma.$transaction((db) => readAdminAssessmentReview(params, schoolId, now, db), { isolationLevel: "RepeatableRead", timeout: 30000 });
+}
+
+async function readAdminAssessmentReview(params: Record<string, string | string[] | undefined>, schoolId: string, now: Date, db: Prisma.TransactionClient) {
+  const parsed = filters.safeParse(Object.fromEntries(Object.entries(params).filter(([key, value]) => Object.hasOwn(filters.shape, key) && value !== undefined && value !== "")));
   const [classes, configs, active] = await Promise.all([
-    prisma.class.findMany({ where: { schoolId }, select: { id: true, name: true }, orderBy: { name: "asc" } }),
-    prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } }),
-    getActiveAcademicPeriod(schoolId),
+    db.class.findMany({ where: { schoolId }, select: { id: true, name: true }, orderBy: { name: "asc" } }),
+    db.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } }),
+    getActiveAcademicPeriod(schoolId, db),
   ]);
   const selection = parsed.success ? parsed.data : { page: 1 };
   const activityId = selection.activityId;
@@ -37,14 +42,15 @@ export async function getAdminAssessmentReview(params: Record<string, string | s
   const classId = selection.classId ?? classes[0]?.id;
   const currentPeriod = year === active.academicYear && term === active.currentTerm;
   const config = configs.find((item) => item.academicYear === year);
-  const base = { classes, configs, year, term, classId, currentPeriod, activityId, selectedActivity: null as { id: number; title: string; rawMaxScore: number } | null, studentId: selection.studentId, search: selection.search ?? "", page: selection.page, subjects: [] as { id: number; name: string }[], subjectId: selection.subjectId, teacherNames: [] as string[], rows: [] as Awaited<ReturnType<typeof loadRows>>, count: 0, pageCount: 1, error: null as string | null, config };
+  const base = { classes, configs, year, term, classId, currentPeriod, activityId, selectedActivity: null as { id: number; title: string; rawMaxScore: number; activityDate: Date } | null, studentId: selection.studentId, search: selection.search ?? "", page: selection.page, subjects: [] as { id: number; name: string }[], subjectId: selection.subjectId, teacherNames: [] as string[], rows: [] as Awaited<ReturnType<typeof loadRows>>, count: 0, pageCount: 1, error: null as string | null, config };
   if (!parsed.success) return { ...base, error: "Some filters are invalid. Select a valid class, subject, year and term." };
   if (activityId !== undefined && (selection.classId === undefined || selection.subjectId === undefined || selection.year === undefined || selection.term === undefined)) return { ...base, error: "Activity review requires its class, subject, year and term." };
   if (classId === undefined) return base;
   if (!classes.some((item) => item.id === classId)) return { ...base, error: "This class is not available in your school." };
   if (!config) return { ...base, error: "Assessment configuration is not available for this academic year." };
-  const lessons = await listLiveTimetableLessons(schoolId, { classId });
-  const historicalSubjects = currentPeriod ? [] : await prisma.subject.findMany({
+  if (!validAssessmentWeights(config)) return { ...base, error: "Assessment weights require review before results can be evaluated." };
+  const lessons = await listLiveTimetableLessons(schoolId, { classId }, db);
+  const historicalSubjects = currentPeriod ? [] : await db.subject.findMany({
     where: { schoolId, OR: [
       { caBuckets: { some: { schoolId, classId, term, academicYear: year } } },
       { continuousAssessments: { some: { schoolId, classId, term, academicYear: year } } },
@@ -62,29 +68,29 @@ export async function getAdminAssessmentReview(params: Record<string, string | s
       { caActivityScores: { some: { schoolId, activity: { schoolId, classId, subjectId, bucket: context } } } },
     ] }),
     ...(base.search ? { AND: [{ OR: ["name", "surname", "admissionNumber"].map((field) => ({ [field]: { contains: base.search, mode: "insensitive" as const } })) }] } : {}) };
-  return prisma.$transaction(async (db) => {
   const activity = activityId === undefined ? null : await db.cAActivity.findFirst({
     where: { id: activityId, schoolId, classId, subjectId, activityDate: { lte: now }, bucket: context, class: { schoolId }, subject: { schoolId }, teacher: { schoolId } },
-    select: { id: true, title: true, rawMaxScore: true },
+    select: { id: true, title: true, rawMaxScore: true, activityDate: true },
   });
   if (activityId !== undefined && !activity) return { ...base, subjects, subjectId, error: "This activity is not available for the selected class and period. Refresh the dashboard to review current records." };
   const selectedActivity = activity ? { ...activity, rawMaxScore: Number(activity.rawMaxScore) } : null;
+  if (selectedActivity && (!Number.isFinite(selectedActivity.rawMaxScore) || selectedActivity.rawMaxScore <= 0)) return { ...base, subjects, subjectId, error: "This activity has an invalid raw maximum score. Review its setup before using the scores." };
   const count = await db.student.count({ where: studentWhere });
   const pageCount = Math.max(1, Math.ceil(count / 25));
   const page = Math.min(selection.page, pageCount);
-  const students = await db.student.findMany({ where: studentWhere, select: { id: true, name: true, surname: true, admissionNumber: true }, orderBy: [{ surname: "asc" }, { name: "asc" }, { id: "asc" }], take: 25, skip: (page - 1) * 25 });
+  const students = await db.student.findMany({ where: studentWhere, select: { id: true, name: true, surname: true, admissionNumber: true, createdAt: true, classJoinedAt: true }, orderBy: [{ surname: "asc" }, { name: "asc" }, { id: "asc" }], take: 25, skip: (page - 1) * 25 });
   const snapshotConfig = await db.cAConfig.findUnique({ where: { schoolId_academicYear: { schoolId, academicYear: year } } });
   if (!snapshotConfig) return { ...base, subjects, subjectId, error: "Assessment configuration changed. Refresh this review." };
-  const rows = await loadRows({ schoolId, classId, subjectId, term, year, now, config: snapshotConfig, students }, db);
+  const rows = await loadRows({ schoolId, classId, subjectId, term, year, now, config: snapshotConfig, students, activityDate: currentPeriod ? selectedActivity?.activityDate : undefined }, db);
   const teacherNames = currentPeriod ? [...new Set(lessons.filter((lesson) => lesson.subjectId === subjectId).map((lesson) => `${lesson.teacher.name} ${lesson.teacher.surname}`))] : [];
   return { ...base, selectedActivity, config: snapshotConfig, subjects, subjectId, teacherNames, rows, count, page, pageCount };
-  }, { isolationLevel: "RepeatableRead", timeout: 30000 });
 }
 
 async function loadRows(input: {
   schoolId: string; classId: number; subjectId: number; term: "TERM_1" | "TERM_2" | "TERM_3"; year: string; now: Date;
   config: { examWeight: number; classworkWeight: number };
-  students: { id: string; name: string; surname: string; admissionNumber: string | null }[];
+  students: { id: string; name: string; surname: string; admissionNumber: string | null; createdAt: Date; classJoinedAt: Date | null }[];
+  activityDate?: Date;
 }, db: Prisma.TransactionClient) {
   const context = { schoolId: input.schoolId, classId: input.classId, subjectId: input.subjectId, term: input.term, academicYear: input.year };
   const ids = input.students.map((student) => student.id);
@@ -109,11 +115,12 @@ async function loadRows(input: {
     const record = records.find((item) => item.studentId === student.id);
     const dates = [...updates.filter((item) => item.studentId === student.id).map((item) => item.updatedAt), ...(record ? [record.updatedAt] : [])];
     const position = assessmentPosition(progress, record?.examScore ?? null, input.config.examWeight, futureActivities, record?.examRecordedAt);
-    if (invalidScore) position.status = "Needs review";
+    if (invalidScore) { position.status = "Needs review"; position.total = null; position.ca = null; }
     if (position.total !== null && (!record || !Number.isFinite(record.classworkScore) || !Number.isFinite(record.totalScore) || Math.abs(record.classworkScore - progress.earnedMarks) > 0.005 || Math.abs(record.totalScore - position.total) > 0.005)) {
       position.status = "Needs review";
       position.total = null;
     }
-    return { student, progress, examScore: record?.examScore ?? null, position, updatedAt: dates.length ? new Date(Math.max(...dates.map((date) => date.getTime()))) : null };
+    const activityEligibilityState = input.activityDate ? activityEligibility(student, input.activityDate) : null;
+    return { student, progress, activityEligibilityState, examScore: record?.examScore ?? null, position, updatedAt: dates.length ? new Date(Math.max(...dates.map((date) => date.getTime()))) : null };
   }));
 }

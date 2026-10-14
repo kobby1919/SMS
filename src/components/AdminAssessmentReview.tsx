@@ -10,6 +10,8 @@ const dateLabel = (value: Date | null) => value ? value.toLocaleString("en-GH", 
 type Row = Awaited<ReturnType<typeof getAdminAssessmentReview>>["rows"][number];
 
 function Evidence({ row, activityId }: { row: Row; activityId?: number }) {
+  if (activityId !== undefined && row.activityEligibilityState === "NOT_YET_JOINED") return <p className="mt-3 text-sm text-gray-600">This activity took place before the student joined this class. A score is not required.</p>;
+  if (activityId !== undefined && row.activityEligibilityState === "PLACEMENT_UNKNOWN") return <p className="mt-3 text-sm text-amber-800">Review the student&apos;s class placement date before deciding whether this activity requires a score.</p>;
   if (row.position.status === "Needs review") return <p className="mt-3 text-sm text-amber-800">Score data requires review before this result can be used.</p>;
   return <details open={activityId !== undefined} className="mt-3 border-t border-gray-100 pt-3">
     <summary className="cursor-pointer text-sm font-semibold text-blue-800">Activity scores</summary>
