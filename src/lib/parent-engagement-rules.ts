@@ -123,20 +123,23 @@ export function parentMessagingPosition(policy: unknown) {
 }
 
 const deliverySchema = z.object({ id: z.string().min(1), channel: z.enum(["IN_APP", "EMAIL", "SMS", "WHATSAPP"]), status: z.enum(["PENDING", "SENT", "DELIVERED", "FAILED", "RETRYING", "CANCELLED"]), updatedAt: z.date(), sentAt: z.date().nullable(), deliveredAt: z.date().nullable(), providerMessageId: z.string().nullable() });
-export type EngagementDelivery = z.infer<typeof deliverySchema>;
+export type EngagementDelivery = z.infer<typeof deliverySchema> & { provider?: string | null };
 export function emailDeliveryPosition(deliveries: EngagementDelivery[], now = new Date()) {
   if (!Array.isArray(deliveries)) return "UNAVAILABLE";
-  const parsed = z.array(deliverySchema).safeParse(deliveries.filter((row) => row?.channel === "EMAIL"));
+  const parsed = z.array(deliverySchema.extend({ provider: z.string().nullable().optional() })).safeParse(deliveries.filter((row) => row?.channel === "EMAIL"));
   if (!parsed.success || !Number.isFinite(now.getTime())) return "UNAVAILABLE";
   const emails = parsed.data.filter((row) => row.channel === "EMAIL").sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime() || a.id.localeCompare(b.id));
   if (!emails.length) return "NOT_QUEUED";
   const row = emails[0];
+  const simulated = (entry: typeof row) => entry.provider === "console" || Boolean(entry.providerMessageId?.startsWith("console:"));
+  if (emails.some((entry) => entry.updatedAt.getTime() === row.updatedAt.getTime() && simulated(entry) !== simulated(row))) return "UNAVAILABLE";
   if (emails.some((candidate) => candidate.updatedAt.getTime() === row.updatedAt.getTime() && candidate.status !== row.status)) return "UNAVAILABLE";
   for (const candidate of emails.filter((entry) => entry.updatedAt.getTime() === row.updatedAt.getTime())) {
     if (candidate.updatedAt > now || candidate.sentAt && candidate.sentAt > now || candidate.deliveredAt && candidate.deliveredAt > now) return "UNAVAILABLE";
     if (candidate.status === "DELIVERED" && (!candidate.deliveredAt || !candidate.providerMessageId?.trim())) return "UNAVAILABLE";
-    if (candidate.status === "SENT" && !candidate.sentAt) return "UNAVAILABLE";
+    if (candidate.status === "SENT" && (!candidate.sentAt || !candidate.providerMessageId?.trim())) return "UNAVAILABLE";
   }
+  if (simulated(row)) return "SIMULATED";
   return row.status;
 }
 
@@ -156,5 +159,25 @@ export function countWeeklyParentSummaryStates(input: { schoolId: string; rangeK
     unique.set(row.parentId, { id: row.id, centralTracked, deliveries: [...(previous?.deliveries ?? []), ...row.deliveries] });
   }
   const states = [...unique.values()].map((row) => row.centralTracked ? emailDeliveryPosition(row.deliveries, input.now) : "UNAVAILABLE");
-  return { summariesAvailable: unique.size, queuedOrRetrying: states.filter((state) => state === "PENDING" || state === "RETRYING").length, sent: states.filter((state) => state === "SENT").length, delivered: states.filter((state) => state === "DELIVERED").length, failed: states.filter((state) => state === "FAILED").length, cancelled: states.filter((state) => state === "CANCELLED").length, notQueued: states.filter((state) => state === "NOT_QUEUED").length, unavailable: states.filter((state) => state === "UNAVAILABLE").length };
+  return { summariesAvailable: unique.size, queuedOrRetrying: states.filter((state) => state === "PENDING" || state === "RETRYING").length, sent: states.filter((state) => state === "SENT").length, delivered: states.filter((state) => state === "DELIVERED").length, failed: states.filter((state) => state === "FAILED").length, cancelled: states.filter((state) => state === "CANCELLED").length, notQueued: states.filter((state) => state === "NOT_QUEUED").length, simulated: states.filter((state) => state === "SIMULATED").length, unavailable: states.filter((state) => state === "UNAVAILABLE").length };
+}
+
+const routeSchema = z.object({ weeklyEnabled: z.boolean(), parentWeeklyEnabled: z.boolean(), schoolChannelEnabled: z.boolean(), parentChannelEnabled: z.boolean(), destinationUsable: z.boolean(), providerState: z.enum(["AVAILABLE", "NOT_CONFIGURED", "UNSUPPORTED", "SIMULATED"]) });
+export type ParentSummaryRoute = z.infer<typeof routeSchema>;
+/** Future routing eligibility, not evidence of a past send or human reachability. */
+export function parentSummaryRoutePosition(input: unknown) {
+  const parsed = routeSchema.safeParse(input);
+  if (!parsed.success) return "UNAVAILABLE";
+  const row = parsed.data;
+  if (!row.weeklyEnabled || !row.schoolChannelEnabled) return "DISABLED";
+  if (!row.parentWeeklyEnabled || !row.parentChannelEnabled) return "OPTED_OUT";
+  if (row.providerState !== "AVAILABLE") return row.providerState;
+  return row.destinationUsable ? "AVAILABLE" : "MISSING_CONTACT";
+}
+
+export function countParentSummaryRoutes(inputs: unknown[]) {
+  const totals = { available: 0, disabled: 0, optedOut: 0, notConfigured: 0, unsupported: 0, simulated: 0, missingContact: 0, unavailable: 0 };
+  const keys = { AVAILABLE: "available", DISABLED: "disabled", OPTED_OUT: "optedOut", NOT_CONFIGURED: "notConfigured", UNSUPPORTED: "unsupported", SIMULATED: "simulated", MISSING_CONTACT: "missingContact", UNAVAILABLE: "unavailable" } as const;
+  for (const input of inputs) totals[keys[parentSummaryRoutePosition(input)]]++;
+  return totals;
 }

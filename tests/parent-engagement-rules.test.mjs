@@ -83,9 +83,28 @@ test("preferences, disabled channels and missing providers never become delivery
   assert.equal(rules.parentMessagingPosition({ enabled: true, allowParentTeacherMessaging: true }), "AVAILABLE");
 });
 const delivery = (status, extra = {}) => ({ id: "d1", channel: "EMAIL", status, updatedAt: new Date("2026-10-16T15:30:00Z"), sentAt: null, deliveredAt: null, providerMessageId: null, ...extra });
+
+test("route reasons distinguish opt-outs, disabled, unsupported and missing configuration", () => {
+  const base = { weeklyEnabled: true, parentWeeklyEnabled: true, schoolChannelEnabled: true, parentChannelEnabled: true, destinationUsable: true, providerState: "AVAILABLE" };
+  assert.equal(rules.parentSummaryRoutePosition(base), "AVAILABLE");
+  for (const providerState of ["UNSUPPORTED", "NOT_CONFIGURED", "SIMULATED"]) assert.equal(rules.parentSummaryRoutePosition({ ...base, providerState }), providerState);
+  assert.equal(rules.parentSummaryRoutePosition({ ...base, parentChannelEnabled: false, providerState: "UNSUPPORTED" }), "OPTED_OUT");
+  assert.equal(rules.parentSummaryRoutePosition({ ...base, schoolChannelEnabled: false }), "DISABLED");
+  assert.equal(rules.parentSummaryRoutePosition({ ...base, destinationUsable: false }), "MISSING_CONTACT");
+  assert.equal(rules.parentSummaryRoutePosition({ ...base, schoolChannelEnabled: undefined }), "UNAVAILABLE");
+  assert.deepEqual(rules.countParentSummaryRoutes([base, { ...base, parentWeeklyEnabled: false }]), { available: 1, optedOut: 1, disabled: 0, notConfigured: 0, unsupported: 0, simulated: 0, missingContact: 0, unavailable: 0 });
+});
+
+test("console provider and legacy console IDs never establish a real delivery", () => {
+  const row = delivery("DELIVERED", { providerMessageId: "console:job", deliveredAt: new Date("2026-10-16T15:25:00Z") });
+  assert.equal(rules.emailDeliveryPosition([row], now), "SIMULATED");
+  assert.equal(rules.emailDeliveryPosition([{ ...row, provider: "console", providerMessageId: "local-test" }], now), "SIMULATED");
+  assert.equal(rules.emailDeliveryPosition([row, { ...row, id: "real", provider: "resend", providerMessageId: "real-id" }], now), "UNAVAILABLE");
+});
 test("email state needs evidence and latest failure/retry cannot be hidden by an old sent status", () => {
-  const sent = delivery("SENT", { sentAt: new Date("2026-10-16T15:20:00Z") });
+  const sent = delivery("SENT", { sentAt: new Date("2026-10-16T15:20:00Z"), providerMessageId: "provider-id" });
   assert.equal(rules.emailDeliveryPosition([sent], now), "SENT");
+  assert.equal(rules.emailDeliveryPosition([{ ...sent, providerMessageId: null }], now), "UNAVAILABLE");
   assert.equal(rules.emailDeliveryPosition([delivery("DELIVERED")], now), "UNAVAILABLE");
   assert.equal(rules.emailDeliveryPosition([delivery("SENT")], now), "UNAVAILABLE");
   const confirmed = delivery("DELIVERED", { providerMessageId: "provider-id", deliveredAt: new Date("2026-10-16T15:25:00Z") });

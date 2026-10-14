@@ -48,6 +48,14 @@ const RESEND_ENDPOINT = "https://api.resend.com/emails";
 const NOT_CONFIGURED_PROVIDER = "provider-not-configured";
 const DEFAULT_EMAIL_PROVIDER = "resend";
 
+/** Local capability check only. It does not verify credentials or domain ownership. */
+export function notificationProviderAvailability(channel: "EMAIL" | "SMS" | "WHATSAPP") {
+  if (channel !== "EMAIL") return "UNSUPPORTED" as const;
+  if (configuredEmailProvider() !== DEFAULT_EMAIL_PROVIDER) return "UNSUPPORTED" as const;
+  if (process.env.RESEND_API_KEY?.trim()) return "AVAILABLE" as const;
+  return process.env.NODE_ENV === "production" ? "NOT_CONFIGURED" as const : "SIMULATED" as const;
+}
+
 function appBaseUrl() {
   return (
     process.env.NEXT_PUBLIC_APP_URL ??

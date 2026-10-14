@@ -79,6 +79,7 @@ usable contact details establishes read status or verified human reachability.
 
 ## Step 2 Snapshot Service
 
+
 `getAdminParentEngagementSnapshot` authenticates admins before opening a
 RepeatableRead transaction. It accepts no caller tenant and uses existing records
 only; no provider calls, setting upserts, notification generation or delivery writes.
@@ -118,3 +119,26 @@ Relationship flags, preference ownership/role and acceptance evidence are valida
 before use. Opaque ward/parent IDs are joined with nested sets, not delimiter keys.
 Incomplete per-lane evidence has explicit unavailable tracking states; known partial
 counts must not be presented as complete healthy totals.
+
+## Step 3 Parent Update Tracking
+
+The snapshot exposes summaries available and mutually exclusive current email
+states for the latest scheduled weekly period. Counts are unique parents with a
+canonical summary, never delivery attempts. A resend uses its latest delivery
+state; these are not lifetime counts of everyone ever successfully contacted.
+Queued includes pending/retrying jobs, including deferred quiet-hour work. Sent
+means provider acceptance, delivered requires recorded provider confirmation,
+and neither means read. Console simulations have their own count and cannot
+appear as real sends/deliveries. Legacy unbridged history remains unknown.
+
+Separate channelRoutes describe current weekly delivery eligibility per parent:
+available, opted out, disabled, unsupported, not configured, simulated, missing
+contact or unavailable. Current preferences never erase actual historical email
+states. SMS/WhatsApp are unsupported until adapters are connected. Local provider
+configuration is not certification of valid credentials, verified domains or
+recipient deliverability. No summary for a parent with no reportable events is
+automatically a failure; this section does not claim every parent needs a summary.
+
+No new sender, provider calls, notification writes or dashboard UI are introduced.
+The compact dashboard consumes these aggregates in Step 5. Live provider/webhook
+verification and school-timezone generator scheduling remain pre-pilot checks.

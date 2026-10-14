@@ -35,6 +35,7 @@ function fixture(options = {}) {
   db.schoolCommunicationPolicy = { findUnique: query("policy", options.missingPolicy ? null : { enabled: !options.disabled, allowParentTeacherMessaging: !options.disabled }) };
   db.appNotificationPreference = { findMany: query("preferences", (options.appPreferences ?? []).map((row) => ({ recipientType: "PARENT", ...row }))) };
   const mocks = {
+    "@/src/lib/services/notification-provider-adapters": { notificationProviderAvailability: (channel) => channel === "EMAIL" ? "AVAILABLE" : "UNSUPPORTED" },
     "@/src/lib/authz": { requireRole: async (roles) => { calls.auth++; assert.deepEqual(roles, ["admin"]); if (options.denied) throw new Error("Forbidden"); return { schoolId: "school-a" }; } },
     "@/src/lib/prisma": { $transaction: async (work, config) => { calls.transactions++; assert.equal(calls.auth, 1); assert.equal(config.isolationLevel, "RepeatableRead"); if (options.failure) throw options.failure; inTransaction = true; try { return await work(db); } finally { inTransaction = false; } } },
   };
@@ -54,6 +55,33 @@ test("snapshot authenticates first, ignores caller tenant and keeps every read i
   assert.equal(result.contacts.portalAccessVerified, false);
   assert.equal(JSON.stringify(result).includes("private-parent"), false);
   assert.equal(JSON.stringify(result).includes("private-provider-id"), false);
+});
+
+test("email route expectations stay separate from stored delivery history", async () => {
+  const f = fixture({ appPreferences: [{ schoolId: "school-a", recipientId: "p1", emailEnabled: false }] });
+  const result = await f.run();
+  assert.equal(result.channelRoutes.EMAIL.optedOut, 1);
+  assert.equal(result.channelRoutes.EMAIL.available, 1);
+  assert.equal(result.summaries.delivered, 1);
+  assert.equal(result.channelRoutes.SMS.unavailable, 2);
+});
+
+test("console simulation never counts as a provider-confirmed delivery", async () => {
+  const f = fixture();
+  f.data.notifications[0].deliveries[0].provider = "console";
+  const result = await f.run();
+  assert.equal(result.summaries.delivered, 0);
+  assert.equal(result.summaries.sent, 0);
+  assert.equal(result.summaries.simulated, 1);
+});
+
+test("multiple retry/resend jobs still count one parent summary", async () => {
+  const f = fixture();
+  f.data.notifications[0].deliveries.push({ ...f.data.notifications[0].deliveries[0], id: "retry", status: "RETRYING", updatedAt: new Date("2026-10-16T15:50:00Z"), sentAt: null, deliveredAt: null, providerMessageId: null });
+  const result = await f.run();
+  assert.equal(result.summaries.summariesAvailable, 1);
+  assert.equal(result.summaries.queuedOrRetrying, 1);
+  assert.equal(result.summaries.delivered, 0);
 });
 test("non-admin rejection never starts any database read", async () => {
   const f = fixture({ denied: true });

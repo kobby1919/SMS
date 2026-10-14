@@ -2,6 +2,8 @@ import "server-only";
 import prisma from "@/src/lib/prisma";
 import { requireRole } from "@/src/lib/authz";
 import { z } from "zod";
+import { countParentSummaryRoutes } from "@/src/lib/parent-engagement-rules";
+import { notificationProviderAvailability } from "@/src/lib/services/notification-provider-adapters";
 import { countWeeklyParentSummaryStates, eligibleEngagementGuardian, parentContactPosition, parentMessagingPosition, parentResponsePosition, parentWeeklySchedule, studentParentContactPosition, type EngagementGuardian } from "@/src/lib/parent-engagement-rules";
 
 const budgets = { students: 5000, parents: 6000, relationships: 20000, invites: 12000, requests: 10000, summaries: 6000, notifications: 12000, deliveries: 24000 };
@@ -22,7 +24,7 @@ export async function getAdminParentEngagementSnapshot() {
       const parentWhere = { schoolId, OR: [{ studentRelationships: { some: { schoolId, student: { schoolId, status: "ACTIVE" as const } } } }, { students: { some: { schoolId, status: "ACTIVE" as const } } }] };
       const [setting, appSetting, policy, studentCount, parentCount, relationshipCount, requestCount] = await Promise.all([
         db.schoolNotificationSetting.findUnique({ where: { schoolId } }),
-        db.appNotificationSetting.findUnique({ where: { schoolId }, select: { emailEnabled: true, sendParentSummariesByEmail: true } }),
+        db.appNotificationSetting.findUnique({ where: { schoolId }, select: { emailEnabled: true, sendParentSummariesByEmail: true, smsEnabled: true, whatsappEnabled: true, sendParentSummariesBySms: true, sendParentSummariesByWhatsapp: true } }),
         db.schoolCommunicationPolicy.findUnique({ where: { schoolId }, select: { enabled: true, allowParentTeacherMessaging: true } }),
         db.student.count({ where: { schoolId, status: "ACTIVE" } }),
         db.parent.count({ where: parentWhere }),
@@ -87,7 +89,7 @@ export async function getAdminParentEngagementSnapshot() {
         }
       }
       const preferences = { weeklyOptOut: 0, emailOptOut: 0, schoolEmailEnabled: setting && appSetting ? setting.emailEnabled && appSetting.emailEnabled && appSetting.sendParentSummariesByEmail : null };
-      const appPreferences = await db.appNotificationPreference.findMany({ where: { schoolId, recipientType: "PARENT", recipientId: { in: [...eligibleParents] } }, select: { schoolId: true, recipientType: true, recipientId: true, emailEnabled: true } });
+      const appPreferences = await db.appNotificationPreference.findMany({ where: { schoolId, recipientType: "PARENT", recipientId: { in: [...eligibleParents] } }, select: { schoolId: true, recipientType: true, recipientId: true, emailEnabled: true, smsEnabled: true, whatsappEnabled: true } });
       const appPreferenceMap = new Map(appPreferences.map((row) => [row.recipientId, row]));
       if (appPreferenceMap.size !== appPreferences.length || appPreferences.some((row) => row.schoolId !== schoolId || row.recipientType !== "PARENT" || typeof row.emailEnabled !== "boolean" || !eligibleParents.has(row.recipientId))) throw inconsistent();
       for (const id of eligibleParents) {
@@ -116,6 +118,20 @@ export async function getAdminParentEngagementSnapshot() {
         requests.missingDeadlines += Number(position.awaitingResponse && !position.deadlineConfigured);
       }
       const schedule = parentWeeklySchedule(setting, now);
+      const channelRoutes = Object.fromEntries((["EMAIL", "SMS", "WHATSAPP"] as const).map((channel) => {
+        const field = channel === "EMAIL" ? "emailEnabled" : channel === "SMS" ? "smsEnabled" : "whatsappEnabled";
+        const summaryField = channel === "EMAIL" ? "sendParentSummariesByEmail" : channel === "SMS" ? "sendParentSummariesBySms" : "sendParentSummariesByWhatsapp";
+        const providerState = notificationProviderAvailability(channel);
+        return [channel, countParentSummaryRoutes([...eligibleParents].map((id) => {
+          const parent = parentMap.get(id)!;
+          const contact = parentContactPosition(parent);
+          const preference = appPreferenceMap.get(id);
+          const schoolFlags = [setting?.[field], appSetting?.[field], appSetting?.[summaryField]];
+          const parentFlag = parent.notificationPreference ? parent.notificationPreference[field] : true;
+          const appFlag = preference ? preference[field] : channel === "EMAIL";
+          return { weeklyEnabled: schedule.state === "SETUP_REQUIRED" ? undefined : schedule.state === "AVAILABLE", parentWeeklyEnabled: parent.notificationPreference?.weeklySummaryEnabled ?? true, schoolChannelEnabled: schoolFlags.every((flag) => typeof flag === "boolean") ? schoolFlags.every(Boolean) : undefined, parentChannelEnabled: typeof parentFlag === "boolean" && typeof appFlag === "boolean" ? parentFlag && appFlag : undefined, destinationUsable: channel === "EMAIL" ? contact.usableEmail : contact.usablePhone, providerState };
+        }))];
+      }));
       let summaries: ReturnType<typeof countWeeklyParentSummaryStates> | null = null;
       if (schedule.state === "AVAILABLE" && schedule.period) {
         const sourceKeys = [...eligibleParents].map((id) => `weekly-summary:${id}:${schedule.period!.rangeKey}`);
@@ -128,7 +144,7 @@ export async function getAdminParentEngagementSnapshot() {
         const notificationCount = await db.appNotification.count({ where: centralWhere });
         const deliveryCount = await db.appNotificationDelivery.count({ where: { schoolId, channel: "EMAIL", notification: centralWhere } });
         if (notificationCount > budgets.notifications || deliveryCount > budgets.deliveries) return empty("EVALUATION_LIMIT");
-        const notifications = await db.appNotification.findMany({ where: centralWhere, select: { schoolId: true, sourceId: true, recipientId: true, deliveries: { where: { schoolId, channel: "EMAIL" }, select: { id: true, schoolId: true, channel: true, status: true, updatedAt: true, sentAt: true, deliveredAt: true, providerMessageId: true } } } });
+        const notifications = await db.appNotification.findMany({ where: centralWhere, select: { schoolId: true, sourceId: true, recipientId: true, deliveries: { where: { schoolId, channel: "EMAIL" }, select: { id: true, schoolId: true, channel: true, status: true, provider: true, updatedAt: true, sentAt: true, deliveredAt: true, providerMessageId: true } } } });
         if (notifications.length !== notificationCount || notifications.reduce((sum, row) => sum + row.deliveries.length, 0) !== deliveryCount) throw inconsistent();
         const recordMap = new Map(records.map((row) => [row.id, row]));
         if (recordMap.size !== records.length) throw inconsistent();
@@ -142,7 +158,7 @@ export async function getAdminParentEngagementSnapshot() {
         }
         summaries = countWeeklyParentSummaryStates({ schoolId, rangeKey: schedule.period.rangeKey, eligibleParentIds: eligibleParents, now, summaries: records.map((row) => ({ ...row, centralTracked: deliveries.has(row.id), deliveries: deliveries.get(row.id) ?? [] })) });
       }
-      return { state: "AVAILABLE" as const, code: "EVALUATED", evaluatedAt: now.toISOString(), schedule, newMessagingState: parentMessagingPosition(policy), summaryTrackingState: schedule.state === "AVAILABLE" && summaries?.unavailable ? "UNAVAILABLE" : schedule.state, requestsTrackingState: requests.unavailable ? "UNAVAILABLE" : "AVAILABLE", deliverySettingsState: setting && appSetting ? "AVAILABLE" : "SETUP_REQUIRED", cohort: { students: students.length, parents: eligibleParents.size }, summaries, requests, contacts, preferences };
+      return { state: "AVAILABLE" as const, code: "EVALUATED", evaluatedAt: now.toISOString(), schedule, newMessagingState: parentMessagingPosition(policy), summaryTrackingState: schedule.state === "AVAILABLE" && summaries?.unavailable ? "UNAVAILABLE" : schedule.state, requestsTrackingState: requests.unavailable ? "UNAVAILABLE" : "AVAILABLE", deliverySettingsState: setting && appSetting ? "AVAILABLE" : "SETUP_REQUIRED", cohort: { students: students.length, parents: eligibleParents.size }, summaries, requests, contacts, preferences, channelRoutes };
     }, { isolationLevel: "RepeatableRead", maxWait: 15000, timeout: 30000 });
   } catch (error) {
     const code = error && typeof error === "object" && "code" in error ? String(error.code) : "";
