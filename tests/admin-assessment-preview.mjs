@@ -13,11 +13,14 @@ const { chromium } = require(runtime);
 const rows = Array.from({ length: 4 }, (_, index) => ({
   student: { id: String(index), name: index === 0 ? "Alexandra-Abena" : "Student", surname: "Mensah-Agyemang", admissionNumber: "EDJ-2026-000123" },
   position: { ca: index ? null : 25.75, scored: index ? 0 : 1, expected: 2, examConfirmed: false, total: null, status: index ? "Not started" : "Incomplete" },
-  examScore: 0, updatedAt: index ? null : new Date("2026-10-09T10:30:00Z"),
+  examScore: 0, activityEligibilityState: index === 2 ? "NOT_YET_JOINED" : index === 3 ? "PLACEMENT_UNKNOWN" : "ELIGIBLE", updatedAt: index ? null : new Date("2026-10-09T10:30:00Z"),
   progress: { buckets: [{ bucketId: 1, name: "Class exercises", aggregationMode: "AVERAGE_TO_BUCKET", earnedMarks: 25.75, allocationMarks: 30, activities: [{ id: 1, title: "Reading comprehension and written expression", teacherName: "Victoria Ama Mensah", activityDate: new Date("2026-10-08"), rawScore: index ? null : 9, rawMaxScore: 10, earnedMarks: index ? null : 27 }] }] },
 }));
 const data = { year: "2026/27", term: "TERM_1", classId: 1, subjectId: 2, classes: [{ id: 1, name: "Primary Six - Section A" }], configs: [{ academicYear: "2026/27" }], config: { classworkWeight: 30, examWeight: 70 }, subjects: [{ id: 2, name: "English Language" }], teacherNames: ["Victoria Ama Mensah"], search: "", rows, count: 4, page: 1, pageCount: 1, error: null };
 const timetablePreview = process.env.EDUJAY_PREVIEW === "timetable";
+data.activityId = 1;
+data.currentPeriod = true;
+data.selectedActivity = { id: 1, title: "Reading comprehension and written expression with a long descriptive activity name", rawMaxScore: 10 };
 const timetable = { publication: { version: 3, publishedAt: new Date("2026-10-09T10:00:00Z") }, classes: [{ id: 1, name: "Primary Six - Section A" }], teachers: [{ id: "t1", name: "Victoria Ama Mensah-Agyemang" }], uncoveredClasses: [{ id: 2, name: "Kindergarten One - Section B" }], unavailableTeachers: [{ id: "t1", name: "Victoria Ama Mensah-Agyemang" }], days: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"], selection: {}, error: null, totalLessons: 4, count: 4, page: 1, pageCount: 1, lessons: Array.from({ length: 4 }, (_, index) => ({ id: String(index), day: "MONDAY", startTime: new Date("1970-01-01T08:00:00Z"), endTime: new Date("1970-01-01T09:00:00Z"), className: "Primary Six - Section A", subjectName: "English Language and Written Expression", teacherName: "Victoria Ama Mensah-Agyemang" })) };
 function load(path) {
   const loaded = { exports: {} };

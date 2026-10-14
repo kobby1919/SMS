@@ -34,8 +34,42 @@ function fixture(options = {}) {
   };
   const rules = { invalidAssignmentCount: 0, period: { academicYear: "2026/2027", term: "TERM_1", classworkWeight: 30, examWeight: 70 }, publicationId: "pub", scope: [{ classId: 1, subjectId: 1, teacherId: "t1" }], caPolicy: policy, operating: { timezone: "Africa/Accra", activeDays: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"] }, ...options.rules };
   const { getCARecordingTracking } = load("src/lib/services/ca-recording-tracking.ts", mocks);
-  return { queries, run: () => getCARecordingTracking({ schoolId: "school-a", rules, now: options.now ?? at, db, reportPublications: options.publications ?? [] }) };
+  return { queries, db, rules, run: () => getCARecordingTracking({ schoolId: "school-a", rules, now: options.now ?? at, db, reportPublications: options.publications ?? [] }) };
 }
+
+test("dashboard CA counts match exact read-only assessment evidence for the same eligible roster", async () => {
+  const students = [student, { ...student, id: "s2" }];
+  const activities = [activity({ scores: [score("s1", 0)] })];
+  const f = fixture({ students, activities });
+  const tracking = await f.run();
+  const db = f.db;
+  const config = { academicYear: "2026/2027", classworkWeight: 30, examWeight: 70 };
+  db.class = { findMany: async () => [{ id: 1, name: "KG1" }] };
+  db.cAConfig = { findMany: async () => [config], findUnique: async () => config };
+  db.student.count = async () => students.length;
+  db.continuousAssessment = { findMany: async () => [] };
+  db.cAActivityScore = { findMany: async () => [] };
+  db.cAActivity = { count: async () => 0, findFirst: async () => activities[0] };
+  db.cABucket.findMany = async (query) => {
+    assert.equal(query.where.schoolId, "school-a");
+    const studentId = query.include.activities.include.scores.where.studentId;
+    return [bucket(activities.map((row) => ({ ...row, scores: row.scores.filter((saved) => saved.studentId === studentId) })))];
+  };
+  const mocks = { "@/src/lib/prisma": { $transaction: async (work, opts) => { assert.equal(opts.isolationLevel, "RepeatableRead"); return work(db); } },
+    "@/src/lib/authz": { requireRole: async (roles) => { assert.deepEqual(roles, ["admin"]); return { schoolId: "school-a" }; } },
+    "@/src/lib/services/academic-period": { getActiveAcademicPeriod: async (schoolId, reader) => { assert.equal(reader, db); return { academicYear: config.academicYear, currentTerm: "TERM_1" }; } },
+    "@/src/lib/services/timetable": { listLiveTimetableLessons: async (schoolId, filters, reader) => { assert.equal(reader, db); return [{ subjectId: 1, subject: { id: 1, name: "Reading" }, teacher }]; } },
+  };
+  const review = load("src/lib/queries/admin-assessment-review.ts", mocks);
+  const result = await review.getAdminAssessmentReview({ classId: "1", subjectId: "1", activityId: "3", year: config.academicYear, term: "TERM_1" }, at);
+  assert.equal(result.error, null);
+  const recorded = result.rows.reduce((sum, row) => sum + row.position.scored, 0);
+  const expected = result.rows.reduce((sum, row) => sum + row.position.expected, 0);
+  assert.equal(tracking.totals.scoresRecorded, recorded);
+  assert.equal(tracking.totals.scoresRequired, expected);
+  assert.equal(tracking.totals.scoresRemaining, expected - recorded);
+  assert.equal(recorded, 1, "A genuine zero remains recorded across both views");
+});
 test("no activities is not missing or overdue teacher work", async () => {
   const f = fixture({ buckets: [] });
   const result = await f.run();
