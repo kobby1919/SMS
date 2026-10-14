@@ -112,3 +112,32 @@ test("weekly counts deduplicate parent summaries and exclude foreign, ineligible
     assert.equal(merged.queuedOrRetrying, 0);
   }
 });
+
+test("ambiguous daylight-saving send times require setup instead of guessing a due instant", () => {
+  assert.equal(rules.parentWeeklySchedule({ ...schedule, timezone: "America/New_York", weeklySummarySendDay: "SUNDAY", weeklySummarySendTime: "01:30" }, new Date("2026-11-01T04:00:00Z")).state, "SETUP_REQUIRED");
+});
+test("malformed contacts and string booleans cannot become usable contact or enabled delivery", () => {
+  assert.equal(rules.parentContactPosition({ email: 123, phone: null }).state, "UNAVAILABLE");
+  assert.equal(rules.parentContactPosition({ email: null }).noExternalContact, null);
+  assert.equal(rules.summaryChannelPosition({ weeklyEnabled: "false", parentWeeklyEnabled: true, schoolChannelEnabled: true, parentChannelEnabled: true, providerConfigured: true, destinationUsable: true }), "UNAVAILABLE");
+  assert.equal(rules.eligibleEngagementGuardian("school-a", "s1", { ...guardian, hasRelationshipRows: "false" }), false);
+  assert.equal(rules.eligibleEngagementGuardian("school-a", "s1", { ...guardian, hasRelationshipRows: false, relationshipStatus: "REVOKED" }), false);
+});
+test("contradictory duplicate guardian rows cannot overwrite revoked access or contact data", () => {
+  for (const change of [{ relationshipStatus: "REVOKED" }, { email: "different@gmail.com" }, { portalState: "ACTIVE" }]) for (const rows of [[guardian, { ...guardian, ...change }], [{ ...guardian, ...change }, guardian]]) {
+    assert.throws(() => rules.studentParentContactPosition("school-a", "s1", rows), (error) => error.code === "PARENT_ENGAGEMENT_INCONSISTENT");
+  }
+  assert.equal(rules.studentParentContactPosition("school-a", "s1", [guardian, guardian]).activeGuardians, 1);
+  assert.equal(rules.studentParentContactPosition("school-a", "s1", [], "TRANSFERRED").noActiveGuardian, null);
+  assert.throws(() => rules.studentParentContactPosition("school-a", "s1", [{ ...guardian, studentStatus: "WITHDRAWN" }]), /disagree/);
+});
+test("all tied delivery evidence must be valid; unrelated SMS records do not corrupt email counts", () => {
+  const valid = delivery("DELIVERED", { providerMessageId: "provider-id", deliveredAt: new Date("2026-10-16T15:25:00Z") });
+  const missingProof = { ...valid, providerMessageId: null };
+  for (const rows of [[valid, missingProof], [missingProof, valid]]) assert.equal(rules.emailDeliveryPosition(rows, now), "UNAVAILABLE");
+  assert.equal(rules.emailDeliveryPosition([valid, delivery("FAILED", { channel: "SMS", updatedAt: new Date("invalid") })], now), "DELIVERED");
+});
+test("bad summary period or blank scope cannot silently produce healthy zero counts", () => {
+  const input = { schoolId: "school-a", rangeKey: "2026-10-12:2026-10-18", eligibleParentIds: new Set(), summaries: [], now };
+  for (const change of [{ schoolId: " " }, { rangeKey: "wrong" }, { rangeKey: "2026-02-30:2026-03-08" }, { rangeKey: "2026-10-13:2026-10-19" }, { rangeKey: "2026-10-12:2026-10-20" }, { now: new Date("invalid") }]) assert.throws(() => rules.countWeeklyParentSummaryStates({ ...input, ...change }), (error) => error.code === "PARENT_ENGAGEMENT_INCONSISTENT");
+});

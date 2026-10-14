@@ -5,6 +5,7 @@ const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"
 const scheduleSchema = z.object({ timezone: z.string().min(1).max(80), summaryCadence: z.enum(["OFF", "DAILY", "WEEKLY", "BOTH"]), weeklySummarySendDay: z.enum(days), weeklySummarySendTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/) });
 const isoDay = (calendar: Date) => calendar.toISOString().slice(0, 10);
 const shift = (calendar: Date, count: number) => new Date(calendar.getTime() + count * 86400000);
+const inconsistent = (message: string) => Object.assign(new Error(message), { code: "PARENT_ENGAGEMENT_INCONSISTENT" });
 
 function localParts(date: Date, timezone: string) {
   return Object.fromEntries(new Intl.DateTimeFormat("en-GB", { timeZone: timezone, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(date).filter((part) => part.type !== "literal").map((part) => [part.type, Number(part.value)]));
@@ -17,7 +18,13 @@ function scheduledInstant(calendar: Date, time: string, timezone: string) {
   for (let i = 0; i < 4; i++) {
     const p = localParts(new Date(candidate), timezone);
     const difference = desired - Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute);
-    if (difference === 0) return new Date(candidate);
+    if (difference === 0) {
+      for (const offset of [-7200000, -3600000, -1800000, 1800000, 3600000, 7200000]) {
+        const other = localParts(new Date(candidate + offset), timezone);
+        if (Date.UTC(other.year, other.month - 1, other.day, other.hour, other.minute) === desired) throw new Error("The configured send time is ambiguous in the school timezone.");
+      }
+      return new Date(candidate);
+    }
     candidate += difference;
   }
   throw new Error("The configured send time does not exist in the school timezone.");
@@ -55,14 +62,19 @@ export function parentResponsePosition(request: unknown, now = new Date()) {
   return { state: "AVAILABLE" as const, awaitingResponse, overdue: awaitingResponse && row.responseDueAt !== null && row.responseDueAt < now, deadlineConfigured: row.responseDueAt !== null, highPriority: awaitingResponse && row.priority === "HIGH", escalated: !closed && row.status === "ESCALATED" };
 }
 
-export function parentContactPosition(parent: { email: string | null; phone: string | null }) {
-  const email = parent.email?.trim() ?? "";
-  const phone = parent.phone?.trim() ?? "";
+export function parentContactPosition(parent: unknown) {
+  const parsed = z.object({ email: z.string().nullable(), phone: z.string().nullable() }).safeParse(parent);
+  if (!parsed.success) return { state: "UNAVAILABLE" as const, missingEmail: null, invalidEmail: null, missingPhone: null, invalidPhone: null, usableEmail: null, usablePhone: null, noExternalContact: null };
+  const email = parsed.data.email?.trim() ?? "";
+  const phone = parsed.data.phone?.trim() ?? "";
   const usableEmail = z.string().email().safeParse(email).success;
   const digits = phone.replace(/\D/g, "");
   const usablePhone = /^\+?[\d\s()-]+$/.test(phone) && digits.length >= 7 && digits.length <= 15;
-  return { missingEmail: email === "", invalidEmail: email !== "" && !usableEmail, missingPhone: phone === "", invalidPhone: phone !== "" && !usablePhone, usableEmail, usablePhone, noExternalContact: !usableEmail && !usablePhone };
+  return { state: "AVAILABLE" as const, missingEmail: email === "", invalidEmail: email !== "" && !usableEmail, missingPhone: phone === "", invalidPhone: phone !== "" && !usablePhone, usableEmail, usablePhone, noExternalContact: !usableEmail && !usablePhone };
 }
+
+const studentStatusSchema = z.enum(["ACTIVE", "INCOMPLETE_SETUP", "TRANSFERRED", "GRADUATED", "WITHDRAWN"]);
+const guardianSchema = z.object({ parentId: z.string().trim().min(1), parentSchoolId: z.string().min(1), studentId: z.string().trim().min(1), studentSchoolId: z.string().min(1), studentStatus: studentStatusSchema, hasRelationshipRows: z.boolean(), relationshipStatus: z.enum(["ACTIVE", "REMOVED", "TRANSFERRED", "REVOKED", "GRADUATED"]).optional(), legacyParentMatches: z.boolean(), canViewFees: z.boolean(), canViewReports: z.boolean(), canMessageSchool: z.boolean(), email: z.string().nullable(), phone: z.string().nullable(), portalState: z.enum(["ACTIVE", "NEEDS_INVITE", "INVITED", "UNAVAILABLE"]) }).refine((row) => row.hasRelationshipRows || row.relationshipStatus === undefined);
 
 export type EngagementGuardian = {
   parentId: string; parentSchoolId: string; studentId: string; studentSchoolId: string; studentStatus: string;
@@ -72,16 +84,31 @@ export type EngagementGuardian = {
 };
 
 export function eligibleEngagementGuardian(schoolId: string, studentId: string, guardian: EngagementGuardian, permission?: "fees" | "reports" | "messages") {
+  if (!guardianSchema.safeParse(guardian).success) return false;
   return Boolean(schoolId.trim()) && guardian.parentSchoolId === schoolId && guardian.studentSchoolId === schoolId && guardian.studentId === studentId && guardian.studentStatus === "ACTIVE" && canUseParentWardRelationship({ hasRelationshipRows: guardian.hasRelationshipRows, status: guardian.relationshipStatus, permission, legacyParentMatches: guardian.legacyParentMatches, canViewFees: guardian.canViewFees, canViewReports: guardian.canViewReports, canMessageSchool: guardian.canMessageSchool });
 }
 
-export function studentParentContactPosition(schoolId: string, studentId: string, guardians: EngagementGuardian[]) {
-  const eligible = [...new Map(guardians.filter((row) => eligibleEngagementGuardian(schoolId, studentId, row)).map((row) => [row.parentId, row])).values()];
+export function studentParentContactPosition(schoolId: string, studentId: string, guardians: EngagementGuardian[], studentStatus = "ACTIVE") {
+  if (!schoolId.trim() || !studentId.trim()) throw inconsistent("School and student scope are required.");
+  if (!studentStatusSchema.safeParse(studentStatus).success) throw inconsistent("Student status requires review.");
+  if (studentStatus !== "ACTIVE") return { state: "NOT_APPLICABLE" as const, activeGuardians: 0, noActiveGuardian: null, noExternalContact: null, portalState: "NOT_APPLICABLE" };
+  const parsed = z.array(guardianSchema).safeParse(guardians);
+  if (!parsed.success) throw inconsistent("Guardian evidence requires review.");
+  const unique = new Map<string, EngagementGuardian>();
+  for (const row of parsed.data) {
+    if (row.parentSchoolId !== schoolId || row.studentSchoolId !== schoolId || row.studentId !== studentId) continue;
+    if (row.studentStatus !== studentStatus) throw inconsistent("Guardian and student status evidence disagree.");
+    const previous = unique.get(row.parentId);
+    if (previous && JSON.stringify(previous) !== JSON.stringify(row)) throw inconsistent("Conflicting guardian evidence requires review.");
+    unique.set(row.parentId, row);
+  }
+  const eligible = [...unique.values()].filter((row) => eligibleEngagementGuardian(schoolId, studentId, row));
   const noActiveGuardian = eligible.length === 0;
-  return { activeGuardians: eligible.length, noActiveGuardian, noExternalContact: !noActiveGuardian && eligible.every((row) => parentContactPosition(row).noExternalContact), portalState: noActiveGuardian ? "NO_GUARDIAN" : eligible.some((row) => row.portalState === "ACTIVE") ? "AVAILABLE" : eligible.some((row) => row.portalState === "UNAVAILABLE") ? "UNAVAILABLE" : "NOT_ACTIVATED" };
+  return { state: "AVAILABLE" as const, activeGuardians: eligible.length, noActiveGuardian, noExternalContact: !noActiveGuardian && eligible.every((row) => parentContactPosition(row).noExternalContact), portalState: noActiveGuardian ? "NO_GUARDIAN" : eligible.some((row) => row.portalState === "ACTIVE") ? "AVAILABLE" : eligible.some((row) => row.portalState === "UNAVAILABLE") ? "UNAVAILABLE" : "NOT_ACTIVATED" };
 }
 
 export function summaryChannelPosition(input: { weeklyEnabled: boolean; parentWeeklyEnabled: boolean; schoolChannelEnabled: boolean; parentChannelEnabled: boolean; providerConfigured: boolean; destinationUsable: boolean }) {
+  if (!z.object({ weeklyEnabled: z.boolean(), parentWeeklyEnabled: z.boolean(), schoolChannelEnabled: z.boolean(), parentChannelEnabled: z.boolean(), providerConfigured: z.boolean(), destinationUsable: z.boolean() }).safeParse(input).success) return "UNAVAILABLE";
   if (!input.weeklyEnabled || !input.schoolChannelEnabled) return "DISABLED";
   if (!input.parentWeeklyEnabled || !input.parentChannelEnabled) return "OPTED_OUT";
   if (!input.providerConfigured) return "NOT_CONFIGURED";
@@ -98,25 +125,32 @@ export function parentMessagingPosition(policy: unknown) {
 const deliverySchema = z.object({ id: z.string().min(1), channel: z.enum(["IN_APP", "EMAIL", "SMS", "WHATSAPP"]), status: z.enum(["PENDING", "SENT", "DELIVERED", "FAILED", "RETRYING", "CANCELLED"]), updatedAt: z.date(), sentAt: z.date().nullable(), deliveredAt: z.date().nullable(), providerMessageId: z.string().nullable() });
 export type EngagementDelivery = z.infer<typeof deliverySchema>;
 export function emailDeliveryPosition(deliveries: EngagementDelivery[], now = new Date()) {
-  const parsed = z.array(deliverySchema).safeParse(deliveries);
+  if (!Array.isArray(deliveries)) return "UNAVAILABLE";
+  const parsed = z.array(deliverySchema).safeParse(deliveries.filter((row) => row?.channel === "EMAIL"));
   if (!parsed.success || !Number.isFinite(now.getTime())) return "UNAVAILABLE";
   const emails = parsed.data.filter((row) => row.channel === "EMAIL").sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime() || a.id.localeCompare(b.id));
   if (!emails.length) return "NOT_QUEUED";
   const row = emails[0];
   if (emails.some((candidate) => candidate.updatedAt.getTime() === row.updatedAt.getTime() && candidate.status !== row.status)) return "UNAVAILABLE";
-  if (row.updatedAt > now || row.sentAt && row.sentAt > now || row.deliveredAt && row.deliveredAt > now) return "UNAVAILABLE";
-  if (row.status === "DELIVERED" && (!row.deliveredAt || !row.providerMessageId?.trim())) return "UNAVAILABLE";
-  if (row.status === "SENT" && !row.sentAt) return "UNAVAILABLE";
+  for (const candidate of emails.filter((entry) => entry.updatedAt.getTime() === row.updatedAt.getTime())) {
+    if (candidate.updatedAt > now || candidate.sentAt && candidate.sentAt > now || candidate.deliveredAt && candidate.deliveredAt > now) return "UNAVAILABLE";
+    if (candidate.status === "DELIVERED" && (!candidate.deliveredAt || !candidate.providerMessageId?.trim())) return "UNAVAILABLE";
+    if (candidate.status === "SENT" && !candidate.sentAt) return "UNAVAILABLE";
+  }
   return row.status;
 }
 
 /** Use canonical ParentNotification rows and central deliveries only, not legacy attempt logs. */
 export function countWeeklyParentSummaryStates(input: { schoolId: string; rangeKey: string; eligibleParentIds: ReadonlySet<string>; summaries: { id: string; schoolId: string; parentId: string; sourceModel: string; sourceKey: string; deliveries: EngagementDelivery[] }[]; now: Date }) {
+  const range = /^\d{4}-\d{2}-\d{2}:\d{4}-\d{2}-\d{2}$/.test(input.rangeKey) ? input.rangeKey.split(":") : [];
+  const start = new Date(`${range[0]}T00:00:00Z`);
+  if (!input.schoolId.trim() || !Number.isFinite(input.now.getTime()) || !Number.isFinite(start.getTime()) || isoDay(start) !== range[0] || start.getUTCDay() !== 1 || isoDay(shift(start, 6)) !== range[1]) throw inconsistent("A valid school, evaluation time and Monday-Sunday summary period are required.");
   const unique = new Map<string, { id: string; deliveries: EngagementDelivery[] }>();
   for (const row of input.summaries) {
     if (row.schoolId !== input.schoolId || !input.eligibleParentIds.has(row.parentId) || row.sourceModel !== "ParentWeeklySummary" || row.sourceKey !== `weekly-summary:${row.parentId}:${input.rangeKey}`) continue;
     const previous = unique.get(row.parentId);
-    if (previous && previous.id !== row.id) throw new Error("Conflicting parent summaries require review.");
+    if (!row.id.trim() || !row.parentId.trim()) throw inconsistent("Parent summary identity requires review.");
+    if (previous && previous.id !== row.id) throw inconsistent("Conflicting parent summaries require review.");
     unique.set(row.parentId, { id: row.id, deliveries: [...(previous?.deliveries ?? []), ...row.deliveries] });
   }
   const states = [...unique.values()].map((row) => emailDeliveryPosition(row.deliveries, input.now));

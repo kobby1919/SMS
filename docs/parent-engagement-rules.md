@@ -63,3 +63,16 @@ Step 2 must authenticate the admin and supply school-scoped, consistent records.
 
 No dashboard/snapshot integration is introduced in Step 1. No messages or data
 are changed. Live authenticated tenant checks remain required before pilot.
+
+## Step 1 Hardening
+
+Malformed booleans and contact shapes are unavailable, not enabled or contactable.
+Conflicting guardian duplicates, contradictory lifecycle evidence and invalid
+summary periods raise PARENT_ENGAGEMENT_INCONSISTENT; Step 2 must translate that
+code into explicit unavailable tracking, not a healthy zero or generic crash.
+Inactive students are not applicable to current contact-readiness counts.
+
+Both nonexistent and ambiguous daylight-saving local send times require setup.
+All equal-time email evidence must have valid proof; unrelated SMS/WhatsApp
+records cannot poison email status. Neither successful provider delivery nor
+usable contact details establishes read status or verified human reachability.
