@@ -12,11 +12,11 @@ function loader(mocks = {}) {
   const cache = new Map();
   function load(path) {
     if (cache.has(path)) return cache.get(path).exports;
-    const module = { exports: {} };
-    cache.set(path, module);
+    const compiled = { exports: {} };
+    cache.set(path, compiled);
     const source = ts.transpileModule(readFileSync(path, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true } }).outputText;
-    new Function("require", "module", "exports", source)((id) => Object.hasOwn(mocks, id) ? mocks[id] : id === "server-only" ? {} : id.startsWith("@/") ? load(`${id.slice(2)}.${existsSync(`${id.slice(2)}.ts`) ? "ts" : "tsx"}`) : require(id), module, module.exports);
-    return module.exports;
+    new Function("require", "module", "exports", source)((id) => Object.hasOwn(mocks, id) ? mocks[id] : id === "server-only" ? {} : id.startsWith("@/") ? load(`${id.slice(2)}.${existsSync(`${id.slice(2)}.ts`) ? "ts" : "tsx"}`) : require(id), compiled, compiled.exports);
+    return compiled.exports;
   }
   return load;
 }
@@ -136,7 +136,8 @@ test("finance and its nested receipt and collection helpers share one school-sco
   assert.equal(f.transactions(), 1); assert.equal(data.hasFeeRecords, false);
   assert.equal(data.moneyPosition.expectedFees, 0); assert.equal(data.todayActivity.amountCollectedToday, 0);
   assert.ok(f.calls.some((q) => q.model === "dailyCollectionSession" && q.method === "findMany"));
-  assert.ok(f.calls.some((q) => q.model === "payment" && q.method === "groupBy"));
+  assert.ok(f.calls.some((q) => q.model === "payment" && q.method === "count" && q.query.where.status === "REVERSED"));
+  assert.ok(!f.calls.some((q) => ["dailyCollectionEntry", "dailyCollectionAuditLog"].includes(q.model)));
 });
 
 test("finance budget is checked before expensive rows are loaded and read errors never become empty money", async () => {
@@ -209,8 +210,8 @@ test("React streams the fast section while a slow sibling still displays loading
   output.on("data", (chunk) => { html += chunk.toString(); });
   const finished = new Promise((resolve, reject) => { output.on("end", resolve); output.on("error", reject); });
   const tree = React.createElement("main", null,
-    React.createElement(Section, { id: "pulse", title: "Slow pulse", read, load: () => gate.promise, children: (value) => React.createElement("p", null, value) }),
-    React.createElement(Section, { id: "finance", title: "Fast finance", read, load: async () => "FINANCE_READY", children: (value) => React.createElement("p", null, value) }));
+    React.createElement(Section, { id: "pulse", title: "Slow pulse", read, load: () => gate.promise }, (value) => React.createElement("p", null, value)),
+    React.createElement(Section, { id: "finance", title: "Fast finance", read, load: async () => "FINANCE_READY" }, (value) => React.createElement("p", null, value)));
   let stream;
   const shell = deferred();
   stream = renderToPipeableStream(tree, { progressiveChunkSize: 1, onShellReady() { stream.pipe(output); shell.resolve(); }, onError(error) { output.destroy(error); } });
@@ -254,4 +255,69 @@ test("accountability dashboard rejects oversized histories before evaluating dut
   const load = loader({ "@/src/lib/prisma": { $transaction: async (work, options) => { assert.equal(options.isolationLevel, "RepeatableRead"); assert.equal(options.timeout, 30000); return work(tx); } }, "@/src/generated/prisma": { Prisma: { TransactionIsolationLevel: { RepeatableRead: "RepeatableRead" } } }, "@/src/lib/services/teacher-ca-obligations": {}, "@/src/lib/services/teacher-homework-obligations": {} });
   await assert.rejects(load("src/lib/services/admin-teacher-accountability.ts").getAdminTeacherAccountability("school-a", new Date(), undefined, false, { dashboard: true }), { name: "DashboardReadLimitError" });
   assert.ok(calls.includes("teacherObligation")); assert.ok(calls.includes("cAActivityScore"));
+});
+
+test("compact collection totals match the full report for every session state", async () => {
+  const now = new Date("2026-10-15T12:00:00Z");
+  const sessions = ["OPEN", "SUBMITTED", "CONFIRMED", "FLAGGED", "CANCELLED"].map((status, i) => ({
+    id: String(i), status, collectionDate: now, updatedAt: now, submittedAt: now,
+    expectedAmount: 100, reportedAmount: 90, confirmedAmount: 80,
+    collectionType: { id: "type", name: "Feeding", category: "FEEDING" },
+    collector: { id: "collector", name: "Test", surname: "Collector" }, entries: [],
+  }));
+  const calls = [];
+  const db = new Proxy({}, { get(_, model) { return { findMany: async (query) => {
+    assert.equal(query.where.schoolId, "school-a"); calls.push(model);
+    return model === "dailyCollectionSession" ? sessions : [];
+  } }; } });
+  const load = loader({ "@/src/lib/prisma": db, "@/src/generated/prisma": { Prisma: { Decimal: class {} } } });
+  const service = load("src/lib/services/daily-collection-report.ts");
+  const full = await service.getDailyCollectionReport("school-a", now, db);
+  calls.length = 0;
+  const slim = await service.getDailyCollectionDashboardSummary("school-a", now, db);
+  assert.deepEqual(slim.confirmationStatus, full.confirmationStatus);
+  assert.equal(slim.summary.confirmedAmount, full.summary.confirmedAmount);
+  assert.equal(slim.summary.confirmedAmount, 80);
+  assert.equal(slim.confirmationStatus.flaggedAmount, 80);
+  assert.equal(slim.confirmationStatus.pendingReviewAmount, 90);
+  assert.deepEqual(calls, ["dailyCollectionSession"]);
+});
+
+test("compact receipt integrity matches full report including case, whitespace and method boundaries", async () => {
+  const references = [
+    { id: 1, referenceNo: " REF-A ", paymentMethod: "BANK_TRANSFER", amount: 10 },
+    { id: 2, referenceNo: "ref-a", paymentMethod: "BANK_TRANSFER", amount: 20 },
+    { id: 3, referenceNo: "ref-a", paymentMethod: "MTN_MOMO", amount: 30 },
+    { id: 4, referenceNo: " ", paymentMethod: "CASH", amount: 30 },
+  ];
+  const queries = [];
+  const db = {
+    payment: {
+      groupBy: async () => [{ status: "REVERSED", _count: { _all: 4 } }],
+      count: async (q) => { assert.deepEqual(q.where, { schoolId: "school-a", status: "REVERSED" }); return 4; },
+      findMany: async (q) => { queries.push(q); assert.equal(q.where.schoolId, "school-a"); return q.where.referenceNo ? references : []; },
+    },
+    paymentCorrectionRequest: { findMany: async () => [], count: async () => 0 },
+  };
+  const load = loader({ "@/src/lib/prisma": db, "@/src/generated/prisma": { Prisma: { Decimal: class {} } } });
+  const service = load("src/lib/services/receipt-integrity-report.ts");
+  const full = await service.getReceiptIntegrityReport("school-a", db);
+  queries.length = 0;
+  const slim = await service.getReceiptIntegrityDashboardSummary("school-a", db);
+  assert.deepEqual(slim, { voidedReceipts: full.voidedReceipts, duplicateReferenceCount: full.duplicateReferenceCount });
+  assert.equal(slim.duplicateReferenceCount, 1);
+  assert.deepEqual(queries[0].where.status, { notIn: ["FAILED", "REVERSED"] });
+  assert.deepEqual(queries[0].select, { referenceNo: true, paymentMethod: true });
+});
+
+test("a failed finance read recovers with new figures, not cached pre-failure money", async (t) => {
+  t.mock.method(console, "error", () => {});
+  const { read } = readerFixture();
+  let amount = 10; let broken = false;
+  const query = async () => { if (broken) throw Object.assign(new Error("timeout"), { code: "P2028" }); return { amount }; };
+  assert.equal((await read("finance", query)).data.amount, 10);
+  broken = true; amount = 20;
+  assert.deepEqual(await read("finance", query), { state: "UNAVAILABLE", reason: "UNAVAILABLE" });
+  broken = false;
+  assert.equal((await read("finance", query)).data.amount, 20);
 });

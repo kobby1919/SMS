@@ -1,0 +1,18 @@
+{
+  "baseUrl": "http://localhost:3100",
+  "fixtureToken": "EDUJAY_LOADTEST_ABCDEFGH",
+  "schoolId": "replace-with-synthetic-school-id",
+  "studentId": "replace-with-synthetic-student-id",
+  "teacherId": "replace-with-synthetic-teacher-id",
+  "billId": 1,
+  "activityId": 1,
+  "bucketTitle": "Load test CA",
+  "assessmentPath": "/list/ca?classId=1",
+  "paymentAmount": 1,
+  "rawScore": 0,
+  "adminStates": [".private/load-admin-1.json", ".private/load-admin-2.json"],
+  "bursarState": ".private/load-bursar.json",
+  "teacherState": ".private/load-teacher.json",
+  "rounds": 3,
+  "maxDashboardP95Ms": 15000
+}

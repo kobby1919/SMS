@@ -25,7 +25,7 @@ These are conservative evaluation limits, not promises of supported school size.
 | Dashboard read | Main limits |
 | --- | --- |
 | Pulse | 200 classes; 5,000 active students; 20,000 published lesson rows; 50 publications in the review interval; 50,000 attendance rows in that interval |
-| Finance | 10,000 bills; 50,000 bill lines; 20,000 guardian relationships, with at most 20 per billed student; 50,000 payments; 1,000 daily collection sessions and 20,000 entries for the day |
+| Finance | 10,000 bills; 50,000 bill lines; 20,000 guardian relationships, with at most 20 per billed student; 50,000 payments; 1,000 daily collection sessions for the day. Daily entry detail is no longer loaded. |
 | Accountability | 500 teachers; 5,000 active students; 10,000 active published lessons; 20,000 obligations/escalations; 10,000 pending corrections/assignments/activities; 100,000 attendance, homework submission and CA score records |
 
 Pulse and accountability also cap evaluated work at 2 million operations using conservative estimates. Large histories may reach a limit before student-count limits. Monitor this and move the expensive historical calculations to scoped aggregates or maintained read models after reconciliation tests; do not blindly raise limits or truncate data.
@@ -54,3 +54,25 @@ Before pilot, still test with authenticated admins and representative production
 6. Connect logs to monitoring and alert on sustained unavailable/limit states and excessive queue/read duration.
 
 No live data, migrations or credentials are changed by this hardening. Passing code tests or a successful build is not production certification. Keep the broader go-live checks in `docs/production-readiness.md`, Point 5.
+
+## Measured follow-up: 2026-10-15
+
+Read-only profiling against the current small development-school database used actual service code, Prisma query events and sanitized PostgreSQL EXPLAIN (ANALYZE, BUFFERS). Authentication was supplied by the local harness, so this is not an authenticated HTTP load test. The database matched the working app's configuration. Two warm reads are not a statistically meaningful capacity benchmark.
+
+| Section | Query events per read after changes | Observed elapsed time |
+| --- | --- | --- |
+| Finance | 29 (previously 58) | 7.63-7.92 seconds (baseline 14.70 seconds) |
+| School pulse | 16 | 4.32-4.48 seconds |
+| Teacher accountability | 29 | 7.36-7.61 seconds |
+| Academic readiness | 13 | 3.58-3.74 seconds, SETUP_REQUIRED rather than full evidence |
+| Parent engagement | 23 | 5.98-6.32 seconds |
+
+These figures include network/client overhead and transaction events. The twelve sampled post-change plans executed in approximately 0.02-0.09 ms on the server. This tiny dataset does not establish index sufficiency for large schools; sequential scans can be appropriate at this size. No speculative index migration was applied. Reassess bill-line foreign-key access and date/status collection filters on representative data, comparing write overhead as well as read plans.
+
+Finance previously loaded unused full receipt history, correction detail, collection entries, parent contacts and audit actors. It now selects only the session and receipt fields the dashboard uses. Shared reducers retain full-report status/reference semantics. The original reports remain intact. Real-database full/compact parity passed inside one RepeatableRead snapshot; regression fixtures also cover all collection statuses and duplicate-reference normalization.
+
+Two concurrent read clients returned identical finance and parent results. A cancelled PostgreSQL sleep produced an unavailable section without figures; recovery returned the same confirmed finance snapshot. A separate one-connection pool exhausted/timed out and recovered. This did not exhaust the app pool, alter school data, terminate another session or simulate a full network outage. No write contention or large-school performance claim follows from it.
+
+Current verification: **511 tests passed**, TypeScript, scoped lint and production build passed. See `tools/dashboard-performance/README.md` for rerunnable profiling, fault probes and the prepared authenticated mixed-load rehearsal. The user explicitly deferred mixed writes until a disposable database exists. That browser rehearsal is not yet executed or certified; its fixture/selector preflight, representative concurrent writers, tenant isolation and hosting/pool budgets remain pilot gates.
+
+No shared caching or maintained summary records were introduced. Live reads, visible request/evaluation times, manual refresh and explicit failure states remain. The measurements justify eliminating redundant reads first; the remaining multi-second latency still needs work and deployment-region validation. Do not conceal it with financial totals of unspecified freshness.

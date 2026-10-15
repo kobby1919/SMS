@@ -28,6 +28,48 @@ function latestSessionFirst<T extends { collectionDate: Date; updatedAt: Date }>
 
 const FOLLOW_UP_ENTRY_STATUSES: DailyCollectionSessionStatus[] = ["SUBMITTED", "CONFIRMED", "FLAGGED"];
 
+type ConfirmationSession = {
+  status: DailyCollectionSessionStatus;
+  reportedAmount: Prisma.Decimal | number | string | null;
+  confirmedAmount: Prisma.Decimal | number | string | null;
+  submittedAt: Date | null;
+};
+
+function summarizeConfirmations(sessions: ConfirmationSession[]) {
+  const result = {
+    pendingReviewSessions: 0, pendingReviewAmount: 0,
+    flaggedSessions: 0, flaggedAmount: 0,
+    confirmedSessions: 0, confirmedAmount: 0,
+    oldestSubmittedAt: null as Date | null,
+  };
+  for (const session of sessions) {
+    if (session.status === "SUBMITTED") {
+      result.pendingReviewSessions++;
+      result.pendingReviewAmount += asNumber(session.reportedAmount);
+      if (session.submittedAt && (!result.oldestSubmittedAt || session.submittedAt < result.oldestSubmittedAt)) result.oldestSubmittedAt = session.submittedAt;
+    } else if (session.status === "FLAGGED") {
+      result.flaggedSessions++;
+      result.flaggedAmount += asNumber(session.confirmedAmount);
+    } else if (session.status === "CONFIRMED") {
+      result.confirmedSessions++;
+      result.confirmedAmount += asNumber(session.confirmedAmount);
+    }
+  }
+  return result;
+}
+
+/** Same session totals as the full report, without entry, contact or audit detail. */
+export async function getDailyCollectionDashboardSummary(schoolId: string, date: Date, prisma: Prisma.TransactionClient) {
+  const { start, end } = dayBounds(date);
+  const sessions = await prisma.dailyCollectionSession.findMany({
+    where: { schoolId, collectionDate: { gte: start, lte: end } },
+    select: { status: true, reportedAmount: true, confirmedAmount: true, submittedAt: true },
+    orderBy: [{ collectionDate: "desc" }, { updatedAt: "desc" }],
+  });
+  const confirmationStatus = summarizeConfirmations(sessions);
+  return { summary: { confirmedAmount: confirmationStatus.confirmedAmount }, confirmationStatus };
+}
+
 export async function getDailyCollectionReport(schoolId: string, date = new Date(), prisma: Prisma.TransactionClient = defaultPrisma) {
   const { start, end } = dayBounds(date);
 
@@ -182,15 +224,7 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
     unpaidAmount: 0,
     inProgressUnpaidEntries: 0,
   };
-  const confirmationStatus = {
-    pendingReviewSessions: 0,
-    pendingReviewAmount: 0,
-    flaggedSessions: 0,
-    flaggedAmount: 0,
-    confirmedSessions: 0,
-    confirmedAmount: 0,
-    oldestSubmittedAt: null as Date | null,
-  };
+  const confirmationStatus = summarizeConfirmations(sessions);
 
   const byType = new Map<
     string,
@@ -244,24 +278,6 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
     summary.reportedAmount += sessionReported;
     summary.confirmedAmount += sessionConfirmed;
     summary.flaggedAmount += sessionFlagged;
-    if (session.status === "SUBMITTED") {
-      confirmationStatus.pendingReviewSessions += 1;
-      confirmationStatus.pendingReviewAmount += sessionReported;
-      if (
-        session.submittedAt &&
-        (!confirmationStatus.oldestSubmittedAt || session.submittedAt < confirmationStatus.oldestSubmittedAt)
-      ) {
-        confirmationStatus.oldestSubmittedAt = session.submittedAt;
-      }
-    }
-    if (session.status === "FLAGGED") {
-      confirmationStatus.flaggedSessions += 1;
-      confirmationStatus.flaggedAmount += sessionFlagged;
-    }
-    if (session.status === "CONFIRMED") {
-      confirmationStatus.confirmedSessions += 1;
-      confirmationStatus.confirmedAmount += sessionConfirmed;
-    }
 
     const type = byType.get(session.collectionType.id) ?? {
       id: session.collectionType.id,

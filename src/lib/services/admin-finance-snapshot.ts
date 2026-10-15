@@ -1,7 +1,7 @@
 import type { PaymentIntentStatus, Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
-import { getDailyCollectionReport } from "@/src/lib/services/daily-collection-report";
-import { getReceiptIntegrityReport } from "@/src/lib/services/receipt-integrity-report";
+import { getDailyCollectionDashboardSummary } from "@/src/lib/services/daily-collection-report";
+import { getReceiptIntegrityDashboardSummary } from "@/src/lib/services/receipt-integrity-report";
 import { assertDashboardReadBudget, DashboardReadLimitError } from "@/src/lib/dashboard-read-budget";
 
 const OPEN_BILL_STATUSES = ["UNPAID", "PARTIAL"] as const;
@@ -405,7 +405,6 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
       [db.parentStudentRelationship.count({ where: { schoolId } }), 20000],
       [db.payment.count({ where: { schoolId } }), 50000],
       [db.dailyCollectionSession.count({ where: { schoolId, collectionDate: { gte: startOfDay(now), lte: endOfDay(now) } } }), 1000],
-      [db.dailyCollectionEntry.count({ where: { schoolId, session: { schoolId, collectionDate: { gte: startOfDay(now), lte: endOfDay(now) } } } }), 20000],
     ]);
     return readFinanceSnapshot(db, schoolId, now);
   }, { isolationLevel: "RepeatableRead", maxWait: 5000, timeout: 30000 });
@@ -432,8 +431,8 @@ async function readFinanceSnapshot(prisma: Prisma.TransactionClient, schoolId: s
     activeStudentsWithoutBills,
     outstandingCollectionStatuses,
   ] = await Promise.all([
-    getDailyCollectionReport(schoolId, now, prisma),
-    getReceiptIntegrityReport(schoolId, prisma),
+    getDailyCollectionDashboardSummary(schoolId, now, prisma),
+    getReceiptIntegrityDashboardSummary(schoolId, prisma),
     prisma.payment.aggregate({
       where: {
         schoolId,

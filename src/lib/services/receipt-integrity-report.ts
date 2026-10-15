@@ -42,6 +42,31 @@ function receiptSeries(receiptNumber: string) {
   return { prefix: match[1], counter: Number(match[2]) };
 }
 
+function duplicateReferenceGroups<T extends { referenceNo: string | null; paymentMethod: string }>(rows: T[]) {
+  const groups = new Map<string, T[]>();
+  for (const row of rows) {
+    const ref = row.referenceNo?.trim();
+    if (!ref) continue;
+    const key = `${row.paymentMethod}:${ref.toLowerCase()}`;
+    const group = groups.get(key) ?? [];
+    group.push(row);
+    groups.set(key, group);
+  }
+  return Array.from(groups.values()).filter((group) => group.length > 1);
+}
+
+/** Preserve report semantics without loading receipt history and correction detail. */
+export async function getReceiptIntegrityDashboardSummary(schoolId: string, prisma: Prisma.TransactionClient) {
+  const [voidedReceipts, rows] = await Promise.all([
+    prisma.payment.count({ where: { schoolId, status: "REVERSED" } }),
+    prisma.payment.findMany({
+      where: { schoolId, referenceNo: { not: null }, status: { notIn: ["FAILED", "REVERSED"] } },
+      select: { referenceNo: true, paymentMethod: true },
+    }),
+  ]);
+  return { voidedReceipts, duplicateReferenceCount: duplicateReferenceGroups(rows).length };
+}
+
 export async function getReceiptIntegrityReport(schoolId: string, prisma: Prisma.TransactionClient = defaultPrisma): Promise<ReceiptIntegrityReport> {
   const [statusCounts, receiptNumbers, referenceRows, payments, correctionLinks, correctionLinkedCount, correctedReceiptCount] = await Promise.all([
     prisma.payment.groupBy({
@@ -135,18 +160,7 @@ export async function getReceiptIntegrityReport(schoolId: string, prisma: Prisma
   ]);
   const countByStatus = Object.fromEntries(statusCounts.map((row) => [row.status, row._count._all])) as Record<string, number>;
   const totalReceipts = statusCounts.reduce((sum, row) => sum + row._count._all, 0);
-  const referenceGroups = new Map<string, typeof referenceRows>();
-
-  for (const payment of referenceRows) {
-    const ref = payment.referenceNo?.trim();
-    if (!ref) continue;
-    const key = `${payment.paymentMethod}:${ref.toLowerCase()}`;
-    const current = referenceGroups.get(key) ?? [];
-    current.push(payment);
-    referenceGroups.set(key, current);
-  }
-
-  const duplicateReferenceGroups = Array.from(referenceGroups.values()).filter((group) => group.length > 1);
+  const duplicates = duplicateReferenceGroups(referenceRows);
   const countersBySeries = new Map<string, number[]>();
   for (const payment of receiptNumbers) {
     const parsed = receiptSeries(payment.receiptNumber);
@@ -178,7 +192,7 @@ export async function getReceiptIntegrityReport(schoolId: string, prisma: Prisma
         href: `/list/finance/receipts?search=${encodeURIComponent(payment.receiptNumber)}`,
         risk: "Risk" as const,
       })),
-    ...duplicateReferenceGroups.slice(0, 5).map((group) => {
+    ...duplicates.slice(0, 5).map((group) => {
       const first = group[0];
       return {
         id: `duplicate-ref-${first.id}`,
@@ -220,7 +234,7 @@ export async function getReceiptIntegrityReport(schoolId: string, prisma: Prisma
     failedReceipts: countByStatus.FAILED ?? 0,
     correctedReceipts: correctedReceiptCount,
     correctionLinkedReceipts: correctionLinkedCount,
-    duplicateReferenceCount: duplicateReferenceGroups.length,
+    duplicateReferenceCount: duplicates.length,
     receiptGapCount,
     issueCount: issues.length,
     issues,
