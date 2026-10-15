@@ -171,6 +171,9 @@ const AdminNotificationsPage = async ({ searchParams }: PageProps) => {
         <StatCard label="No delivery job" value={summary.notificationsWithoutDeliveryCount} note="Created for in-app/history only, or no email/phone destination was available." tone="bg-violet-50 text-violet-700" icon={<BellRing size={18} />} />
       </div>
 
+      {params.deliveryId !== undefined && !selectedDelivery && (
+        <p role="status" className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">The selected delivery is unavailable in your school. The link may be outdated or invalid.</p>
+      )}
       {selectedDelivery && (
         <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">

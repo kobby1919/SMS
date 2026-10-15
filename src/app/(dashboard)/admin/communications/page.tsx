@@ -54,8 +54,9 @@ const AdminCommunicationsPage = async ({ searchParams }: { searchParams: Promise
   const { schoolId } = await requirePageSession(["admin"]);
   const params = await searchParams;
   const page = params.page && /^[1-9]\d*$/.test(params.page) && Number.isSafeInteger(Number(params.page)) ? Math.min(Number(params.page), 100000) : 1;
-  const requestId = typeof params.requestId === "string" && params.requestId.length > 0 && params.requestId.length <= 191 ? params.requestId : params.requestId === undefined ? undefined : "invalid-request";
-  const scope = { schoolId, ...(requestId ? { id: requestId } : {}), parent: { schoolId }, teacher: { schoolId }, student: { schoolId, class: { schoolId } } };
+  const requestId = typeof params.requestId === "string" && params.requestId.trim().length > 0 && params.requestId.length <= 191 ? params.requestId : undefined;
+  const invalidRequest = params.requestId !== undefined && !requestId;
+  const scope = { schoolId, ...(invalidRequest ? { id: { in: [] as string[] } } : requestId ? { id: requestId } : {}), parent: { schoolId }, teacher: { schoolId }, student: { schoolId, class: { schoolId } } };
   const pageSize = 40;
   const now = new Date();
   const [openCount, overdueCount, escalatedCount, closedCount, totalCount] = await Promise.all([
@@ -161,7 +162,13 @@ const AdminCommunicationsPage = async ({ searchParams }: { searchParams: Promise
         </div>
       </div>
 
-      {activeRequests.length === 0 ? (
+      {params.requestId !== undefined && requests.length === 0 ? (
+        <div role="status" className="rounded-lg border border-gray-200 bg-white p-4">
+          <p className="text-sm font-bold text-gray-900">This request is unavailable in your school.</p>
+          <p className="mt-1 text-sm text-gray-600">The link may be outdated or invalid.</p>
+          <a href="/admin/communications" className="mt-3 inline-block text-sm font-bold text-blue-700">Review school requests</a>
+        </div>
+      ) : activeRequests.length === 0 ? (
         <div className="rounded-2xl border border-gray-100 bg-white p-6 text-center shadow-sm">
           <p className="text-sm font-black text-gray-900">{openCount ? "No active requests on this page." : "No active parent contact requests."}</p>
           <p className="mt-1 text-sm font-semibold text-gray-400">
@@ -171,15 +178,18 @@ const AdminCommunicationsPage = async ({ searchParams }: { searchParams: Promise
       ) : (
         <div className="space-y-4">
           {activeRequests.map((request) => {
-            const isOverdue = parentResponsePosition(request, now).overdue === true;
+            const response = parentResponsePosition(request, now);
+            const isOverdue = response.overdue === true;
+            const responseLabel = response.state === "UNAVAILABLE" ? "Response tracking unavailable" : response.awaitingResponse ? "Awaiting school response" : "School response recorded";
+            const displayStatus = response.state === "UNAVAILABLE" ? "UNKNOWN" : response.awaitingResponse && request.status === "RESPONDED" ? "PENDING" : request.status;
 
             return (
               <article key={request.id} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
                 <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className={`rounded-full px-2 py-1 text-[10px] font-black uppercase tracking-wide ring-1 ${statusClass(request.status)}`}>
-                        {readable(request.status)}
+                      <span className={`rounded-full px-2 py-1 text-[10px] font-black uppercase tracking-wide ring-1 ${statusClass(displayStatus)}`}>
+                        {displayStatus === "UNKNOWN" || request.status === "RESPONDED" && response.awaitingResponse ? responseLabel : readable(request.status)}
                       </span>
                       {isOverdue && (
                         <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-rose-700 ring-1 ring-rose-100">
@@ -196,6 +206,7 @@ const AdminCommunicationsPage = async ({ searchParams }: { searchParams: Promise
                     </div>
                     <h2 className="mt-3 text-base font-black text-gray-950">{request.subject}</h2>
                     <p className="mt-1 text-sm font-semibold leading-relaxed text-gray-600">{request.message}</p>
+                    <p className="mt-2 text-xs font-semibold text-gray-600">{responseLabel}</p>
                   </div>
                   <div className="grid shrink-0 gap-2 text-sm font-semibold text-gray-500 sm:grid-cols-2 xl:w-80 xl:grid-cols-1">
                     <p className="inline-flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2">
@@ -208,7 +219,7 @@ const AdminCommunicationsPage = async ({ searchParams }: { searchParams: Promise
                     </p>
                     <p className="inline-flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2">
                       <Timer size={15} />
-                      Due {formatDateTime(request.responseDueAt)}
+                      {response.state === "UNAVAILABLE" ? "Response deadline cannot be confirmed" : response.awaitingResponse ? response.deadlineConfigured ? `Due ${formatDateTime(request.responseDueAt)}` : "Current response deadline needs review" : "No outstanding response deadline"}
                     </p>
                   </div>
                 </div>

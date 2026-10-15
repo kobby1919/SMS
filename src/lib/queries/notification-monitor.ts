@@ -46,7 +46,7 @@ function parseDateEnd(value: string | undefined) {
 }
 
 function parseDeliveryId(value: string | undefined) {
-  if (!value) return undefined;
+  if (typeof value !== "string" || !value) return undefined;
   return /^[a-z0-9_-]{8,80}$/i.test(value) ? value : undefined;
 }
 
@@ -156,7 +156,7 @@ export async function getNotificationMonitorData(schoolId: string, rawFilters: N
     prisma.appNotificationDelivery.count({ where: deliveryWhere }),
     filters.deliveryId
       ? prisma.appNotificationDelivery.findFirst({
-          where: { id: filters.deliveryId, schoolId },
+          where: { id: filters.deliveryId, schoolId, notification: { schoolId } },
           select: {
             id: true,
             channel: true,
@@ -190,6 +190,7 @@ export async function getNotificationMonitorData(schoolId: string, rawFilters: N
               },
             },
             auditLogs: {
+              where: { schoolId },
               select: {
                 id: true,
                 event: true,

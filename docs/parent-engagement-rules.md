@@ -200,3 +200,10 @@ delivery record, or student guardian section. No transcript, email address, phon
 number or provider diagnostics are exposed on the dashboard. Contact request
 detail overdue indicators use the same response evidence and current deadline
 rules, including a parent writing again after an earlier teacher response.
+### Step 5 Destination Hardening
+
+- Request review derives response and deadline labels from the same rules as the dashboard. A later parent message cannot retain a misleading answered badge or an earlier message's deadline.
+- Invalid or stale exact-request links show an explicit unavailable state without broadening into all school requests.
+- Exact delivery review scopes the delivery, its notification and audit history to the authenticated school. Missing selected deliveries have an explicit unavailable message.
+- Calendar-incompatible summary tracking does not promise a next-send date. Reconcile the legacy generator calendar before enabling non-compatible school/runtime timezones.
+- Regression coverage executes request rendering and delivery queries, including malformed filters, role rejection, stale deadlines, renewed requests and escaped student names. Live authenticated and real-database checks remain required before pilot.

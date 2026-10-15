@@ -59,6 +59,24 @@ test("priority is stable, deduplicated and capped without operational actions", 
   assert.equal(Object.hasOwn(result.rows[0], "rank"), false);
 });
 
+test("calendar mismatch does not promise an unverified scheduled send date", () => {
+  const data = parentEngagementFixture();
+  data.summaryCalendarState = "CALENDAR_MISMATCH";
+  data.summaryTrackingState = "UNAVAILABLE";
+  data.summaries = null;
+  const html = render(data);
+  assert.ok(html.includes("summary calendar needs review"));
+  assert.equal(html.includes("Next weekly summary due"), false);
+});
+
+test("untrusted student names are escaped and never become dashboard markup", () => {
+  const data = parentEngagementFixture();
+  data.attention.rows[0].detail = '<script>alert("name")</script>';
+  const html = render(data);
+  assert.equal(html.includes("<script>"), false);
+  assert.ok(html.includes("&lt;script&gt;"));
+});
+
 test("attention destinations are exact guarded routes with a real guardian anchor", () => {
   const communications = readFileSync("src/app/(dashboard)/admin/communications/page.tsx", "utf8");
   assert.match(communications, /requirePageSession\(\["admin"\]\)/);
