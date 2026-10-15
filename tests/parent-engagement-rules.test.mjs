@@ -160,3 +160,38 @@ test("bad summary period or blank scope cannot silently produce healthy zero cou
   const input = { schoolId: "school-a", rangeKey: "2026-10-12:2026-10-18", eligibleParentIds: new Set(), summaries: [], now };
   for (const change of [{ schoolId: " " }, { rangeKey: "wrong" }, { rangeKey: "2026-02-30:2026-03-08" }, { rangeKey: "2026-10-13:2026-10-19" }, { rangeKey: "2026-10-12:2026-10-20" }, { now: new Date("invalid") }]) assert.throws(() => rules.countWeeklyParentSummaryStates({ ...input, ...change }), (error) => error.code === "PARENT_ENGAGEMENT_INCONSISTENT");
 });
+
+test("an earlier response deadline is not reused against a later parent message", () => {
+  const later = { ...request, status: "RESPONDED", lastTeacherResponseAt: new Date("2026-10-16T13:00:00Z"), lastParentMessageAt: new Date("2026-10-16T15:30:00Z") };
+  const result = rules.parentResponsePosition(later, now);
+  assert.equal(result.awaitingResponse, true);
+  assert.equal(result.deadlineConfigured, false);
+  assert.equal(result.overdue, false);
+  assert.equal(rules.parentResponsePosition({ ...later, responseDueAt: new Date("2026-10-16T15:45:00Z") }, now).overdue, true);
+});
+
+test("imported portal placeholders are setup evidence, never a live account certification", () => {
+  const id = "par_12345678-1234-1234-1234-123456789abc";
+  assert.equal(rules.parentRecordedPortalState(id, false), "NEEDS_INVITE");
+  assert.equal(rules.parentRecordedPortalState("user_real", false), "UNAVAILABLE");
+  assert.equal(rules.parentRecordedPortalState("user_real", true), "ACTIVE");
+  assert.equal(rules.parentRecordedPortalState("par_unrecognised", false), "UNAVAILABLE");
+  assert.throws(() => rules.parentRecordedPortalState(id, true), /conflicts/);
+  assert.throws(() => rules.parentRecordedPortalState("user_real", "false"), /requires review/);
+});
+
+test("guardian email, phone and portal readiness use every eligible guardian independently", () => {
+  const imported = { ...guardian, portalState: "NEEDS_INVITE" };
+  const reachable = { ...guardian, parentId: "p2", email: null, phone: "0241234567", portalState: "ACTIVE" };
+  const result = rules.studentParentContactPosition("school-a", "s1", [imported, reachable]);
+  assert.equal(result.noUsableEmail, true);
+  assert.equal(result.noUsablePhone, false);
+  assert.equal(result.noExternalContact, false);
+  assert.equal(result.portalState, "AVAILABLE");
+  assert.equal(rules.studentParentContactPosition("school-a", "s1", [imported, { ...reachable, relationshipStatus: "REVOKED" }]).portalState, "NOT_ACTIVATED");
+  assert.equal(rules.studentParentContactPosition("school-a", "s1", [imported, { ...reachable, portalState: "UNAVAILABLE" }]).portalState, "UNAVAILABLE");
+  const missing = rules.studentParentContactPosition("school-a", "s1", []);
+  assert.equal(missing.noActiveGuardian, true);
+  assert.equal(missing.noExternalContact, false);
+  assert.equal(missing.noUsableEmail, false);
+});

@@ -20,7 +20,7 @@ function fixture(options = {}) {
     parents: [parent("p1"), parent("p2")],
     relationships: [{ schoolId: "school-a", studentId: "s1", parentId: "p1", status: "ACTIVE", canViewFees: true, canViewReports: true, canMessageSchool: true }],
     invites: [{ schoolId: "school-a", status: "ACCEPTED", acceptedAt: new Date("2026-10-01"), acceptedParentId: "p1", acceptedBy: "p1" }],
-    requests: [{ parentId: "p1", studentId: "s1", status: "ACKNOWLEDGED", priority: "HIGH", lastParentMessageAt: new Date("2026-10-16T12:00:00Z"), lastTeacherResponseAt: null, respondedAt: null, responseDueAt: new Date("2026-10-16T15:00:00Z") }],
+    requests: [{ id: "request-1", schoolId: "school-a", parentId: "p1", studentId: "s1", status: "ACKNOWLEDGED", priority: "HIGH", lastParentMessageAt: new Date("2026-10-16T12:00:00Z"), lastTeacherResponseAt: null, respondedAt: null, responseDueAt: new Date("2026-10-16T15:00:00Z") }],
     summaries: [{ id: "n1", schoolId: "school-a", parentId: "p1", sourceModel: "ParentWeeklySummary", sourceKey: "weekly-summary:p1:2026-10-12:2026-10-18" }],
     notifications: [{ schoolId: "school-a", sourceId: "n1", recipientId: "p1", deliveries: [{ id: "d1", schoolId: "school-a", channel: "EMAIL", status: "DELIVERED", providerMessageId: "private-provider-id", sentAt: new Date("2026-10-16T15:20:00Z"), deliveredAt: new Date("2026-10-16T15:25:00Z"), updatedAt: new Date("2026-10-16T15:30:00Z") }] }],
     ...options.data,
@@ -37,7 +37,7 @@ function fixture(options = {}) {
   const mocks = {
     "@/src/lib/services/notification-provider-adapters": { notificationProviderAvailability: (channel) => channel === "EMAIL" ? "AVAILABLE" : "UNSUPPORTED" },
     "@/src/lib/authz": { requireRole: async (roles) => { calls.auth++; assert.deepEqual(roles, ["admin"]); if (options.denied) throw new Error("Forbidden"); return { schoolId: "school-a" }; } },
-    "@/src/lib/prisma": { $transaction: async (work, config) => { calls.transactions++; assert.equal(calls.auth, 1); assert.equal(config.isolationLevel, "RepeatableRead"); if (options.failure) throw options.failure; inTransaction = true; try { return await work(db); } finally { inTransaction = false; } } },
+    "@/src/lib/prisma": { $transaction: async (work, config) => { calls.transactions++; assert.equal(calls.auth, calls.transactions); assert.equal(config.isolationLevel, "RepeatableRead"); if (options.failure) throw options.failure; inTransaction = true; try { return await work(db); } finally { inTransaction = false; } } },
   };
   return { run: load("src/lib/services/admin-parent-engagement.ts", mocks).getAdminParentEngagementSnapshot, calls, data };
 }
@@ -234,4 +234,83 @@ test("opaque IDs cannot collide when matching a request to a specific ward/guard
   f.data.relationships = []; f.data.invites = []; f.data.summaries = []; f.data.notifications = [];
   f.data.requests[0].studentId = "a"; f.data.requests[0].parentId = "b:c";
   assert.equal((await f.run()).requests.awaitingResponse, 0);
+});
+
+test("new parent messages after a response remain visible without a false old-deadline accusation", async () => {
+  const f = fixture();
+  Object.assign(f.data.requests[0], { status: "RESPONDED", respondedAt: new Date("2026-10-16T13:00:00Z"), lastTeacherResponseAt: new Date("2026-10-16T13:00:00Z"), lastParentMessageAt: new Date("2026-10-16T15:30:00Z") });
+  const result = await f.run();
+  assert.equal(result.requests.awaitingResponse, 1);
+  assert.equal(result.requests.highPriority, 1);
+  assert.equal(result.requests.overdue, 0);
+  assert.equal(result.requests.missingDeadlines, 1);
+  f.data.requests[0].responseDueAt = new Date("2026-10-16T15:45:00Z");
+  assert.equal((await f.run()).requests.overdue, 1);
+});
+
+test("answered escalations remain management work but are not labelled unanswered", async () => {
+  const f = fixture();
+  Object.assign(f.data.requests[0], { status: "ESCALATED", lastTeacherResponseAt: new Date("2026-10-16T13:00:00Z") });
+  const result = await f.run();
+  assert.equal(result.requests.escalated, 1);
+  assert.equal(result.requests.awaitingResponse, 0);
+  assert.equal(result.requests.highPriority, 0);
+  assert.equal(result.requests.overdue, 0);
+});
+
+test("one reachable authorised guardian prevents a false student contact warning", async () => {
+  const f = fixture();
+  f.data.parents[0].email = null; f.data.parents[0].phone = null;
+  f.data.relationships.push({ ...f.data.relationships[0], parentId: "p2" });
+  f.data.parents[1]._count.studentRelationships = 1;
+  f.data.students[1].parentId = null;
+  const result = await f.run();
+  assert.equal(result.contacts.missingEmails, 1);
+  assert.equal(result.contacts.missingPhones, 1);
+  assert.equal(result.contacts.parentsWithoutExternalContact, 1);
+  assert.equal(result.contacts.studentsWithoutExternalContact, 0);
+  assert.equal(result.contacts.studentsWithoutUsableEmail, 0);
+  assert.equal(result.contacts.studentsWithoutUsablePhone, 0);
+  assert.equal(result.contacts.studentsWithoutActiveGuardian, 1);
+  f.data.relationships[1].status = "REVOKED";
+  const revoked = await f.run();
+  assert.equal(revoked.contacts.studentsWithoutExternalContact, 1);
+  assert.equal(revoked.contacts.studentsWithoutUsableEmail, 1);
+  assert.equal(revoked.contacts.studentsWithoutUsablePhone, 1);
+});
+
+test("parent counters deduplicate siblings while student counters retain each ward", async () => {
+  const f = fixture(); f.data.parents[0].email = null; f.data.parents[0].phone = null;
+  f.data.relationships.push({ ...f.data.relationships[0], studentId: "s2" });
+  f.data.parents[0]._count.studentRelationships = 2;
+  f.data.students[1].parentId = "p1";
+  const result = await f.run();
+  assert.equal(result.cohort.parents, 1);
+  assert.equal(result.contacts.parentsWithoutExternalContact, 1);
+  assert.equal(result.contacts.studentsWithoutExternalContact, 2);
+});
+
+test("unaccepted imported profiles show setup needed rather than invented live Clerk status", async () => {
+  const f = fixture();
+  const id = "par_12345678-1234-1234-1234-123456789abc";
+  f.data.parents[1].id = id; f.data.students[1].parentId = id;
+  const result = await f.run();
+  assert.equal(result.contacts.parentsNeedingPortalSetup, 1);
+  assert.equal(result.contacts.studentsNeedingPortalSetup, 1);
+  assert.equal(result.contacts.studentsWithUnknownActivation, 0);
+  assert.equal(result.contacts.inactivePortalAccess, null);
+  assert.equal(result.contacts.portalAccessVerified, false);
+});
+
+test("request identity and tenant checks stop duplicate counts and foreign or closed evidence", async () => {
+  for (const corruption of ["duplicate", "school", "closed", "blank"]) {
+    const f = fixture();
+    if (corruption === "duplicate") f.data.requests.push({ ...f.data.requests[0] });
+    if (corruption === "school") f.data.requests[0].schoolId = "school-b";
+    if (corruption === "closed") f.data.requests[0].status = "CLOSED";
+    if (corruption === "blank") f.data.requests[0].id = "";
+    const result = await f.run();
+    assert.equal(result.code, "EVIDENCE_INCONSISTENT");
+    assert.equal(result.requests, null);
+  }
 });

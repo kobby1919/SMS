@@ -59,7 +59,18 @@ export function parentResponsePosition(request: unknown, now = new Date()) {
   const closed = ["CLOSED", "CANCELLED"].includes(row.status);
   const lastReply = Math.max(row.lastTeacherResponseAt?.getTime() ?? -Infinity, row.respondedAt?.getTime() ?? -Infinity);
   const awaitingResponse = !closed && lastReply < row.lastParentMessageAt.getTime();
-  return { state: "AVAILABLE" as const, awaitingResponse, overdue: awaitingResponse && row.responseDueAt !== null && row.responseDueAt < now, deadlineConfigured: row.responseDueAt !== null, highPriority: awaitingResponse && row.priority === "HIGH", escalated: !closed && row.status === "ESCALATED" };
+  // A deadline for an earlier message cannot establish an SLA for a later reply.
+  const deadlineConfigured = row.responseDueAt !== null && row.responseDueAt >= row.lastParentMessageAt;
+  return { state: "AVAILABLE" as const, awaitingResponse, overdue: awaitingResponse && deadlineConfigured && row.responseDueAt! < now, deadlineConfigured, highPriority: awaitingResponse && row.priority === "HIGH", escalated: !closed && row.status === "ESCALATED" };
+}
+
+/** Import placeholders are replaced with the Clerk user ID on invite acceptance. */
+export function parentRecordedPortalState(parentId: string, hasAcceptedInvite: boolean) {
+  if (!parentId?.trim() || typeof hasAcceptedInvite !== "boolean") throw inconsistent("Portal activation evidence requires review.");
+  const imported = /^par_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(parentId);
+  if (imported && hasAcceptedInvite) throw inconsistent("Imported profile conflicts with recorded account activation.");
+  if (hasAcceptedInvite) return "ACTIVE" as const;
+  return imported ? "NEEDS_INVITE" as const : "UNAVAILABLE" as const;
 }
 
 export function parentContactPosition(parent: unknown) {
@@ -91,7 +102,7 @@ export function eligibleEngagementGuardian(schoolId: string, studentId: string, 
 export function studentParentContactPosition(schoolId: string, studentId: string, guardians: EngagementGuardian[], studentStatus = "ACTIVE") {
   if (!schoolId.trim() || !studentId.trim()) throw inconsistent("School and student scope are required.");
   if (!studentStatusSchema.safeParse(studentStatus).success) throw inconsistent("Student status requires review.");
-  if (studentStatus !== "ACTIVE") return { state: "NOT_APPLICABLE" as const, activeGuardians: 0, noActiveGuardian: null, noExternalContact: null, portalState: "NOT_APPLICABLE" };
+  if (studentStatus !== "ACTIVE") return { state: "NOT_APPLICABLE" as const, activeGuardians: 0, noActiveGuardian: null, noExternalContact: null, noUsableEmail: null, noUsablePhone: null, portalState: "NOT_APPLICABLE" };
   const parsed = z.array(guardianSchema).safeParse(guardians);
   if (!parsed.success) throw inconsistent("Guardian evidence requires review.");
   const unique = new Map<string, EngagementGuardian>();
@@ -104,7 +115,8 @@ export function studentParentContactPosition(schoolId: string, studentId: string
   }
   const eligible = [...unique.values()].filter((row) => eligibleEngagementGuardian(schoolId, studentId, row));
   const noActiveGuardian = eligible.length === 0;
-  return { state: "AVAILABLE" as const, activeGuardians: eligible.length, noActiveGuardian, noExternalContact: !noActiveGuardian && eligible.every((row) => parentContactPosition(row).noExternalContact), portalState: noActiveGuardian ? "NO_GUARDIAN" : eligible.some((row) => row.portalState === "ACTIVE") ? "AVAILABLE" : eligible.some((row) => row.portalState === "UNAVAILABLE") ? "UNAVAILABLE" : "NOT_ACTIVATED" };
+  const contacts = eligible.map(parentContactPosition);
+  return { state: "AVAILABLE" as const, activeGuardians: eligible.length, noActiveGuardian, noExternalContact: !noActiveGuardian && contacts.every((row) => row.noExternalContact), noUsableEmail: !noActiveGuardian && contacts.every((row) => !row.usableEmail), noUsablePhone: !noActiveGuardian && contacts.every((row) => !row.usablePhone), portalState: noActiveGuardian ? "NO_GUARDIAN" : eligible.some((row) => row.portalState === "ACTIVE") ? "AVAILABLE" : eligible.some((row) => row.portalState === "UNAVAILABLE") ? "UNAVAILABLE" : "NOT_ACTIVATED" };
 }
 
 export function summaryChannelPosition(input: { weeklyEnabled: boolean; parentWeeklyEnabled: boolean; schoolChannelEnabled: boolean; parentChannelEnabled: boolean; providerConfigured: boolean; destinationUsable: boolean }) {

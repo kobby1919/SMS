@@ -2,14 +2,14 @@ import "server-only";
 import prisma from "@/src/lib/prisma";
 import { requireRole } from "@/src/lib/authz";
 import { z } from "zod";
-import { countParentSummaryRoutes } from "@/src/lib/parent-engagement-rules";
+import { countParentSummaryRoutes, parentRecordedPortalState } from "@/src/lib/parent-engagement-rules";
 import { notificationProviderAvailability } from "@/src/lib/services/notification-provider-adapters";
 import { countWeeklyParentSummaryStates, eligibleEngagementGuardian, parentContactPosition, parentMessagingPosition, parentResponsePosition, parentWeeklySchedule, studentParentContactPosition, type EngagementGuardian } from "@/src/lib/parent-engagement-rules";
 
 const budgets = { students: 5000, parents: 6000, relationships: 20000, invites: 12000, requests: 10000, summaries: 6000, notifications: 12000, deliveries: 24000 };
 const inconsistent = () => Object.assign(new Error("Parent engagement evidence requires review."), { code: "PARENT_ENGAGEMENT_INCONSISTENT" });
 const knownDatabaseErrors = new Set(["P1001", "P1002", "P1017", "P2024", "P2028", "P2034"]);
-type ContactTotals = { missingEmails: number; invalidEmails: number; missingPhones: number; invalidPhones: number; parentsWithoutExternalContact: number; studentsWithoutActiveGuardian: number; studentsWithoutExternalContact: number; studentsWithRecordedActivation: number; studentsWithUnknownActivation: number; portalAccessVerified: false };
+type ContactTotals = { missingEmails: number; invalidEmails: number; missingPhones: number; invalidPhones: number; parentsWithoutExternalContact: number; studentsWithoutActiveGuardian: number; studentsWithoutExternalContact: number; studentsWithoutUsableEmail: number; studentsWithoutUsablePhone: number; parentsNeedingPortalSetup: number; studentsNeedingPortalSetup: number; studentsWithRecordedActivation: number; studentsWithUnknownActivation: number; inactivePortalAccess: null; portalAccessVerified: false };
 const relationshipSchema = z.object({ schoolId: z.string().min(1), parentId: z.string().min(1), studentId: z.string().min(1), status: z.enum(["ACTIVE", "REMOVED", "TRANSFERRED", "REVOKED", "GRADUATED"]), canViewFees: z.boolean(), canViewReports: z.boolean(), canMessageSchool: z.boolean() });
 const parentSchema = z.object({ id: z.string().min(1), schoolId: z.string().min(1), email: z.string().nullable(), phone: z.string().nullable(), _count: z.object({ studentRelationships: z.number().int().nonnegative() }), notificationPreference: z.object({ schoolId: z.string().min(1), parentId: z.string().min(1), weeklySummaryEnabled: z.boolean(), emailEnabled: z.boolean() }).nullable() });
 
@@ -54,7 +54,7 @@ export async function getAdminParentEngagementSnapshot() {
       const add = (studentId: string, parentId: string, relationship?: typeof relationships[number]) => {
         const parent = parentMap.get(parentId);
         if (!parent || !studentIds.has(studentId)) throw inconsistent();
-        const row: EngagementGuardian = { parentId, parentSchoolId: parent.schoolId, studentId, studentSchoolId: schoolId, studentStatus: "ACTIVE", hasRelationshipRows: parent._count.studentRelationships > 0, relationshipStatus: relationship?.status, legacyParentMatches: !relationship, canViewFees: relationship ? relationship.canViewFees : true, canViewReports: relationship ? relationship.canViewReports : true, canMessageSchool: relationship ? relationship.canMessageSchool : true, email: parent.email, phone: parent.phone, portalState: activated.has(parent.id) ? "ACTIVE" : "UNAVAILABLE" };
+        const row: EngagementGuardian = { parentId, parentSchoolId: parent.schoolId, studentId, studentSchoolId: schoolId, studentStatus: "ACTIVE", hasRelationshipRows: parent._count.studentRelationships > 0, relationshipStatus: relationship?.status, legacyParentMatches: !relationship, canViewFees: relationship ? relationship.canViewFees : true, canViewReports: relationship ? relationship.canViewReports : true, canMessageSchool: relationship ? relationship.canMessageSchool : true, email: parent.email, phone: parent.phone, portalState: parentRecordedPortalState(parent.id, activated.has(parent.id)) };
         const rows = byStudent.get(studentId) ?? [];
         rows.push(row);
         byStudent.set(studentId, rows);
@@ -72,12 +72,15 @@ export async function getAdminParentEngagementSnapshot() {
       }
       const eligibleParents = new Set<string>();
       const eligibleRequestPairs = new Map<string, Set<string>>();
-      const contacts: ContactTotals = { missingEmails: 0, invalidEmails: 0, missingPhones: 0, invalidPhones: 0, parentsWithoutExternalContact: 0, studentsWithoutActiveGuardian: 0, studentsWithoutExternalContact: 0, studentsWithRecordedActivation: 0, studentsWithUnknownActivation: 0, portalAccessVerified: false };
+      const contacts: ContactTotals = { missingEmails: 0, invalidEmails: 0, missingPhones: 0, invalidPhones: 0, parentsWithoutExternalContact: 0, studentsWithoutActiveGuardian: 0, studentsWithoutExternalContact: 0, studentsWithoutUsableEmail: 0, studentsWithoutUsablePhone: 0, parentsNeedingPortalSetup: 0, studentsNeedingPortalSetup: 0, studentsWithRecordedActivation: 0, studentsWithUnknownActivation: 0, inactivePortalAccess: null, portalAccessVerified: false };
       for (const student of students) {
         const guardians = byStudent.get(student.id) ?? [];
         const position = studentParentContactPosition(schoolId, student.id, guardians);
         contacts.studentsWithoutActiveGuardian += Number(position.noActiveGuardian === true);
         contacts.studentsWithoutExternalContact += Number(position.noExternalContact === true);
+        contacts.studentsWithoutUsableEmail += Number(position.noUsableEmail === true);
+        contacts.studentsWithoutUsablePhone += Number(position.noUsablePhone === true);
+        contacts.studentsNeedingPortalSetup += Number(position.portalState === "NOT_ACTIVATED");
         contacts.studentsWithRecordedActivation += Number(position.portalState === "AVAILABLE");
         contacts.studentsWithUnknownActivation += Number(position.portalState === "UNAVAILABLE");
         for (const guardian of guardians) {
@@ -101,12 +104,14 @@ export async function getAdminParentEngagementSnapshot() {
         contacts.missingPhones += Number(contact.missingPhone);
         contacts.invalidPhones += Number(contact.invalidPhone);
         contacts.parentsWithoutExternalContact += Number(contact.noExternalContact);
+        contacts.parentsNeedingPortalSetup += Number(parentRecordedPortalState(parent.id, activated.has(parent.id)) === "NEEDS_INVITE");
         preferences.weeklyOptOut += Number(parent.notificationPreference?.weeklySummaryEnabled === false);
         preferences.emailOptOut += Number(parent.notificationPreference?.emailEnabled === false || appPreferenceMap.get(id)?.emailEnabled === false);
       }
       const requests = { awaitingResponse: 0, overdue: 0, highPriority: 0, escalated: 0, missingDeadlines: 0, unavailable: 0 };
-      const requestRows = await db.parentTeacherContactRequest.findMany({ where: { schoolId, status: { notIn: ["CLOSED", "CANCELLED"] }, student: { schoolId, status: "ACTIVE" }, parent: { schoolId }, teacher: { schoolId } }, select: { parentId: true, studentId: true, status: true, priority: true, lastParentMessageAt: true, lastTeacherResponseAt: true, respondedAt: true, responseDueAt: true } });
+      const requestRows = await db.parentTeacherContactRequest.findMany({ where: { schoolId, status: { notIn: ["CLOSED", "CANCELLED"] }, student: { schoolId, status: "ACTIVE" }, parent: { schoolId }, teacher: { schoolId } }, select: { id: true, schoolId: true, parentId: true, studentId: true, status: true, priority: true, lastParentMessageAt: true, lastTeacherResponseAt: true, respondedAt: true, responseDueAt: true } });
       if (requestRows.length !== requestCount) throw inconsistent();
+      if (new Set(requestRows.map((row) => row.id)).size !== requestRows.length || requestRows.some((row) => !row.id?.trim() || row.schoolId !== schoolId || ["CLOSED", "CANCELLED"].includes(row.status))) throw inconsistent();
       for (const row of requestRows) {
         if (!eligibleRequestPairs.get(row.studentId)?.has(row.parentId)) continue;
         const position = parentResponsePosition(row, now);

@@ -142,3 +142,30 @@ automatically a failure; this section does not claim every parent needs a summar
 No new sender, provider calls, notification writes or dashboard UI are introduced.
 The compact dashboard consumes these aggregates in Step 5. Live provider/webhook
 verification and school-timezone generator scheduling remain pre-pilot checks.
+
+## Step 4 Response And Contact Readiness
+
+Requests count actual unanswered parent messages, not unread inbox items. Acknowledging
+does not answer a request. A newer parent message after a response needs a response
+again, even if its stored status still says RESPONDED. An earlier response deadline
+cannot be applied to that newer message: report missing/current-deadline setup instead
+of accusing the teacher of being overdue. An answered but unresolved escalation stays
+in the escalation count without inflating unanswered/high-priority/overdue counts.
+Closed/cancelled requests and inactive or revoked ward links are not current duties.
+Request IDs and school IDs are checked so duplicate or foreign evidence cannot inflate
+the totals. Disabled new messaging never conceals eligible existing response work.
+
+Missing/invalid contacts count once per eligible parent, even for siblings. Student
+warnings examine every authorised guardian, independently for email and phone.
+One usable contact route prevents a no-external-contact warning. Missing guardian links
+are separate from linked guardians with no usable contact. Syntactically usable contact
+details are not proof of human reachability or successful delivery.
+
+Imported par_UUID profiles need portal setup: acceptance replaces these placeholders
+with the Clerk account ID. A recorded accepted invite is historical activation evidence,
+not a live Clerk access check. Unknown accounts stay unknown; never infer inactivity
+from absent invite history. inactivePortalAccess is explicitly null and
+portalAccessVerified is false until authoritative current account-state evidence is
+available. Setup-needed students require all eligible guardians to need setup; another
+recorded activation or unknown account prevents an unjustified all-guardians warning.
+This is backend tracking; dashboard presentation follows in Step 5.
