@@ -332,3 +332,35 @@ test("the snapshot selects immutable job creation time for resend ordering", asy
   assert.equal(unavailable.channelRoutes, null);
   assert.equal(unavailable.summaryCalendarState, "UNAVAILABLE");
 });
+
+test("dashboard attention links the exact request and latest failed delivery without exposing delivery details", async () => {
+  const f = fixture();
+  f.data.requests[0].id = "request&special";
+  Object.assign(f.data.notifications[0].deliveries[0], { status: "FAILED", createdAt: new Date("2026-10-16T15:10:00Z"), sentAt: null, deliveredAt: null });
+  f.data.notifications[0].deliveries.push({ ...f.data.notifications[0].deliveries[0], id: "latest&failed", createdAt: new Date("2026-10-16T15:40:00Z"), updatedAt: new Date("2026-10-16T15:45:00Z") });
+  const result = await f.run();
+  assert.equal(result.summaries.failed, 1);
+  assert.equal(result.attention.rows[0].href, "/admin/communications?requestId=request%26special");
+  assert.equal(result.attention.rows[1].href, "/admin/notifications?deliveryId=latest%26failed");
+  assert.equal(result.attention.rows.filter((row) => row.key.startsWith("summary:")).length, 1);
+  assert.equal(JSON.stringify(result.attention).includes("private-provider-id"), false);
+});
+
+test("revoked guardians produce a relationship review instead of an unauthorised request link", async () => {
+  const f = fixture();
+  f.data.relationships[0].status = "REVOKED";
+  f.data.summaries = []; f.data.notifications = [];
+  const result = await f.run();
+  assert.equal(result.attention.rows.some((row) => row.key.startsWith("request:")), false);
+  assert.equal(result.attention.rows[0].href, "/list/students/s1#guardian-links");
+  assert.equal(result.attention.rows[0].title, "Guardian link needed");
+});
+
+test("an active retry removes stale email failure from the dashboard attention list", async () => {
+  const f = fixture();
+  Object.assign(f.data.notifications[0].deliveries[0], { status: "FAILED", createdAt: new Date("2026-10-16T15:10:00Z"), sentAt: null, deliveredAt: null });
+  f.data.notifications[0].deliveries.push({ ...f.data.notifications[0].deliveries[0], id: "retry", status: "RETRYING", createdAt: new Date("2026-10-16T15:40:00Z"), updatedAt: new Date("2026-10-16T15:45:00Z"), providerMessageId: null });
+  const result = await f.run();
+  assert.equal(result.summaries.queuedOrRetrying, 1);
+  assert.equal(result.attention.rows.some((row) => row.key.startsWith("summary:")), false);
+});

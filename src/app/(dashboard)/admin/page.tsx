@@ -7,6 +7,7 @@ import { getAdminFinanceSnapshot } from "@/src/lib/services/admin-finance-snapsh
 import AdminDashboard from "@/src/components/AdminDashboard";
 import { getAdminTeacherAccountability } from "@/src/lib/services/admin-teacher-accountability";
 import { getAdminAcademicReadinessSnapshot } from "@/src/lib/services/admin-academic-readiness";
+import { getAdminParentEngagementSnapshot } from "@/src/lib/services/admin-parent-engagement";
 
 export const dynamic = "force-dynamic";
 
@@ -15,11 +16,12 @@ const AdminPage = async () => {
   await requireCompletedAdminSchoolSetup(session);
   const { schoolId } = session;
 
-  const [ownerDashboard, financeSnapshot, accountability, academicReadiness] = await Promise.all([
+  const [ownerDashboard, financeSnapshot, accountability, academicReadiness, parentEngagement] = await Promise.all([
     getAdminOwnerDashboardData(schoolId),
     getAdminFinanceSnapshot(schoolId),
     getAdminTeacherAccountability(schoolId),
     getAdminAcademicReadinessSnapshot(),
+    getAdminParentEngagementSnapshot(),
   ]);
 
   return (
@@ -28,6 +30,7 @@ const AdminPage = async () => {
       financeSnapshot={financeSnapshot}
       accountability={accountability}
       academicReadiness={academicReadiness}
+      parentEngagement={parentEngagement}
     />
   );
 };

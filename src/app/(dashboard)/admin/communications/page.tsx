@@ -2,6 +2,7 @@ import { AlertTriangle, CheckCircle2, MessageCircle, Timer, UserRound } from "lu
 import AdminContactRequestActions from "@/src/components/AdminContactRequestActions";
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
+import { parentResponsePosition } from "@/src/lib/parent-engagement-rules";
 
 export const dynamic = "force-dynamic";
 
@@ -49,16 +50,17 @@ function deliveryStatusClass(status: string) {
   }
 }
 
-const AdminCommunicationsPage = async ({ searchParams }: { searchParams: Promise<{ page?: string }> }) => {
+const AdminCommunicationsPage = async ({ searchParams }: { searchParams: Promise<{ page?: string; requestId?: string }> }) => {
   const { schoolId } = await requirePageSession(["admin"]);
   const params = await searchParams;
   const page = params.page && /^[1-9]\d*$/.test(params.page) && Number.isSafeInteger(Number(params.page)) ? Math.min(Number(params.page), 100000) : 1;
-  const scope = { schoolId, parent: { schoolId }, teacher: { schoolId }, student: { schoolId, class: { schoolId } } };
+  const requestId = typeof params.requestId === "string" && params.requestId.length > 0 && params.requestId.length <= 191 ? params.requestId : params.requestId === undefined ? undefined : "invalid-request";
+  const scope = { schoolId, ...(requestId ? { id: requestId } : {}), parent: { schoolId }, teacher: { schoolId }, student: { schoolId, class: { schoolId } } };
   const pageSize = 40;
   const now = new Date();
   const [openCount, overdueCount, escalatedCount, closedCount, totalCount] = await Promise.all([
     prisma.parentTeacherContactRequest.count({ where: { ...scope, status: { notIn: ["CLOSED", "CANCELLED"] } } }),
-    prisma.parentTeacherContactRequest.count({ where: { ...scope, status: { notIn: ["CLOSED", "CANCELLED", "RESPONDED"] }, responseDueAt: { lt: now } } }),
+    prisma.parentTeacherContactRequest.count({ where: { ...scope, status: { notIn: ["CLOSED", "CANCELLED"] }, lastParentMessageAt: { lte: now }, responseDueAt: { lt: now, gte: prisma.parentTeacherContactRequest.fields.lastParentMessageAt }, AND: [{ OR: [{ lastTeacherResponseAt: null }, { lastTeacherResponseAt: { lt: prisma.parentTeacherContactRequest.fields.lastParentMessageAt } }] }, { OR: [{ respondedAt: null }, { respondedAt: { lt: prisma.parentTeacherContactRequest.fields.lastParentMessageAt } }] }] } }),
     prisma.parentTeacherContactRequest.count({ where: { ...scope, status: "ESCALATED" } }),
     prisma.parentTeacherContactRequest.count({ where: { ...scope, status: { in: ["CLOSED", "CANCELLED"] } } }),
     prisma.parentTeacherContactRequest.count({ where: scope }),
@@ -169,9 +171,7 @@ const AdminCommunicationsPage = async ({ searchParams }: { searchParams: Promise
       ) : (
         <div className="space-y-4">
           {activeRequests.map((request) => {
-            const isOverdue = Boolean(
-              request.responseDueAt && request.responseDueAt < now && request.status !== "RESPONDED",
-            );
+            const isOverdue = parentResponsePosition(request, now).overdue === true;
 
             return (
               <article key={request.id} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">

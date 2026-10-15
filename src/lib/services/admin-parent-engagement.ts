@@ -4,6 +4,8 @@ import { requireRole } from "@/src/lib/authz";
 import { z } from "zod";
 import { countParentSummaryRoutes, parentRecordedPortalState, parentSummaryCalendarCompatible } from "@/src/lib/parent-engagement-rules";
 import { notificationProviderAvailability } from "@/src/lib/services/notification-provider-adapters";
+import { prioritiseParentEngagementIssues, type ParentEngagementIssue } from "@/src/lib/services/parent-engagement-attention";
+import { emailDeliveryPosition } from "@/src/lib/parent-engagement-rules";
 import { countWeeklyParentSummaryStates, eligibleEngagementGuardian, parentContactPosition, parentMessagingPosition, parentResponsePosition, parentWeeklySchedule, studentParentContactPosition, type EngagementGuardian } from "@/src/lib/parent-engagement-rules";
 
 const budgets = { students: 5000, parents: 6000, relationships: 20000, invites: 12000, requests: 10000, summaries: 6000, notifications: 12000, deliveries: 24000 };
@@ -32,10 +34,12 @@ export async function getAdminParentEngagementSnapshot() {
     contacts: null as ContactTotals | null,
     preferences: null as { weeklyOptOut: number; emailOptOut: number; schoolEmailEnabled: boolean | null } | null,
     channelRoutes: null as ChannelRoutes | null,
+    attention: null as ReturnType<typeof prioritiseParentEngagementIssues> | null,
   });
   try {
     return await prisma.$transaction(async (db) => {
       const now = new Date();
+      const attentionIssues: ParentEngagementIssue[] = [];
       const parentWhere = { schoolId, OR: [{ studentRelationships: { some: { schoolId, student: { schoolId, status: "ACTIVE" as const } } } }, { students: { some: { schoolId, status: "ACTIVE" as const } } }] };
       const [setting, appSetting, policy, studentCount, parentCount, relationshipCount, requestCount] = await Promise.all([
         db.schoolNotificationSetting.findUnique({ where: { schoolId } }),
@@ -48,7 +52,7 @@ export async function getAdminParentEngagementSnapshot() {
       ]);
       if (studentCount > budgets.students || parentCount > budgets.parents || relationshipCount > budgets.relationships || requestCount > budgets.requests) return empty("EVALUATION_LIMIT");
       const [students, parents, relationships] = await Promise.all([
-        db.student.findMany({ where: { schoolId, status: "ACTIVE", class: { schoolId } }, select: { id: true, parentId: true }, orderBy: { id: "asc" } }),
+        db.student.findMany({ where: { schoolId, status: "ACTIVE", class: { schoolId } }, select: { id: true, parentId: true, name: true, surname: true, class: { select: { name: true } } }, orderBy: { id: "asc" } }),
         db.parent.findMany({ where: parentWhere, select: { id: true, schoolId: true, email: true, phone: true, notificationPreference: true, _count: { select: { studentRelationships: { where: { schoolId } } } } } }),
         db.parentStudentRelationship.findMany({ where: { schoolId, student: { schoolId, status: "ACTIVE" } }, select: { schoolId: true, parentId: true, studentId: true, status: true, canViewFees: true, canViewReports: true, canMessageSchool: true } }),
       ]);
@@ -56,6 +60,11 @@ export async function getAdminParentEngagementSnapshot() {
       if (!z.array(relationshipSchema).safeParse(relationships).success || !z.array(parentSchema).safeParse(parents).success) throw inconsistent();
       const parentMap = new Map(parents.map((row) => [row.id, row]));
       const studentIds = new Set(students.map((row) => row.id));
+      const studentMap = new Map(students.map((row) => [row.id, row]));
+      const studentLabel = (id: string) => {
+        const student = studentMap.get(id);
+        return [student?.name, student?.surname].filter(Boolean).join(" ") || "Student";
+      };
       if (parentMap.size !== parents.length || studentIds.size !== students.length || parents.some((row) => row.schoolId !== schoolId || row.notificationPreference && (row.notificationPreference.schoolId !== schoolId || row.notificationPreference.parentId !== row.id))) throw inconsistent();
       if (setting && !z.object({ emailEnabled: z.boolean() }).safeParse(setting).success || appSetting && !z.object({ emailEnabled: z.boolean(), sendParentSummariesByEmail: z.boolean() }).safeParse(appSetting).success) throw inconsistent();
       const inviteWhere = { schoolId, status: "ACCEPTED" as const, acceptedAt: { not: null, lte: now }, acceptedParentId: { in: parents.map((row) => row.id) } };
@@ -98,6 +107,8 @@ export async function getAdminParentEngagementSnapshot() {
         contacts.studentsNeedingPortalSetup += Number(position.portalState === "NOT_ACTIVATED");
         contacts.studentsWithRecordedActivation += Number(position.portalState === "AVAILABLE");
         contacts.studentsWithUnknownActivation += Number(position.portalState === "UNAVAILABLE");
+        const issue = position.noActiveGuardian ? { title: "Guardian link needed", detail: "No active guardian relationship is saved.", action: "Review guardian links", rank: 5 } : position.noExternalContact ? { title: "Guardian contact details needed", detail: "No authorised guardian has a usable email or phone saved.", action: "Review contact details", rank: 6 } : position.portalState === "NOT_ACTIVATED" ? { title: "Parent portal setup needed", detail: "All linked guardians still need account setup.", action: "Review guardian links", rank: 7 } : null;
+        if (issue) attentionIssues.push({ ...issue, key: `student:${student.id}`, detail: `${studentLabel(student.id)}${student.class?.name ? ` · ${student.class.name}` : ""} · ${issue.detail}`, href: `/list/students/${encodeURIComponent(student.id)}#guardian-links`, sortAt: 0 });
         for (const guardian of guardians) {
           if (!eligibleEngagementGuardian(schoolId, student.id, guardian)) continue;
           eligibleParents.add(guardian.parentId);
@@ -136,6 +147,7 @@ export async function getAdminParentEngagementSnapshot() {
         requests.highPriority += Number(position.highPriority);
         requests.escalated += Number(position.escalated);
         requests.missingDeadlines += Number(position.awaitingResponse && !position.deadlineConfigured);
+        if (position.awaitingResponse || position.escalated) attentionIssues.push({ key: `request:${row.id}`, title: position.overdue && position.highPriority ? "High-priority parent request overdue" : position.escalated ? "Escalated parent request" : position.overdue ? "Parent response overdue" : position.highPriority ? "High-priority request awaiting response" : "Parent request awaiting response", detail: `${studentLabel(row.studentId)} · ${position.awaitingResponse ? position.deadlineConfigured ? "School response needed." : "Response needed; current deadline requires review." : "Response recorded; escalation still needs management review."}`, action: "Review request", href: `/admin/communications?${new URLSearchParams({ requestId: row.id })}`, rank: position.overdue && position.highPriority ? 0 : position.escalated ? 1 : position.overdue ? 2 : position.highPriority ? 3 : 8, sortAt: row.lastParentMessageAt.getTime() });
       }
       const schedule = parentWeeklySchedule(setting, now);
       const channelRoutes = Object.fromEntries((["EMAIL", "SMS", "WHATSAPP"] as const).map((channel) => {
@@ -178,8 +190,14 @@ export async function getAdminParentEngagementSnapshot() {
           deliveries.set(record.id, rows);
         }
         summaries = countWeeklyParentSummaryStates({ schoolId, rangeKey: schedule.period.rangeKey, eligibleParentIds: eligibleParents, now, summaries: records.map((row) => ({ ...row, centralTracked: deliveries.has(row.id), deliveries: deliveries.get(row.id) ?? [] })) });
+        for (const record of records) {
+          const jobs = deliveries.get(record.id) ?? [];
+          if (emailDeliveryPosition(jobs, now) !== "FAILED") continue;
+          const latest = [...jobs].sort((a, b) => (b.createdAt ?? b.updatedAt).getTime() - (a.createdAt ?? a.updatedAt).getTime() || a.id.localeCompare(b.id))[0];
+          attentionIssues.push({ key: `summary:${record.id}`, title: "Weekly summary email failed", detail: "A parent summary email needs delivery review.", action: "Review delivery", href: `/admin/notifications?${new URLSearchParams({ deliveryId: latest.id })}`, rank: 4, sortAt: latest.updatedAt.getTime() });
+        }
       }
-      return { state: "AVAILABLE" as const, code: "EVALUATED", evaluatedAt: now.toISOString(), schedule, newMessagingState: parentMessagingPosition(policy), summaryTrackingState: summaryCalendarCompatible === false || schedule.state === "AVAILABLE" && summaries?.unavailable ? "UNAVAILABLE" : schedule.state, summaryCalendarState: summaryCalendarCompatible === false ? "CALENDAR_MISMATCH" : schedule.state, requestsTrackingState: requests.unavailable ? "UNAVAILABLE" : "AVAILABLE", deliverySettingsState: setting && appSetting ? "AVAILABLE" : "SETUP_REQUIRED", cohort: { students: students.length, parents: eligibleParents.size }, summaries, requests, contacts, preferences, channelRoutes };
+      return { state: "AVAILABLE" as const, code: "EVALUATED", evaluatedAt: now.toISOString(), schedule, newMessagingState: parentMessagingPosition(policy), summaryTrackingState: summaryCalendarCompatible === false || schedule.state === "AVAILABLE" && summaries?.unavailable ? "UNAVAILABLE" : schedule.state, summaryCalendarState: summaryCalendarCompatible === false ? "CALENDAR_MISMATCH" : schedule.state, requestsTrackingState: requests.unavailable ? "UNAVAILABLE" : "AVAILABLE", deliverySettingsState: setting && appSetting ? "AVAILABLE" : "SETUP_REQUIRED", cohort: { students: students.length, parents: eligibleParents.size }, summaries, requests, contacts, preferences, channelRoutes, attention: prioritiseParentEngagementIssues(attentionIssues) };
     }, { isolationLevel: "RepeatableRead", maxWait: 15000, timeout: 30000 });
   } catch (error) {
     const code = error && typeof error === "object" && "code" in error ? String(error.code) : "";

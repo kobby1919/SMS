@@ -184,3 +184,19 @@ summaryCalendarState=CALENDAR_MISMATCH and null summary totals; it must not labe
 missing records as zero sends. Calendar reconciliation in the generator is still
 required before enabling non-UTC school calendars or non-UTC production runtimes.
 Live Clerk inactivity remains unverified, not inferred from invite history.
+
+## Step 5 Compact Dashboard
+
+The authenticated admin dashboard renders Parent Updates, Requests Needing Response
+and Parent Contact Readiness using the snapshot only. Unknown lanes do not become
+healthy zeroes. Current opted-out/disabled/provider setup states remain distinct
+from historical failed deliveries. Counts describe the latest scheduled week, with
+the next due date alongside them, not a fabricated engagement percentage.
+
+Only five prioritised issues are shown, ordered by urgent overdue responses,
+escalations, other overdue/high-priority responses, failed summary emails and
+guardian setup gaps. One action per issue opens the exact scoped request,
+delivery record, or student guardian section. No transcript, email address, phone
+number or provider diagnostics are exposed on the dashboard. Contact request
+detail overdue indicators use the same response evidence and current deadline
+rules, including a parent writing again after an earlier teacher response.

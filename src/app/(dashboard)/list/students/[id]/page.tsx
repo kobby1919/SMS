@@ -768,7 +768,7 @@ const SingleStudentPage = async ({
 
         {/* Parent links */}
         {canViewParentContact && (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <div id="guardian-links" className="scroll-mt-4 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <h2 className="text-base font-black text-gray-800">Parent / Guardian Links</h2>
