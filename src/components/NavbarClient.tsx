@@ -62,6 +62,7 @@ type NavbarClientProps = {
 };
 
 type SearchItem = {
+  id?: string;
   label: string;
   description: string;
   href: string;
@@ -74,8 +75,7 @@ const roleShortcuts: Record<string, SearchItem[]> = {
     { label: "Admin home", description: "School overview", href: "/admin", keywords: "dashboard overview home", icon: <Home size={15} /> },
     { label: "Classes", description: "Manage classes", href: "/list/classes", keywords: "classes class", icon: <GraduationCap size={15} /> },
     { label: "Attendance", description: "Track attendance records", href: "/list/attendance", keywords: "attendance absent late present", icon: <CalendarDays size={15} /> },
-    { label: "Bill review", description: "School fee balances", href: "/list/finance/bills", keywords: "finance fees bills money balances", icon: <WalletCards size={15} /> },
-    { label: "Bill review", description: "Student fee status", href: "/list/finance/bills", keywords: "finance fees bills balances outstanding review", icon: <ReceiptText size={15} /> },
+    { label: "Bill review", description: "School fee balances", href: "/list/finance/bills", keywords: "finance fees bills money balances outstanding review student fee status", icon: <WalletCards size={15} /> },
     { label: "Payment settings", description: "Online payment provider setup", href: "/admin/payment-settings", keywords: "paystack hubtel payment settings provider keys webhook settlement", icon: <Settings size={15} /> },
     { label: "Notifications", description: "Parent notification settings", href: "/admin/notification-settings", keywords: "notifications settings summary", icon: <BellRing size={15} /> },
   ],
@@ -130,6 +130,7 @@ function parentSearchItems(children: ParentChild[], notifications: AppBellNotifi
       icon: <UserRound size={15} />,
     })),
     ...notifications.slice(0, 5).map((notification) => ({
+      id: `notification:${notification.id}`,
       label: notification.title,
       description: notification.category.replaceAll("_", " ").toLowerCase(),
       href: notification.href,
@@ -197,7 +198,7 @@ function SearchBox({
         <div className={`${mobile ? "mt-3" : "absolute left-0 top-12 z-30"} w-full overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl`}>
           {matches.length > 0 ? matches.map((item) => (
             <Link
-              key={`${item.href}-${item.label}`}
+              key={item.id ?? JSON.stringify([item.href, item.label])}
               href={item.href}
               onClick={handleNavigate}
               className="flex items-center gap-3 border-b border-gray-50 px-3 py-3 last:border-0 hover:bg-blue-50"
