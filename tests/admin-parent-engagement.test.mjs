@@ -3,12 +3,14 @@ import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
 import { createRequire } from "node:module";
 import ts from "typescript";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 const nodeRequire = createRequire(import.meta.url);
 const now = new Date("2026-10-16T16:00:00Z");
 class FixedDate extends Date { constructor(value) { super(value === undefined ? now.getTime() : value); } }
 function load(path, mocks) {
   const loaded = { exports: {} };
-  const code = ts.transpileModule(readFileSync(path, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true } }).outputText;
+  const code = ts.transpileModule(readFileSync(path, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true } }).outputText;
   new Function("require", "module", "exports", "Date", code)((id) => { if (Object.hasOwn(mocks, id)) return mocks[id]; if (id === "server-only") return {}; if (!id.startsWith("@/")) return nodeRequire(id); const file = id.slice(2); return load(existsSync(file) ? file : `${file}.ts`, mocks); }, loaded, loaded.exports, FixedDate);
   return loaded.exports;
 }
@@ -31,11 +33,11 @@ function fixture(options = {}) {
   for (const [model, key] of [["student", "students"], ["parent", "parents"], ["parentStudentRelationship", "relationships"], ["parentInvite", "invites"], ["parentTeacherContactRequest", "requests"], ["parentNotification", "summaries"], ["appNotification", "notifications"]]) db[model] = { count: query(`${model}.count`, () => options.counts?.[model] ?? data[key].length), findMany: query(`${model}.findMany`, () => data[key]) };
   db.appNotificationDelivery = { count: query("delivery.count", () => options.deliveryCount ?? data.notifications.flatMap((row) => row.deliveries).length) };
   db.schoolNotificationSetting = { findUnique: query("summary-setting", options.missingSettings ? null : { timezone: options.timezone ?? "Africa/Accra", summaryCadence: options.disabled ? "OFF" : "WEEKLY", weeklySummarySendDay: "FRIDAY", weeklySummarySendTime: "15:15", emailEnabled: true }) };
-  db.appNotificationSetting = { findUnique: query("app-setting", options.missingSettings ? null : { emailEnabled: true, sendParentSummariesByEmail: true }) };
-  db.schoolCommunicationPolicy = { findUnique: query("policy", options.missingPolicy ? null : { enabled: !options.disabled, allowParentTeacherMessaging: !options.disabled }) };
+  db.appNotificationSetting = { findUnique: query("app-setting", options.missingSettings ? null : { emailEnabled: true, sendParentSummariesByEmail: true, ...options.appSetting }) };
+  db.schoolCommunicationPolicy = { findUnique: query("policy", options.missingPolicy ? null : { enabled: !options.disabled, allowParentTeacherMessaging: !options.disabled, ...options.policy }) };
   db.appNotificationPreference = { findMany: query("preferences", (options.appPreferences ?? []).map((row) => ({ recipientType: "PARENT", ...row }))) };
   const mocks = {
-    "@/src/lib/services/notification-provider-adapters": { notificationProviderAvailability: (channel) => channel === "EMAIL" ? "AVAILABLE" : "UNSUPPORTED" },
+    "@/src/lib/services/notification-provider-adapters": { notificationProviderAvailability: (channel) => channel === "EMAIL" ? options.providerState ?? "AVAILABLE" : "UNSUPPORTED" },
     "@/src/lib/authz": { requireRole: async (roles) => { calls.auth++; assert.deepEqual(roles, ["admin"]); if (options.denied) throw new Error("Forbidden"); return { schoolId: "school-a" }; } },
     "@/src/lib/prisma": { $transaction: async (work, config) => { calls.transactions++; assert.equal(calls.auth, calls.transactions); assert.equal(config.isolationLevel, "RepeatableRead"); if (options.failure) throw options.failure; inTransaction = true; try { return await work(db); } finally { inTransaction = false; } } },
   };
@@ -363,4 +365,80 @@ test("an active retry removes stale email failure from the dashboard attention l
   const result = await f.run();
   assert.equal(result.summaries.queuedOrRetrying, 1);
   assert.equal(result.attention.rows.some((row) => row.key.startsWith("summary:")), false);
+});
+
+test("all email buckets reconcile to unique summaries without counting retries as extra parents", async () => {
+  const f = fixture();
+  const states = ["PENDING", "RETRYING", "SENT", "DELIVERED", "FAILED", "CANCELLED", "NONE", "SIMULATED", "UNKNOWN"];
+  const parent = f.data.parents[1];
+  const proof = f.data.notifications[0].deliveries[0];
+  f.data.students = states.map((_, i) => ({ id: `student-${i}`, parentId: `parent-${i}` }));
+  f.data.parents = states.map((_, i) => ({ ...parent, id: `parent-${i}` }));
+  f.data.relationships = []; f.data.invites = []; f.data.requests = [];
+  f.data.summaries = states.map((_, i) => ({ id: `summary-${i}`, schoolId: "school-a", parentId: `parent-${i}`, sourceModel: "ParentWeeklySummary", sourceKey: `weekly-summary:parent-${i}:2026-10-12:2026-10-18` }));
+  f.data.notifications = states.flatMap((status, i) => status === "UNKNOWN" ? [] : [{ schoolId: "school-a", sourceId: `summary-${i}`, recipientId: `parent-${i}`, deliveries: status === "NONE" ? [] : [{ ...proof, id: `delivery-${i}`, createdAt: new Date("2026-10-16T15:00:00Z"), status: status === "SIMULATED" ? "DELIVERED" : status, provider: status === "SIMULATED" ? "console" : "resend", sentAt: ["SENT", "DELIVERED", "SIMULATED"].includes(status) ? proof.sentAt : null, deliveredAt: ["DELIVERED", "SIMULATED"].includes(status) ? proof.deliveredAt : null, providerMessageId: ["SENT", "DELIVERED", "SIMULATED"].includes(status) ? proof.providerMessageId : null }] }]);
+  const retry = f.data.notifications[1].deliveries;
+  retry.unshift({ ...retry[0], id: "older-failure", status: "FAILED", createdAt: new Date("2026-10-16T14:00:00Z") });
+  const result = await f.run();
+  assert.equal(result.summaries.summariesAvailable, 9);
+  assert.equal(result.summaries.queuedOrRetrying, 2);
+  for (const key of ["sent", "delivered", "failed", "cancelled", "notQueued", "simulated", "unavailable"]) assert.equal(result.summaries[key], 1, key);
+  assert.equal(Object.entries(result.summaries).filter(([key]) => key !== "summariesAvailable").reduce((sum, [, count]) => sum + count, 0), 9);
+  assert.equal(result.summaryTrackingState, "UNAVAILABLE");
+  assert.equal(result.attention.rows.filter((row) => row.key.startsWith("summary:")).length, 1);
+});
+
+test("provider and school channel changes affect future routes without rewriting delivery history", async () => {
+  const cases = [
+    [{ appSetting: { emailEnabled: false } }, "disabled"],
+    [{ appSetting: { sendParentSummariesByEmail: false } }, "disabled"],
+    [{ providerState: "NOT_CONFIGURED" }, "notConfigured"],
+    [{ providerState: "UNSUPPORTED" }, "unsupported"],
+    [{ providerState: "SIMULATED" }, "simulated"],
+  ];
+  for (const [options, bucket] of cases) {
+    const result = await fixture(options).run();
+    assert.equal(result.channelRoutes.EMAIL[bucket], 2);
+    assert.equal(Object.values(result.channelRoutes.EMAIL).reduce((sum, count) => sum + count, 0), result.cohort.parents);
+    assert.equal(result.summaries.delivered, 1);
+    assert.equal(result.summaries.failed, 0);
+  }
+});
+
+test("messaging-only shutdown leaves weekly evidence and existing follow-up visible", async () => {
+  const result = await fixture({ policy: { enabled: false, allowParentTeacherMessaging: false } }).run();
+  assert.equal(result.newMessagingState, "DISABLED");
+  assert.equal(result.summaryTrackingState, "AVAILABLE");
+  assert.equal(result.summaries.delivered, 1);
+  assert.equal(result.requests.awaitingResponse, 1);
+  assert.equal(result.attention.rows[0].key, "request:request-1");
+});
+
+test("snapshot attention caps at five and ordering survives database row reordering", async () => {
+  const f = fixture();
+  const request = f.data.requests[0];
+  f.data.requests = Array.from({ length: 8 }, (_, i) => ({ ...request, id: `request-${i}`, priority: i === 7 ? "HIGH" : "NORMAL", lastParentMessageAt: new Date(`2026-10-16T12:0${i}:00Z`) }));
+  const first = await f.run();
+  f.data.requests.reverse();
+  const second = await f.run();
+  assert.equal(first.attention.total, 8);
+  assert.equal(first.attention.rows.length, 5);
+  assert.equal(first.attention.rows[0].key, "request:request-7");
+  assert.deepEqual(first.attention, second.attention);
+});
+
+test("actual dashboard markup displays the snapshot's counts and exact issue links", async () => {
+  const snapshot = await fixture().run();
+  const component = load("src/components/AdminParentEngagement.tsx", { "next/link": { __esModule: true, default: ({ prefetch, children, ...props }) => { void prefetch; return React.createElement("a", props, children); } } }).default;
+  const html = renderToStaticMarkup(React.createElement(component, { snapshot }));
+  const metrics = new Map([...html.matchAll(/<dt[^>]*>([^<]*)<\/dt><dd[^>]*>([^<]*)<\/dd>/g)].map((match) => [match[1], Number(match[2].replaceAll(",", ""))]));
+  assert.equal(metrics.get("Parents with a summary available"), snapshot.summaries.summariesAvailable);
+  assert.equal(metrics.get("Provider-confirmed deliveries"), snapshot.summaries.delivered);
+  assert.equal(metrics.get("Awaiting school response"), snapshot.requests.awaitingResponse);
+  assert.equal(metrics.get("Past response deadline"), snapshot.requests.overdue);
+  assert.equal(metrics.get("Students without an active guardian link"), snapshot.contacts.studentsWithoutActiveGuardian);
+  assert.equal((html.match(/<a /g) ?? []).length, snapshot.attention.rows.length);
+  assert.ok(html.includes(snapshot.attention.rows[0].href));
+  assert.equal(html.includes("private-parent"), false);
+  assert.equal(html.includes("private-provider-id"), false);
 });
