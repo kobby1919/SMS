@@ -30,7 +30,7 @@ function fixture(options = {}) {
   const query = (name, result) => async (q) => { assert.ok(inTransaction); assert.equal(q.where.schoolId, "school-a"); calls.queries.push({ name, q }); return typeof result === "function" ? result() : result; };
   for (const [model, key] of [["student", "students"], ["parent", "parents"], ["parentStudentRelationship", "relationships"], ["parentInvite", "invites"], ["parentTeacherContactRequest", "requests"], ["parentNotification", "summaries"], ["appNotification", "notifications"]]) db[model] = { count: query(`${model}.count`, () => options.counts?.[model] ?? data[key].length), findMany: query(`${model}.findMany`, () => data[key]) };
   db.appNotificationDelivery = { count: query("delivery.count", () => options.deliveryCount ?? data.notifications.flatMap((row) => row.deliveries).length) };
-  db.schoolNotificationSetting = { findUnique: query("summary-setting", options.missingSettings ? null : { timezone: "Africa/Accra", summaryCadence: options.disabled ? "OFF" : "WEEKLY", weeklySummarySendDay: "FRIDAY", weeklySummarySendTime: "15:15", emailEnabled: true }) };
+  db.schoolNotificationSetting = { findUnique: query("summary-setting", options.missingSettings ? null : { timezone: options.timezone ?? "Africa/Accra", summaryCadence: options.disabled ? "OFF" : "WEEKLY", weeklySummarySendDay: "FRIDAY", weeklySummarySendTime: "15:15", emailEnabled: true }) };
   db.appNotificationSetting = { findUnique: query("app-setting", options.missingSettings ? null : { emailEnabled: true, sendParentSummariesByEmail: true }) };
   db.schoolCommunicationPolicy = { findUnique: query("policy", options.missingPolicy ? null : { enabled: !options.disabled, allowParentTeacherMessaging: !options.disabled }) };
   db.appNotificationPreference = { findMany: query("preferences", (options.appPreferences ?? []).map((row) => ({ recipientType: "PARENT", ...row }))) };
@@ -313,4 +313,22 @@ test("request identity and tenant checks stop duplicate counts and foreign or cl
     assert.equal(result.code, "EVIDENCE_INCONSISTENT");
     assert.equal(result.requests, null);
   }
+});
+
+test("summary calendar mismatch is explicit unavailable evidence, not zero summaries sent", async () => {
+  const result = await fixture({ timezone: "Asia/Tokyo" }).run();
+  assert.equal(result.state, "AVAILABLE");
+  assert.equal(result.summaryTrackingState, "UNAVAILABLE");
+  assert.equal(result.summaryCalendarState, "CALENDAR_MISMATCH");
+  assert.equal(result.summaries, null);
+  assert.equal(result.requests.awaitingResponse, 1);
+});
+
+test("the snapshot selects immutable job creation time for resend ordering", async () => {
+  const f = fixture(); await f.run();
+  const query = f.calls.queries.find((row) => row.name === "appNotification.findMany").q;
+  assert.equal(query.select.deliveries.select.createdAt, true);
+  const unavailable = await fixture({ counts: { student: 1000000 } }).run();
+  assert.equal(unavailable.channelRoutes, null);
+  assert.equal(unavailable.summaryCalendarState, "UNAVAILABLE");
 });

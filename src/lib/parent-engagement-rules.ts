@@ -49,6 +49,17 @@ export function parentWeeklySchedule(settings: unknown, now = new Date()) {
   } catch { return { state: "SETUP_REQUIRED" as const, period: null, nextSendAt: null }; }
 }
 
+/** Legacy generators use host-local week boundaries. Refuse competing calendars. */
+export function parentSummaryCalendarCompatible(timezone: string, period: { startDate: string; endDateExclusive: string }) {
+  try {
+    return [period.startDate, period.endDateExclusive].every((key) => {
+      const calendar = new Date(`${key}T00:00:00Z`);
+      const host = new Date(`${key}T00:00:00`);
+      return Number.isFinite(host.getTime()) && host.getTime() === scheduledInstant(calendar, "00:00", timezone).getTime() && host.getTime() === calendar.getTime();
+    });
+  } catch { return false; }
+}
+
 const requestSchema = z.object({ status: z.enum(["PENDING", "ACKNOWLEDGED", "RESPONDED", "ESCALATED", "CLOSED", "CANCELLED"]), priority: z.enum(["LOW", "NORMAL", "HIGH"]), lastParentMessageAt: z.date(), lastTeacherResponseAt: z.date().nullable(), respondedAt: z.date().nullable(), responseDueAt: z.date().nullable() });
 export function parentResponsePosition(request: unknown, now = new Date()) {
   const parsed = requestSchema.safeParse(request);
@@ -135,19 +146,30 @@ export function parentMessagingPosition(policy: unknown) {
 }
 
 const deliverySchema = z.object({ id: z.string().min(1), channel: z.enum(["IN_APP", "EMAIL", "SMS", "WHATSAPP"]), status: z.enum(["PENDING", "SENT", "DELIVERED", "FAILED", "RETRYING", "CANCELLED"]), updatedAt: z.date(), sentAt: z.date().nullable(), deliveredAt: z.date().nullable(), providerMessageId: z.string().nullable() });
-export type EngagementDelivery = z.infer<typeof deliverySchema> & { provider?: string | null };
+export type EngagementDelivery = z.infer<typeof deliverySchema> & { provider?: string | null; createdAt?: Date };
 export function emailDeliveryPosition(deliveries: EngagementDelivery[], now = new Date()) {
   if (!Array.isArray(deliveries)) return "UNAVAILABLE";
-  const parsed = z.array(deliverySchema.extend({ provider: z.string().nullable().optional() })).safeParse(deliveries.filter((row) => row?.channel === "EMAIL"));
+  const parsed = z.array(deliverySchema.extend({ provider: z.string().nullable().optional(), createdAt: z.date().optional() })).safeParse(deliveries.filter((row) => row?.channel === "EMAIL"));
   if (!parsed.success || !Number.isFinite(now.getTime())) return "UNAVAILABLE";
-  const emails = parsed.data.filter((row) => row.channel === "EMAIL").sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime() || a.id.localeCompare(b.id));
+  const unique = new Map<string, typeof parsed.data[number]>();
+  for (const entry of parsed.data) {
+    const previous = unique.get(entry.id);
+    if (previous && JSON.stringify(previous) !== JSON.stringify(entry)) return "UNAVAILABLE";
+    unique.set(entry.id, entry);
+  }
+  const emails = [...unique.values()];
+  if (emails.some((entry) => entry.createdAt !== undefined) && emails.some((entry) => entry.createdAt === undefined)) return "UNAVAILABLE";
+  const orderTime = (entry: typeof emails[number]) => (entry.createdAt ?? entry.updatedAt).getTime();
+  emails.sort((a, b) => orderTime(b) - orderTime(a) || a.id.localeCompare(b.id));
   if (!emails.length) return "NOT_QUEUED";
   const row = emails[0];
   const simulated = (entry: typeof row) => entry.provider === "console" || Boolean(entry.providerMessageId?.startsWith("console:"));
-  if (emails.some((entry) => entry.updatedAt.getTime() === row.updatedAt.getTime() && simulated(entry) !== simulated(row))) return "UNAVAILABLE";
-  if (emails.some((candidate) => candidate.updatedAt.getTime() === row.updatedAt.getTime() && candidate.status !== row.status)) return "UNAVAILABLE";
-  for (const candidate of emails.filter((entry) => entry.updatedAt.getTime() === row.updatedAt.getTime())) {
+  if (emails.some((entry) => orderTime(entry) === orderTime(row) && simulated(entry) !== simulated(row))) return "UNAVAILABLE";
+  if (emails.some((candidate) => orderTime(candidate) === orderTime(row) && candidate.status !== row.status)) return "UNAVAILABLE";
+  for (const candidate of emails.filter((entry) => orderTime(entry) === orderTime(row))) {
     if (candidate.updatedAt > now || candidate.sentAt && candidate.sentAt > now || candidate.deliveredAt && candidate.deliveredAt > now) return "UNAVAILABLE";
+    if (candidate.createdAt && (candidate.createdAt > candidate.updatedAt || candidate.sentAt && candidate.sentAt < candidate.createdAt || candidate.deliveredAt && candidate.deliveredAt < candidate.createdAt)) return "UNAVAILABLE";
+    if (candidate.sentAt && candidate.sentAt > candidate.updatedAt || candidate.deliveredAt && candidate.deliveredAt > candidate.updatedAt || candidate.sentAt && candidate.deliveredAt && candidate.deliveredAt < candidate.sentAt) return "UNAVAILABLE";
     if (candidate.status === "DELIVERED" && (!candidate.deliveredAt || !candidate.providerMessageId?.trim())) return "UNAVAILABLE";
     if (candidate.status === "SENT" && (!candidate.sentAt || !candidate.providerMessageId?.trim())) return "UNAVAILABLE";
   }

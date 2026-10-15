@@ -2,7 +2,7 @@ import "server-only";
 import prisma from "@/src/lib/prisma";
 import { requireRole } from "@/src/lib/authz";
 import { z } from "zod";
-import { countParentSummaryRoutes, parentRecordedPortalState } from "@/src/lib/parent-engagement-rules";
+import { countParentSummaryRoutes, parentRecordedPortalState, parentSummaryCalendarCompatible } from "@/src/lib/parent-engagement-rules";
 import { notificationProviderAvailability } from "@/src/lib/services/notification-provider-adapters";
 import { countWeeklyParentSummaryStates, eligibleEngagementGuardian, parentContactPosition, parentMessagingPosition, parentResponsePosition, parentWeeklySchedule, studentParentContactPosition, type EngagementGuardian } from "@/src/lib/parent-engagement-rules";
 
@@ -10,6 +10,7 @@ const budgets = { students: 5000, parents: 6000, relationships: 20000, invites: 
 const inconsistent = () => Object.assign(new Error("Parent engagement evidence requires review."), { code: "PARENT_ENGAGEMENT_INCONSISTENT" });
 const knownDatabaseErrors = new Set(["P1001", "P1002", "P1017", "P2024", "P2028", "P2034"]);
 type ContactTotals = { missingEmails: number; invalidEmails: number; missingPhones: number; invalidPhones: number; parentsWithoutExternalContact: number; studentsWithoutActiveGuardian: number; studentsWithoutExternalContact: number; studentsWithoutUsableEmail: number; studentsWithoutUsablePhone: number; parentsNeedingPortalSetup: number; studentsNeedingPortalSetup: number; studentsWithRecordedActivation: number; studentsWithUnknownActivation: number; inactivePortalAccess: null; portalAccessVerified: false };
+type ChannelRoutes = Record<"EMAIL" | "SMS" | "WHATSAPP", ReturnType<typeof countParentSummaryRoutes>>;
 const relationshipSchema = z.object({ schoolId: z.string().min(1), parentId: z.string().min(1), studentId: z.string().min(1), status: z.enum(["ACTIVE", "REMOVED", "TRANSFERRED", "REVOKED", "GRADUATED"]), canViewFees: z.boolean(), canViewReports: z.boolean(), canMessageSchool: z.boolean() });
 const parentSchema = z.object({ id: z.string().min(1), schoolId: z.string().min(1), email: z.string().nullable(), phone: z.string().nullable(), _count: z.object({ studentRelationships: z.number().int().nonnegative() }), notificationPreference: z.object({ schoolId: z.string().min(1), parentId: z.string().min(1), weeklySummaryEnabled: z.boolean(), emailEnabled: z.boolean() }).nullable() });
 
@@ -17,7 +18,21 @@ const parentSchema = z.object({ id: z.string().min(1), schoolId: z.string().min(
 export async function getAdminParentEngagementSnapshot() {
   const { schoolId } = await requireRole(["admin"]);
   if (!schoolId?.trim()) throw new Error("An authenticated school scope is required.");
-  const empty = (code: string) => ({ state: "UNAVAILABLE" as const, code, evaluatedAt: new Date().toISOString(), schedule: null as ReturnType<typeof parentWeeklySchedule> | null, newMessagingState: "UNAVAILABLE" as string, summaryTrackingState: "UNAVAILABLE" as string, requestsTrackingState: "UNAVAILABLE" as string, deliverySettingsState: "UNAVAILABLE" as string, cohort: null as { students: number; parents: number } | null, summaries: null as ReturnType<typeof countWeeklyParentSummaryStates> | null, requests: null as { awaitingResponse: number; overdue: number; highPriority: number; escalated: number; missingDeadlines: number; unavailable: number } | null, contacts: null as ContactTotals | null, preferences: null as { weeklyOptOut: number; emailOptOut: number; schoolEmailEnabled: boolean | null } | null });
+  const empty = (code: string) => ({
+    state: "UNAVAILABLE" as const, code, evaluatedAt: new Date().toISOString(),
+    schedule: null as ReturnType<typeof parentWeeklySchedule> | null,
+    newMessagingState: "UNAVAILABLE" as string,
+    summaryTrackingState: "UNAVAILABLE" as string,
+    summaryCalendarState: "UNAVAILABLE" as string,
+    requestsTrackingState: "UNAVAILABLE" as string,
+    deliverySettingsState: "UNAVAILABLE" as string,
+    cohort: null as { students: number; parents: number } | null,
+    summaries: null as ReturnType<typeof countWeeklyParentSummaryStates> | null,
+    requests: null as { awaitingResponse: number; overdue: number; highPriority: number; escalated: number; missingDeadlines: number; unavailable: number } | null,
+    contacts: null as ContactTotals | null,
+    preferences: null as { weeklyOptOut: number; emailOptOut: number; schoolEmailEnabled: boolean | null } | null,
+    channelRoutes: null as ChannelRoutes | null,
+  });
   try {
     return await prisma.$transaction(async (db) => {
       const now = new Date();
@@ -136,9 +151,10 @@ export async function getAdminParentEngagementSnapshot() {
           const appFlag = preference ? preference[field] : channel === "EMAIL";
           return { weeklyEnabled: schedule.state === "SETUP_REQUIRED" ? undefined : schedule.state === "AVAILABLE", parentWeeklyEnabled: parent.notificationPreference?.weeklySummaryEnabled ?? true, schoolChannelEnabled: schoolFlags.every((flag) => typeof flag === "boolean") ? schoolFlags.every(Boolean) : undefined, parentChannelEnabled: typeof parentFlag === "boolean" && typeof appFlag === "boolean" ? parentFlag && appFlag : undefined, destinationUsable: channel === "EMAIL" ? contact.usableEmail : contact.usablePhone, providerState };
         }))];
-      }));
+      })) as ChannelRoutes;
       let summaries: ReturnType<typeof countWeeklyParentSummaryStates> | null = null;
-      if (schedule.state === "AVAILABLE" && schedule.period) {
+      const summaryCalendarCompatible = schedule.period ? parentSummaryCalendarCompatible(setting!.timezone, schedule.period) : null;
+      if (schedule.state === "AVAILABLE" && schedule.period && summaryCalendarCompatible) {
         const sourceKeys = [...eligibleParents].map((id) => `weekly-summary:${id}:${schedule.period!.rangeKey}`);
         const where = { schoolId, parent: { schoolId }, parentId: { in: [...eligibleParents] }, sourceModel: "ParentWeeklySummary", sourceKey: { in: sourceKeys } };
         const summaryCount = await db.parentNotification.count({ where });
@@ -149,7 +165,7 @@ export async function getAdminParentEngagementSnapshot() {
         const notificationCount = await db.appNotification.count({ where: centralWhere });
         const deliveryCount = await db.appNotificationDelivery.count({ where: { schoolId, channel: "EMAIL", notification: centralWhere } });
         if (notificationCount > budgets.notifications || deliveryCount > budgets.deliveries) return empty("EVALUATION_LIMIT");
-        const notifications = await db.appNotification.findMany({ where: centralWhere, select: { schoolId: true, sourceId: true, recipientId: true, deliveries: { where: { schoolId, channel: "EMAIL" }, select: { id: true, schoolId: true, channel: true, status: true, provider: true, updatedAt: true, sentAt: true, deliveredAt: true, providerMessageId: true } } } });
+        const notifications = await db.appNotification.findMany({ where: centralWhere, select: { schoolId: true, sourceId: true, recipientId: true, deliveries: { where: { schoolId, channel: "EMAIL" }, select: { id: true, schoolId: true, channel: true, status: true, provider: true, createdAt: true, updatedAt: true, sentAt: true, deliveredAt: true, providerMessageId: true } } } });
         if (notifications.length !== notificationCount || notifications.reduce((sum, row) => sum + row.deliveries.length, 0) !== deliveryCount) throw inconsistent();
         const recordMap = new Map(records.map((row) => [row.id, row]));
         if (recordMap.size !== records.length) throw inconsistent();
@@ -163,7 +179,7 @@ export async function getAdminParentEngagementSnapshot() {
         }
         summaries = countWeeklyParentSummaryStates({ schoolId, rangeKey: schedule.period.rangeKey, eligibleParentIds: eligibleParents, now, summaries: records.map((row) => ({ ...row, centralTracked: deliveries.has(row.id), deliveries: deliveries.get(row.id) ?? [] })) });
       }
-      return { state: "AVAILABLE" as const, code: "EVALUATED", evaluatedAt: now.toISOString(), schedule, newMessagingState: parentMessagingPosition(policy), summaryTrackingState: schedule.state === "AVAILABLE" && summaries?.unavailable ? "UNAVAILABLE" : schedule.state, requestsTrackingState: requests.unavailable ? "UNAVAILABLE" : "AVAILABLE", deliverySettingsState: setting && appSetting ? "AVAILABLE" : "SETUP_REQUIRED", cohort: { students: students.length, parents: eligibleParents.size }, summaries, requests, contacts, preferences, channelRoutes };
+      return { state: "AVAILABLE" as const, code: "EVALUATED", evaluatedAt: now.toISOString(), schedule, newMessagingState: parentMessagingPosition(policy), summaryTrackingState: summaryCalendarCompatible === false || schedule.state === "AVAILABLE" && summaries?.unavailable ? "UNAVAILABLE" : schedule.state, summaryCalendarState: summaryCalendarCompatible === false ? "CALENDAR_MISMATCH" : schedule.state, requestsTrackingState: requests.unavailable ? "UNAVAILABLE" : "AVAILABLE", deliverySettingsState: setting && appSetting ? "AVAILABLE" : "SETUP_REQUIRED", cohort: { students: students.length, parents: eligibleParents.size }, summaries, requests, contacts, preferences, channelRoutes };
     }, { isolationLevel: "RepeatableRead", maxWait: 15000, timeout: 30000 });
   } catch (error) {
     const code = error && typeof error === "object" && "code" in error ? String(error.code) : "";

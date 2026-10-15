@@ -123,7 +123,7 @@ test("weekly counts deduplicate parent summaries and exclude foreign, ineligible
   assert.equal(result.sent, 0);
   assert.equal(result.failed, 0);
   assert.throws(() => rules.countWeeklyParentSummaryStates({ ...input, summaries: [base, { ...base, id: "different" }] }), /Conflicting/);
-  const newest = { ...base, deliveries: [delivery("FAILED", { updatedAt: new Date("2026-10-16T15:40:00Z") })] };
+  const newest = { ...base, deliveries: [delivery("FAILED", { id: "d2", updatedAt: new Date("2026-10-16T15:40:00Z") })] };
   for (const summaries of [[base, newest], [newest, base]]) {
     const merged = rules.countWeeklyParentSummaryStates({ ...input, summaries });
     assert.equal(merged.summariesAvailable, 1);
@@ -194,4 +194,23 @@ test("guardian email, phone and portal readiness use every eligible guardian ind
   assert.equal(missing.noActiveGuardian, true);
   assert.equal(missing.noExternalContact, false);
   assert.equal(missing.noUsableEmail, false);
+});
+
+test("late webhooks on an older job cannot hide the actual newest resend", () => {
+  const old = delivery("DELIVERED", { id: "old", createdAt: new Date("2026-10-16T14:00:00Z"), updatedAt: new Date("2026-10-16T15:55:00Z"), deliveredAt: new Date("2026-10-16T15:55:00Z"), providerMessageId: "old-id" });
+  const resend = delivery("RETRYING", { id: "new", createdAt: new Date("2026-10-16T15:00:00Z"), updatedAt: new Date("2026-10-16T15:30:00Z") });
+  for (const rows of [[old, resend], [resend, old]]) assert.equal(rules.emailDeliveryPosition(rows, now), "RETRYING");
+  assert.equal(rules.emailDeliveryPosition([resend, { ...resend, status: "FAILED" }], now), "UNAVAILABLE");
+  assert.equal(rules.emailDeliveryPosition([old, delivery("FAILED")], now), "UNAVAILABLE");
+});
+
+test("impossible delivery timestamp sequences cannot establish delivery success", () => {
+  const base = delivery("DELIVERED", { createdAt: new Date("2026-10-16T15:00:00Z"), sentAt: new Date("2026-10-16T15:10:00Z"), deliveredAt: new Date("2026-10-16T15:20:00Z"), providerMessageId: "real" });
+  for (const change of [{ createdAt: new Date("2026-10-17") }, { deliveredAt: new Date("2026-10-16T15:05:00Z") }, { deliveredAt: new Date("2026-10-16T15:35:00Z") }, { sentAt: new Date("2026-10-16T14:59:00Z") }]) assert.equal(rules.emailDeliveryPosition([{ ...base, ...change }], now), "UNAVAILABLE");
+});
+
+test("tracking refuses a school calendar that disagrees with legacy generation boundaries", () => {
+  const period = { startDate: "2026-10-12", endDateExclusive: "2026-10-19" };
+  assert.equal(rules.parentSummaryCalendarCompatible("Asia/Tokyo", period), false);
+  assert.equal(rules.parentSummaryCalendarCompatible("invalid/timezone", period), false);
 });

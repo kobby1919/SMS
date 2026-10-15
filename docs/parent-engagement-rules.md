@@ -169,3 +169,18 @@ portalAccessVerified is false until authoritative current account-state evidence
 available. Setup-needed students require all eligible guardians to need setup; another
 recorded activation or unknown account prevents an unjustified all-guardians warning.
 This is backend tracking; dashboard presentation follows in Step 5.
+
+### Steps 3/4 Hardening
+
+Latest resend state is selected by immutable delivery createdAt, not updatedAt:
+a delayed webhook for an older job must not displace a newer resend. Conflicting
+copies of one job, mixed creation-time evidence and impossible proof timestamps
+are unavailable, not guessed success. Unavailable snapshot responses explicitly
+return null channel routes instead of leaving their state ambiguous.
+
+The legacy weekly generator still uses host-local boundaries and Ghana weekday
+logic. The snapshot now refuses competing school/host calendars with
+summaryCalendarState=CALENDAR_MISMATCH and null summary totals; it must not label
+missing records as zero sends. Calendar reconciliation in the generator is still
+required before enabling non-UTC school calendars or non-UTC production runtimes.
+Live Clerk inactivity remains unverified, not inferred from invite history.
