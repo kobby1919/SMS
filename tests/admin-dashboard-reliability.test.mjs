@@ -40,7 +40,7 @@ test("a failing section cannot turn successful school data into zeroes or reject
   assert.deepEqual(results[1], { state: "READY", data: { parents: 23 } });
   assert.equal(JSON.stringify(logs).includes("private"), false);
   assert.equal(JSON.stringify(results).includes("password"), false);
-  assert.equal(logs[0][1].code, "P2024");
+  assert.equal(JSON.parse(logs[0][1]).code, "P2024");
 });
 
 test("authorization and Next control-flow errors propagate while releasing the read slot", async () => {
@@ -64,17 +64,33 @@ test("concurrent heavy reads are limited per request, without blocking a faster 
   slow.resolve("slow"); assert.equal((await first).data, "slow");
 });
 
-test("a queued section times out without starting another database query", async (t) => {
+test("all five sections eventually read fresh data even when the first reads exceed ten seconds", async (t) => {
   t.mock.method(console, "warn", () => {});
   t.mock.timers.enable({ apis: ["setTimeout"] });
-  const { read } = readerFixture(); const gate = deferred(); let queried = false;
+  const { read } = readerFixture(); const gate = deferred(); const queried = []; let settled = false;
   const first = read("pulse", () => gate.promise); const second = read("finance", () => gate.promise);
-  const queued = read("parents", async () => { queried = true; });
-  await Promise.resolve(); t.mock.timers.tick(10001);
-  assert.deepEqual(await queued, { state: "UNAVAILABLE", reason: "BUSY" });
-  assert.equal(queried, false);
+  let currentRecords = 1;
+  const queued = ["accountability", "academics", "parents"].map((section) => read(section, async () => { queried.push(section); return currentRecords; }));
+  queued[2].then(() => { settled = true; });
+  await Promise.resolve(); t.mock.timers.tick(60000); await flush();
+  assert.equal(settled, false); assert.deepEqual(queried, []);
+  currentRecords = 25;
   gate.resolve(1); await Promise.all([first, second]);
-  assert.equal((await read("academics", async () => 2)).data, 2);
+  assert.deepEqual(await Promise.all(queued), Array.from({ length: 3 }, () => ({ state: "READY", data: 25 })));
+  assert.deepEqual(queried, ["accountability", "academics", "parents"]);
+});
+
+test("a failed active read releases capacity for both academic and parent sections", async (t) => {
+  t.mock.method(console, "error", () => {});
+  const { read } = readerFixture(); const gate = deferred();
+  const first = read("pulse", async () => { await gate.promise; throw new Error("database timeout"); });
+  const second = read("finance", () => gate.promise);
+  const academic = read("academics", async () => "academic records");
+  const parent = read("parents", async () => "parent records");
+  gate.resolve(1);
+  assert.equal((await first).state, "UNAVAILABLE"); await second;
+  assert.equal((await academic).data, "academic records");
+  assert.equal((await parent).data, "parent records");
 });
 
 test("readers never share results, queues or failures between school requests", async () => {
