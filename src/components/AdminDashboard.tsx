@@ -6,36 +6,49 @@ import AdminFinanceSnapshot from "@/src/components/AdminFinanceSnapshot";
 import AdminTeacherAccountability from "@/src/components/AdminTeacherAccountability";
 import AdminAcademicReadiness from "@/src/components/AdminAcademicReadiness";
 import AdminParentEngagement from "@/src/components/AdminParentEngagement";
-import type { getAdminParentEngagementSnapshot } from "@/src/lib/services/admin-parent-engagement";
-import type { getAdminAcademicReadinessSnapshot } from "@/src/lib/services/admin-academic-readiness";
-import type { AdminOwnerDashboardData } from "@/src/lib/queries/admin-owner-dashboard";
-import type { AdminFinanceSnapshot as FinanceSnapshot } from "@/src/lib/services/admin-finance-snapshot";
-import type { AdminTeacherAccountabilitySnapshot } from "@/src/lib/services/admin-teacher-accountability";
+import { getAdminParentEngagementSnapshot } from "@/src/lib/services/admin-parent-engagement";
+import { getAdminAcademicReadinessSnapshot } from "@/src/lib/services/admin-academic-readiness";
+import { getAdminSchoolPulse } from "@/src/lib/services/admin-school-pulse";
+import { getAdminFinanceSnapshot } from "@/src/lib/services/admin-finance-snapshot";
+import { getAdminTeacherAccountability } from "@/src/lib/services/admin-teacher-accountability";
+import { createDashboardReader } from "@/src/lib/services/admin-dashboard-section";
+import AdminDashboardSection from "@/src/components/AdminDashboardSection";
+import AdminDashboardRefresh from "@/src/components/AdminDashboardRefresh";
 
-export default function AdminDashboard({ ownerDashboard, financeSnapshot, accountability, academicReadiness, parentEngagement }: {
-  ownerDashboard: AdminOwnerDashboardData;
-  financeSnapshot: FinanceSnapshot;
-  accountability: AdminTeacherAccountabilitySnapshot;
-  academicReadiness: Awaited<ReturnType<typeof getAdminAcademicReadinessSnapshot>>;
-  parentEngagement: Awaited<ReturnType<typeof getAdminParentEngagementSnapshot>>;
-}) {
+export default function AdminDashboard({ schoolId }: { schoolId: string }) {
+  const read = createDashboardReader();
+  const now = new Date();
   return (
     <div className="flex min-w-0 flex-col gap-6 p-4 md:p-6">
       <WelcomeBanner role="admin" name="Admin" subtitle="Here is what is happening at your school today."
-        tag={`${ownerDashboard.activePeriod.currentTerm.replace("_", " ")} · ${ownerDashboard.activePeriod.academicYear}`} />
-      <AdminOwnerSchoolPulse pulse={ownerDashboard.schoolPulse} activePeriod={ownerDashboard.activePeriod} />
-      <AdminFinanceSnapshot snapshot={financeSnapshot} />
-      <AdminTeacherAccountability snapshot={accountability} />
-      <AdminAcademicReadiness snapshot={academicReadiness} />
-      <AdminParentEngagement snapshot={parentEngagement} />
+        tag="School overview" />
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 text-xs text-gray-500">
+        <p>Requested <time dateTime={now.toISOString()}>{now.toISOString().slice(11, 19)} UTC</time></p>
+        <AdminDashboardRefresh />
+      </div>
+      <AdminDashboardSection requestKey={now.toISOString()} id="pulse" title="Today's School Pulse" read={read} load={() => getAdminSchoolPulse(schoolId, now)}>
+        {(data) => <AdminOwnerSchoolPulse pulse={data.schoolPulse} activePeriod={data.activePeriod} />}
+      </AdminDashboardSection>
+      <AdminDashboardSection requestKey={now.toISOString()} id="finance" title="Finance Snapshot" read={read} load={() => getAdminFinanceSnapshot(schoolId, now)}>
+        {(data) => <AdminFinanceSnapshot snapshot={data} />}
+      </AdminDashboardSection>
+      <AdminDashboardSection requestKey={now.toISOString()} id="accountability" title="Teacher Accountability" read={read} load={() => getAdminTeacherAccountability(schoolId, now, undefined, false, { dashboard: true })}>
+        {(data) => <AdminTeacherAccountability snapshot={data} />}
+      </AdminDashboardSection>
+      <AdminDashboardSection requestKey={now.toISOString()} id="academics" title="Academic Readiness" read={read} load={() => getAdminAcademicReadinessSnapshot()}>
+        {(data) => <AdminAcademicReadiness snapshot={data} />}
+      </AdminDashboardSection>
+      <AdminDashboardSection requestKey={now.toISOString()} id="parents" title="Parent Engagement" read={read} load={() => getAdminParentEngagementSnapshot()}>
+        {(data) => <AdminParentEngagement snapshot={data} />}
+      </AdminDashboardSection>
       <nav aria-label="Academic review" className="flex flex-wrap gap-x-5 gap-y-3 border-t border-gray-200 pt-4 text-sm font-semibold text-gray-700">
         {[["Timetable", "/admin/timetable", CalendarDays], ["Curriculum", "/list/syllabus", BookMarked], ["Attendance Review", "/list/attendance", UserCheck], ["Assessments", "/list/ca?view=summary", Star], ["Reports & Approval", "/list/report-cards", FileText]].map(([label, href, Icon]) => {
           const Symbol = Icon as typeof CalendarDays;
-          return <Link key={String(href)} href={String(href)} className="inline-flex min-h-10 items-center gap-2 hover:text-blue-800"><Symbol size={16} aria-hidden="true" />{String(label)}</Link>;
+          return <Link prefetch={false} key={String(href)} href={String(href)} className="inline-flex min-h-10 items-center gap-2 hover:text-blue-800"><Symbol size={16} aria-hidden="true" />{String(label)}</Link>;
         })}
       </nav>
       <div className="border-t border-gray-200 pt-4">
-        <Link href="/admin/data-migration" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-blue-800">
+        <Link prefetch={false} href="/admin/data-migration" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-blue-800">
           <Database size={16} aria-hidden="true" /> Data setup and bulk invites
         </Link>
       </div>

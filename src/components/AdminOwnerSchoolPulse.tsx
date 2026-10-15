@@ -13,7 +13,7 @@ import {
 
 type Props = {
   pulse: AdminOwnerDashboardData["schoolPulse"];
-  activePeriod: AdminOwnerDashboardData["activePeriod"];
+  activePeriod: AdminOwnerDashboardData["activePeriod"] | null;
 };
 
 function formatTerm(term: string) {
@@ -136,7 +136,7 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
             </span>
           </div>
           <p className="mt-1 text-sm font-semibold text-gray-500">
-            {pulse.todayLabel} · {formatTerm(activePeriod.currentTerm)} · {activePeriod.academicYear}
+            {pulse.todayLabel} · {activePeriod ? `${formatTerm(activePeriod.currentTerm)} · ${activePeriod.academicYear}` : "Academic period needs setup"}
           </p>
           <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-gray-600">
             {status.message}

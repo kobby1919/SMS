@@ -3,6 +3,7 @@ import prisma from "@/src/lib/prisma";
 import { activityEligibility, validAssessmentWeights } from "@/src/lib/academic-readiness-rules";
 import { eligibleAttendanceStudentIds } from "@/src/lib/attendance-review";
 import { Prisma } from "@/src/generated/prisma";
+import { assertDashboardReadBudget, assertDashboardWorkBudget } from "@/src/lib/dashboard-read-budget";
 import { caPublishingDeadline } from "@/src/lib/services/teacher-ca-obligations";
 import { homeworkCheckingDeadline } from "@/src/lib/services/teacher-homework-obligations";
 import { isOutstandingDuty, summarizeTeacherFollowUps, teacherFollowUpName, type TeacherFollowUpItem } from "@/src/lib/queries/admin-teacher-follow-up";
@@ -15,13 +16,28 @@ const dayEnd = (date: Date) => { const value = new Date(date); value.setHours(23
 
 export type AdminTeacherAccountabilitySnapshot = Omit<Awaited<ReturnType<typeof getAdminTeacherAccountability>>, "details">;
 
-export async function getAdminTeacherAccountability(schoolId: string, now = new Date(), teacherId?: string, includeDetails = false, options: { db?: Prisma.TransactionClient; academicOnly?: boolean } = {}) {
+export async function getAdminTeacherAccountability(schoolId: string, now = new Date(), teacherId?: string, includeDetails = false, options: { db?: Prisma.TransactionClient; academicOnly?: boolean; dashboard?: boolean } = {}) {
   if (!schoolId.trim()) throw new Error("School scope is required.");
-  const read = (tx: Prisma.TransactionClient) => readTeacherAccountability(tx, schoolId, now, teacherId, includeDetails, options.academicOnly ?? false);
-  return options.db ? read(options.db) : prisma.$transaction(read, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead, maxWait: 15000, timeout: 45000 });
+  const read = async (tx: Prisma.TransactionClient) => {
+    if (options.dashboard) await assertDashboardReadBudget([
+      [tx.teacher.count({ where: { schoolId } }), 500],
+      [tx.student.count({ where: { schoolId, status: "ACTIVE" } }), 5000],
+      [tx.publishedTimetableLesson.count({ where: { schoolId, publication: { status: "ACTIVE" } } }), 10000],
+      [tx.teacherObligation.count({ where: { schoolId } }), 20000],
+      [tx.teacherEscalation.count({ where: { schoolId } }), 20000],
+      [tx.teacherCorrectionRequest.count({ where: { schoolId, status: "PENDING" } }), 10000],
+      [tx.attendance.count({ where: { schoolId } }), 100000],
+      [tx.assignment.count({ where: { schoolId } }), 10000],
+      [tx.homeworkSubmission.count({ where: { schoolId } }), 100000],
+      [tx.cAActivity.count({ where: { schoolId } }), 10000],
+      [tx.cAActivityScore.count({ where: { schoolId } }), 100000],
+    ]);
+    return readTeacherAccountability(tx, schoolId, now, teacherId, includeDetails, options.academicOnly ?? false, options.dashboard ?? false);
+  };
+  return options.db ? read(options.db) : prisma.$transaction(read, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead, maxWait: options.dashboard ? 5000 : 15000, timeout: options.dashboard ? 30000 : 45000 });
 }
 
-async function readTeacherAccountability(tx: Prisma.TransactionClient, schoolId: string, now: Date, teacherId: string | undefined, includeDetails: boolean, academicOnly: boolean) {
+async function readTeacherAccountability(tx: Prisma.TransactionClient, schoolId: string, now: Date, teacherId: string | undefined, includeDetails: boolean, academicOnly: boolean, dashboard: boolean) {
     const policy = await tx.teacherAccountabilitySetting.findUnique({ where: { schoolId } });
     const operating = await tx.schoolNotificationSetting.findUnique({ where: { schoolId }, select: { timezone: true, activeDays: true } });
     const activeDays = operating?.activeDays.length ? operating.activeDays : ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
@@ -54,6 +70,11 @@ async function readTeacherAccountability(tx: Prisma.TransactionClient, schoolId:
     const lessonMap = new Map(lessons.map((lesson) => [lesson.sourceId, lesson]));
     const obligations = await tx.teacherObligation.findMany({ where: { schoolId, teacher: { schoolId }, teacherId: { in: teachers.map((teacher) => teacher.id) }, type: { in: academicOnly ? ["CA_SCORE_PUBLISHING"] : ["ATTENDANCE", "HOMEWORK_CHECKING", "CA_SCORE_PUBLISHING"] } }, select: { id: true, teacherId: true, type: true, sourceModel: true, sourceId: true, sourceKey: true, status: true, completedAt: true, expectedAt: true, metadata: true, escalations: { where: { schoolId }, select: { id: true, status: true, teacherId: true, obligationId: true, escalatedAt: true, reason: true } } } });
     const obligationMap = new Map(obligations.map((row) => [`${row.teacherId}:${row.sourceKey}`, row]));
+    let evaluationWork = 0;
+    const checkWork = (classId: number) => {
+      evaluationWork += (studentsByClass.get(classId)?.length ?? 0) + lessons.length;
+      if (dashboard) assertDashboardWorkBudget(evaluationWork);
+    };
     const items: TeacherFollowUpItem[] = [];
     const addDuty = (input: { teacherId: string; key: string; kind: "ATTENDANCE" | "HOMEWORK_CHECKING" | "CA_SCORE_PUBLISHING"; title: string; detail: string; deadline: Date; complete: boolean }) => {
       const row = obligationMap.get(`${input.teacherId}:${input.key}`);
@@ -95,6 +116,7 @@ async function readTeacherAccountability(tx: Prisma.TransactionClient, schoolId:
         marksByLessonDay.set(key, marks);
       }
       for (const duty of attendanceDuties.values()) {
+        checkWork(duty.lesson.classId);
         const savedMarks = marksByLessonDay.get(`${duty.lesson.sourceId}:${duty.date.toISOString().slice(0, 10)}`) ?? new Set<string>();
         const starts = dayStart(duty.date); starts.setHours(duty.lesson.startTime.getHours(), duty.lesson.startTime.getMinutes(), 0, 0);
         const expected = eligibleAttendanceStudentIds(studentsByClass.get(duty.lesson.classId) ?? [], starts, savedMarks);
@@ -105,6 +127,7 @@ async function readTeacherAccountability(tx: Prisma.TransactionClient, schoolId:
       const assignments = await tx.assignment.findMany({ where: { schoolId, dueDate: { lte: now }, lessonId: { in: lessons.map((lesson) => lesson.sourceId) }, lesson: { schoolId } }, select: { id: true, title: true, dueDate: true, lessonId: true, lesson: { select: { teacherId: true, classId: true, subjectId: true } }, homeworkSubmissions: { where: { schoolId, student: { schoolId, status: "ACTIVE" } }, select: { studentId: true, status: true, checkedAt: true } } } });
       for (const assignment of assignments) {
         const lesson = lessonMap.get(assignment.lessonId)!;
+        checkWork(lesson.classId);
         if (assignment.lesson.teacherId !== lesson.teacherId || assignment.lesson.classId !== lesson.classId || assignment.lesson.subjectId !== lesson.subjectId) continue;
         const expected = roster(lesson.classId, assignment.dueDate);
         if (!expected.size) continue;
@@ -114,6 +137,7 @@ async function readTeacherAccountability(tx: Prisma.TransactionClient, schoolId:
       }
       const activities = config ? await tx.cAActivity.findMany({ where: { schoolId, activityDate: { lte: now }, class: { schoolId }, subject: { schoolId }, teacher: { schoolId }, bucket: { schoolId, term: config.currentTerm, academicYear: config.academicYear } }, select: { id: true, title: true, activityDate: true, teacherId: true, classId: true, subjectId: true, bucket: { select: { classId: true, subjectId: true } }, scores: { where: { schoolId, student: { schoolId, status: "ACTIVE" } }, select: { studentId: true } } } }) : [];
       for (const activity of activities) {
+        checkWork(activity.classId);
         if (activity.bucket.classId !== activity.classId || activity.bucket.subjectId !== activity.subjectId || !scopes.has(scopeKey(activity.teacherId, activity.classId, activity.subjectId))) continue;
         const expected = new Set((studentsByClass.get(activity.classId) ?? []).filter((student) => activityEligibility(student, activity.activityDate) === "ELIGIBLE").map((student) => student.id));
         if (!expected.size) continue;

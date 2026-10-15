@@ -87,5 +87,5 @@ test("attention destinations are exact guarded routes with a real guardian ancho
   const source = readFileSync("src/lib/services/admin-parent-engagement.ts", "utf8");
   assert.match(source, /new URLSearchParams\(\{ deliveryId: latest.id \}\)/);
   assert.match(source, /new URLSearchParams\(\{ requestId: row.id \}\)/);
-  assert.match(readFileSync("src/app/(dashboard)/admin/page.tsx", "utf8"), /getAdminParentEngagementSnapshot\(\)/);
+  assert.match(readFileSync("src/components/AdminDashboard.tsx", "utf8"), /getAdminParentEngagementSnapshot\(\)/);
 });

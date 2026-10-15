@@ -90,6 +90,10 @@ async function getOrCreateSchoolOperatingSettings(schoolId: string, db: Pick<Pri
 
 export async function getSchoolOperatingWindowStatus(schoolId: string, now = new Date(), db: Pick<Prisma.TransactionClient, "schoolNotificationSetting"> = prisma) {
   const settings = await getOrCreateSchoolOperatingSettings(schoolId, db);
+  return evaluateSchoolOperatingWindow(settings, now);
+}
+
+export function evaluateSchoolOperatingWindow(settings: { timezone: string; openingTime: string; closingTime: string; activeDays: string[] }, now = new Date()) {
   const timezone = settings.timezone || DEFAULT_SCHOOL_HOURS.timezone;
   const openingTime = settings.openingTime || DEFAULT_SCHOOL_HOURS.openingTime;
   const closingTime = settings.closingTime || DEFAULT_SCHOOL_HOURS.closingTime;

@@ -1,7 +1,8 @@
 import "server-only";
 import { z } from "zod";
 import prisma from "@/src/lib/prisma";
-import { requireRole } from "@/src/lib/authz";
+import { AuthorizationError, requireRole } from "@/src/lib/authz";
+import { assertDashboardReadBudget, assertDashboardWorkBudget } from "@/src/lib/dashboard-read-budget";
 import { DEFAULT_TEACHER_ACCOUNTABILITY_SETTINGS } from "@/src/lib/services/teacher-accountability-settings";
 import { attendanceClock, attendanceDateBounds, attendanceSchedule, eligibleAttendanceStudentIds, latestAttendanceMarks, schoolAttendanceDate, schoolDayPosition, shiftAttendanceDate, type DayPosition } from "@/src/lib/attendance-review";
 
@@ -9,11 +10,13 @@ const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => value >= 
 const integer = z.string().regex(/^[1-9]\d*$/).transform(Number).pipe(z.number().int().max(2147483647));
 const filters = z.object({ classId: integer.optional(), date: date.optional(), studentId: z.string().trim().min(1).max(200).optional(), status: z.enum(["PRESENT", "ABSENT", "LATE", "EXCUSED", "UNKNOWN", "NO_LESSONS"]).optional(), page: integer.pipe(z.number().max(100000)).optional() });
 
-export async function getAdminAttendanceReview(params: Record<string, string | string[] | undefined>, now = new Date(), options: { includeHistory?: boolean } = {}) {
+export async function getAdminAttendanceReview(params: Record<string, string | string[] | undefined>, now = new Date(), options: { includeHistory?: boolean; dashboard?: boolean; expectedSchoolId?: string } = {}) {
   const { schoolId } = await requireRole(["admin"]);
+  if (options.expectedSchoolId && options.expectedSchoolId !== schoolId) throw new AuthorizationError("School access denied.", 403);
   const parsed = filters.safeParse(Object.fromEntries(Object.entries(params).filter(([key, value]) => Object.hasOwn(filters.shape, key) && value !== undefined && value !== "")));
   return prisma.$transaction(async (db) => {
-    const settings = await db.schoolNotificationSetting.findUnique({ where: { schoolId }, select: { timezone: true, activeDays: true } });
+    const settings = await db.schoolNotificationSetting.findUnique({ where: { schoolId }, select: { timezone: true, activeDays: true, openingTime: true, closingTime: true } });
+    const academicPeriods = options.dashboard ? await db.cAConfig.findMany({ where: { schoolId, isActive: true }, take: 2, select: { academicYear: true, currentTerm: true, classworkWeight: true, examWeight: true } }) : [];
     const timezone = settings?.timezone || "Africa/Accra";
     const activeDays = settings?.activeDays ?? ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
     const today = schoolAttendanceDate(now, timezone);
@@ -24,6 +27,13 @@ export async function getAdminAttendanceReview(params: Record<string, string | s
     const since = options.includeHistory === false ? reviewDate : shiftAttendanceDate(reviewDate, -29);
     const rangeStart = attendanceDateBounds(since, timezone).start;
     const cutoff = new Date(Math.min(bounds.end.getTime() - 1, now.getTime()));
+    if (options.dashboard) await assertDashboardReadBudget([
+      [db.class.count({ where: { schoolId } }), 200],
+      [db.student.count({ where: { schoolId, status: "ACTIVE" } }), 5000],
+      [db.publishedTimetableLesson.count({ where: { schoolId } }), 20000],
+      [db.timetablePublication.count({ where: { schoolId, publishedAt: { gte: rangeStart, lte: cutoff } } }), 50],
+      [db.attendance.count({ where: { schoolId, date: { gte: rangeStart, lt: bounds.end } } }), 50000],
+    ]);
     const classes = await db.class.findMany({ where: { schoolId }, select: { id: true, name: true }, orderBy: { name: "asc" } });
     let error: string | null = parsed.success ? null : "Some attendance filters are invalid.";
     if (selectedDate > today) error = "Future attendance cannot be reviewed.";
@@ -44,6 +54,7 @@ export async function getAdminAttendanceReview(params: Record<string, string | s
       select: { id: true, studentId: true, lessonId: true, date: true, status: true, updatedAt: true },
     }) : [];
     const byDayStudent = new Map<string, typeof records>();
+    if (options.dashboard) assertDashboardWorkBudget(selectedLessons.length * (students.length + records.length + lessonRecords.length));
     for (const record of records) { const key = `${schoolAttendanceDate(record.date, timezone)}:${record.studentId}`; const list = byDayStudent.get(key) ?? []; list.push(record); byDayStudent.set(key, list); }
     const daySchedules = new Map<string, ReturnType<typeof attendanceSchedule>>();
     for (let key = since; key <= reviewDate; key = shiftAttendanceDate(key, 1)) daySchedules.set(key, attendanceSchedule(publications, key, timezone, activeDays, now));
@@ -92,6 +103,6 @@ export async function getAdminAttendanceReview(params: Record<string, string | s
     const matches = error ? [] : roster.filter((row) => !selection.status || row.status === selection.status);
     const pageCount = Math.max(1, Math.ceil(matches.length / 25));
     const page = Math.min(selection.page ?? 1, pageCount);
-    return { schoolId, date: reviewDate, today, timezone, since, selection, classes, error, totals, rosterCount: roster.length, count: matches.length, page, pageCount, rows: matches.slice((page - 1) * 25, page * 25), recurring: error ? [] : recurring.slice(0, 10), recurringCount: error ? 0 : recurring.length, history: error ? [] : history, selectedStudent: error ? null : selectedStudent, lessons: error ? [] : lessonRows, publication: schedule.publication ? { id: schedule.publication.id, publishedAt: schedule.publication.publishedAt } : null, operatingDay: schedule.operatingDay, ambiguous: schedule.ambiguous };
-  }, { isolationLevel: "RepeatableRead", timeout: 30000 });
+    return { schoolId, operatingSettings: settings, academicPeriods, date: reviewDate, today, timezone, since, selection, classes, error, totals, rosterCount: roster.length, count: matches.length, page, pageCount, rows: matches.slice((page - 1) * 25, page * 25), recurring: error ? [] : recurring.slice(0, 10), recurringCount: error ? 0 : recurring.length, history: error ? [] : history, selectedStudent: error ? null : selectedStudent, lessons: error ? [] : lessonRows, publication: schedule.publication ? { id: schedule.publication.id, publishedAt: schedule.publication.publishedAt } : null, operatingDay: schedule.operatingDay, ambiguous: schedule.ambiguous };
+  }, { isolationLevel: "RepeatableRead", maxWait: 5000, timeout: 30000 });
 }

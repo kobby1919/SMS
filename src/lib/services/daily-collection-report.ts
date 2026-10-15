@@ -1,4 +1,4 @@
-import prisma from "@/src/lib/prisma";
+import defaultPrisma from "@/src/lib/prisma";
 import { Prisma, type DailyCollectionSessionStatus } from "@/src/generated/prisma";
 
 export type DailyCollectionReport = Awaited<ReturnType<typeof getDailyCollectionReport>>;
@@ -28,7 +28,7 @@ function latestSessionFirst<T extends { collectionDate: Date; updatedAt: Date }>
 
 const FOLLOW_UP_ENTRY_STATUSES: DailyCollectionSessionStatus[] = ["SUBMITTED", "CONFIRMED", "FLAGGED"];
 
-export async function getDailyCollectionReport(schoolId: string, date = new Date()) {
+export async function getDailyCollectionReport(schoolId: string, date = new Date(), prisma: Prisma.TransactionClient = defaultPrisma) {
   const { start, end } = dayBounds(date);
 
   const [sessions, unpaidEntries, recentAuditLogs] = await Promise.all([
@@ -55,7 +55,7 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
           select: { id: true, name: true, surname: true },
         },
         entries: {
-          where: { student: { status: "ACTIVE" } },
+          where: { schoolId, student: { schoolId, status: "ACTIVE" } },
           select: {
             id: true,
             status: true,
@@ -71,10 +71,11 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
         schoolId,
         status: "UNPAID",
         session: {
+          schoolId,
           collectionDate: { gte: start, lte: end },
           status: { in: FOLLOW_UP_ENTRY_STATUSES },
         },
-        student: { status: "ACTIVE" },
+        student: { schoolId, status: "ACTIVE" },
       },
       select: {
         id: true,
@@ -99,7 +100,7 @@ export async function getDailyCollectionReport(schoolId: string, date = new Date
             status: true,
             class: { select: { id: true, name: true } },
             parentRelationships: {
-              where: { schoolId, status: "ACTIVE", canViewFees: true },
+              where: { schoolId, status: "ACTIVE", canViewFees: true, parent: { schoolId } },
               select: {
                 role: true,
                 parent: {

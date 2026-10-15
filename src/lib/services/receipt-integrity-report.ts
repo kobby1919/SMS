@@ -1,4 +1,4 @@
-import prisma from "@/src/lib/prisma";
+import defaultPrisma from "@/src/lib/prisma";
 import { Prisma } from "@/src/generated/prisma";
 import { PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 
@@ -42,7 +42,7 @@ function receiptSeries(receiptNumber: string) {
   return { prefix: match[1], counter: Number(match[2]) };
 }
 
-export async function getReceiptIntegrityReport(schoolId: string): Promise<ReceiptIntegrityReport> {
+export async function getReceiptIntegrityReport(schoolId: string, prisma: Prisma.TransactionClient = defaultPrisma): Promise<ReceiptIntegrityReport> {
   const [statusCounts, receiptNumbers, referenceRows, payments, correctionLinks, correctionLinkedCount, correctedReceiptCount] = await Promise.all([
     prisma.payment.groupBy({
       by: ["status"],

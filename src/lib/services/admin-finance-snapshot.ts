@@ -2,6 +2,7 @@ import type { PaymentIntentStatus, Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { getDailyCollectionReport } from "@/src/lib/services/daily-collection-report";
 import { getReceiptIntegrityReport } from "@/src/lib/services/receipt-integrity-report";
+import { assertDashboardReadBudget, DashboardReadLimitError } from "@/src/lib/dashboard-read-budget";
 
 const OPEN_BILL_STATUSES = ["UNPAID", "PARTIAL"] as const;
 const BILL_POSITION_FREQUENCIES = ["TERM", "MONTHLY", "WEEKLY", "ONE_TIME"] as const;
@@ -396,6 +397,21 @@ function buildBillMoneyPosition(
 }
 
 export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()) {
+  if (!schoolId.trim()) throw new Error("School scope is required.");
+  return prisma.$transaction(async (db) => {
+    await assertDashboardReadBudget([
+      [db.studentBill.count({ where: { schoolId } }), 10000],
+      [db.billLineItem.count({ where: { studentBill: { schoolId } } }), 50000],
+      [db.parentStudentRelationship.count({ where: { schoolId } }), 20000],
+      [db.payment.count({ where: { schoolId } }), 50000],
+      [db.dailyCollectionSession.count({ where: { schoolId, collectionDate: { gte: startOfDay(now), lte: endOfDay(now) } } }), 1000],
+      [db.dailyCollectionEntry.count({ where: { schoolId, session: { schoolId, collectionDate: { gte: startOfDay(now), lte: endOfDay(now) } } } }), 20000],
+    ]);
+    return readFinanceSnapshot(db, schoolId, now);
+  }, { isolationLevel: "RepeatableRead", maxWait: 5000, timeout: 30000 });
+}
+
+async function readFinanceSnapshot(prisma: Prisma.TransactionClient, schoolId: string, now: Date) {
   const todayStart = startOfDay(now);
   const todayEnd = endOfDay(now);
 
@@ -416,8 +432,8 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
     activeStudentsWithoutBills,
     outstandingCollectionStatuses,
   ] = await Promise.all([
-    getDailyCollectionReport(schoolId, now),
-    getReceiptIntegrityReport(schoolId),
+    getDailyCollectionReport(schoolId, now, prisma),
+    getReceiptIntegrityReport(schoolId, prisma),
     prisma.payment.aggregate({
       where: {
         schoolId,
@@ -541,6 +557,7 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
                 parent: { select: { email: true, phone: true } },
               },
               orderBy: [{ role: "asc" }, { updatedAt: "desc" }],
+              take: 21,
             },
           },
         },
@@ -569,6 +586,8 @@ export async function getAdminFinanceSnapshot(schoolId: string, now = new Date()
     }),
   ]);
 
+  // A sentinel row detects excess guardian fan-out; never infer contacts from a truncated list.
+  if (billMoneyRows.some((bill) => bill.student.parentRelationships.length > 20)) throw new DashboardReadLimitError();
   const confirmedPaymentAmount = asNumber(confirmedPaymentTotals._sum.amount);
   const billPosition = buildBillMoneyPosition(billMoneyRows, now);
 
