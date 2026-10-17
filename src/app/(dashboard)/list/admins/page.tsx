@@ -1,5 +1,4 @@
 import type React from "react";
-import Link from "next/link";
 import { Clock3, Mail, ShieldCheck, UserRoundCheck } from "lucide-react";
 import AdminInviteActions from "@/src/components/AdminInviteActions";
 import AdminInviteModal from "@/src/components/AdminInviteModal";
@@ -83,7 +82,7 @@ export default async function AdminListPage({
             <p className="text-sm font-black uppercase tracking-widest text-edujay-primary">Admin access</p>
             <h1 className="mt-1 text-2xl font-black tracking-tight text-gray-900">School admins</h1>
             <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-gray-500">
-              Invite trusted admins into {school?.name ?? "this school"}. Use this to replace old test access without deleting teachers, parents, bursars, or school records.
+              Invite trusted admins to help manage {school?.name ?? "this school"}.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -171,17 +170,13 @@ export default async function AdminListPage({
             {invites.length === 0 && (
               <div className="p-6 text-center">
                 <p className="text-sm font-black text-gray-500">No admin invites yet.</p>
-                <p className="mt-1 text-xs font-semibold text-gray-400">Create one when you want to bring in a proper school admin account.</p>
+                <p className="mt-1 text-xs font-semibold text-gray-400">Send an invite to give a trusted colleague admin access.</p>
               </div>
             )}
           </div>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm font-semibold leading-6 text-blue-900">
-        To replace the old test admin, invite a fresh email, accept the invite with that email, then use the new account for all future admin work. Do not delete the school or existing role records.
-        <Link href="/admin" className="ml-1 font-black underline">Back to dashboard</Link>
-      </section>
     </main>
   );
 }
