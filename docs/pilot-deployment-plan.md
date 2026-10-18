@@ -28,13 +28,15 @@ Budget clarification: the deck describes Vercel's USD 20 base price, GHS 12/USD 
 
 ### 1. Establish company ownership
 
-Create a dedicated company-controlled email. Suggested initial address: miqratechconsult@gmail.com, subject to availability. Use the display name Miqratech Consult. The authorized company representative should control recovery and billing ownership. Enable MFA and retain recovery codes securely. Invite named collaborators through provider teams where supported rather than sharing the owner password.
+Company email confirmed by the user on 2026-10-18: miqratechc@gmail.com. Use the display name Miqratech Consult. The authorized company representative should control recovery and billing ownership. Enable MFA and retain recovery codes securely; completion of those security settings has not yet been confirmed. Invite named collaborators through provider teams where supported rather than sharing the owner password.
 
 Use that email to register the company's service accounts. It is an infrastructure/account-ownership address; school users still join Edujay through their role-specific invitations. Buying edujay.app does not itself provision an email inbox. The app sender will use a separately verified domain address such as updates@mail.edujay.app.
 
 ### 2. Create Vercel account/team and obtain the domain
 
 Create the company Vercel account/team, confirm Pro checkout and establish billing/spend alerts. Check edujay.app availability and the registration/renewal price, then purchase only within the agreed budget. Vercel will manage the DNS zone when configured as the DNS provider. Email/authentication providers' verification records still need to be added and verified.
+
+Offer checked on 2026-10-18: eligible paid Pro teams can claim one first-year standard domain, including .app, when the exact search result shows Free With Pro. Premium domains and Pro trials are excluded. Confirm eligibility and the renewal price at checkout; if the first year is free, retain the unused GHS 198 domain allocation in the funding balance. The name's availability and actual account eligibility are not yet confirmed. Official terms: https://vercel.com/docs/domains/free-domain-with-pro.
 
 Connect the existing SMS repository through authorized company access. Review repository ownership separately if moving it into a company GitHub organization; do not recreate or transfer the repository automatically. Keep the first deployment restricted to the team.
 
@@ -79,7 +81,7 @@ Agree the school's source inventory, cutoff, opening financial controls and reco
 ## Current status
 
 - Funding: received, GHS 1,892.
-- Company email: pending creation and confirmation.
+- Company email: miqratechc@gmail.com, creation confirmed on 2026-10-18; recovery/MFA completion not independently confirmed.
 - New provider accounts: pending.
 - Domain/service purchases: not performed by this task.
 - Deployment and live checks: pending.
