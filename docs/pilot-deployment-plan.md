@@ -36,7 +36,7 @@ Use that email to register the company's service accounts. It is an infrastructu
 
 Create the company Vercel account/team, confirm Pro checkout and establish billing/spend alerts. Check edujay.app availability and the registration/renewal price, then purchase only within the agreed budget. Vercel will manage the DNS zone when configured as the DNS provider. Email/authentication providers' verification records still need to be added and verified.
 
-Offer checked on 2026-10-18: eligible paid Pro teams can claim one first-year standard domain, including .app, when the exact search result shows Free With Pro. Premium domains and Pro trials are excluded. Confirm eligibility and the renewal price at checkout; if the first year is free, retain the unused GHS 198 domain allocation in the funding balance. The name's availability and actual account eligibility are not yet confirmed. Official terms: https://vercel.com/docs/domains/free-domain-with-pro.
+Offer checked on 2026-10-18: eligible paid Pro teams can claim one first-year standard domain, including .app, when the exact search result shows Free With Pro. Premium domains and Pro trials are excluded. The user reported completing Vercel setup and purchasing edujay.app on 2026-10-19. Actual charges, plan activation, domain renewal price and any applied promotion still need reconciliation against the receipt. Official terms: https://vercel.com/docs/domains/free-domain-with-pro.
 
 Connect the existing SMS repository through authorized company access. Review repository ownership separately if moving it into a company GitHub organization; do not recreate or transfer the repository automatically. Keep the first deployment restricted to the team.
 
@@ -82,10 +82,14 @@ Agree the school's source inventory, cutoff, opening financial controls and reco
 
 - Funding: received, GHS 1,892.
 - Company email: miqratechc@gmail.com, creation confirmed on 2026-10-18; recovery/MFA completion not independently confirmed.
-- New provider accounts: pending.
-- Domain/service purchases: not performed by this task.
+- Vercel account setup: completed by the user, reported on 2026-10-19; exact Pro/Pro Trial billing state and actual charge pending confirmation.
+- Domain: edujay.app purchased by the user, reported on 2026-10-19; receipt amount and renewal details pending confirmation.
+- Other provider accounts: pending; Neon is the next setup step.
+- Spending ledger: retain the GHS 1,892 starting balance and record actual receipts before calculating remaining funds. Approved allowances are not deductions.
 - Deployment and live checks: pending.
 - Existing local school records: retained.
+
+Live-service setup has now reached its first confirmed purchase milestone. Return to docs/production-readiness.md, Point 5: complete the applicable pre-pilot concurrency, recovery, retention, tenant/role, dependency and provider checks, then perform the immediate post-deployment smoke tests before admitting schools. A code-test pass or domain purchase does not certify production readiness.
 
 ## Official references checked on 2026-10-17
 
