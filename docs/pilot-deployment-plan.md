@@ -83,8 +83,12 @@ Agree the school's source inventory, cutoff, opening financial controls and reco
 - Funding: received, GHS 1,892.
 - Company email: miqratechc@gmail.com, creation confirmed on 2026-10-18; recovery/MFA completion not independently confirmed.
 - Vercel account setup: completed by the user, reported on 2026-10-19; exact Pro/Pro Trial billing state and actual charge pending confirmation.
-- Domain: edujay.app purchased by the user, reported on 2026-10-19; receipt amount and renewal details pending confirmation.
-- Other provider accounts: pending; Neon is the next setup step.
+- Domain: edujay.app purchased by the user, reported on 2026-10-19; domain page shows expiration 2027-10-19 and renewal USD 15/year. Initial receipt amount remains pending confirmation.
+- Neon: company project edujay and production branch created; Launch activation confirmed from the billing screen on 2026-10-19. Screenshot showed no charges to date at that time, not a guarantee of zero later usage charges.
+- Neon production compute: edujay-production, saved autoscaling 0.25-0.5 CU confirmed in the compute summary; 5-minute scale-to-zero was enabled in the edit screen. This is the setup/test starting size, subject to load-test results before live pilot admission.
+- Neon recovery: user confirmed changing the history window from 6 hours to 7 days on 2026-10-19. Actual restore drill remains pending.
+- Neon outstanding: verify selected Frankfurt region, confirm USD 30 spending notification was saved, create schema-only staging branch, set its compute and separate credentials, apply reviewed migrations and complete concurrency/recovery tests. Keep production as the default branch. History storage and staging compute contribute to the same usage budget.
+- Other provider accounts: Clerk, Resend and Sentry company setup pending.
 - Spending ledger: retain the GHS 1,892 starting balance and record actual receipts before calculating remaining funds. Approved allowances are not deductions.
 - Deployment and live checks: pending.
 - Existing local school records: retained.
