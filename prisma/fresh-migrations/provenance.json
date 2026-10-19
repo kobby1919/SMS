@@ -1,0 +1,359 @@
+{
+  "historicalSchemaCommit": "593a38c",
+  "schemaSha256": "9dd38aa992d5b5dec9564a6d4f7f6c1609dc65c692432f9fae05ccc3828b466a",
+  "baselineSha256": "5b365550eb737da1bf433fe0d889c1106fbdba7537c273f82e631ab3e49605fa",
+  "checks": 18,
+  "extraIndexes": 5,
+  "legacy": [
+    {
+      "name": "20260414075509_init",
+      "sha256": "eaa7e61428216b75d985405864358d99b44d74a7726f3e04b7f51c1cb1f2894b"
+    },
+    {
+      "name": "20260421163046_timetable_redesign",
+      "sha256": "fd2389ca6bb54f7008f55ca269bb5985ff25fc505e8aa87193de83bef97f0369"
+    },
+    {
+      "name": "20260422105754_add_cascade_deletes",
+      "sha256": "7bb40c9f86875efa974f3f8a17d8568d099fb48ad2dd85bf52d9b9e41a5394a0"
+    },
+    {
+      "name": "20260423214033_attendance_status",
+      "sha256": "250705ec805e378484924c5e89d7dfeeda13e40697af8de30a37ac455c6f516c"
+    },
+    {
+      "name": "20260520000000_add_school_tenancy",
+      "sha256": "ff7051f40140c3f5ceee903098dd9292116e4fd94aba26a7dd0e732ad13112e3"
+    },
+    {
+      "name": "20260520001000_scope_unique_constraints",
+      "sha256": "292d4583ec154ce16cdb466f99e7ff6433fb0f3d5bbcf5018de30d205e166245"
+    },
+    {
+      "name": "20260522000000_add_hot_path_indexes",
+      "sha256": "b1ade2a68e110cb30c187636a7c146c000421ca66062fa896e3db8a6dd13d451"
+    },
+    {
+      "name": "20260523000000_harden_sensitive_records",
+      "sha256": "e1afe1425c0b93cf15c362b97e727bcd61e8240a4ece0db731ecb5bdf3e544b0"
+    },
+    {
+      "name": "20260524000000_extend_hot_path_indexes",
+      "sha256": "9b4b37cbf1abd4d8b271c4567463550932cc53ca56539fa5f8613705cd164fda"
+    },
+    {
+      "name": "20260610000000_add_waitlist_entry",
+      "sha256": "97cc3c6d5e152bd8d6368e41c6c6ef67c1752f970ac9e7d75728461571fdbcf3"
+    },
+    {
+      "name": "20260623000000_complete_hot_path_indexes",
+      "sha256": "9c594f04518c94f7918a1c5654da78658645e116f0143eb92e79526e7247e7a8"
+    },
+    {
+      "name": "20260623001000_add_distributed_rate_limits",
+      "sha256": "6f07f60334ec89158a31e5e3d123acb472196a0f285d255b878e710f1d8b3235"
+    },
+    {
+      "name": "20260625000000_add_school_onboarding",
+      "sha256": "57f9fc7e2edb23491d571cf6bff8ac84e20e10bf974e4158b5183ba2311f2f85"
+    },
+    {
+      "name": "20260625001000_complete_onboarding_controls",
+      "sha256": "07f480656a443acc69af8135ef2a9420a40ec5a5a79887e9e5c31468790f7d4c"
+    },
+    {
+      "name": "20260625002000_complete_existing_school_onboarding",
+      "sha256": "74d29cb755ec4e48723cdd6b9bc173751be3cb6127b261a5060e2bb53f758839"
+    },
+    {
+      "name": "20260625003000_add_finance_webhooks_and_jobs",
+      "sha256": "b38c0a138b110b5c12a014f08d12cafd999b03420c741cf12e75474ee72a02cb"
+    },
+    {
+      "name": "20260625011000_add_payment_external_idempotency",
+      "sha256": "b3235869eb70c79a6827b5d26590acc0f3160576ba45f7a8ff0c3f68fddb41b2"
+    },
+    {
+      "name": "20260729000000_add_parent_notifications",
+      "sha256": "f0e73f671925849248608f84c3dee0f43af97da01719cd094d8b520c916a5b5a"
+    },
+    {
+      "name": "20260729001000_add_activity_based_ca",
+      "sha256": "bb1ef909477059cab89c4e968c94332a620c8d75786a036d79b79a46aba6fb8b"
+    },
+    {
+      "name": "20260729002000_add_parent_activity_events",
+      "sha256": "b43c17d17630769591d0ac363b2d746789a4265edbc5dacc89174aa3bb8d3ae1"
+    },
+    {
+      "name": "20260730000000_add_ca_audit_logs",
+      "sha256": "bb74d1487112cdda8e41659cb3fae73e167dabd52f258893bc8acdb3f35f1f9f"
+    },
+    {
+      "name": "20260730001000_add_parent_notification_delivery_settings",
+      "sha256": "383ed5594677ad0bc3ff912b377a7beb7a91fcb3349cb002674a89a1bce4fb95"
+    },
+    {
+      "name": "20260730003000_add_school_branding_identity",
+      "sha256": "0c0a31f435c98c74fad89387a8ee3b133c94075c91c2d5847ccaa6be45210e81"
+    },
+    {
+      "name": "20260730004000_add_parent_fee_transparency",
+      "sha256": "ff1e60c9b5e76c0a0ead0cdfeb39448972672c69a5d8b762bdd5a026d632f4c1"
+    },
+    {
+      "name": "20260730005500_complete_parent_fee_transparency",
+      "sha256": "25eeeca079585a73fafbcef25d1beca4b397d0152fefb35d43d2e3bf8376a7c3"
+    },
+    {
+      "name": "20260730010600_expand_payment_providers",
+      "sha256": "79376a42bde760da2d3adf3f24b86c1fb48956d3513ad928f81b997772e2bc69"
+    },
+    {
+      "name": "20260802090000_add_parent_summary_cadence",
+      "sha256": "5eed883b09d041277064c413b3a427003b7b0c5516eaf673eb451e357f218dd5"
+    },
+    {
+      "name": "20260803090000_harden_attendance_governance",
+      "sha256": "4faf74df21048d98cda5b249f938b116db88379b9b69cb175572901eac1fa5da"
+    },
+    {
+      "name": "20260823090000_add_homework_submission_tracking",
+      "sha256": "169ff7d6ab61da8666944baf1f5b5fd6282296e1cd07316c2055ea5899ffa5a9"
+    },
+    {
+      "name": "20260823091000_backfill_homework_submissions",
+      "sha256": "3d25f9f7b8c287d854043ebae72f7cfab9c32ba3af26ec5fc9440c9b15e313f5"
+    },
+    {
+      "name": "20260824090000_add_announcement_priority",
+      "sha256": "12c0872297cffec890744256c67fc05571b6d9cbdb4fed927b8ade7d53506b73"
+    },
+    {
+      "name": "20260825090000_add_active_academic_period_to_ca_config",
+      "sha256": "c5c585285d820799a19f7a59b2434e9743d6e25ddc35c3b742c8dd18837dc078"
+    },
+    {
+      "name": "20260827090000_add_report_card_publications",
+      "sha256": "ad650f1c65202aa19551f3defa323d18e423e092a2b9d42c921f1496b064efe3"
+    },
+    {
+      "name": "20260831090000_add_exam_entry_windows",
+      "sha256": "16109af95e976fe3c01f309f9cc49163559f90a67c43631b81fe3158f0be3c41"
+    },
+    {
+      "name": "20260901090000_add_teacher_accountability_settings",
+      "sha256": "1fb87c734bcea9c820c17fc446722635a4f9c7e8399cafd308b2fdc2238e6816"
+    },
+    {
+      "name": "20260901100000_add_teacher_accountability_models",
+      "sha256": "c9a777cf6a12821fefa04e6b1af5d777bde866489de92ca1b3c12ce153f46403"
+    },
+    {
+      "name": "20260901110000_add_teacher_reminder_dedupe_key",
+      "sha256": "a0ed1adbadb4cc9d97735ea8bdf0bdd50fac43bfca269b9368bef5b36ad56ce5"
+    },
+    {
+      "name": "20260907090000_add_homework_sequence",
+      "sha256": "3528957da349fa2ba74eb3b2152305272e47482a1b84b1b8981cdc56f3098161"
+    },
+    {
+      "name": "20260908090000_add_report_submission_workflow",
+      "sha256": "8b1c9736908f3436234cf42bec2209f6d21c2ff7c2ce0eca88e4cc8b811c62fc"
+    },
+    {
+      "name": "20260910150000_add_school_communication_policy",
+      "sha256": "82f00e10798bb26271dc6ca488e473d6ffbe9443e27bdc4fa2ea72d15a3ec6a2"
+    },
+    {
+      "name": "20260910162000_add_parent_teacher_contact_requests",
+      "sha256": "e859f034a96758d5bde9ee2cb2f36834ff548d33e7b0a518ac46c752fbdc356d"
+    },
+    {
+      "name": "20260910172000_add_school_communication_routes",
+      "sha256": "d5379f26c8616ed0b74c3e1ea0f8733c7ccac24118e02184ba1cc8cd3ee34310"
+    },
+    {
+      "name": "20260911100000_add_parent_teacher_contact_messages",
+      "sha256": "64b4e781c24bfcfacfe0c01ceece2269faca3f48cae91ad71f49a1993c78896c"
+    },
+    {
+      "name": "20260911113000_add_parent_contact_notification_type",
+      "sha256": "f47d137bf7382cd01e7bbe2b052ca8db54511f169d91cbee47d8e6cc4dd56860"
+    },
+    {
+      "name": "20260911120000_add_finance_parent_contact_category",
+      "sha256": "6836b4dc4a1e9f25c6118cbe5d396f7b4c8fb6431f94bb360855fa2eb1b26226"
+    },
+    {
+      "name": "20260913090000_add_school_period_templates",
+      "sha256": "602349c6ee844097aea02da36567f78fe304ce66b633f07ab1349a4ce4f2b851"
+    },
+    {
+      "name": "20260914020000_add_timetable_publication_snapshots",
+      "sha256": "fbc25824bdf18243b3d69048be921c5f40a8c34a8f9bd74e9b083ceed58cdba8"
+    },
+    {
+      "name": "20260914120000_add_teacher_invites",
+      "sha256": "c0c6c64eb7874cc209a15be35d000e0412c880db9cdea66b38638023ed23b893"
+    },
+    {
+      "name": "20260914123000_add_teacher_invite_audit_logs",
+      "sha256": "bdca33de131e767c19a4db06d18fc9c77f11b3b4204f91dce5e9c8e37ab22c57"
+    },
+    {
+      "name": "20260915100000_make_teacher_profile_fields_optional",
+      "sha256": "8758e48d067a9903725b59b0e6d72ccfc544ed3f3a259ec20a9ae34389f25914"
+    },
+    {
+      "name": "20260915120000_parent_student_relationships",
+      "sha256": "b8d69c1b3e2343a04b6fac23a97de6d57d62ee26934a4cfa751b55c6b219c749"
+    },
+    {
+      "name": "20260915123000_parent_invites",
+      "sha256": "3ecfe52697bfcc65164e88abf9cb0bfbdf810fb7565787dc18b8f3b34cc2d9d7"
+    },
+    {
+      "name": "20260915124500_parent_invite_students",
+      "sha256": "8afd85298f4b1e093828979c290b5c295120aaa8380d60420b3710178c019ac0"
+    },
+    {
+      "name": "20260916130000_parent_access_audit",
+      "sha256": "86bda3206148cecaad28962056274f8da0ae9b76c790db003f75948e2239a307"
+    },
+    {
+      "name": "20260916143000_add_bursar_invites",
+      "sha256": "6310b68e8f96cbcca69ed4cf7237de2a146d6abea70567504a7af033f498f9fb"
+    },
+    {
+      "name": "20260917120000_add_teacher_status_lifecycle",
+      "sha256": "3272bf19b580166e7ef8f8c25361a69aa119fbaaf1ac601ec6ad3ca69af7cd84"
+    },
+    {
+      "name": "20260918120000_add_teacher_invite_sex",
+      "sha256": "9986e75f15e37827101b86149173a32b463d3b4aeb8b2524b124d42c2dbd2aa6"
+    },
+    {
+      "name": "20260918130000_add_parent_bursar_sex",
+      "sha256": "e019a04590b754a59f808db5d713ffcbfe627fee22b25064e1d42635e5a29024"
+    },
+    {
+      "name": "20260919165000_drop_bursar_sex_defaults",
+      "sha256": "e6a152755c6c26efbc5e64c6c471608bc83aeb07a30a58e7ebd5174acb2b58f7"
+    },
+    {
+      "name": "20260921034500_add_pos_payment_method",
+      "sha256": "911866664aee46268dab3a7474f93cc67de833d81ffca5a6bebd87ea50d00afa"
+    },
+    {
+      "name": "20260921043000_unique_active_payment_reference",
+      "sha256": "9d816245560419aac7652dccbdd0f2f1a0b205cb4bf38a05d0b7489a6c9354fa"
+    },
+    {
+      "name": "20260921052000_add_payment_correction_requests",
+      "sha256": "630521e8272dbe0ad785be1708996d0eb5d4fd4c57b67281332da7467666a7d2"
+    },
+    {
+      "name": "20260923170000_add_app_notifications",
+      "sha256": "be21fe36e26e5a59ade8b20cdaa850f3e616e13304d14a2f22d4cfa742782689"
+    },
+    {
+      "name": "20260923173000_add_app_notification_deliveries",
+      "sha256": "43ebe7a98c2bc6076e3a76d220d058b8ae643702b7a8f796f0984b8a7996ace8"
+    },
+    {
+      "name": "20260923174500_harden_app_notification_deliveries",
+      "sha256": "ee3d5cf76e6d0e0fe78019dde905a8d263d935bff4c02093d45e1084bddd91cc"
+    },
+    {
+      "name": "20260923180000_harden_app_notification_idempotency",
+      "sha256": "099b2855cdf078a0826186faf8ef0fccf7fc4aa60b2dc31e2b353a8f8f1a32d4"
+    },
+    {
+      "name": "20260923183000_add_app_notification_preferences",
+      "sha256": "a61963ed92759e2213f218275277247f26abac37d82ad1379b124e6ad7898899"
+    },
+    {
+      "name": "20260923184500_harden_app_notification_preferences",
+      "sha256": "806996b9b46ea647c4969f8c4f48d5dec4f96e3e82808d8aa46a7d7f61f6553e"
+    },
+    {
+      "name": "20260924090000_add_app_notification_audit_logs",
+      "sha256": "bb18ed57f7c95902279888a9be2d5e89dcecb05f50816859dc6567e0ed660dca"
+    },
+    {
+      "name": "20260928120000_add_school_payment_settings",
+      "sha256": "d1683aa35f8a53023ebc13e1bda1f186d5a467dbabe80fecaa1e979d2766588e"
+    },
+    {
+      "name": "20260929130000_add_payment_intents",
+      "sha256": "b5314ff874380d54e748d1b587e808c1d8dd950afb22fbc65a7f41c4c11af69f"
+    },
+    {
+      "name": "20260929133000_add_pending_payment_intent_status",
+      "sha256": "622c7ab1a55ed4c42be82eaeab05ac7553231dda057e1b505571756bfe323ce0"
+    },
+    {
+      "name": "20260929134000_harden_payment_intent_records",
+      "sha256": "81f31d9f63a8b63c9440f1f4dd4e94a253f7858a8e092e36c0b373024162f62b"
+    },
+    {
+      "name": "20260929141000_add_card_payment_method",
+      "sha256": "cb39c520cb2f7b54e1f29c15c4f8b1fd5afbccda33e50722dcc423f3578aef05"
+    },
+    {
+      "name": "20261001110000_add_student_source_truth",
+      "sha256": "644805d652db9c965a8be6c99045a44898a46f2bcf743b47e4b8b534c3b66d13"
+    },
+    {
+      "name": "20261003103000_add_school_code",
+      "sha256": "b55711bd368b8f3480decf9970182bea9c537b3dc23ff9958452781e2df024d9"
+    },
+    {
+      "name": "20261005090000_add_fee_billing_frequency",
+      "sha256": "a51b477db33ae640ca0b5971a3faaa2a75a311fe61213473add259eb78c94da5"
+    },
+    {
+      "name": "20261005102000_add_daily_collection_setup",
+      "sha256": "1f53e756d06a2897da87bcdf8a88b7d9272a5d6daf6d9cf52956449dd8d530ad"
+    },
+    {
+      "name": "20261007103000_harden_daily_collection_setup",
+      "sha256": "a4b7b33e35c543d7e5fabd4582636fb4b50c923add8c61ee1eb96b69404c8855"
+    },
+    {
+      "name": "20261007113000_add_daily_collection_sessions",
+      "sha256": "f7c02739886b1e95a617f4cc1c8833f4216b5de98804e17e4aa3e599bbb51059"
+    },
+    {
+      "name": "20261007120000_add_collector_invites",
+      "sha256": "3079a5d1fb364717a574f8974a1ded3733c52909e6b50675d958bd4cc3d777cf"
+    },
+    {
+      "name": "20261008120000_migration_inventory",
+      "sha256": "3a0acfd19bed5f98af0a105a05b44a78379f535d822861fff173746592ba9a73"
+    },
+    {
+      "name": "20261008140000_protected_migration_staging",
+      "sha256": "9f323527a50035d2ef1a994b4f604b9fd6b436a6822b91cfdb115be86dd19729"
+    },
+    {
+      "name": "20261008160000_migration_reconciliation_approval",
+      "sha256": "40a3eea3ed77c3dffe2464cf5d98a26f913c2376ba5eefffbf50d9c3b71bd291"
+    },
+    {
+      "name": "20261008180000_migration_recovery_checkpoint",
+      "sha256": "b46ff55d141d554922b1fbbc9538deb68db13abc754c68fe1104dfef3c6d2706"
+    },
+    {
+      "name": "20261013120000_academic_recording_evidence",
+      "sha256": "a1db888697db4b8b737b77c09b8f65b66aa9606fc431de7a3f5a592bf00bfe23"
+    }
+  ],
+  "knownLegacyDrift": [
+    "Missing pre-tenancy CA/curriculum/finance DDL",
+    "ParentTeacherContactMessage.studentId and foreign key missing",
+    "Historical updatedAt/default and array-nullability differences",
+    "Legacy identifiers truncated differently from Prisma-generated names"
+  ]
+}
