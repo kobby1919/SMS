@@ -88,6 +88,19 @@ to `.private/database-evidence/staging-fresh-install.json` without a password or
 It refuses an already initialized database rather than reset it. On failure, inspect
 the state and recover deliberately; do not delete migration bookkeeping or repeatedly retry.
 
+If schema creation completed but subsequent verification stopped, use the read-only
+verification mode after investigating the failure. This mode does not run migrate deploy:
+
+```bash
+node tools/database/fresh-install.mjs --environment staging --env-file .private/neon-staging-migrations.env --verify-only
+```
+
+The first Neon staging rehearsal exposed three preserved historical indexes absent
+from the Prisma model. These are now explicitly represented in schema.prisma (the
+legacy CA unique index and two report-submission indexes). The applied baseline SQL
+and its checksum were not edited; the reviewed schema fingerprint was updated.
+The two financial partial indexes remain SQL-only and are checked separately.
+
 ## Production remains separately gated
 
 Only after staging initialization, runtime-grant tests and authenticated app review:
@@ -119,6 +132,13 @@ guards, production-evidence checks and refusal to overwrite an installation.
 They do not connect to Neon or certify its runtime permissions, TLS/network behaviour,
 concurrency, restoration or the authenticated application. Complete those on staging
 and return to `docs/production-readiness.md`, Point 5, before opening the pilot.
+
+Live staging rehearsal on 2026-10-20 subsequently passed initialization and read-only
+verification: 91 application tables (plus Prisma history), no canonical schema diff,
+matching applied checksum, 18 CHECK constraints and both valid financial partial
+unique indexes. School/student/payment/admin counts were zero. The SQL baseline was
+not edited or reapplied when correcting the three Prisma index declarations. This
+does not certify runtime-role permissions or any authenticated business workflow.
 
 Dependencies reported security advisories during the pinned test-dependency install.
 Review and resolve exploitable runtime findings before deployment; do not run an

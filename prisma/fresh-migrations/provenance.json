@@ -1,9 +1,9 @@
 {
   "historicalSchemaCommit": "593a38c",
-  "schemaSha256": "9dd38aa992d5b5dec9564a6d4f7f6c1609dc65c692432f9fae05ccc3828b466a",
+  "schemaSha256": "f5fa17a4b31ff40772c5f046250379fade457a503ba4c49bb9fad6277cb29319",
   "baselineSha256": "5b365550eb737da1bf433fe0d889c1106fbdba7537c273f82e631ab3e49605fa",
   "checks": 18,
-  "extraIndexes": 5,
+  "extraIndexes": 2,
   "legacy": [
     {
       "name": "20260414075509_init",
@@ -355,5 +355,7 @@
     "ParentTeacherContactMessage.studentId and foreign key missing",
     "Historical updatedAt/default and array-nullability differences",
     "Legacy identifiers truncated differently from Prisma-generated names"
-  ]
+  ],
+  "baselineSourceSchemaSha256": "9dd38aa992d5b5dec9564a6d4f7f6c1609dc65c692432f9fae05ccc3828b466a",
+  "recoveredIndexCount": 5
 }

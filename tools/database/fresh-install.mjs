@@ -8,6 +8,7 @@ import { baselineName, requireEmptyDatabase, validateStagingEvidence, validateTa
 const { values } = parseArgs({ options: {
   "env-file": { type: "string" }, environment: { type: "string" }, execute: { type: "boolean", default: false },
   "approve-production": { type: "boolean", default: false }, "staging-evidence": { type: "string" },
+  "verify-only": { type: "boolean", default: false },
 } });
 
 function privatePath(value) {
@@ -34,6 +35,7 @@ async function prismaCommand(args, databaseUrl, allowedCodes = [0]) {
 }
 
 async function main() {
+  if (values.execute && values["verify-only"]) throw new Error("Choose initialization or read-only verification, not both.");
   const settings = parseEnv(readFileSync(privatePath(values["env-file"]), "utf8"));
   const target = validateTarget({ environment: values.environment,
     url: settings.EDUJAY_MIGRATION_DATABASE_URL, expectedHost: settings.EDUJAY_EXPECTED_DATABASE_HOST,
@@ -54,11 +56,12 @@ async function main() {
     if (identity[0].role !== "neondb_owner" || identity[0].database !== target.database) throw new Error("Database identity check failed.");
     const { rows: relations } = await client.query(`SELECT c.relname FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname NOT IN ('pg_catalog','information_schema') AND n.nspname NOT LIKE 'pg_%' AND c.relkind IN ('r','p','v','m','f','S')`);
     const { rows: enums } = await client.query(`SELECT t.typname FROM pg_type t JOIN pg_namespace n ON n.oid=t.typnamespace WHERE n.nspname NOT IN ('pg_catalog','information_schema') AND n.nspname NOT LIKE 'pg_%' AND t.typtype='e'`);
-    requireEmptyDatabase(relations, enums);
-    console.log(JSON.stringify({ target, empty: true, mode: values.execute ? "INITIALIZE" : "READ_ONLY_PREFLIGHT" }));
-    if (!values.execute) return;
+    if (!values["verify-only"]) requireEmptyDatabase(relations, enums);
+    console.log(JSON.stringify({ target, empty: !relations.length && !enums.length,
+      mode: values["verify-only"] ? "VERIFY_ONLY" : values.execute ? "INITIALIZE" : "READ_ONLY_PREFLIGHT" }));
+    if (!values.execute && !values["verify-only"]) return;
     // Prisma owns its migration bookkeeping. Never db push, reset, seed or mark legacy migrations applied.
-    await prismaCommand(["migrate", "deploy"], settings.EDUJAY_MIGRATION_DATABASE_URL);
+    if (values.execute) await prismaCommand(["migrate", "deploy"], settings.EDUJAY_MIGRATION_DATABASE_URL);
     await prismaCommand(["migrate", "diff", "--from-config-datasource", "--to-schema", "prisma/schema.prisma", "--exit-code"], settings.EDUJAY_MIGRATION_DATABASE_URL);
     const { rows: applied } = await client.query('SELECT migration_name, checksum, finished_at, rolled_back_at FROM "_prisma_migrations"');
     if (applied.length !== 1 || applied[0].migration_name !== baselineName || applied[0].checksum !== checksum || !applied[0].finished_at || applied[0].rolled_back_at) {

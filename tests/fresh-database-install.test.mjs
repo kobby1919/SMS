@@ -30,7 +30,7 @@ test("fresh PostgreSQL catalog matches every canonical table, column, type, defa
   ]) assert.deepEqual((await db.query(query)).rows, (await expected.query(query)).rows);
 });
 
-test("all canonical indexes plus the five recovered indexes exist", async () => {
+test("all canonical indexes and the remaining SQL-only partial indexes exist", async () => {
   const query = "SELECT indexname,indexdef FROM pg_indexes WHERE schemaname='public' ORDER BY indexname";
   const actual = (await db.query(query)).rows;
   const canonical = (await expected.query(query)).rows;
@@ -64,7 +64,9 @@ test("migration commands cannot inherit the working DATABASE_URL", () => {
   assert.match(config, /EDUJAY_MIGRATION_DATABASE_URL/);
   const runner = readFileSync("tools/database/fresh-install.mjs", "utf8");
   assert.doesNotMatch(runner, /["'](?:reset|push|resolve|seed)["']/);
-  assert.match(runner, /if \(!values.execute\) return/);
+  assert.match(runner, /if \(!values.execute && !values\["verify-only"\]\) return/);
+  assert.match(runner, /if \(values.execute\) await prismaCommand\(\["migrate", "deploy"\]/);
+  assert.match(runner, /values.execute && values\["verify-only"\]/);
 });
 
 test("target guard rejects production aliases, pooled URLs, weak TLS and wrong identities", () => {
