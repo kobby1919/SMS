@@ -11,6 +11,7 @@ import { readMigrationJson } from "@/src/lib/migration/request-body";
 import { enforceActionRateLimit, RateLimitExceededError } from "@/src/lib/rate-limit";
 import { z } from "zod";
 import { BillDiscountError } from "@/src/lib/services/bill-discounts";
+import { isSerializationConflict } from "@/src/lib/prisma-conflicts";
 
 const MAX_IMPORT_PAYLOAD_BYTES = 1024;
 
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
     if (error instanceof BillDiscountError) return NextResponse.json({ error: error.message }, { status: 400 });
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2034") {
+    if (isSerializationConflict(error)) {
       return NextResponse.json({ error: "School records or the saved upload changed during import. Nothing was saved. Review the upload and retry." }, { status: 409 });
     }
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {

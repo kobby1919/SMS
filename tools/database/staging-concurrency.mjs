@@ -12,9 +12,15 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Prisma, PrismaClient } from "../../src/generated/prisma/index.js";
 import { validateTarget, verifyBundle } from "./fresh-install-safety.mjs";
 import { runtimeConnectionUrls } from "./runtime-role-policy.mjs";
-import { blockedSessionCountSql } from "./concurrency-locks.mjs";
+import { blockedSessionCountSql, postgresErrorCode } from "./concurrency-locks.mjs";
+import { checkMigrationWorkflows } from "./migration-workflow-checks.mjs";
+import { cleanupStagingFixtures } from "./staging-fixture-cleanup.mjs";
 
-const { values } = parseArgs({ options: { execute: { type: "boolean", default: false } } });
+const { values } = parseArgs({ options: { execute: { type: "boolean", default: false }, workflow: { type: "boolean", default: false }, "cleanup-interrupted": { type: "boolean", default: false } } });
+const evidenceFile = values.workflow ? "database-evidence/staging-workflow-concurrency.json" : "database-evidence/staging-concurrency.json";
+const scope = values.workflow
+  ? "Full subject CSV staging/import/cancellation/reconciliation service races. Ephemeral encryption key, test recovery mode, no HTTP/auth/cache/people/finance/load or restore certification."
+  : "Inventory service concurrency and importer school-lock protocol only; not full import, approval, cancellation, finance, HTTP auth or load certification.";
 const directory = realpathSync(".private");
 function privatePath(name) {
   const result = path.join(directory, name);
@@ -74,6 +80,7 @@ async function main() {
   let holder;
   let observer;
   let created = false;
+  let controlError;
   const ids = [0, 1, 2].map(() => "concurrency_probe_" + randomUUID());
   const results = [];
   const pending = [];
@@ -89,13 +96,25 @@ async function main() {
   try {
     holder = await controls.connect();
     observer = await controls.connect();
+    holder.on("error", (error) => { controlError = error; });
+    observer.on("error", (error) => { controlError = error; });
+    await holder.query("SET idle_in_transaction_session_timeout='20s'");
     const identity = (await observer.query("SELECT current_user AS role,current_database() AS database")).rows[0];
     assert.equal(identity.role, "edujay_app"); assert.equal(identity.database, "neondb");
     const locked = (await holder.query("SELECT pg_try_advisory_lock(18453,19000) AS locked")).rows[0].locked;
     if (!locked) throw new Error("Another staging database maintenance operation is active.");
+    if (values["cleanup-interrupted"]) {
+      if (!values.workflow || !values.execute) throw new Error("Interrupted cleanup requires explicit workflow execution authorization.");
+      const previous = JSON.parse(readFileSync(privatePath(evidenceFile), "utf8"));
+      if (previous.environment !== "staging" || previous.host !== target.host || previous.baselineSha256 !== manifest.baselineSha256 || previous.passed !== false || previous.cleanupPassed !== false) throw new Error("No matching interrupted rehearsal evidence.");
+      await cleanupStagingFixtures(prisma, previous.fixtureIds);
+      writeFileSync(privatePath(evidenceFile), JSON.stringify({ ...previous, status: "INTERRUPTED_CLEANED", cleanupPassed: true, cleanedAt: new Date().toISOString() }, null, 2) + "\n", { mode: 0o600 });
+      console.log(JSON.stringify({ interruptedFixturesCleaned: true, rehearsalPassed: false }));
+      return;
+    }
     const count = await prisma.school.count();
     if (count !== 0 || await prisma.onboardingAuditLog.count() !== 0) throw new Error("Concurrency rehearsal requires empty staging schools/audits; never remove existing data automatically.");
-    console.log(JSON.stringify({ environment: "staging", mode: values.execute ? "EXECUTE_SYNTHETIC_REHEARSAL" : "READ_ONLY_PREFLIGHT", schoolCount: count }));
+    console.log(JSON.stringify({ environment: "staging", suite: values.workflow ? "SUBJECT_WORKFLOWS" : "INVENTORY", mode: values.execute ? "EXECUTE_SYNTHETIC_REHEARSAL" : "READ_ONLY_PREFLIGHT", schoolCount: count }));
     if (!values.execute) return;
     const core = loadService("src/lib/migration/inventory.ts", { zod: { z } });
     const service = loadService("src/lib/services/migration-inventory.ts", {
@@ -107,10 +126,13 @@ async function main() {
       rows: core.inventoryDatasets.map(([key]) => ({ key, disposition: key === "subjects" ? "INCLUDE" : "EXCLUDE",
         expectedRecords: key === "subjects" ? 1 : 0, files: key === "subjects" ? "synthetic-subjects.csv" : "",
         reason: "Synthetic rehearsal only", from: "", to: "" })) });
-    writeFileSync(privatePath("database-evidence/staging-concurrency.json"), JSON.stringify({ environment: "staging", host: target.host,
+    writeFileSync(privatePath(evidenceFile), JSON.stringify({ environment: "staging", host: target.host,
       startedAt: new Date().toISOString(), baselineSha256: manifest.baselineSha256, passed: false, fixtureIds: ids, cleanupPassed: false, status: "RUNNING" }, null, 2) + "\n", { mode: 0o600 });
     await prisma.school.createMany({ data: ids.map((id) => ({ id, slug: id, name: "Synthetic concurrency rehearsal" })) });
     created = true;
+    if (values.workflow) {
+      await checkMigrationWorkflows({ prisma, holder, observer, ids, run, waitForBlocked });
+    } else {
     const pid = (await holder.query("SELECT pg_backend_pid() AS pid")).rows[0].pid;
 
     await run("concurrent_same_revision_has_one_winner_and_one_audit", (async () => {
@@ -175,19 +197,14 @@ async function main() {
       } finally { await holder.query("ROLLBACK"); if (request) await Promise.allSettled([request]); }
       assert.equal((await request).version, 3);
     })());
+    }
   } finally {
     let cleanupError;
     try {
-      if (holder) await holder.query("ROLLBACK");
+      if (holder && !controlError) await holder.query("ROLLBACK").catch((error) => { controlError = error; });
       await Promise.allSettled(pending);
       if (created) {
-        await prisma.$transaction(async (tx) => {
-          await tx.onboardingAuditLog.deleteMany({ where: { schoolId: { in: ids } } });
-          const removed = await tx.school.deleteMany({ where: { id: { in: ids } } });
-          assert.equal(removed.count, ids.length);
-        });
-        assert.equal(await prisma.school.count({ where: { id: { in: ids } } }), 0);
-        assert.equal(await prisma.onboardingAuditLog.count({ where: { schoolId: { in: ids } } }), 0);
+        await cleanupStagingFixtures(prisma, ids);
         cleanupPassed = true;
       }
     } catch (error) { cleanupError = error; }
@@ -198,14 +215,15 @@ async function main() {
       const closed = await Promise.allSettled([prisma.$disconnect(), appPool.end(), controls.end()]);
       cleanupError ??= closed.find((result) => result.status === "rejected")?.reason;
     }
-    if (values.execute) {
-      const passed = results.length === 4 && results.every((result) => result.passed) && cleanupPassed && !cleanupError;
+    if (values.execute && !values["cleanup-interrupted"]) {
+      const passed = results.length === 4 && results.every((result) => result.passed) && cleanupPassed && !cleanupError && !controlError;
       const record = { environment: "staging", host: target.host, verifiedAt: new Date().toISOString(), baselineSha256: manifest.baselineSha256,
-        passed, results, fixtureIds: ids, cleanupPassed, scope: "Inventory service concurrency and importer school-lock protocol only; not full import, approval, cancellation, finance, HTTP auth or load certification." };
-      writeFileSync(privatePath("database-evidence/staging-concurrency.json"), JSON.stringify(record, null, 2) + "\n", { mode: 0o600 });
+        passed, results, fixtureIds: ids, cleanupPassed, scope };
+      writeFileSync(privatePath(evidenceFile), JSON.stringify(record, null, 2) + "\n", { mode: 0o600 });
       console.log(JSON.stringify(record));
     }
     if (cleanupError) throw cleanupError;
+    if (controlError) throw controlError;
   }
 }
 
@@ -213,6 +231,8 @@ main().catch((error) => {
   const known = ["Did not observe the expected independent blocked database sessions.", "Independent school operation timed out."];
   console.error(JSON.stringify({ failed: true, code: /^(?:P\d{4}|\d{5}|ERR_ASSERTION)$/.test(error?.code ?? "") ? error.code : "REHEARSAL_FAILED",
     errorType: error?.constructor?.name,
+    databaseCode: postgresErrorCode(error),
+    category: /\bvoid\b/i.test(JSON.stringify(error?.meta ?? {})) ? "UNSUPPORTED_VOID_RESULT" : undefined,
     reason: known.includes(error?.message) ? error.message : "Review failed assertion or service exception without exposing query details.",
     actual: typeof error?.actual === "number" ? error.actual : undefined,
     expected: typeof error?.expected === "number" ? error.expected : undefined,

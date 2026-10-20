@@ -20,7 +20,7 @@ export async function applyDiscountInTransaction(tx: Prisma.TransactionClient, i
   schoolId: string; actorId: string; billId: number; type: DiscountType; description: string;
   amount?: number | string | null; percentage?: number | string | null; approvalReference?: string; requestId?: string;
 }) {
-  if (input.requestId) await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${input.schoolId}), hashtext(${`${input.actorId}:${input.requestId}`}))`;
+  if (input.requestId) await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${input.schoolId}), hashtext(${`${input.actorId}:${input.requestId}`}))`;
   const bill = await lockBill(tx, input.schoolId, input.billId);
   if ((input.amount == null) === (input.percentage == null)) throw new BillDiscountError("Choose a fixed amount or percentage.");
   if (input.requestId) {

@@ -18,6 +18,7 @@ function fixture() {
   const audits = [];
   const tx = {
     $queryRaw: async () => [],
+    $executeRaw: async () => 1,
     studentBill: { findFirst: async ({ where }) => where.schoolId === bill.schoolId && where.id === bill.id ? bill : null, update: async ({ data }) => Object.assign(bill, data) },
     discount: { create: async ({ data }) => { const row = { id: discounts.length + 1, status: "ACTIVE", ...data }; discounts.push(row); return row; }, findFirst: async ({ where }) => discounts.find((row) => row.id === where.id && row.schoolId === where.schoolId) ?? null, findFirstOrThrow: async ({ where }) => discounts.find((row) => row.id === where.id), update: async ({ where, data }) => Object.assign(discounts.find((row) => row.id === where.id), data) },
     financeAuditLog: { create: async ({ data }) => { audits.push(data); return data; }, findFirst: async ({ where }) => audits.find((row) => row.action === where.action && (where.metadata ? row.metadata.requestId === where.metadata.equals && row.performedBy === where.performedBy : row.entityId === where.entityId)) ?? null },

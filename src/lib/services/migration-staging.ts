@@ -21,7 +21,7 @@ export async function stageMigrationUpload(schoolId: string, actorId: string, ra
   const expiresAt = new Date(Date.now() + retentionMs);
   const upload = await prisma.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT "id" FROM "School" WHERE "id" = ${schoolId} FOR SHARE`;
-    await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${schoolId}), hashtext('migration-staging-quota'))`;
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${schoolId}), hashtext('migration-staging-quota'))`;
     const inventory = await getMigrationInventory(schoolId, tx);
     if (inventory?.status !== "CONFIRMED" || !inventorySchema.safeParse(inventory).success || !inventory.rows.some((r) => r.key === input.areaKey && r.disposition === "INCLUDE")) throw new MigrationStagingError("Confirm the inventory scope for this dataset before saving an upload.", 409);
     const [pendingCount, retainedCount] = await Promise.all([

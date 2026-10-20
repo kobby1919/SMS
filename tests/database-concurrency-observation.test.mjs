@@ -1,7 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { PGlite } from "@electric-sql/pglite";
-import { blockedSessionCountSql } from "../tools/database/concurrency-locks.mjs";
+import { blockedSessionCountSql, postgresErrorCode } from "../tools/database/concurrency-locks.mjs";
+
+test("Prisma raw serialization failures are distinguished from unrelated database errors", () => {
+  const raw = { code: "P2010", meta: { driverAdapterError: { cause: { originalCode: "40001" } } } };
+  assert.equal(postgresErrorCode(raw), "40001");
+  assert.equal(postgresErrorCode({ code: "P2010", meta: { code: "23505" } }), "23505");
+  assert.equal(postgresErrorCode({ code: "P2010", meta: { message: "40001" } }), undefined);
+});
 
 test("lock observation includes queued waiters, deduplicates chains and excludes unrelated sessions", async () => {
   const db = new PGlite();

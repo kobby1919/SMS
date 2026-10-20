@@ -705,7 +705,7 @@ export async function importValidatedMigrationRows(
       await tx.$queryRaw`SELECT "id" FROM "MigrationStagedUpload" WHERE "id" = ${request.uploadId} AND "schoolId" = ${context.schoolId} FOR UPDATE`;
       const upload = await tx.migrationStagedUpload.findFirst({ where: { id: request.uploadId, schoolId: context.schoolId } });
       if (!upload || upload.status !== "VALIDATED" || !upload.encryptedPayload || upload.expiresAt <= new Date() || upload.checksum !== staged.upload.checksum) throw new MigrationImportError("This upload changed, expired, or was already imported. Refresh the workspace.", 409);
-      if (["fees", "feeStructures", "discounts"].includes(context.areaKey)) await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${context.schoolId}), hashtext('finance-migration'))`;
+      if (["fees", "feeStructures", "discounts"].includes(context.areaKey)) await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${context.schoolId}), hashtext('finance-migration'))`;
       validation = await validateMigrationRows(context, tx);
       cleanRows = validation.rows.filter((row) => row.status === "READY" && row.issues.length === 0);
       dirtyRows = validation.rows.filter((row) => row.status !== "READY" || row.issues.length > 0).map((row) => ({ rowNumber: row.rowNumber, status: row.status, issues: row.issues }));
