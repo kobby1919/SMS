@@ -134976,6 +134976,7 @@ export namespace Prisma {
   export type ContinuousAssessmentWhereUniqueInput = Prisma.AtLeast<{
     id?: number
     schoolId_studentId_subjectId_classId_term_academicYear?: ContinuousAssessmentSchoolIdStudentIdSubjectIdClassIdTermAcademicYearCompoundUniqueInput
+    studentId_subjectId_classId_term_academicYear?: ContinuousAssessmentStudentIdSubjectIdClassIdTermAcademicYearCompoundUniqueInput
     AND?: ContinuousAssessmentWhereInput | ContinuousAssessmentWhereInput[]
     OR?: ContinuousAssessmentWhereInput[]
     NOT?: ContinuousAssessmentWhereInput | ContinuousAssessmentWhereInput[]
@@ -135001,7 +135002,7 @@ export namespace Prisma {
     teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
     subject?: XOR<SubjectScalarRelationFilter, SubjectWhereInput>
     class?: XOR<ClassScalarRelationFilter, ClassWhereInput>
-  }, "id" | "schoolId_studentId_subjectId_classId_term_academicYear">
+  }, "id" | "schoolId_studentId_subjectId_classId_term_academicYear" | "studentId_subjectId_classId_term_academicYear">
 
   export type ContinuousAssessmentOrderByWithAggregationInput = {
     id?: SortOrder
@@ -154060,6 +154061,14 @@ export namespace Prisma {
 
   export type ContinuousAssessmentSchoolIdStudentIdSubjectIdClassIdTermAcademicYearCompoundUniqueInput = {
     schoolId: string
+    studentId: string
+    subjectId: number
+    classId: number
+    term: $Enums.Term
+    academicYear: string
+  }
+
+  export type ContinuousAssessmentStudentIdSubjectIdClassIdTermAcademicYearCompoundUniqueInput = {
     studentId: string
     subjectId: number
     classId: number

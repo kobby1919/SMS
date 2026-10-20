@@ -2145,6 +2145,7 @@ model ContinuousAssessment {
   updatedAt DateTime @updatedAt
 
   @@unique([schoolId, studentId, subjectId, classId, term, academicYear])
+  @@unique([studentId, subjectId, classId, term, academicYear], map: "ContinuousAssessment_studentId_subjectId_classId_term_acade_key")
   @@index([schoolId, studentId])
   @@index([schoolId, classId, term, academicYear])
 }
@@ -2177,6 +2178,8 @@ model ReportCardPublication {
   @@unique([schoolId, classId, term, academicYear])
   @@index([schoolId, status, publishedAt])
   @@index([schoolId, classId, status])
+  @@index([schoolId, status, submittedAt])
+  @@index([schoolId, submittedBy, status])
 }
 
 model ExamEntryWindow {
