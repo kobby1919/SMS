@@ -10,7 +10,7 @@ const files = new Set([
   "migration/inventory", "migration/staging", "migration/reconciliation", "migration/recovery", "migration/column-mapping",
   "validation/data-migration", "admission-number", "prisma-conflicts", "services/migration-inventory", "services/migration-recovery",
   "services/migration-staging", "services/migration-staging-storage", "services/migration-staging-parser",
-  "services/data-migration-validation", "services/data-migration-import", "services/migration-reconciliation",
+  "services/data-migration-validation", "services/data-migration-import", "services/migration-reconciliation", "services/onboarding", "roles",
 ]);
 const external = new Set(["zod", "crypto", "node:crypto", "node:fs/promises", "node:path", "csv-parse/sync"]);
 
@@ -22,6 +22,9 @@ export function loadMigrationServices(prisma) {
     "@/src/lib/cacheTags": { revalidateDashboard() {}, revalidateReferenceData() {} },
     "@/src/lib/services/user-management": { studentRecordUsername: unsupported },
     "@/src/lib/services/bill-discounts": { applyDiscountInTransaction: unsupported },
+    "@clerk/nextjs/server": { clerkClient: unsupported },
+    "@/src/lib/services/notifications": { appBaseUrl: unsupported, sendFirstAdminInviteEmail: unsupported, sendSchoolAdminInviteEmail: unsupported },
+    "@/src/lib/services/onboarding-policy": { getSchoolAdminInviteAccountSafety: unsupported },
   };
   // Ephemeral test key and non-production recovery mode never alter process.env or deployment settings.
   const isolatedProcess = { env: { NODE_ENV: "test", MIGRATION_STAGING_ENCRYPTION_KEY: randomBytes(32).toString("base64") }, cwd: () => process.cwd() };
@@ -45,5 +48,6 @@ export function loadMigrationServices(prisma) {
     importer: "services/data-migration-import", reconciliation: "services/migration-reconciliation",
     storage: "services/migration-staging-storage", parser: "services/migration-staging-parser",
     conflicts: "prisma-conflicts",
+    recovery: "services/migration-recovery", onboarding: "services/onboarding",
   }).map(([key, file]) => [key, load(`@/src/lib/${file}`)]));
 }

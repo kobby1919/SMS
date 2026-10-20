@@ -29,6 +29,6 @@ The ignored `.private/database-evidence/staging-concurrency.json` records result
 
 ## Still Required
 
-This is a limited concurrency milestone, not completion of Point 5 or a load certification. Full duplicate import, approval/import, cancellation/import, completion/edit and recovery-HOLD races remain pending, as do mixed payment/score workloads and report reconciliation. Import-lock probes exercise the real database protocol but do not execute the full importer.
+This is a limited concurrency milestone, not completion of Point 5 or a load certification. Subsequent subject-only duplicate import, approval/import and cancellation/import checks are recorded in `docs/staging-workflow-concurrency.md`; HOLD and completion-versus-inventory-edit checks are recorded in `docs/staging-recovery-concurrency.md`. Mixed payment/score workloads, other representative edit/import races and report reconciliation remain pending. The import-lock probes in this initial suite exercise the database protocol but do not execute the full importer.
 
 Also pending before school admission: isolated backup/restore, encrypted staging redeploy/retention/cleanup, production-like authentication and tenant/role isolation, desktop/mobile walkthroughs, dependency security fixes and enabled provider/webhook/worker tests. Perform deployed Vercel smoke tests immediately after deployment and before inviting schools. Passing code or these four checks alone is not production certification; return to `docs/production-readiness.md`, Point 5.

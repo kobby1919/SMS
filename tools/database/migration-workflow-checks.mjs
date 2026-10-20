@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { loadMigrationServices } from "./migration-service-harness.mjs";
+import { migrationContest } from "./contested-migration.mjs";
 
 export async function checkMigrationWorkflows({ prisma, holder, observer, ids, run, waitForBlocked }) {
   const { inventoryCore, inventory, staging, importer, reconciliation, conflicts } = loadMigrationServices(prisma);
@@ -18,24 +19,7 @@ export async function checkMigrationWorkflows({ prisma, holder, observer, ids, r
       expectedRecords: key === "subjects" ? 1 : 0, files: key === "subjects" ? "synthetic-subjects.csv" : "", reason: "Synthetic subject-only test", from: "", to: "" })),
   });
 
-  // Keep each contested request observed and awaited before fixture cleanup can begin.
-  async function contested(table, id, work) {
-    const requests = [];
-    const failures = [];
-    const start = (promise) => {
-      requests.push(promise);
-      promise.catch((error) => { failures.push(error); });
-      return promise;
-    };
-    await holder.query("BEGIN");
-    try {
-      assert.ok(["School", "MigrationStagedUpload"].includes(table));
-      const lock = table === "School" ? "FOR NO KEY UPDATE" : "FOR UPDATE";
-      await holder.query(`SELECT id FROM public."${table}" WHERE id=$1 ${lock}`, [id]);
-      await work(start, (count) => waitForBlocked(observer, pid, count, failures));
-    } finally { await holder.query("ROLLBACK"); await Promise.allSettled(requests); }
-    return Promise.allSettled(requests);
-  }
+  const contested = migrationContest({ holder, observer, waitForBlocked, pid });
 
   await run("duplicate_full_import_has_one_commit_and_idempotent_retry", (async () => {
     const upload = await stage(ids[0], "Synthetic duplicate subject");

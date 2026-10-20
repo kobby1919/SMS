@@ -9,10 +9,12 @@ export async function cleanupStagingFixtures(prisma, ids) {
     await tx.onboardingAuditLog.deleteMany({ where: { schoolId: { in: ids } } });
     await tx.migrationStagedUpload.deleteMany({ where: { schoolId: { in: ids } } });
     await tx.subject.deleteMany({ where: { schoolId: { in: ids } } });
+    await tx.class.deleteMany({ where: { schoolId: { in: ids } } });
+    await tx.grade.deleteMany({ where: { schoolId: { in: ids } } });
     assert.equal((await tx.school.deleteMany({ where: { id: { in: ids } } })).count, schools.length);
   });
   assert.equal(await prisma.school.count({ where: { id: { in: ids } } }), 0);
-  for (const model of [prisma.onboardingAuditLog, prisma.migrationStagedUpload, prisma.subject]) {
+  for (const model of [prisma.onboardingAuditLog, prisma.migrationStagedUpload, prisma.subject, prisma.class, prisma.grade]) {
     assert.equal(await model.count({ where: { schoolId: { in: ids } } }), 0);
   }
 }

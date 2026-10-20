@@ -15,10 +15,12 @@ import { runtimeConnectionUrls } from "./runtime-role-policy.mjs";
 import { blockedSessionCountSql, postgresErrorCode } from "./concurrency-locks.mjs";
 import { checkMigrationWorkflows } from "./migration-workflow-checks.mjs";
 import { cleanupStagingFixtures } from "./staging-fixture-cleanup.mjs";
+import { checkMigrationRecovery } from "./migration-recovery-checks.mjs";
 
-const { values } = parseArgs({ options: { execute: { type: "boolean", default: false }, workflow: { type: "boolean", default: false }, "cleanup-interrupted": { type: "boolean", default: false } } });
-const evidenceFile = values.workflow ? "database-evidence/staging-workflow-concurrency.json" : "database-evidence/staging-concurrency.json";
-const scope = values.workflow
+const { values } = parseArgs({ options: { execute: { type: "boolean", default: false }, workflow: { type: "boolean", default: false }, recovery: { type: "boolean", default: false }, "cleanup-interrupted": { type: "boolean", default: false } } });
+const evidenceFile = values.recovery ? "database-evidence/staging-recovery-concurrency.json" : values.workflow ? "database-evidence/staging-workflow-concurrency.json" : "database-evidence/staging-concurrency.json";
+const scope = values.recovery ? "Actual subject importer, recovery HOLD, inventory edit and onboarding completion services; synthetic data, test recovery mode, ephemeral key. No production backup evidence, HTTP/auth, finance, load or restore certification."
+  : values.workflow
   ? "Full subject CSV staging/import/cancellation/reconciliation service races. Ephemeral encryption key, test recovery mode, no HTTP/auth/cache/people/finance/load or restore certification."
   : "Inventory service concurrency and importer school-lock protocol only; not full import, approval, cancellation, finance, HTTP auth or load certification.";
 const directory = realpathSync(".private");
@@ -56,6 +58,7 @@ async function within(promise, milliseconds) {
 }
 
 async function main() {
+  if (values.workflow && values.recovery) throw new Error("Choose one rehearsal suite.");
   const settings = parseEnv(readFileSync(privatePath("neon-staging-migrations.env"), "utf8"));
   const target = validateTarget({ environment: "staging", url: settings.EDUJAY_MIGRATION_DATABASE_URL,
     expectedHost: settings.EDUJAY_EXPECTED_DATABASE_HOST, productionHost: settings.EDUJAY_PRODUCTION_DATABASE_HOST });
@@ -104,7 +107,7 @@ async function main() {
     const locked = (await holder.query("SELECT pg_try_advisory_lock(18453,19000) AS locked")).rows[0].locked;
     if (!locked) throw new Error("Another staging database maintenance operation is active.");
     if (values["cleanup-interrupted"]) {
-      if (!values.workflow || !values.execute) throw new Error("Interrupted cleanup requires explicit workflow execution authorization.");
+      if ((!values.workflow && !values.recovery) || !values.execute) throw new Error("Interrupted cleanup requires explicit workflow or recovery execution authorization.");
       const previous = JSON.parse(readFileSync(privatePath(evidenceFile), "utf8"));
       if (previous.environment !== "staging" || previous.host !== target.host || previous.baselineSha256 !== manifest.baselineSha256 || previous.passed !== false || previous.cleanupPassed !== false) throw new Error("No matching interrupted rehearsal evidence.");
       await cleanupStagingFixtures(prisma, previous.fixtureIds);
@@ -114,7 +117,7 @@ async function main() {
     }
     const count = await prisma.school.count();
     if (count !== 0 || await prisma.onboardingAuditLog.count() !== 0) throw new Error("Concurrency rehearsal requires empty staging schools/audits; never remove existing data automatically.");
-    console.log(JSON.stringify({ environment: "staging", suite: values.workflow ? "SUBJECT_WORKFLOWS" : "INVENTORY", mode: values.execute ? "EXECUTE_SYNTHETIC_REHEARSAL" : "READ_ONLY_PREFLIGHT", schoolCount: count }));
+    console.log(JSON.stringify({ environment: "staging", suite: values.recovery ? "RECOVERY_COMPLETION" : values.workflow ? "SUBJECT_WORKFLOWS" : "INVENTORY", mode: values.execute ? "EXECUTE_SYNTHETIC_REHEARSAL" : "READ_ONLY_PREFLIGHT", schoolCount: count }));
     if (!values.execute) return;
     const core = loadService("src/lib/migration/inventory.ts", { zod: { z } });
     const service = loadService("src/lib/services/migration-inventory.ts", {
@@ -130,7 +133,9 @@ async function main() {
       startedAt: new Date().toISOString(), baselineSha256: manifest.baselineSha256, passed: false, fixtureIds: ids, cleanupPassed: false, status: "RUNNING" }, null, 2) + "\n", { mode: 0o600 });
     await prisma.school.createMany({ data: ids.map((id) => ({ id, slug: id, name: "Synthetic concurrency rehearsal" })) });
     created = true;
-    if (values.workflow) {
+    if (values.recovery) {
+      await checkMigrationRecovery({ prisma, holder, observer, ids, run, waitForBlocked });
+    } else if (values.workflow) {
       await checkMigrationWorkflows({ prisma, holder, observer, ids, run, waitForBlocked });
     } else {
     const pid = (await holder.query("SELECT pg_backend_pid() AS pid")).rows[0].pid;
@@ -216,7 +221,7 @@ async function main() {
       cleanupError ??= closed.find((result) => result.status === "rejected")?.reason;
     }
     if (values.execute && !values["cleanup-interrupted"]) {
-      const passed = results.length === 4 && results.every((result) => result.passed) && cleanupPassed && !cleanupError && !controlError;
+      const passed = results.length === (values.recovery ? 5 : 4) && results.every((result) => result.passed) && cleanupPassed && !cleanupError && !controlError;
       const record = { environment: "staging", host: target.host, verifiedAt: new Date().toISOString(), baselineSha256: manifest.baselineSha256,
         passed, results, fixtureIds: ids, cleanupPassed, scope };
       writeFileSync(privatePath(evidenceFile), JSON.stringify(record, null, 2) + "\n", { mode: 0o600 });

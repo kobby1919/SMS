@@ -7,6 +7,35 @@ import ts from "typescript";
 import { z } from "zod";
 import { Prisma } from "../src/generated/prisma/index.js";
 import { cleanupStagingFixtures } from "../tools/database/staging-fixture-cleanup.mjs";
+import { migrationContest } from "../tools/database/contested-migration.mjs";
+
+test("synthetic cleanup preserves exact scope and removes classes before grades", async () => {
+  const ids = [1, 2, 3].map((number) => "concurrency_probe_" + String(number).padStart(36, "0"));
+  const deleted = [];
+  const tx = Object.fromEntries(["onboardingAuditLog", "migrationStagedUpload", "subject", "class", "grade", "school"].map((name) => [name, {
+    deleteMany: async ({ where }) => {
+      assert.deepEqual((where.id ?? where.schoolId).in, ids);
+      deleted.push(name); return { count: name === "school" ? 3 : 0 };
+    },
+  }]));
+  const prisma = Object.fromEntries(Object.keys(tx).map((name) => [name, { count: async () => 0 }]));
+  prisma.school.findMany = async () => ids.map((id) => ({ id, slug: id, name: "Synthetic concurrency rehearsal" }));
+  prisma.$transaction = async (work) => work(tx);
+  await cleanupStagingFixtures(prisma, ids);
+  assert.deepEqual(deleted, ["onboardingAuditLog", "migrationStagedUpload", "subject", "class", "grade", "school"]);
+});
+
+test("contest waits for started requests even when its control rollback fails", async () => {
+  let settled = false;
+  const failure = new Error("Synthetic control connection failure");
+  const holder = { query: async (sql) => { if (sql === "ROLLBACK") throw failure; } };
+  const contested = migrationContest({ holder, observer: {}, pid: 1, waitForBlocked: async () => {} });
+  await assert.rejects(contested("School", "synthetic", async (start) => {
+    start(new Promise((resolve) => setTimeout(() => { settled = true; resolve(); }, 10)));
+    throw new Error("Synthetic failed check");
+  }), (error) => error === failure);
+  assert.equal(settled, true);
+});
 
 function loadTs(file, dependencies = {}) {
   const exports = {};
