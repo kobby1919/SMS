@@ -217,7 +217,7 @@ export default function DataMigrationMapper() {
   }
 
   async function validateRows() {
-    if (!readyForValidation || isValidating) return;
+    if (!readyForValidation || busy || importResult || allRows.length === 0) return;
 
     setError(null);
     setValidation(null);
@@ -481,11 +481,11 @@ export default function DataMigrationMapper() {
                 <button
                   type="button"
                   onClick={() => void validateRows()}
-                  disabled={!readyForValidation || busy || allRows.length === 0}
+                  disabled={!readyForValidation || busy || !!importResult || allRows.length === 0}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3 text-xs font-black text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-gray-300 sm:w-auto"
                 >
-                  {isValidating ? <Loader2 size={15} className="animate-spin" /> : <ShieldCheck size={15} />}
-                  Validate and save upload
+                  {isValidating ? <Loader2 size={15} className="animate-spin" /> : importResult ? <CheckCircle2 size={15} /> : <ShieldCheck size={15} />}
+                  {importResult ? "Import completed" : "Validate and save upload"}
                 </button>
               </div>
 

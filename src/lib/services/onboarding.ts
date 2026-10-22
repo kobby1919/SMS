@@ -438,6 +438,11 @@ export async function completeSchoolOnboarding(context: AuthzContext) {
 
   return withApprovedMigration(context.schoolId, async (tx) => {
     const current = await tx.school.findUniqueOrThrow({ where: { id: context.schoolId }, select: { _count: { select: { grades: true, classes: true, subjects: true } } } });
+    await tx.schoolNotificationSetting.upsert({
+      where: { schoolId: context.schoolId },
+      create: { schoolId: context.schoolId, emailEnabled: false, smsEnabled: false, whatsappEnabled: false },
+      update: {},
+    });
     const updated = await tx.school.update({ where: { id: context.schoolId }, data: { onboardingStatus: "COMPLETED", setupStep: null, setupCompletedAt: new Date() } });
     await tx.onboardingAuditLog.create({ data: { action: "ONBOARDING_COMPLETED", performedBy: context.userId, schoolId: context.schoolId, metadata: { grades: current._count.grades, classes: current._count.classes, subjects: current._count.subjects } } });
     return updated;
