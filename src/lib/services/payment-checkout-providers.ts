@@ -165,6 +165,7 @@ export async function verifyProviderPayment(
       method: "GET",
       headers: { Authorization: `Bearer ${input.secretKey}` },
       cache: "no-store",
+      signal: AbortSignal.timeout(15_000),
     },
   );
 

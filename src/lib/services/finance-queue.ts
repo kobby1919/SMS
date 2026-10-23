@@ -46,8 +46,9 @@ export async function claimNextFinanceJob(workerId: string, types?: FinanceJobTy
 
   if (!job) return null;
 
-  return prisma.financeJob.update({
-    where: { id: job.id },
+  // Only one worker may transition this pending job into processing.
+  const claimed = await prisma.financeJob.updateMany({
+    where: { id: job.id, status: "PENDING", runAfter: { lte: new Date() } },
     data: {
       status: "PROCESSING",
       lockedAt: new Date(),
@@ -55,6 +56,9 @@ export async function claimNextFinanceJob(workerId: string, types?: FinanceJobTy
       attempts: { increment: 1 },
     },
   });
+
+  if (claimed.count !== 1) return null;
+  return prisma.financeJob.findUnique({ where: { id: job.id } });
 }
 
 export async function completeFinanceJob(jobId: string) {
