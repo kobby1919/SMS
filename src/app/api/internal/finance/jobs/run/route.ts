@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runNextFinanceJob } from "@/src/lib/services/finance-job-runner";
+import * as Sentry from "@sentry/nextjs";
 
 export const maxDuration = 60;
 
@@ -27,9 +28,10 @@ export async function GET(req: NextRequest) {
       const result = await runNextFinanceJob(`cron-worker:${crypto.randomUUID()}`);
       if (!result) break;
       completed += 1;
-    } catch {
+    } catch (error) {
       // The queue retains retry details. Never expose provider errors or secrets.
       failed += 1;
+      Sentry.captureException(error, { tags: { component: "finance-cron" } });
       console.error("Scheduled finance job failed; inspect the finance queue securely.");
     }
   }

@@ -25,6 +25,7 @@ function load(path, dependencies, globals = {}) {
 function workerRoute(env = {}, run = async () => null, now = () => Date.now()) {
   const errors = [];
   const route = load("src/app/api/internal/finance/jobs/run/route.ts", {
+    "@sentry/nextjs": { captureException: () => {} },
     "next/server": { NextResponse: { json: (body, options) => Response.json(body, options) } },
     "@/src/lib/services/finance-job-runner": { runNextFinanceJob: run },
   }, { process: { env }, Date: { now }, console: { error: (message) => errors.push(message) } });
