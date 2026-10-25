@@ -2,16 +2,16 @@
 
 import { motion } from "framer-motion";
 
-const stats = [
-  { value: "50+",  label: "Schools onboarded",    color: "#8B7FF5" },
-  { value: "500+", label: "Students managed",      color: "#10B981" },
-  { value: "3",    label: "Regions across Ghana",  color: "#F59E0B" },
-  { value: "98%",  label: "Satisfaction rate",     color: "#FB7185" },
+const priorities = [
+  { title: "Connected records", description: "Bring related school information into a shared structure.", color: "#8B7FF5" },
+  { title: "Clear responsibilities", description: "Match access and tasks to each person's role.", color: "#10B981" },
+  { title: "Reviewed information", description: "Check records and figures before relying on them.", color: "#F59E0B" },
+  { title: "Guided setup", description: "Prepare the school and its records before daily use.", color: "#FB7185" },
 ];
 
 export default function AboutMission() {
   return (
-    <section id="mission" className="relative w-full py-24 lg:py-32 overflow-hidden" style={{ background: "white" }}>
+    <section id="mission" className="relative w-full py-24 lg:py-32 overflow-hidden scroll-mt-20" style={{ background: "white" }}>
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse at 80% 50%, #8B7FF508 0%, transparent 55%)" }} />
 
@@ -29,64 +29,64 @@ export default function AboutMission() {
               <div className="h-px w-8 bg-gray-200 rounded-full" />
               <span className="text-xs font-semibold uppercase tracking-widest text-gray-400"
                 style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.18em" }}>
-                Our Mission
+                Our Purpose
               </span>
             </div>
 
-            <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-6"
+            <h2 className="text-3xl min-[360px]:text-4xl xl:text-5xl font-extrabold text-gray-900 leading-tight mb-6"
               style={{ fontFamily: "'Clash Display', sans-serif" }}>
-              Modernising how
+              Connect the work.
               <br />
               <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #A855F7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-                schools operate.
+                Support the people.
               </span>
             </h2>
 
             <div className="flex flex-col gap-4">
               <p className="text-base text-gray-500 leading-relaxed"
                 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
-                Across Ghana, school administrators are still managing attendance in notebooks,
-                computing grades in Excel, and chasing fees with paper receipts. It works —
-                until it doesn&apos;t. A missed absence alert, a calculation error at term end,
-                a misplaced receipt. Small failures with real consequences.
+                When records sit across separate books, spreadsheets, and conversations,
+                keeping information consistent takes extra effort. Edujay aims to connect
+                that work so school teams can record, review, and follow up more clearly.
               </p>
               <p className="text-base text-gray-500 leading-relaxed"
                 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
-                Our mission is simple — give every Ghanaian school, regardless of size or
-                resources, access to the same quality of management tools that international
-                schools take for granted. Clean, fast, and reliable software that just works.
+                Our purpose is to support the people responsible for school administration,
+                teaching, finance, and parent communication, with tools organised around
+                their responsibilities and the records they need.
               </p>
               <p className="text-base text-gray-500 leading-relaxed"
                 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
-                Edujay is not a global product adapted for Ghana. It is built here, from scratch,
-                with Ghana&apos;s school structure, curriculum, and workflows at its core.
+                Developed by MiqraTech Consult, Edujay brings school records, attendance,
+                assessments, and fee management into a connected platform, with guided
+                setup and review before a school begins daily work.
               </p>
             </div>
           </motion.div>
 
-          {/* Right — stat grid */}
+          {/* Product priorities, not adoption statistics. */}
           <motion.div
-            className="grid grid-cols-2 gap-4"
+            className="grid grid-cols-1 min-[480px]:grid-cols-2 gap-4 min-w-0"
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.65, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           >
-            {stats.map((s, i) => (
+            {priorities.map((s, i) => (
               <motion.div
-                key={s.label}
-                className="rounded-2xl p-8 flex flex-col gap-2"
+                key={s.title}
+                className="rounded-2xl p-5 flex flex-col gap-2 min-w-0"
                 style={{ background: `${s.color}08`, border: `1px solid ${s.color}18` }}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.1 }}
               >
-                <div className="text-4xl font-extrabold" style={{ color: s.color, fontFamily: "'Sora', sans-serif" }}>
-                  {s.value}
-                </div>
+                <h3 className="text-base font-bold leading-snug" style={{ color: s.color, fontFamily: "'Sora', sans-serif" }}>
+                  {s.title}
+                </h3>
                 <div className="text-sm text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                  {s.label}
+                  {s.description}
                 </div>
               </motion.div>
             ))}

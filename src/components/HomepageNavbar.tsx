@@ -107,14 +107,14 @@ export default function Navbar() {
                 Sign In
               </Link>
               <Link
-                href="/sign-up"
+                href="/waitlist"
                 className="text-sm font-semibold px-5 py-2.5 rounded-xl text-white shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
                 style={{
                   background: "linear-gradient(135deg, #5B4FE9 0%, #7C71F0 100%)",
                   fontFamily: "'DM Sans', sans-serif",
                 }}
               >
-                Get Started Free
+                Request School Access
               </Link>
             </div>
 
@@ -200,7 +200,7 @@ export default function Navbar() {
                 Sign In
               </Link>
               <Link
-                href="/sign-up"
+                href="/waitlist"
                 className="nav-item-enter px-4 py-3 text-sm font-semibold text-white rounded-xl text-center shadow-md transition-all duration-300 hover:shadow-lg hover:shadow-[#5B4FE9]/20"
                 style={{
                   background: "linear-gradient(135deg, #5B4FE9 0%, #7C71F0 100%)",
@@ -208,7 +208,7 @@ export default function Navbar() {
                   animationDelay: menuOpen ? `${(navLinks.length + 1) * 0.055}s` : "0s",
                 }}
               >
-                Get Started Free
+                Request School Access
               </Link>
             </div>
           </div>

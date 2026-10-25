@@ -3,35 +3,15 @@
 import { motion } from "framer-motion";
 
 const timeline = [
-  {
-    year: "2024",
-    title: "The frustration",
-    description: "A chance conversation with a school administrator in Accra revealed what we already suspected — most schools were drowning in manual processes. Attendance books, Excel gradesheets, paper fee receipts. We started asking questions.",
-    color: "#8B7FF5",
-  },
-  {
-    year: "Early 2025",
-    title: "Building the foundation",
-    description: "We spent months embedded with teachers, bursars, and headmasters across Accra and Kumasi. We watched how they actually worked — not how we assumed they did. Edujay's first modules were shaped entirely by those conversations.",
-    color: "#10B981",
-  },
-  {
-    year: "Mid 2025",
-    title: "First schools go live",
-    description: "The first three schools started using Edujay in Term 2. Teachers marked attendance on their phones for the first time. A bursar generated a full term financial report in under a minute. The feedback was immediate — and honest.",
-    color: "#F59E0B",
-  },
-  {
-    year: "2026",
-    title: "Growing across Ghana",
-    description: "Edujay now serves schools across Greater Accra, Ashanti, and Central regions. We're building the bursar dashboard, expanding result reporting, and working toward a parent mobile experience. The mission hasn't changed.",
-    color: "#FB7185",
-  },
+  { year: "Understand", title: "Begin with the school's needs", description: "Discuss what the school needs to manage, who will coordinate the work, and which records and services fall within the agreed scope.", color: "#8B7FF5" },
+  { year: "Prepare", title: "Build the foundation", description: "Organise the academic structure, people, and records. Start fresh or bring existing information through a guided migration process.", color: "#10B981" },
+  { year: "Review", title: "Check before relying on it", description: "Review permissions, student-guardian links, and any opening financial figures. Where records are imported, reconcile them against the agreed sources before approval.", color: "#F59E0B" },
+  { year: "Improve", title: "Let feedback guide development", description: "Our approach is to use feedback from school teams to guide improvements, while being clear about what is available and what still needs preparation.", color: "#FB7185" },
 ];
 
 export default function AboutStory() {
   return (
-    <section id="story" className="relative w-full py-24 lg:py-32 overflow-hidden" style={{ background: "#f8f7ff" }}>
+    <section id="story" className="relative w-full py-24 lg:py-32 overflow-hidden scroll-mt-20" style={{ background: "#f8f7ff" }}>
       <div className="absolute inset-0 pointer-events-none"
         style={{ backgroundImage: "radial-gradient(circle, #8B7FF518 1px, transparent 1px)", backgroundSize: "28px 28px", opacity: 0.5 }} />
 
@@ -49,21 +29,21 @@ export default function AboutStory() {
             <div className="h-px w-8 bg-gray-300 rounded-full" />
             <span className="text-xs font-semibold uppercase tracking-widest text-gray-400"
               style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.18em" }}>
-              Our Story
+              Our Approach
             </span>
           </div>
           <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
             style={{ fontFamily: "'Clash Display', sans-serif" }}>
-            How Edujay
+            How we approach
             <br />
             <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #10B981 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              came to life.
+              school management.
             </span>
           </h2>
           <p className="text-base text-gray-500 leading-relaxed"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
-            Not a startup idea from a pitch deck — a solution born from watching real schools
-            struggle with problems that software could solve.
+            Understand, prepare, review, and improve. A considered start helps school
+            teams bring their structure, records, and responsibilities together.
           </p>
         </motion.div>
 
@@ -84,7 +64,7 @@ export default function AboutStory() {
                 transition={{ duration: 0.55, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
               >
                 {/* Content */}
-                <div className={`flex-1 pl-14 lg:pl-0 ${i % 2 === 0 ? "lg:pr-16 lg:text-right" : "lg:pl-16"}`}>
+                <div className={`flex-1 min-w-0 pl-14 lg:pl-0 ${i % 2 === 0 ? "lg:pr-16 lg:text-right" : "lg:pl-16"}`}>
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3"
                     style={{ background: `${item.color}12`, border: `1px solid ${item.color}25` }}>
                     <span className="text-xs font-bold" style={{ color: item.color, fontFamily: "'Sora', sans-serif" }}>

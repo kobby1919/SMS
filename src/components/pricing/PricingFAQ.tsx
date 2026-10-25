@@ -5,29 +5,37 @@ import { useState } from "react";
 
 const faqs = [
   {
-    q: "Can I upgrade or downgrade my plan at any time?",
-    a: "Yes. You can upgrade to Growth at any time and your school data carries over immediately. If you downgrade to Free, your data is preserved but features above the Free tier become read-only until you upgrade again.",
+    "q": "How much does Edujay cost?",
+    "a": "The school receives an annual package quotation from MiqraTech Consult after its requirements and onboarding scope are reviewed. No fixed public rate is currently published. Request a school quote to discuss your needs before committing."
   },
   {
-    q: "What happens when I exceed the Free plan student limit?",
-    a: "When you reach 50 students on the Free plan, you'll be prompted to upgrade to Growth to add more. Existing students and their data remain fully accessible — nothing is deleted.",
+    "q": "What does the annual package include?",
+    "a": "The standard package covers school records, attendance, teaching schedules, assessments and reports, finance workflows, role-based access, hosting, maintenance, standard updates, and defined support. The quotation confirms the scope. Features require appropriate setup and permissions; external services do not activate automatically."
   },
   {
-    q: "Is there a trial period for the Growth plan?",
-    a: "Yes — Growth comes with a 14-day free trial. No credit card required to start. At the end of the trial you can subscribe or continue on the Free plan.",
+    "q": "Are setup and migration included?",
+    "a": "The quotation states which onboarding and migration work is included. Existing records need an agreed scope and review. Work outside that scope is separately quoted and agreed before it begins, rather than added as an unexpected charge."
   },
   {
-    q: "Do you offer discounts for government or public schools?",
-    a: "Yes. We offer special pricing for government-funded public schools in Ghana. Contact us with your school's details and we'll work out a plan that fits your budget.",
+    "q": "What may cost separately?",
+    "a": "Optional messaging usage, payment-provider processing charges, and additional custom work outside the agreed package may cost extra. Availability, responsibility for charges, and any additional costs must be made clear before the service or work is agreed."
   },
   {
-    q: "What payment methods do you accept?",
-    a: "We accept Mobile Money (MTN MoMo, Vodafone Cash, AirtelTigo Money), bank transfers, and major credit/debit cards. All payments are processed securely.",
+    "q": "Do parent fee payments go to MiqraTech Consult?",
+    "a": "No. When online school-fee collections are enabled, payments use the school's own activated, verified payment-provider account. The school pays MiqraTech Consult separately for the annual Edujay package. Provider verification and processing requirements still apply."
   },
   {
-    q: "What does the Enterprise plan include that Growth doesn't?",
-    a: "Enterprise is designed for large schools (500+ students) and school networks managing multiple campuses. It includes unlimited students, dedicated priority support, custom onboarding, advanced reporting, and custom pricing based on your scale.",
+    "q": "How does the school pay for Edujay?",
+    "a": "Payment instructions and billing dates are provided with the agreed quotation and invoice. Requesting a quote does not take a payment. Do not treat the school-fee checkout as an Edujay subscription checkout."
   },
+  {
+    "q": "How do renewal and cancellation work?",
+    "a": "The package is annual. Payment dates, renewal arrangements, cancellation terms, any refund arrangements, and support scope are agreed in writing before acceptance. Discuss these terms with MiqraTech Consult when reviewing your quotation."
+  },
+  {
+    "q": "Is there a free plan or trial?",
+    "a": "There is no published free package or standard free-trial offer on this page. Any pilot or evaluation arrangement must be agreed explicitly with MiqraTech Consult, including its scope, duration, and any charges."
+  }
 ];
 
 function FAQItem({ item, index }: { item: typeof faqs[0]; index: number }) {
@@ -42,6 +50,9 @@ function FAQItem({ item, index }: { item: typeof faqs[0]; index: number }) {
       transition={{ duration: 0.4, delay: index * 0.06 }}
     >
       <button className="w-full flex items-start justify-between gap-4 px-6 py-5 text-left"
+        type="button"
+        aria-expanded={open}
+        aria-controls={`pricing-faq-${index}`}
         onClick={() => setOpen(!open)}>
         <div className="flex items-start gap-4">
           <span className="text-xs font-bold mt-0.5 flex-shrink-0"
@@ -66,6 +77,7 @@ function FAQItem({ item, index }: { item: typeof faqs[0]; index: number }) {
       <AnimatePresence initial={false}>
         {open && (
           <motion.div
+            id={`pricing-faq-${index}`}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -85,7 +97,7 @@ function FAQItem({ item, index }: { item: typeof faqs[0]; index: number }) {
 
 export default function PricingFAQ() {
   return (
-    <section className="relative w-full py-24 lg:py-28 overflow-hidden" style={{ background: "#f0fdf8" }}>
+    <section id="pricing-faq" className="relative w-full py-24 lg:py-28 overflow-hidden scroll-mt-20" style={{ background: "#f0fdf8" }}>
       <div className="absolute inset-0 pointer-events-none"
         style={{ backgroundImage: "radial-gradient(circle, #10B98118 1px, transparent 1px)", backgroundSize: "28px 28px", opacity: 0.5 }} />
 
@@ -111,7 +123,7 @@ export default function PricingFAQ() {
           </h2>
           <p className="text-sm text-gray-500 leading-relaxed"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
-            Still unsure? These are the questions schools ask most before signing up.
+            Practical answers about the annual package, quotations, and separate costs.
           </p>
         </motion.div>
 
@@ -131,10 +143,10 @@ export default function PricingFAQ() {
           <p className="text-sm text-gray-400 mb-3" style={{ fontFamily: "'DM Sans', sans-serif" }}>
             Have a question that&apos;s not here?
           </p>
-          <a href="/contact"
+          <a href="/waitlist"
             className="inline-flex items-center gap-2 text-sm font-semibold transition-all duration-200 hover:gap-3"
             style={{ color: "#8B7FF5", fontFamily: "'DM Sans', sans-serif" }}>
-            Contact the team
+            Discuss Your School Quote
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
               <path d="M5 12H19M13 6L19 12L13 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

@@ -6,25 +6,17 @@ import Link from "next/link";
 export default function FeaturesHero() {
   return (
     <section
+      id="features-overview"
       className="relative w-full overflow-hidden pt-36 pb-16"
-      style={{ background: "#0a0916" }}
+      style={{ background: "#080B18", isolation: "isolate" }}
     >
-      {/* Single subtle glow — not overpowering */}
+      {/* Match the smooth background of the homepage hero. */}
       <div
+        aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse at 50% 0%, rgba(91,79,233,0.14) 0%, transparent 55%)",
-        }}
-      />
-
-      {/* Very faint grid */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+            "radial-gradient(ellipse 72% 80% at 22% 42%, rgba(32,44,92,0.6) 0%, rgba(16,19,28,0.76) 52%, #10131C 100%)",
         }}
       />
 
@@ -87,7 +79,7 @@ export default function FeaturesHero() {
             className="text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4"
             style={{ fontFamily: "'Clash Display', sans-serif" }}
           >
-            Every tool your
+              Tools for your
             <span
               style={{
                 background: "linear-gradient(135deg, #8B7FF5 0%, #A855F7 100%)",
@@ -96,22 +88,22 @@ export default function FeaturesHero() {
               }}
             >
               {" "}
-              school needs.
+              school&apos;s daily work.
             </span>
           </h1>
 
           {/* Subtext — one line, concise */}
           <p
-            className="text-sm lg:text-base text-white/45 leading-relaxed mb-8 max-w-lg"
+            className="text-sm lg:text-base text-white/65 leading-relaxed mb-8 max-w-lg"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}
           >
-            Attendance, grading, timetables, results, finance, and a dedicated
-            bursar dashboard — purpose-built for Ghanaian schools.
+            Manage school records, attendance, assessments, timetables, and fees,
+            with access matched to your administrators, teachers, bursars, and parents.
           </p>
 
           {/* CTA — single, smaller */}
           <a
-            href="/sign-up"
+            href="/waitlist"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5"
             style={{
               background: "linear-gradient(135deg, #5B4FE9, #8B7FF5)",
@@ -119,7 +111,7 @@ export default function FeaturesHero() {
               boxShadow: "0 6px 24px #8B7FF535",
             }}
           >
-            Get Started Free
+            Request School Access
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
               <path
                 d="M5 12H19M13 6L19 12L13 18"
@@ -147,13 +139,14 @@ export default function FeaturesHero() {
             Jump to
           </span>
           {[
+            { label: "Records", href: "#records", color: "#60A5FA" },
             { label: "Attendance", href: "#attendance", color: "#10B981" },
-            { label: "Grading & CA", href: "#grading", color: "#F59E0B" },
-            { label: "Timetable", href: "#timetable", color: "#8B7FF5" },
-            { label: "Results", href: "#results", color: "#60A5FA" },
+            { label: "Teaching & Timetables", href: "#timetable", color: "#8B7FF5" },
+            { label: "Assessments", href: "#grading", color: "#F59E0B" },
+            { label: "Reports", href: "#results", color: "#60A5FA" },
             { label: "Finance", href: "#finance", color: "#FB7185" },
-            { label: "Bursar", href: "#bursar", color: "#A855F7" },
-            { label: "Role Access", href: "#roles", color: "#F59E0B" },
+            { label: "Bursar Workspace", href: "#bursar", color: "#A855F7" },
+            { label: "Access", href: "#roles", color: "#F59E0B" },
           ].map((f) => (
             <a
               key={f.label}

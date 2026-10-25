@@ -35,7 +35,7 @@ export default function FeatureBlock({
   return (
     <section
       id={id}
-      className="relative w-full py-24 lg:py-32 overflow-hidden"
+      className="relative w-full py-24 lg:py-32 overflow-hidden scroll-mt-20"
       style={{ background: bg }}
     >
       {/* Subtle bg glow */}
@@ -47,7 +47,7 @@ export default function FeatureBlock({
 
           {/* Text side */}
           <motion.div
-            className="flex-1 max-w-lg"
+            className="flex-1 w-full min-w-0 max-w-lg"
             initial={{ opacity: 0, x: flip ? 30 : -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
@@ -64,7 +64,7 @@ export default function FeatureBlock({
             </div>
 
             {/* Heading */}
-            <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-3"
+            <h2 className="text-3xl min-[360px]:text-4xl xl:text-5xl font-extrabold text-gray-900 leading-tight mb-3"
               style={{ fontFamily: "'Clash Display', sans-serif" }}>
               {heading}
               <br />
@@ -103,10 +103,10 @@ export default function FeatureBlock({
             </ul>
 
             {/* Learn more link */}
-            <a href="/sign-up"
+            <a href="/waitlist"
               className="inline-flex items-center gap-2 text-sm font-semibold transition-all duration-200 hover:gap-3"
               style={{ color, fontFamily: "'DM Sans', sans-serif" }}>
-              Get started with this feature
+              Request School Access
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
                 <path d="M5 12H19M13 6L19 12L13 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -115,13 +115,16 @@ export default function FeatureBlock({
 
           {/* Visual side */}
           <motion.div
-            className="flex-1 w-full"
+            className="flex-1 w-full min-w-0"
             initial={{ opacity: 0, x: flip ? -30 : 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.65, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           >
             {visual}
+            <p className="mt-6 text-center text-xs text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              Illustrative example · Sample data
+            </p>
           </motion.div>
         </div>
       </div>

@@ -9,13 +9,13 @@ import HomepageNavbar from "@/src/components/HomepageNavbar"
 
 export const metadata = {
   title: "About — Edujay",
-  description: "Built in Ghana, for Ghana. Edujay is purpose-built school management software for Ghanaian schools.",
+  description: "Meet Edujay, a school management platform developed by MiqraTech Consult, and the people and principles behind it.",
 };
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen">
-      <div style={{ background: "#0a0916" }}>
+      <div style={{ background: "#080B18" }}>
         <HomepageNavbar />
         <AboutHero />
       </div>

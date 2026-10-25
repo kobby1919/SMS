@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export default function CTABanner() {
   return (
-    <section className="relative w-full py-24 lg:py-32 overflow-hidden" style={{ background: "#f8f7ff" }}>
+    <section id="school-access" className="relative w-full py-24 lg:py-32 overflow-hidden" style={{ background: "#f8f7ff" }}>
 
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none"
@@ -27,31 +27,31 @@ export default function CTABanner() {
             style={{ background: "#8B7FF514", border: "1px solid #8B7FF530" }}>
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#8B7FF5" }} />
             <span className="text-xs font-semibold" style={{ color: "#8B7FF5", fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.1em" }}>
-              Free to get started
+              LET&apos;S TALK ABOUT YOUR SCHOOL
             </span>
           </div>
 
           {/* Heading */}
           <h2 className="text-4xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6"
             style={{ fontFamily: "'Clash Display', sans-serif" }}>
-            Your school deserves
+            Your school&apos;s next chapter,
             <br />
             <span style={{ background: "linear-gradient(135deg, #5B4FE9 0%, #A855F7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              better tools.
+              with Edujay.
             </span>
           </h2>
 
           {/* Subtext */}
           <p className="text-base lg:text-lg text-gray-500 leading-relaxed mb-10 max-w-xl mx-auto"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
-            Join schools across Ghana already running smarter with Edujay.
-            Set up in minutes. No IT team needed.
+            Tell us about your school and what you need to manage. We&apos;ll discuss
+            the package, agree the onboarding scope, and guide you through the next steps.
           </p>
 
           {/* CTAs */}
           <div className="flex flex-wrap items-center justify-center gap-4">
             <motion.a
-              href="/sign-up"
+              href="/waitlist"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white font-semibold text-sm"
               style={{
                 background: "linear-gradient(135deg, #5B4FE9 0%, #A855F7 100%)",
@@ -62,27 +62,27 @@ export default function CTABanner() {
               whileTap={{ y: 0 }}
               transition={{ duration: 0.2 }}
             >
-              Get Started Free
+              Request School Access
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path d="M5 12H19M13 6L19 12L13 18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </motion.a>
 
             <motion.a
-              href="/contact"
+              href="#how-it-works"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-gray-700 font-medium text-sm border border-gray-200"
               style={{ fontFamily: "'DM Sans', sans-serif", background: "white" }}
               whileHover={{ y: -2, borderColor: "#8B7FF544", boxShadow: "0 8px 24px rgba(0,0,0,0.06)" }}
               whileTap={{ y: 0 }}
               transition={{ duration: 0.2 }}
             >
-              Talk to us
+              How Onboarding Works
             </motion.a>
           </div>
 
           {/* Trust note */}
           <p className="mt-8 text-xs text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-            No credit card required · Works on any device · Ghana-built
+            Built for Ghanaian schools. Start fresh or bring existing records.
           </p>
         </motion.div>
       </div>

@@ -11,7 +11,7 @@ const callouts = [
         <path d="M21 12V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
-    label: "Live attendance marking",
+    label: "Today's School Pulse",
     color: "#10B981",
     position: "top-[12%] -left-[2%] lg:-left-[6%]",
   },
@@ -24,7 +24,7 @@ const callouts = [
         <line x1="2" y1="20" x2="22" y2="20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       </svg>
     ),
-    label: "Auto grade computation",
+    label: "Attendance overview",
     color: "#F59E0B",
     position: "top-[12%] -right-[2%] lg:-right-[6%]",
   },
@@ -37,7 +37,7 @@ const callouts = [
         <path d="M12 15H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       </svg>
     ),
-    label: "Fee payment tracking",
+    label: "Student & class counts",
     color: "#FB7185",
     position: "bottom-[14%] -left-[2%] lg:-left-[6%]",
   },
@@ -50,7 +50,7 @@ const callouts = [
         <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       </svg>
     ),
-    label: "Conflict-free timetables",
+    label: "Role-based navigation",
     color: "#8B7FF5",
     position: "bottom-[14%] -right-[2%] lg:-right-[6%]",
   },
@@ -59,6 +59,7 @@ const callouts = [
 export default function DashboardPreview() {
   return (
     <section
+      id="dashboard-preview"
       className="relative w-full py-24 lg:py-32 overflow-hidden"
       style={{ background: "white" }}
     >
@@ -87,7 +88,7 @@ export default function DashboardPreview() {
               className="text-xs font-semibold uppercase tracking-widest text-gray-400"
               style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.18em" }}
             >
-              Built for clarity
+              Inside Edujay
             </span>
             <div className="h-px w-8 bg-gray-200 rounded-full" />
           </div>
@@ -96,14 +97,14 @@ export default function DashboardPreview() {
             className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
             style={{ fontFamily: "'Clash Display', sans-serif" }}
           >
-            See it in
+            Your school day,
             <br />
             <span style={{
               background: "linear-gradient(135deg, #5B4FE9 0%, #8B7FF5 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}>
-              action.
+              at a glance.
             </span>
           </h2>
 
@@ -111,8 +112,9 @@ export default function DashboardPreview() {
             className="text-base lg:text-lg text-gray-500 leading-relaxed"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}
           >
-            A clean, role-aware dashboard that gives every user exactly what they need —
-            no clutter, no confusion.
+            Review your school&apos;s daily status, attendance overview, and student and
+            class counts from the administrator dashboard. Teachers, bursars, and
+            parents have views matched to their responsibilities.
           </p>
         </motion.div>
 
@@ -181,19 +183,19 @@ export default function DashboardPreview() {
               <div className="flex-1 flex items-center gap-2 px-3 py-1.5 rounded-md mx-4"
                 style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
                 <span className="text-xs" style={{ color: "rgba(255,255,255,0.35)", fontFamily: "'DM Sans', sans-serif" }}>
-                  app.edujay.com/dashboard
+                  edujay.app
                 </span>
               </div>
             </div>
 
             {/* Real screenshot */}
             <Image
-              src="/dashboard-preview.png"
-              alt="SchoolJay Dashboard"
-              width={1280}
-              height={720}
-              className="w-full"
-              priority
+              src="/dashboard-admin-sample-20261024.png"
+              alt="Edujay administrator dashboard with sample school data, showing School Pulse, a school-closed status, attendance categories, and student and class counts."
+              width={1908}
+              height={910}
+              sizes="(max-width: 1008px) calc(100vw - 48px), 960px"
+              className="w-full h-auto"
             />
           </div>
         </motion.div>
@@ -206,11 +208,14 @@ export default function DashboardPreview() {
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <p className="text-sm text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-            Your real dashboard will look just like this — populated with your school&apos;s data.
+          <p className="text-sm font-semibold text-gray-600 text-center" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            Administrator dashboard · Sample school data
+          </p>
+          <p className="text-sm text-gray-500 text-center max-w-2xl" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            An example administrator view using sample data. Your dashboard reflects your school&apos;s records, setup, and permissions.
           </p>
           <a
-            href="/sign-up"
+            href="/waitlist"
             className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-white text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
             style={{
               background: "linear-gradient(135deg, #5B4FE9 0%, #8B7FF5 100%)",
@@ -218,7 +223,7 @@ export default function DashboardPreview() {
               boxShadow: "0 4px 20px #8B7FF530",
             }}
           >
-            Try it yourself
+            Request School Access
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
               <path d="M5 12H19M13 6L19 12L13 18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

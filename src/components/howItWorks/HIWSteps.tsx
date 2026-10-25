@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
-import { SetupVisual, PeopleVisual, RunVisual } from "./StepVisuals";
+import { ClipboardCheck } from "lucide-react";
+import { AccessVisual, SetupPathsVisual, ReviewVisual } from "./StepVisuals";
 
 type StepDetail = {
   heading: string;
@@ -18,7 +19,7 @@ type Step = {
   headingAccent: string;
   description: string;
   details: StepDetail[];
-  time: string;
+  stage: string;
   flip: boolean;
   bg: string;
   visual: ReactNode;
@@ -26,61 +27,43 @@ type Step = {
 
 const steps: Step[] = [
   {
-    id: "step-1",
-    number: "01",
-    label: "Setup",
-    color: "#8B7FF5",
-    heading: "Set up your",
-    headingAccent: "school.",
-    description: "Start by creating your school profile. Enter your school name, academic year, current term, and region. Then add your classes — from Nursery all the way to JHS 3 — and set up your subjects. Edujay structures itself around your school, not the other way around.",
+    id: "step-1", number: "01", label: "Access", color: "#8B7FF5",
+    heading: "Introduce", headingAccent: "your school.",
+    description: "Send a school access request so we can understand your needs, discuss the package and onboarding scope, and review your school's request. Once approved, your first administrator receives a school-specific invitation.",
     details: [
-      { heading: "Takes under 10 minutes", text: "The entire school setup — profile, classes, and subjects — is designed to be completed in a single session. No back-and-forth, no waiting." },
-      { heading: "Ghana's school structure built in", text: "Nursery, KG, Class 1–6, JHS 1–3 with optional A/B sections. Edujay already knows how Ghanaian schools are structured." },
-      { heading: "Academic year & term configuration", text: "Set your academic year and active term once. Every module — attendance, grading, results, fees — automatically aligns to it." },
-      { heading: "Subjects assigned per class", text: "Assign subjects to classes and they flow through to timetables, CA scoring, and results automatically." },
+      { heading: "Choose an authorised contact", text: "Identify the person who can discuss your school's requirements and coordinate onboarding." },
+      { heading: "Discuss needs and scope", text: "Agree what your school will use, which records it will bring, and what the package and onboarding include." },
+      { heading: "Review before access", text: "A request begins the conversation. It does not immediately activate a school or create accounts for everyone." },
+      { heading: "Invite the first administrator", text: "After approval, the invited administrator signs in and begins the school's setup." },
     ],
-    time: "~10 mins",
-    flip: false,
-    bg: "white",
-    visual: <SetupVisual color="#8B7FF5" />,
+    stage: "Access review", flip: false, bg: "white",
+    visual: <AccessVisual color="#8B7FF5" />,
   },
   {
-    id: "step-2",
-    number: "02",
-    label: "People",
-    color: "#10B981",
-    heading: "Add your",
-    headingAccent: "people.",
-    description: "Invite your teachers, enroll students, and link parents — all from one place. Every person gets a secure login through Clerk, and their view of Edujay is shaped entirely by their role. A teacher sees their classes. A parent sees their child. An admin sees everything.",
+    id: "step-2", number: "02", label: "Setup", color: "#10B981",
+    heading: "Set up your school", headingAccent: "and records.",
+    description: "Configure your academic year, terms, classes, subjects, and staff responsibilities. Add student records and guardian links, then follow the setup route that fits your school: start fresh or bring existing records through guided migration.",
     details: [
-      { heading: "Teachers onboard in seconds", text: "Enter a teacher's name and email, assign their classes and subjects, and send an invite. They log in and everything is waiting for them." },
-      { heading: "Students enrolled per class", text: "Add students individually or import in bulk. Each student is linked to their class, and their record follows them through every term." },
-      { heading: "Parents linked to their children", text: "Parents are connected directly to their child's account. They see attendance, results, and fee status — nothing more, nothing less." },
-      { heading: "Role-based access from day one", text: "Powered by Clerk — every user has their own secure login. No shared passwords, no access confusion." },
+      { heading: "Build the academic foundation", text: "Review your school profile, academic periods, classes, subjects, and teaching assignments." },
+      { heading: "Start fresh", text: "Enter the records your school needs through the normal school setup and authorised record-entry workflows." },
+      { heading: "Bring existing records", text: "Agree source files and scope, then upload, validate, review, and reconcile records through the migration workspace. Uploading a spreadsheet is not approval of its contents." },
+      { heading: "Review people and opening balances", text: "Check student and guardian links, assign staff responsibilities, and reconcile any opening fee balances against the agreed source records." },
     ],
-    time: "~20 mins",
-    flip: true,
-    bg: "#f8f7ff",
-    visual: <PeopleVisual color="#10B981" />,
+    stage: "Guided setup", flip: true, bg: "#f8f7ff",
+    visual: <SetupPathsVisual color="#10B981" />,
   },
   {
-    id: "step-3",
-    number: "03",
-    label: "Run",
-    color: "#F59E0B",
-    heading: "Run",
-    headingAccent: "everything.",
-    description: "With your school configured and your people added, every module is live and ready. Teachers mark attendance from their phones. Grades compute as scores are entered. The bursar tracks payments. Admins see the full picture from the dashboard. No setup required per module — it all just works.",
+    id: "step-3", number: "03", label: "Review", color: "#F59E0B",
+    heading: "Review,", headingAccent: "then begin.",
+    description: "Check your setup, records, staff access, and any opening financial figures before completing onboarding. Once your school is ready, use Edujay for daily attendance, assessments, bills, receipts, and reports.",
     details: [
-      { heading: "Attendance is live immediately", text: "Teachers open Edujay on any device, pick their class, and mark. Absences trigger alerts automatically. No paper, no delays." },
-      { heading: "Grades flow from CA to results", text: "Enter CA component scores and exam scores — grades compute and feed straight into the term results report. One less thing to calculate." },
-      { heading: "Timetable is accessible to all roles", text: "Build the timetable once and every teacher, student, and parent sees their own filtered view of it automatically." },
-      { heading: "Finance and bursar dashboard live", text: "The bursar logs payments as they come in. The ledger updates in real time. End-of-term reports generate in one click." },
+      { heading: "Confirm records and permissions", text: "Check class assignments, student-guardian links, and that each invited person has the appropriate school and role access." },
+      { heading: "Approve the opening position", text: "Where existing records are imported, review reconciliation and obtain the school's approval before completing migration." },
+      { heading: "Begin daily school work", text: "Teachers record attendance and assessments, bursars manage authorised finance tasks, and parents access records for their linked children." },
+      { heading: "Activate external services separately", text: "Online payments require the school's verified provider setup. External notifications depend on configured and verified delivery channels; school setup does not activate them automatically." },
     ],
-    time: "Day one",
-    flip: false,
-    bg: "white",
-    visual: <RunVisual color="#F59E0B" />,
+    stage: "Readiness review", flip: false, bg: "white",
+    visual: <ReviewVisual color="#F59E0B" />,
   },
 ];
 
@@ -88,7 +71,7 @@ function StepBlock({ step }: { step: Step }) {
   return (
     <section
       id={step.id}
-      className="relative w-full py-24 lg:py-32 overflow-hidden"
+      className="relative w-full py-24 lg:py-32 overflow-hidden scroll-mt-20"
       style={{ background: step.bg }}
     >
       <div className="absolute inset-0 pointer-events-none"
@@ -99,14 +82,14 @@ function StepBlock({ step }: { step: Step }) {
 
           {/* Text */}
           <motion.div
-            className="flex-1 max-w-lg w-full"
+            className="flex-1 max-w-lg w-full min-w-0"
             initial={{ opacity: 0, x: step.flip ? 30 : -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* Step number + time badge */}
-            <div className="flex items-center gap-3 mb-5">
+            {/* Step number and onboarding stage */}
+            <div className="flex flex-wrap items-center gap-3 mb-5">
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
                 style={{ background: `${step.color}12`, border: `1px solid ${step.color}28` }}>
                 <div className="w-1.5 h-1.5 rounded-full" style={{ background: step.color }} />
@@ -117,16 +100,13 @@ function StepBlock({ step }: { step: Step }) {
               </div>
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
                 style={{ background: "#f3f4f6", border: "1px solid #e5e7eb" }}>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" stroke="#9ca3af" strokeWidth="2" />
-                  <path d="M12 6V12L16 14" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-                <span className="text-[10px] font-medium text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>{step.time}</span>
+                <ClipboardCheck size={12} color="#6b7280" aria-hidden="true" />
+                <span className="text-[10px] font-medium text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>{step.stage}</span>
               </div>
             </div>
 
             {/* Heading */}
-            <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
+            <h2 className="text-3xl min-[360px]:text-4xl xl:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
               style={{ fontFamily: "'Clash Display', sans-serif" }}>
               {step.heading}{" "}
               <span style={{ color: step.color }}>{step.headingAccent}</span>
@@ -156,7 +136,7 @@ function StepBlock({ step }: { step: Step }) {
                       <path d="M5 13L9 17L19 7" stroke={step.color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <div className="text-sm font-bold text-gray-800 mb-0.5" style={{ fontFamily: "'Sora', sans-serif" }}>{d.heading}</div>
                     <div className="text-xs text-gray-500 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>{d.text}</div>
                   </div>
@@ -167,13 +147,16 @@ function StepBlock({ step }: { step: Step }) {
 
           {/* Visual */}
           <motion.div
-            className="flex-1 w-full flex items-center justify-center"
+            className="flex-1 w-full min-w-0 flex flex-col items-center justify-center"
             initial={{ opacity: 0, x: step.flip ? -30 : 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.65, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           >
             {step.visual}
+            <p className="mt-6 text-center text-xs text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              Illustrative example · Sample data
+            </p>
           </motion.div>
         </div>
       </div>

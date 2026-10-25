@@ -6,13 +6,12 @@ import Link from "next/link";
 export default function AboutHero() {
   return (
     <section
+      id="about-overview"
       className="relative w-full overflow-hidden pt-36 pb-16"
-      style={{ background: "#0a0916" }}
+      style={{ background: "#080B18", isolation: "isolate" }}
     >
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(91,79,233,0.14) 0%, transparent 55%)" }} />
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+      <div aria-hidden="true" className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse 72% 80% at 22% 42%, rgba(32,44,92,0.6) 0%, rgba(16,19,28,0.76) 52%, #10131C 100%)" }} />
 
 {/* Font Imports: Added Fontshare's CDN for Clash Display */}
 <style>{`
@@ -40,27 +39,27 @@ export default function AboutHero() {
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#8B7FF5" }} />
             <span className="text-xs font-semibold uppercase tracking-widest"
               style={{ color: "#8B7FF5", fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.14em" }}>
-              Our Story
+              About Edujay
             </span>
           </div>
 
           {/* Heading */}
           <h1 className="text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4"
             style={{ fontFamily: "'Clash Display', sans-serif" }}>
-            Built in Ghana,
-            <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #A855F7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}> for Ghana.</span>
+            School management,
+            <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #A855F7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}> built around the people doing the work.</span>
           </h1>
 
-          <p className="text-sm lg:text-base text-white/45 leading-relaxed mb-8 max-w-lg"
+          <p className="text-sm lg:text-base text-white/65 leading-relaxed mb-8 max-w-lg"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
-            Edujay was born from a simple frustration — Ghanaian schools deserve better tools.
-            We decided to build them.
+            Edujay is a school management platform developed by MiqraTech Consult,
+            designed around the academic, administrative, and financial work of Ghanaian schools.
           </p>
 
-          <a href="/sign-up"
+          <a href="/howItWorks"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5"
             style={{ background: "linear-gradient(135deg, #5B4FE9, #8B7FF5)", fontFamily: "'DM Sans', sans-serif", boxShadow: "0 6px 24px #8B7FF535" }}>
-            Join us
+            Explore How Edujay Works
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
               <path d="M5 12H19M13 6L19 12L13 18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -78,9 +77,9 @@ export default function AboutHero() {
           <span className="text-[10px] text-white/25 mr-1 uppercase tracking-widest"
             style={{ fontFamily: "'DM Sans', sans-serif" }}>Jump to</span>
           {[
-            { label: "Our Mission", href: "#mission", color: "#8B7FF5" },
-            { label: "Our Story",   href: "#story",   color: "#10B981" },
-            { label: "Values",      href: "#values",  color: "#F59E0B" },
+            { label: "Our Purpose", href: "#mission", color: "#8B7FF5" },
+            { label: "Our Approach", href: "#story", color: "#10B981" },
+            { label: "Our Principles", href: "#values", color: "#F59E0B" },
             { label: "The Team",    href: "#team",    color: "#60A5FA" },
           ].map((f) => (
             <a key={f.label} href={f.href}

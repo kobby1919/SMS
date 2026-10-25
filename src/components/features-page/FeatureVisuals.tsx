@@ -1,4 +1,36 @@
 // FeatureVisuals.tsx — CSS/SVG visuals for each feature block
+import { BookOpen, FolderOpen, Shield, UsersRound, Wallet } from "lucide-react";
+
+export function RecordsVisual({ color = "#2563a6" }: { color?: string }) {
+  const students = [
+    { name: "Ama Boateng", className: "Class 4B", guardian: "Guardian A" },
+    { name: "Kofi Mensah", className: "Class 4B", guardian: "Guardian B" },
+    { name: "Efua Asante", className: "Class 5A", guardian: "Guardian C" },
+  ];
+  return (
+    <div className="w-full max-w-[480px] mx-auto rounded-2xl overflow-hidden bg-white" style={{ border: `1px solid ${color}22`, boxShadow: `0 20px 60px ${color}18` }}>
+      <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
+        <FolderOpen size={24} color={color} aria-hidden="true" />
+        <div>
+          <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>School Records</div>
+          <div className="text-xs text-gray-500 mt-1">Students, classes, and linked guardians</div>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-100">
+        {students.map(student => (
+          <div key={student.name} className="px-5 py-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-gray-800">{student.name}</p>
+              <p className="text-xs text-gray-500 mt-1">{student.className}</p>
+            </div>
+            <span className="text-xs px-3 py-1 rounded-full" style={{ color, background: `${color}10` }}>{student.guardian}</span>
+          </div>
+        ))}
+      </div>
+      <div className="px-5 py-4 bg-gray-50 text-xs text-gray-500 border-t border-gray-100">3 students · 2 classes · 3 guardian links</div>
+    </div>
+  );
+}
 
 export function AttendanceVisual({ color = "#10B981" }: { color?: string }) {
   const rows = [
@@ -22,7 +54,7 @@ export function AttendanceVisual({ color = "#10B981" }: { color?: string }) {
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#10B981" }} />
-            <span className="text-xs font-medium" style={{ color: "#10B981", fontFamily: "'DM Sans', sans-serif" }}>Live</span>
+            <span className="text-xs font-medium" style={{ color: "#10B981", fontFamily: "'DM Sans', sans-serif" }}>Example</span>
           </div>
         </div>
         {/* Rows */}
@@ -43,9 +75,9 @@ export function AttendanceVisual({ color = "#10B981" }: { color?: string }) {
         </div>
         {/* Summary */}
         <div className="px-5 py-4 grid grid-cols-4 gap-2" style={{ borderTop: "1px solid #f1f1f3", background: "#fafafa" }}>
-          {[["4", "Present", "#10B981"], ["1", "Absent", "#EF4444"], ["1", "Late", "#F59E0B"], ["1", "Excused", "#60A5FA"]].map(([v, l, c]) => (
+          {[["Present", "#10B981"], ["Absent", "#EF4444"], ["Late", "#F59E0B"], ["Excused", "#60A5FA"]].map(([l, c]) => (
             <div key={l} className="text-center">
-              <div className="text-base font-extrabold" style={{ color: c, fontFamily: "'Sora', sans-serif" }}>{v}</div>
+              <div className="text-base font-extrabold" style={{ color: c, fontFamily: "'Sora', sans-serif" }}>{rows.filter(row => row.status === l).length}</div>
               <div className="text-[10px] text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>{l}</div>
             </div>
           ))}
@@ -71,12 +103,12 @@ export function GradingVisual({ color = "#F59E0B" }: { color?: string }) {
       <div className="rounded-2xl overflow-hidden" style={{ background: "white", border: `1px solid ${color}22`, boxShadow: `0 20px 60px ${color}18, 0 4px 20px rgba(0,0,0,0.06)` }}>
         <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: "1px solid #f1f1f3" }}>
           <div>
-            <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>Term 2 Results — Class 4B</div>
+            <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>Assessment Summary — Ama Boateng</div>
             <div className="text-xs text-gray-400 mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>CA 30% · Exam 70% split</div>
           </div>
           <div className="text-right">
-            <div className="text-xl font-extrabold" style={{ color, fontFamily: "'Sora', sans-serif" }}>78%</div>
-            <div className="text-[10px] text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>Class avg</div>
+            <div className="text-xl font-extrabold" style={{ color, fontFamily: "'Sora', sans-serif" }}>{(subjects.reduce((sum, subject) => sum + subject.ca + subject.exam, 0) / subjects.length).toFixed(1)}%</div>
+            <div className="text-[10px] text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>Subject average</div>
           </div>
         </div>
         <div className="px-5 py-3 flex flex-col gap-3">
@@ -134,7 +166,7 @@ export function TimetableVisual({ color = "#8B7FF5" }: { color?: string }) {
         </div>
         <div className="p-4">
           {/* Day headers */}
-          <div className="grid gap-1.5 mb-1.5" style={{ gridTemplateColumns: "48px repeat(5, 1fr)" }}>
+          <div className="grid gap-1.5 mb-1.5" style={{ gridTemplateColumns: "28px repeat(5, minmax(0, 1fr))" }}>
             <div />
             {days.map((d) => (
               <div key={d} className="text-center text-[10px] font-bold text-gray-400 py-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>{d}</div>
@@ -142,7 +174,7 @@ export function TimetableVisual({ color = "#8B7FF5" }: { color?: string }) {
           </div>
           {/* Period rows */}
           {periods.map((row, pi) => (
-            <div key={pi} className="grid gap-1.5 mb-1.5" style={{ gridTemplateColumns: "48px repeat(5, 1fr)" }}>
+            <div key={pi} className="grid gap-1.5 mb-1.5" style={{ gridTemplateColumns: "28px repeat(5, minmax(0, 1fr))" }}>
               <div className="flex items-center justify-center text-[9px] text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>P{pi + 1}</div>
               {row.map((subj, di) => (
                 <div key={di} className="rounded-lg py-2 text-center text-[9px] font-semibold"
@@ -178,7 +210,7 @@ export function ResultsVisual({ color = "#60A5FA" }: { color?: string }) {
           <div className="text-base font-extrabold text-gray-900" style={{ fontFamily: "'Sora', sans-serif" }}>Ama Boateng</div>
           <div className="text-xs text-gray-400 mt-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>Class 4B · 2025/26 Academic Year</div>
           <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full" style={{ background: `${color}18`, border: `1px solid ${color}30` }}>
-            <span className="text-sm font-extrabold" style={{ color, fontFamily: "'Sora', sans-serif" }}>79.4%</span>
+            <span className="text-sm font-extrabold" style={{ color, fontFamily: "'Sora', sans-serif" }}>81.2%</span>
             <span className="text-xs text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>Overall Average</span>
           </div>
         </div>
@@ -190,9 +222,9 @@ export function ResultsVisual({ color = "#60A5FA" }: { color?: string }) {
           {[
             ["Mathematics",    "28", "62", "90", "A"],
             ["English",        "22", "55", "77", "B"],
-            ["Science",        "26", "58", "84", "A"],
+            ["Science",        "26", "60", "86", "A"],
             ["Social Studies", "18", "48", "66", "C"],
-            ["ICT",            "29", "60", "89", "A"],
+            ["ICT",            "29", "58", "87", "A"],
           ].map(([s, ca, ex, tot, g]) => {
             const gc: Record<string, string> = { A: "#10B981", B: "#60A5FA", C: "#F59E0B" };
             return (
@@ -245,15 +277,15 @@ export function FinanceVisual({ color = "#FB7185" }: { color?: string }) {
           </svg>
         </div>
         <div>
-          <div className="text-sm font-extrabold text-gray-900" style={{ fontFamily: "'Sora', sans-serif" }}>GH₵ 42,500</div>
-          <div className="text-[9px] text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>Collected · Term 2</div>
+          <div className="text-sm font-extrabold text-gray-900" style={{ fontFamily: "'Sora', sans-serif" }}>GH₵ 2,550</div>
+          <div className="text-[9px] text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>Collected · 5 sample bills</div>
         </div>
       </div>
 
       <div className="rounded-2xl overflow-hidden mt-4" style={{ background: "white", border: `1px solid ${color}22`, boxShadow: `0 20px 60px ${color}18, 0 4px 20px rgba(0,0,0,0.06)` }}>
         <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: "1px solid #f1f1f3" }}>
           <div>
-            <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>Fee Payments</div>
+            <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>Fee Bills</div>
             <div className="text-xs text-gray-400 mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>Term 2 · 2025/26</div>
           </div>
           <div className="flex gap-1.5">
@@ -320,9 +352,9 @@ export function BursarVisual({ color = "#A855F7" }: { color?: string }) {
         {/* KPI row */}
         <div className="grid grid-cols-3 gap-0 divide-x divide-gray-100 px-0" style={{ borderBottom: "1px solid #f1f1f3" }}>
           {[
-            { label: "Today's Collections", value: "GH₵ 3,400", sub: "+8 payments", color: "#10B981" },
-            { label: "Outstanding",          value: "GH₵ 12,750", sub: "15 students",  color: "#EF4444" },
-            { label: "Term Total",           value: "GH₵ 42,500", sub: "60% collected",color },
+            { label: "Today's Collections", value: "GH₵ 2,550", sub: "3 payments", color: "#10B981" },
+            { label: "Outstanding",          value: "GH₵ 1,700", sub: "2 students",  color: "#EF4444" },
+            { label: "Term Total",           value: "GH₵ 2,550", sub: "60% collected",color },
           ].map((k) => (
             <div key={k.label} className="px-4 py-4">
               <div className="text-[9px] text-gray-400 mb-1 uppercase tracking-wide" style={{ fontFamily: "'DM Sans', sans-serif" }}>{k.label}</div>
@@ -337,8 +369,8 @@ export function BursarVisual({ color = "#A855F7" }: { color?: string }) {
           <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>Recent Payments</div>
           {[
             { name: "Ama Boateng",  time: "9:14 AM",  amount: "GH₵ 850", method: "Mobile Money" },
-            { name: "Kofi Asante",  time: "10:02 AM", amount: "GH₵ 850", method: "Bank Transfer" },
-            { name: "Efua Darko",   time: "11:30 AM", amount: "GH₵ 850", method: "Cash" },
+            { name: "Efua Asante",  time: "10:02 AM", amount: "GH₵ 850", method: "Bank Transfer" },
+            { name: "Akua Owusu",   time: "11:30 AM", amount: "GH₵ 850", method: "Cash" },
           ].map((p) => (
             <div key={p.name} className="flex items-center justify-between py-2.5" style={{ borderBottom: "1px solid #f9fafb" }}>
               <div className="flex items-center gap-3">
@@ -355,11 +387,11 @@ export function BursarVisual({ color = "#A855F7" }: { color?: string }) {
 
         {/* Export bar */}
         <div className="px-5 py-3 flex items-center justify-between" style={{ borderTop: "1px solid #f1f1f3", background: "#fafafa" }}>
-          <span className="text-xs text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>Auto-reconciled · Updated now</span>
+          <span className="text-xs text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>5 sample bills · GH₵ 4,250 billed</span>
           <div className="flex gap-2">
-            {["PDF", "Excel"].map((f) => (
+            {["Collection summary"].map((f) => (
               <div key={f} className="px-3 py-1.5 rounded-lg text-[10px] font-semibold" style={{ background: `${color}12`, color, border: `1px solid ${color}22`, fontFamily: "'DM Sans', sans-serif" }}>
-                Export {f}
+                {f}
               </div>
             ))}
           </div>
@@ -371,19 +403,19 @@ export function BursarVisual({ color = "#A855F7" }: { color?: string }) {
 
 export function RolesVisual() {
   const roles = [
-    { label: "Admin",   desc: "Full school control",        icon: "🛡️", color: "#8B7FF5", perms: ["Manage all users", "View all reports", "Configure system"] },
-    { label: "Teacher", desc: "Class & grade management",   icon: "📚", color: "#10B981", perms: ["Mark attendance", "Enter CA scores", "View timetable"] },
-    { label: "Student", desc: "Personal academic view",     icon: "🎓", color: "#60A5FA", perms: ["View timetable", "Check results", "See attendance"] },
-    { label: "Parent",  desc: "Child progress monitoring",  icon: "👨‍👩‍👧", color: "#FB7185", perms: ["Track attendance", "View results", "Get alerts"] },
+    { label: "Admin", desc: "School management", icon: Shield, color: "#8B7FF5", perms: ["School setup", "Manage school records", "Review school reports"] },
+    { label: "Teacher", desc: "Assigned teaching", icon: BookOpen, color: "#10B981", perms: ["Record attendance", "Enter assigned scores", "View timetable"] },
+    { label: "Bursar", desc: "Finance workspace", icon: Wallet, color: "#60A5FA", perms: ["Record payments", "Review balances", "Access finance reports"] },
+    { label: "Parent", desc: "Linked children only", icon: UsersRound, color: "#FB7185", perms: ["Review attendance", "View published reports", "Review fee balances"] },
   ];
 
   return (
     <div className="relative w-full grid grid-cols-2 gap-3" style={{ maxWidth: "480px", margin: "0 auto" }}>
-      {roles.map((r) => (
+      {roles.map(({ icon: Icon, ...r }) => (
         <div key={r.label} className="rounded-2xl p-4 transition-all duration-200 hover:-translate-y-1"
           style={{ background: "white", border: `1px solid ${r.color}20`, boxShadow: `0 4px 20px ${r.color}12` }}>
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-xl">{r.icon}</span>
+            <Icon size={22} color={r.color} className="flex-shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>{r.label}</div>
               <div className="text-[9px] text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>{r.desc}</div>

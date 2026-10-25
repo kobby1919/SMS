@@ -1,148 +1,45 @@
 "use client";
 
-import { Fragment } from "react"; // 1. Imported Fragment to hold the key safely
 import { motion } from "framer-motion";
 
-const rows = [
-  { category: "School Setup",   feature: "School profile & academic year",  free: true,   growth: true,  enterprise: true  },
-  { category: "School Setup",   feature: "Classes & sections",              free: true,   growth: true,  enterprise: true  },
-  { category: "School Setup",   feature: "Subjects & curriculum",           free: true,   growth: true,  enterprise: true  },
-  { category: "People",         feature: "Student accounts",                free: "50",   growth: "500", enterprise: "∞"   },
-  { category: "People",         feature: "Teacher accounts",                free: "3",    growth: "∞",   enterprise: "∞"   },
-  { category: "People",         feature: "Parent accounts",                 free: true,   growth: true,  enterprise: true  },
-  { category: "Attendance",     feature: "Daily attendance marking",        free: true,   growth: true,  enterprise: true  },
-  { category: "Attendance",     feature: "Consecutive absence alerts",      free: false,  growth: true,  enterprise: true  },
-  { category: "Attendance",     feature: "Attendance history & reports",    free: false,  growth: true,  enterprise: true  },
-  { category: "Grading",        feature: "CA component scoring",            free: false,  growth: true,  enterprise: true  },
-  { category: "Grading",        feature: "Configurable CA/exam split",      free: false,  growth: true,  enterprise: true  },
-  { category: "Grading",        feature: "Auto grade computation",          free: false,  growth: true,  enterprise: true  },
-  { category: "Timetable",      feature: "Basic timetable view",            free: true,   growth: true,  enterprise: true  },
-  { category: "Timetable",      feature: "Conflict detection",              free: false,  growth: true,  enterprise: true  },
-  { category: "Results",        feature: "Term result reports",             free: false,  growth: true,  enterprise: true  },
-  { category: "Results",        feature: "PDF export",                      free: false,  growth: true,  enterprise: true  },
-  { category: "Finance",        feature: "Fee tracking & ledger",           free: false,  growth: true,  enterprise: true  },
-  { category: "Finance",        feature: "Bursar dashboard",                free: false,  growth: true,  enterprise: true  },
-  { category: "Finance",        feature: "Excel & PDF export",              free: false,  growth: true,  enterprise: true  },
-  { category: "Support",        feature: "Community support",               free: true,   growth: true,  enterprise: true  },
-  { category: "Support",        feature: "Email support",                   free: false,  growth: true,  enterprise: true  },
-  { category: "Support",        feature: "Priority & dedicated support",    free: false,  growth: false, enterprise: true  },
-  { category: "Support",        feature: "Custom onboarding",               free: false,  growth: false, enterprise: true  },
+const scope = [
+  { title: "Annual package", text: "Standard platform features, hosting, maintenance, updates, and defined support are covered by the agreed school package. There are no separate standard-feature upgrade tiers." },
+  { title: "Onboarding & migration", text: "The quotation states what setup and migration work is included. Any additional work outside that scope is quoted upfront and agreed before it begins." },
+  { title: "Optional & provider costs", text: "Optional messaging usage, payment-provider processing charges, and separately agreed custom work may cost extra. These are disclosed separately; unconnected services are not automatically included or active." },
 ];
-
-const categories = [...new Set(rows.map(r => r.category))];
-const planColors = { free: "#10B981", growth: "#8B7FF5", enterprise: "#F59E0B" };
-
-function Cell({ value, color }: { value: boolean | string; color: string }) {
-  if (typeof value === "string") {
-    return (
-      <td className="py-3 px-4 text-center">
-        <span className="text-xs font-bold" style={{ color, fontFamily: "'Sora', sans-serif" }}>{value}</span>
-      </td>
-    );
-  }
-  return (
-    <td className="py-3 px-4 text-center">
-      {value ? (
-        <div className="w-5 h-5 rounded-full flex items-center justify-center mx-auto"
-          style={{ background: `${color}14` }}>
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
-            <path d="M5 13L9 17L19 7" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-      ) : (
-        <div className="w-1.5 h-1.5 rounded-full bg-gray-200 mx-auto" />
-      )}
-    </td>
-  );
-}
+const steps = [
+  { title: "School requirements", text: "Share your school size, workflows, and existing-record needs." },
+  { title: "Scope review", text: "Discuss setup, migration, support, and optional services." },
+  { title: "Written quotation", text: "Receive the annual price, inclusions, and any additional costs." },
+  { title: "School acceptance", text: "Agree the quotation and arrangements before onboarding begins." },
+];
 
 export default function PricingComparison() {
   return (
-    <section className="relative w-full py-24 lg:py-28 overflow-hidden" style={{ background: "white" }}>
-      <div className="relative max-w-5xl mx-auto px-6 lg:px-10">
-
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="h-px w-8 bg-gray-200 rounded-full" />
-            <span className="text-xs font-semibold uppercase tracking-widest text-gray-400"
-              style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.18em" }}>
-              Full comparison
-            </span>
-            <div className="h-px w-8 bg-gray-200 rounded-full" />
+    <section id="package-details" className="relative w-full py-24 lg:py-28 scroll-mt-20 bg-white">
+      <div className="max-w-7xl mx-auto px-6 lg:px-10">
+        <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
+          <header className="max-w-2xl mb-10">
+            <p className="text-xs font-semibold uppercase text-[#6654bd] mb-4">Know the scope before you begin</p>
+            <h2 className="text-3xl min-[360px]:text-4xl font-extrabold leading-tight text-gray-900 mb-4" style={{ fontFamily: "'Clash Display', sans-serif" }}>Clear costs.<br /><span className="text-[#7960d9]">No surprise extras.</span></h2>
+            <p className="text-base text-gray-600 leading-relaxed">Your quotation should distinguish the annual package from any separately agreed work or external service charges.</p>
+          </header>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 border-y border-gray-200 py-8">
+            {scope.map(item => (<div key={item.title} className="min-w-0"><h3 className="text-lg font-bold text-gray-900 mb-3" style={{ fontFamily: "'Sora', sans-serif" }}>{item.title}</h3><p className="text-sm text-gray-600 leading-relaxed">{item.text}</p></div>))}
           </div>
-          <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-900 leading-tight"
-            style={{ fontFamily: "'Clash Display', sans-serif" }}>
-            Compare all features
-          </h2>
-        </motion.div>
-
-        <motion.div
-          className="rounded-2xl overflow-hidden"
-          style={{ border: "1px solid #f1f1f3", boxShadow: "0 4px 24px rgba(0,0,0,0.04)" }}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <table className="w-full">
-            {/* Header */}
-            <thead>
-              <tr style={{ background: "#fafafa", borderBottom: "1px solid #f1f1f3" }}>
-                <th className="py-4 px-5 text-left text-xs font-bold text-gray-400 uppercase tracking-widest"
-                  style={{ fontFamily: "'DM Sans', sans-serif", width: "45%" }}>
-                  Feature
-                </th>
-                {[
-                  { name: "Free",       color: planColors.free },
-                  { name: "Growth",     color: planColors.growth },
-                  { name: "Enterprise", color: planColors.enterprise },
-                ].map((p) => (
-                  <th key={p.name} className="py-4 px-4 text-center">
-                    <span className="text-xs font-bold" style={{ color: p.color, fontFamily: "'Sora', sans-serif" }}>
-                      {p.name}
-                    </span>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody>
-              {categories.map((cat) => (
-                // 2. Bound the top element inside the loop with an explicit unique key
-                <Fragment key={`group-${cat}`}>
-                  {/* Category header row */}
-                  <tr style={{ background: "#f8f7ff" }}>
-                    <td colSpan={4} className="py-2.5 px-5">
-                      <span className="text-[10px] font-bold uppercase tracking-widest"
-                        style={{ color: "#8B7FF5", fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.15em" }}>
-                        {cat}
-                      </span>
-                    </td>
-                  </tr>
-
-                  {/* Feature rows loop */}
-                  {rows.filter(r => r.category === cat).map((row, i) => (
-                    <tr key={row.feature}
-                      style={{ borderBottom: "1px solid #f9fafb", background: i % 2 === 0 ? "white" : "#fefefe" }}>
-                      <td className="py-3 px-5 text-sm text-gray-600"
-                        style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                        {row.feature}
-                      </td>
-                      <Cell value={row.free} color={planColors.free} />
-                      <Cell value={row.growth} color={planColors.growth} />
-                      <Cell value={row.enterprise} color={planColors.enterprise} />
-                    </tr>
-                  ))}
-                </Fragment>
-              ))}
-            </tbody>
-          </table>
+          <div className="py-10 border-b border-gray-200">
+            <h3 className="text-xl font-bold text-gray-900 mb-6" style={{ fontFamily: "'Sora', sans-serif" }}>Two separate payment flows</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="min-w-0"><h4 className="text-sm font-bold text-[#6654bd] mb-2">School to MiqraTech Consult</h4><p className="text-sm text-gray-600 leading-relaxed">The school pays MiqraTech Consult for its annual Edujay package, according to the agreed quotation and invoice.</p></div>
+              <div className="min-w-0"><h4 className="text-sm font-bold text-[#087f68] mb-2">Parent to school</h4><p className="text-sm text-gray-600 leading-relaxed">When online school-fee collections are enabled, parents pay through the school&apos;s own verified payment-provider account. These payments are not Edujay subscription revenue.</p></div>
+            </div>
+          </div>
+          <div className="pt-10">
+            <h3 className="text-xl font-bold text-gray-900 mb-6" style={{ fontFamily: "'Sora', sans-serif" }}>How your quotation is agreed</h3>
+            <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+              {steps.map((step, index) => (<li key={step.title} className="border-t-2 border-[#ddd7f2] pt-4 min-w-0"><span className="text-xs font-bold text-[#7960d9]" aria-hidden="true">0{index + 1}</span><h4 className="text-sm font-bold text-gray-900 mt-3 mb-2">{step.title}</h4><p className="text-sm text-gray-600 leading-relaxed">{step.text}</p></li>))}
+            </ol>
+          </div>
         </motion.div>
       </div>
     </section>

@@ -28,11 +28,11 @@ type Step = {
 const STEPS: Step[] = [
   {
     number: "01",
-    label: "Foundation",
-    title: "Set Up Your School",
-    body: "Configure your school profile, academic year, terms, classes, and subjects in minutes. Edujay adapts to your school's structure — from Nursery all the way to JHS 3.",
+    label: "Access",
+    title: "Introduce Your School",
+    body: "Send a school access request. We review your needs, discuss the package and onboarding scope, and invite your first school administrator.",
     color: B.blueLight,
-    details: ["Academic year & terms", "Classes & sections", "Subjects & curriculum"],
+    details: ["School request", "Needs review", "Admin invitation"],
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
         <path d="M3 9L12 2L21 9V20C21 20.6 20.6 21 20 21H15V15H9V21H4C3.4 21 3 20.6 3 20V9Z"
@@ -42,11 +42,11 @@ const STEPS: Step[] = [
   },
   {
     number: "02",
-    label: "People",
-    title: "Add Your People",
-    body: "Onboard teachers, students, and parents with ease. Assign roles, link parents to students, and let Clerk handle secure authentication for everyone.",
+    label: "Setup",
+    title: "Build Your School's Foundation",
+    body: "Configure your academic structure, add your team, and organise student and guardian records. Start fresh or bring existing records through a guided import and review.",
     color: B.green,
-    details: ["Teachers & admins", "Students & classes", "Parents & guardians"],
+    details: ["Academic setup", "People & permissions", "Record migration"],
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
         <path d="M17 21V19C17 16.8 15.2 15 13 15H5C2.8 15 1 16.8 1 19V21" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
@@ -57,11 +57,11 @@ const STEPS: Step[] = [
   },
   {
     number: "03",
-    label: "Operations",
-    title: "Run Everything",
-    body: "Mark attendance, enter grades, publish timetables, track fees, and generate results — all from one clean dashboard. Every role sees exactly what they need.",
+    label: "Review & Begin",
+    title: "Check Your Records. Begin With Confidence.",
+    body: "Review your setup, confirm student and guardian links, and check any opening fee balances. Then use Edujay for attendance, assessments, bills, and reports, with access matched to each person's role.",
     color: B.amber,
-    details: ["Attendance & grading", "Timetables & results", "Fees & reports"],
+    details: ["Setup review", "Opening balances", "Daily school work"],
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
         <path d="M12 3L4 7V12C4 16.4 7.4 20.5 12 21.5C16.6 20.5 20 16.4 20 12V7L12 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
@@ -292,7 +292,7 @@ export default function HowItWorks() {
               textTransform: "uppercase",
               color: `${B.blueLight}90`,
             }}>
-              Simple by design
+              How your school gets started
             </span>
           </div>
 
@@ -314,7 +314,7 @@ export default function HowItWorks() {
               color: "#fff",
               margin: 0,
             }}>
-              Up and running{" "}
+              From first conversation{" "}
               <br />
               <span style={{
                 background: `linear-gradient(135deg, ${B.blueLight} 0%, ${B.green} 100%)`,
@@ -322,7 +322,7 @@ export default function HowItWorks() {
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
               }}>
-                in three steps.
+                to daily school life.
               </span>
             </h2>
 
@@ -335,7 +335,7 @@ export default function HowItWorks() {
                 lineHeight: 1.85,
                 margin: 0,
               }}>
-                No lengthy onboarding. No IT team required. Edujay is designed so any school administrator can get started today — and be fully operational by tomorrow.
+                We guide your school through access, setup, and review. Whether you&apos;re starting fresh or bringing existing records, your team checks the essentials before beginning daily work.
               </p>
             </div>
           </div>
@@ -390,20 +390,20 @@ export default function HowItWorks() {
               color: "#F0F2FF",
               marginBottom: 4,
             }}>
-              Ready to modernize how your school operates?
+              Let&apos;s plan your school&apos;s start.
             </div>
             <div style={{
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 13,
               color: "rgba(200,204,255,0.4)",
             }}>
-              Join schools across Ghana already running on Edujay.
+              Tell us about your school so we can discuss the right setup and next steps.
             </div>
           </div>
 
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <a
-              href="/sign-up"
+              href="/waitlist"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -429,7 +429,7 @@ export default function HowItWorks() {
                 (e.currentTarget as HTMLAnchorElement).style.boxShadow = `0 4px 20px ${B.blue}40`;
               }}
             >
-              Get Started Free
+              Request School Access
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                 <path d="M5 12H19M13 6L19 12L13 18" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -461,7 +461,7 @@ export default function HowItWorks() {
                 (e.currentTarget as HTMLAnchorElement).style.color = "rgba(220,224,255,0.7)";
               }}
             >
-              See all features
+              Explore Features
             </a>
           </div>
         </motion.div>

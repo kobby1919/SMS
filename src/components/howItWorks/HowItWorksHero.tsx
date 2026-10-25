@@ -6,22 +6,16 @@ import Link from "next/link";
 export default function HowItWorksHero() {
   return (
     <section
+      id="onboarding-overview"
       className="relative w-full overflow-hidden pt-36 pb-16"
-      style={{ background: "#0a0916" }}
+      style={{ background: "#080B18", isolation: "isolate" }}
     >
       <div
+        aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse at 50% 0%, rgba(91,79,233,0.14) 0%, transparent 55%)",
-        }}
-      />
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+            "radial-gradient(ellipse 72% 80% at 22% 42%, rgba(32,44,92,0.6) 0%, rgba(16,19,28,0.76) 52%, #10131C 100%)",
         }}
       />
 
@@ -83,7 +77,7 @@ export default function HowItWorksHero() {
             className="text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4"
             style={{ fontFamily: "'Clash Display', sans-serif" }}
           >
-            Up and running
+            A guided start
             <span
               style={{
                 background: "linear-gradient(135deg, #8B7FF5 0%, #10B981 100%)",
@@ -92,21 +86,21 @@ export default function HowItWorksHero() {
               }}
             >
               {" "}
-              in three steps.
+              for your school.
             </span>
           </h1>
 
           <p
-            className="text-sm lg:text-base text-white/45 leading-relaxed mb-8 max-w-lg"
+            className="text-sm lg:text-base text-white/65 leading-relaxed mb-8 max-w-lg"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}
           >
-            No IT team. No lengthy onboarding. No training manual. Any school
-            administrator can have Edujay fully set up and running on the same
-            day.
+            From your first access request to reviewed records and daily use,
+            we help your school prepare Edujay around its people, academic
+            structure, and existing information.
           </p>
 
           <a
-            href="/sign-up"
+            href="/waitlist"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5"
             style={{
               background: "linear-gradient(135deg, #5B4FE9, #8B7FF5)",
@@ -114,7 +108,7 @@ export default function HowItWorksHero() {
               boxShadow: "0 6px 24px #8B7FF535",
             }}
           >
-            Get Started Free
+            Request School Access
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
               <path
                 d="M5 12H19M13 6L19 12L13 18"
@@ -142,9 +136,9 @@ export default function HowItWorksHero() {
             Jump to
           </span>
           {[
-            { label: "Step 1 — Setup", href: "#step-1", color: "#8B7FF5" },
-            { label: "Step 2 — People", href: "#step-2", color: "#10B981" },
-            { label: "Step 3 — Run", href: "#step-3", color: "#F59E0B" },
+            { label: "Step 1 - Access", href: "#step-1", color: "#8B7FF5" },
+            { label: "Step 2 - Setup", href: "#step-2", color: "#10B981" },
+            { label: "Step 3 - Review", href: "#step-3", color: "#F59E0B" },
             { label: "FAQ", href: "#faq", color: "#60A5FA" },
           ].map((f) => (
             <a

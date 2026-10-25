@@ -7,13 +7,13 @@ import CTABanner from "@/src/components/CTABanner";
 
 export const metadata = {
   title: "How It Works — Edujay",
-  description: "Set up your school, add your people, and run everything — in three simple steps. No IT team needed.",
+  description: "Learn how Edujay guides your school through access review, fresh setup or reviewed record migration, and readiness checks before daily use.",
 };
 
 export default function HowItWorksPage() {
   return (
     <div className="min-h-screen">
-      <div style={{ background: "#0a0916" }}>
+      <div style={{ background: "#080B18" }}>
         <HomepageNavbar />
         <HowItWorksHero />
       </div>

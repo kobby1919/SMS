@@ -11,8 +11,8 @@ const values = [
         <path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
-    title: "Reliability first",
-    description: "Schools depend on Edujay every single day. Attendance must save. Grades must compute correctly. Results must print. We treat reliability as a non-negotiable — not a feature.",
+    title: "Accuracy matters",
+    description: "Calculations support review, not replace it. School records, results, and financial figures should be checked against the information they represent.",
     color: "#8B7FF5",
   },
   {
@@ -22,8 +22,8 @@ const values = [
         <path d="M12 8V12L15 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
-    title: "Simplicity over complexity",
-    description: "The best software is the software people actually use. We obsess over making every workflow as simple as possible — because a headmistress shouldn't need training to run a report.",
+    title: "Clarity over promises",
+    description: "Explain what the platform does, what setup is required, and where limitations remain. Avoid promising instant activation or outcomes that depend on review and configuration.",
     color: "#10B981",
   },
   {
@@ -35,8 +35,8 @@ const values = [
         <path d="M16 3.1C17.7 3.5 19 5.1 19 7C19 8.9 17.7 10.5 16 10.9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
-    title: "Built around people",
-    description: "Teachers, bursars, parents, students — Edujay is shaped by how real people in Ghanaian schools actually work, not by assumptions made in a boardroom far removed from the classroom.",
+    title: "Access has boundaries",
+    description: "Responsibilities determine access. School teams need appropriate permissions, parents need access to linked children, and finance tasks require their own authorisation.",
     color: "#F59E0B",
   },
   {
@@ -47,15 +47,15 @@ const values = [
         <path d="M9 21V9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
       </svg>
     ),
-    title: "Local by design",
-    description: "Ghana's school system has its own structure, its own rhythms, its own terminology. Edujay speaks that language — from Nursery to JHS 3, Term 1 to Term 3, GH₵ to cedis.",
+    title: "Support adoption",
+    description: "Make room for onboarding, guidance, and review. Help school teams understand the workflows they will use rather than assuming everyone can begin without preparation.",
     color: "#FB7185",
   },
 ];
 
 export default function AboutValues() {
   return (
-    <section id="values" className="relative w-full py-24 lg:py-32 overflow-hidden" style={{ background: "white" }}>
+    <section id="values" className="relative w-full py-24 lg:py-32 overflow-hidden scroll-mt-20" style={{ background: "white" }}>
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse at 20% 50%, #F59E0B06 0%, transparent 50%), radial-gradient(ellipse at 80% 50%, #8B7FF506 0%, transparent 50%)" }} />
 
@@ -78,13 +78,12 @@ export default function AboutValues() {
           </div>
           <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
             style={{ fontFamily: "'Clash Display', sans-serif" }}>
-            Our core
-            <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #A855F7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}> values.</span>
+            Our guiding
+            <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #A855F7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}> principles.</span>
           </h2>
           <p className="text-base text-gray-500 leading-relaxed"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
-            These aren&apos;t statements on a wall. They&apos;re the decisions we make every day
-            when we&apos;re building Edujay.
+            The commitments that guide how we develop Edujay and prepare schools to use it.
           </p>
         </motion.div>
 
