@@ -103,7 +103,7 @@ export default function FeatureBlock({
             </ul>
 
             {/* Learn more link */}
-            <a href="/waitlist"
+            <a href="/request-access"
               className="inline-flex items-center gap-2 text-sm font-semibold transition-all duration-200 hover:gap-3"
               style={{ color, fontFamily: "'DM Sans', sans-serif" }}>
               Request School Access
@@ -122,9 +122,6 @@ export default function FeatureBlock({
             transition={{ duration: 0.65, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           >
             {visual}
-            <p className="mt-6 text-center text-xs text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-              Illustrative example · Sample data
-            </p>
           </motion.div>
         </div>
       </div>

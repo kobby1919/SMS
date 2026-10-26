@@ -42,12 +42,12 @@ const steps: Step[] = [
   {
     id: "step-2", number: "02", label: "Setup", color: "#10B981",
     heading: "Set up your school", headingAccent: "and records.",
-    description: "Configure your academic year, terms, classes, subjects, and staff responsibilities. Add student records and guardian links, then follow the setup route that fits your school: start fresh or bring existing records through guided migration.",
+    description: "Configure your academic year, terms, classes, subjects, and staff responsibilities. Add student records and parent links, then follow the setup route that fits your school: start fresh or bring existing records through guided migration.",
     details: [
       { heading: "Build the academic foundation", text: "Review your school profile, academic periods, classes, subjects, and teaching assignments." },
       { heading: "Start fresh", text: "Enter the records your school needs through the normal school setup and authorised record-entry workflows." },
       { heading: "Bring existing records", text: "Agree source files and scope, then upload, validate, review, and reconcile records through the migration workspace. Uploading a spreadsheet is not approval of its contents." },
-      { heading: "Review people and opening balances", text: "Check student and guardian links, assign staff responsibilities, and reconcile any opening fee balances against the agreed source records." },
+      { heading: "Review people and opening balances", text: "Check student and parent links, assign staff responsibilities, and reconcile any opening fee balances against the agreed source records." },
     ],
     stage: "Guided setup", flip: true, bg: "#f8f7ff",
     visual: <SetupPathsVisual color="#10B981" />,
@@ -57,7 +57,7 @@ const steps: Step[] = [
     heading: "Review,", headingAccent: "then begin.",
     description: "Check your setup, records, staff access, and any opening financial figures before completing onboarding. Once your school is ready, use Edujay for daily attendance, assessments, bills, receipts, and reports.",
     details: [
-      { heading: "Confirm records and permissions", text: "Check class assignments, student-guardian links, and that each invited person has the appropriate school and role access." },
+      { heading: "Confirm records and permissions", text: "Check class assignments, student-parent links, and that each invited person has the appropriate school and role access." },
       { heading: "Approve the opening position", text: "Where existing records are imported, review reconciliation and obtain the school's approval before completing migration." },
       { heading: "Begin daily school work", text: "Teachers record attendance and assessments, bursars manage authorised finance tasks, and parents access records for their linked children." },
       { heading: "Activate external services separately", text: "Online payments require the school's verified provider setup. External notifications depend on configured and verified delivery channels; school setup does not activate them automatically." },
@@ -154,9 +154,6 @@ function StepBlock({ step }: { step: Step }) {
             transition={{ duration: 0.65, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           >
             {step.visual}
-            <p className="mt-6 text-center text-xs text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-              Illustrative example · Sample data
-            </p>
           </motion.div>
         </div>
       </div>

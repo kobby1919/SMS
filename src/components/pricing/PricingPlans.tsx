@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Check } from "lucide-react";
 
 const inclusions = [
-  { title: "School records", detail: "Student, guardian, class, and staff records." },
+  { title: "School records", detail: "Student, parent, class, and staff records." },
   { title: "Attendance", detail: "Attendance recording, history, and review." },
   { title: "Teaching schedules", detail: "Class timetables and teaching assignments." },
   { title: "Assessments & reports", detail: "Assessment workflows, reviewed results, and term reports." },
@@ -28,7 +28,7 @@ export default function PricingPlans() {
               <div className="flex flex-wrap justify-between gap-2"><dt className="text-gray-500">Package payment to</dt><dd className="font-semibold text-gray-800">MiqraTech Consult</dd></div>
               <div className="flex flex-wrap justify-between gap-2"><dt className="text-gray-500">Price and scope</dt><dd className="font-semibold text-gray-800">Agreed in writing</dd></div>
             </dl>
-            <a href="/waitlist" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-white text-sm font-semibold mt-7 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6654bd]" style={{ background: "linear-gradient(135deg, #5B4FE9, #8B7FF5)", fontFamily: "'DM Sans', sans-serif" }}>Request a School Quote <ArrowRight size={16} aria-hidden="true" /></a>
+            <a href="/request-access" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-white text-sm font-semibold mt-7 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6654bd]" style={{ background: "linear-gradient(135deg, #5B4FE9, #8B7FF5)", fontFamily: "'DM Sans', sans-serif" }}>Request a School Quote <ArrowRight size={16} aria-hidden="true" /></a>
             <p className="mt-4 text-xs text-gray-500 leading-relaxed">Requesting a quote does not take a payment or activate your school.</p>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="min-w-0">

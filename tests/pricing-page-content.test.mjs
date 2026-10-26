@@ -19,7 +19,7 @@ function render(name) {
 test("pricing presents a quoted annual package without a calculator or unapproved tiers", () => {
   const html = render("PricingPlans");
   for (const text of ["Annual school package", "MiqraTech Consult", "Agreed in writing", "Request a School Quote"]) assert.ok(html.includes(text));
-  assert.match(html, /href="\/waitlist"/);
+  assert.match(html, /href="\/request-access"/);
   assert.doesNotMatch(html, /type="range"|Growth|Enterprise|14-day|20%|GH₵|\/sign-up/);
 });
 

@@ -99,7 +99,7 @@ export default function PricingHero() {
 
           <div className="flex flex-wrap items-center gap-3">
             <a
-              href="/waitlist"
+              href="/request-access"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5"
               style={{
                 background: "linear-gradient(135deg, #5B4FE9, #8B7FF5)",

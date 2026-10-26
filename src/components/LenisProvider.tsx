@@ -14,6 +14,11 @@ export default function LenisProvider({
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       touchMultiplier: 1.5,
       infinite: false,
+      anchors: {
+        offset: -88,
+        immediate: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      },
+      stopInertiaOnNavigate: true,
     });
 
     let rafId: number;

@@ -6,7 +6,7 @@ import HIWFAQ from "@/src/components/howItWorks/HIWFAQ";
 import CTABanner from "@/src/components/CTABanner";
 
 export const metadata = {
-  title: "How It Works — Edujay",
+  title: "How It Works",
   description: "Learn how Edujay guides your school through access review, fresh setup or reviewed record migration, and readiness checks before daily use.",
 };
 

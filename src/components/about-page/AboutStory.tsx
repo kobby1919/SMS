@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 const timeline = [
   { year: "Understand", title: "Begin with the school's needs", description: "Discuss what the school needs to manage, who will coordinate the work, and which records and services fall within the agreed scope.", color: "#8B7FF5" },
   { year: "Prepare", title: "Build the foundation", description: "Organise the academic structure, people, and records. Start fresh or bring existing information through a guided migration process.", color: "#10B981" },
-  { year: "Review", title: "Check before relying on it", description: "Review permissions, student-guardian links, and any opening financial figures. Where records are imported, reconcile them against the agreed sources before approval.", color: "#F59E0B" },
+  { year: "Review", title: "Check before relying on it", description: "Review permissions, student-parent links, and any opening financial figures. Where records are imported, reconcile them against the agreed sources before approval.", color: "#F59E0B" },
   { year: "Improve", title: "Let feedback guide development", description: "Our approach is to use feedback from school teams to guide improvements, while being clear about what is available and what still needs preparation.", color: "#FB7185" },
 ];
 

@@ -6,7 +6,7 @@ import Footer from "@/src/components/Footer";
 import HomepageNavbar from "@/src/components/HomepageNavbar";
 
 export const metadata = {
-  title: "Features - Edujay",
+  title: "Features",
   description: "Explore Edujay's tools for school records, attendance, assessments, timetables, and fees, with role-based access for school teams and parents.",
 };
 
@@ -24,12 +24,12 @@ export default function FeaturesPage() {
         color="#2563a6"
         heading="School records,"
         headingAccent="connected."
-        description="Organise students, guardians, classes, and staff around your school's structure. Start fresh or bring existing records through a guided import and review."
+        description="Organise students, parents, classes, and staff around your school's structure. Start fresh or bring existing records through a guided import and review."
         benefits={[
           { text: "Maintain student records and class assignments" },
-          { text: "Link guardians to the students in their care" },
+          { text: "Link parents to the students in their care" },
           { text: "Organise staff and their school responsibilities" },
-          { text: "Review imported records before completing migration" },
+          { text: "Review and reconcile existing records as part of school setup" },
         ]}
         visual={<RecordsVisual color="#2563a6" />}
         bg="white"

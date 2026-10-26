@@ -64,7 +64,7 @@ export async function joinWaitlist(data: WaitlistInput): Promise<WaitlistResult>
   if (existing) {
     return {
       ok:      false,
-      message: "This email is already on the waitlist. We'll be in touch soon.",
+      message: "A school request already exists for this email. Please use your existing request or contact the person coordinating it.",
     };
   }
 

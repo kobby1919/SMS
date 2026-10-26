@@ -3,9 +3,9 @@ import { BookOpen, FolderOpen, Shield, UsersRound, Wallet } from "lucide-react";
 
 export function RecordsVisual({ color = "#2563a6" }: { color?: string }) {
   const students = [
-    { name: "Ama Boateng", className: "Class 4B", guardian: "Guardian A" },
-    { name: "Kofi Mensah", className: "Class 4B", guardian: "Guardian B" },
-    { name: "Efua Asante", className: "Class 5A", guardian: "Guardian C" },
+    { name: "Ama Boateng", className: "Class 4B", guardian: "Parent A" },
+    { name: "Kofi Mensah", className: "Class 4B", guardian: "Parent B" },
+    { name: "Efua Asante", className: "Class 5A", guardian: "Parent C" },
   ];
   return (
     <div className="w-full max-w-[480px] mx-auto rounded-2xl overflow-hidden bg-white" style={{ border: `1px solid ${color}22`, boxShadow: `0 20px 60px ${color}18` }}>
@@ -13,7 +13,7 @@ export function RecordsVisual({ color = "#2563a6" }: { color?: string }) {
         <FolderOpen size={24} color={color} aria-hidden="true" />
         <div>
           <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>School Records</div>
-          <div className="text-xs text-gray-500 mt-1">Students, classes, and linked guardians</div>
+          <div className="text-xs text-gray-500 mt-1">Students, classes, and linked parents</div>
         </div>
       </div>
       <div className="divide-y divide-gray-100">
@@ -27,7 +27,7 @@ export function RecordsVisual({ color = "#2563a6" }: { color?: string }) {
           </div>
         ))}
       </div>
-      <div className="px-5 py-4 bg-gray-50 text-xs text-gray-500 border-t border-gray-100">3 students · 2 classes · 3 guardian links</div>
+      <div className="px-5 py-4 bg-gray-50 text-xs text-gray-500 border-t border-gray-100">3 students · 2 classes · 3 parent links</div>
     </div>
   );
 }

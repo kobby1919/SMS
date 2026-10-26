@@ -28,7 +28,7 @@ export default function FeaturesCTA() {
             Discuss your school&apos;s needs, package, and onboarding scope before your team begins.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <motion.a href="/waitlist"
+            <motion.a href="/request-access"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white font-semibold text-sm"
               style={{ background: "linear-gradient(135deg, #5B4FE9, #A855F7)", fontFamily: "'DM Sans', sans-serif", boxShadow: "0 8px 30px #8B7FF540" }}
               whileHover={{ y: -2, boxShadow: "0 14px 40px #8B7FF550" }}
@@ -39,7 +39,7 @@ export default function FeaturesCTA() {
                 <path d="M5 12H19M13 6L19 12L13 18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </motion.a>
-            <motion.a href="/#how-it-works"
+            <motion.a href="/howItWorks"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white/60 font-medium text-sm border border-white/12"
               style={{ fontFamily: "'DM Sans', sans-serif" }}
               whileHover={{ y: -2, borderColor: "rgba(139,127,245,0.4)", color: "rgba(255,255,255,0.9)" }}

@@ -44,7 +44,7 @@ const STEPS: Step[] = [
     number: "02",
     label: "Setup",
     title: "Build Your School's Foundation",
-    body: "Configure your academic structure, add your team, and organise student and guardian records. Start fresh or bring existing records through a guided import and review.",
+    body: "Configure your academic structure, add your team, and organise student and parent records. Start fresh or bring existing records through a guided import and review.",
     color: B.green,
     details: ["Academic setup", "People & permissions", "Record migration"],
     icon: (
@@ -59,7 +59,7 @@ const STEPS: Step[] = [
     number: "03",
     label: "Review & Begin",
     title: "Check Your Records. Begin With Confidence.",
-    body: "Review your setup, confirm student and guardian links, and check any opening fee balances. Then use Edujay for attendance, assessments, bills, and reports, with access matched to each person's role.",
+    body: "Review your setup, confirm student and parent links, and check any opening fee balances. Then use Edujay for attendance, assessments, bills, and reports, with access matched to each person's role.",
     color: B.amber,
     details: ["Setup review", "Opening balances", "Daily school work"],
     icon: (
@@ -403,7 +403,7 @@ export default function HowItWorks() {
 
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <a
-              href="/waitlist"
+              href="/request-access"
               style={{
                 display: "inline-flex",
                 alignItems: "center",

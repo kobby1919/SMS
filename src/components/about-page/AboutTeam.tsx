@@ -3,10 +3,10 @@
 import { motion } from "framer-motion";
 
 const team = [
-  { name: "Samuel Kwabena Assan", role: "Creator & Lead Software Engineer, Edujay", bio: "Built Edujay and leads its software engineering and technical development.", initials: "SA", color: "#8B7FF5" },
-  { name: "Robert Ankrah", role: "Founder, MiqraTech Consult", bio: "Founded MiqraTech Consult, the company behind Edujay, and provides funding support for the project.", initials: "RA", color: "#10B981" },
-  { name: "Yevgene Mawugbe", role: "Co-Creator & Software Engineering Collaborator", bio: "Co-created the original Edujay idea with Samuel Kwabena Assan and contributes as a software engineering collaborator.", initials: "YM", color: "#F59E0B" },
-  { name: "Harriet", role: "Administration Coordinator", bio: "Coordinates administrative work at MiqraTech Consult.", initials: "H", color: "#FB7185" },
+  { name: "Robert Ankrah", role: "Founder, MiqraTech Consult", bio: "Founder of MiqraTech Consult, the company behind Edujay. Provides the organisational and financial backing for the platform's development.", initials: "RA", color: "#10B981" },
+  { name: "Samuel Kwabena Assan", role: "Creator & Lead Software Engineer, Edujay · MiqraTech Consult", bio: "Designed and built Edujay in its entirety. Leads the platform's architecture, software development, and technical direction.", initials: "SA", color: "#8B7FF5" },
+  { name: "Yevgene Mawugbe", role: "Software Engineer, Edujay", bio: "Helped shape the original Edujay idea with Samuel Kwabena Assan. His role focuses on supporting future development and improvements.", initials: "YM", color: "#F59E0B" },
+  { name: "Harriet", role: "Administration Coordinator, MiqraTech Consult", bio: "Handles administrative coordination at MiqraTech Consult, supporting the company's day-to-day work.", initials: "H", color: "#FB7185" },
 ];
 
 export default function AboutTeam() {

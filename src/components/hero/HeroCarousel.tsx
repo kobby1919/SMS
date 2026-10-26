@@ -54,11 +54,8 @@ const STROKE_GAP_MS = 40;
 
 // ─── AURORA MASSES ────────────────────────────────────────────────────────────
 // ─── SIGNATURE REVEAL ─────────────────────────────────────────────────────────
-interface SignatureRevealProps {
-  onComplete: () => void;
-}
 
-function SignatureReveal({ onComplete }: SignatureRevealProps): React.ReactElement {
+function SignatureReveal(): React.ReactElement {
   const [showTagline, setShowTagline] = useState<boolean>(false);
   const [faded, setFaded]             = useState<boolean>(false);
 
@@ -95,7 +92,6 @@ function SignatureReveal({ onComplete }: SignatureRevealProps): React.ReactEleme
           setTimeout(() => setShowTagline(true), 220);
           setTimeout(() => {
             setFaded(true);
-            setTimeout(onComplete, 500);
           }, 1300);
           return;
         }
@@ -129,7 +125,7 @@ function SignatureReveal({ onComplete }: SignatureRevealProps): React.ReactEleme
       clearTimeout(boot);
       if (raf.current) cancelAnimationFrame(raf.current);
     };
-  }, [onComplete]);
+  }, []);
 
   return (
     <div style={{ position: "relative", width: "100%", maxWidth: 620 }}>
@@ -219,36 +215,16 @@ function SignatureReveal({ onComplete }: SignatureRevealProps): React.ReactEleme
   );
 }
 
-// ─── EARLY ACCESS LINE ────────────────────────────────────────────────────────
-function EarlyAccessLine({ visible }: { visible: boolean }): React.ReactElement {
-  return (
-    <div style={{
-      display: "flex", alignItems: "center", gap: 10, marginTop: 24,
-      opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(10px)",
-      transition: "opacity 0.9s ease, transform 0.9s ease",
-    }}>
-      <span style={{ position: "relative", display: "inline-flex", width: 8, height: 8, flexShrink: 0 }}>
-        <span style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "#4ade80", animation: "ea-ping 1.8s ease-out infinite", opacity: 0.5 }} />
-        <span style={{ position: "relative", display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: "#4ade80" }} />
-      </span>
-      <span style={{ fontFamily: "'DM Sans', var(--font-inter), sans-serif", fontSize: "13px", fontWeight: 500, color: "rgba(255,255,255,0.48)", letterSpacing: "0.01em" }}>
-        Now accepting pilot schools
-      </span>
-    </div>
-  );
-}
 
 // ─── HERO SECTION ─────────────────────────────────────────────────────────────
 export default function HeroSection(): React.ReactElement {
   const [mounted,            setMounted]            = useState<boolean>(false);
-  const [earlyAccessVisible, setEarlyAccessVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 60);
     return () => clearTimeout(t);
   }, []);
 
-  const handleSigComplete = (): void => setEarlyAccessVisible(true);
 
   return (
     <>
@@ -409,16 +385,10 @@ export default function HeroSection(): React.ReactElement {
                 opacity: 0,
               }}
             >
-              <a href="/waitlist" className="ej-btn-primary">
-                Join the Waitlist
+              <a href="/request-access" className="ej-btn-primary">
+                Request School Access
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
                   <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </a>
-              <a href="#demo" className="ej-btn-text">
-                Book a demo
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                  <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
             </div>
@@ -435,8 +405,7 @@ export default function HeroSection(): React.ReactElement {
               opacity: 0,
             }}
           >
-            <SignatureReveal onComplete={handleSigComplete} />
-            <EarlyAccessLine visible={earlyAccessVisible} />
+            <SignatureReveal />
           </div>
         </div>
       </section>

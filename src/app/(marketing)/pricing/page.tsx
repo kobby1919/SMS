@@ -7,7 +7,7 @@ import PricingFAQ from "@/src/components/pricing/PricingFAQ";
 import CTABanner from "@/src/components/CTABanner";
 
 export const metadata = {
-  title: "Pricing — Edujay",
+  title: "Pricing",
   description: "Request an annual Edujay school package quotation from MiqraTech Consult, with clear inclusions, agreed onboarding scope, and separately disclosed optional costs.",
 };
 

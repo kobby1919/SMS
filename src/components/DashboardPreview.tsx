@@ -209,13 +209,13 @@ export default function DashboardPreview() {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <p className="text-sm font-semibold text-gray-600 text-center" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-            Administrator dashboard · Sample school data
+            Administrator dashboard preview
           </p>
           <p className="text-sm text-gray-500 text-center max-w-2xl" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-            An example administrator view using sample data. Your dashboard reflects your school&apos;s records, setup, and permissions.
+            Shown with demonstration records. Your dashboard reflects your school&apos;s setup and permissions.
           </p>
           <a
-            href="/waitlist"
+            href="/request-access"
             className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-white text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
             style={{
               background: "linear-gradient(135deg, #5B4FE9 0%, #8B7FF5 100%)",

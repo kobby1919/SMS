@@ -30,7 +30,7 @@ export function AccessVisual({ color = "#8B7FF5" }: { color?: string }) {
         {[
           ["School request", "Share your school's needs and contact details."],
           ["Needs and scope review", "Discuss the package, records, and onboarding scope."],
-          ["Administrator invitation", "After approval, invite the first administrator."],
+          ["Administrator invitation", "Your school administrator receives an invitation after approval."],
         ].map(([title, text], index) => (
           <li key={title} className="px-5 py-5 flex items-start gap-3">
             <span className="w-7 h-7 flex-shrink-0 rounded-full grid place-items-center text-xs font-bold" style={{ color, background: `${color}12` }}>{index + 1}</span>
@@ -58,7 +58,7 @@ export function SetupPathsVisual({ color = "#10B981" }: { color?: string }) {
         <div className="px-5 py-5">
           <div className="flex items-center gap-2 mb-2"><Building2 size={17} color={color} aria-hidden="true" /><h4 className="text-sm font-bold text-gray-800">Start Fresh</h4></div>
           <p className="text-xs text-gray-500 leading-relaxed">Enter the records your school needs through authorised school workflows.</p>
-          <p className="text-xs text-gray-600 mt-3">Student records · Guardian links · Staff access</p>
+          <p className="text-xs text-gray-600 mt-3">Student records · Parent links · Staff access</p>
         </div>
         <div className="px-5 py-5">
           <div className="flex items-center gap-2 mb-2"><FileInput size={17} color={color} aria-hidden="true" /><h4 className="text-sm font-bold text-gray-800">Bring Existing Records</h4></div>
@@ -77,7 +77,7 @@ export function ReviewVisual({ color = "#F59E0B" }: { color?: string }) {
       <ul className="divide-y divide-gray-100">
         {[
           ["School setup", "Check academic periods, classes, and subjects."],
-          ["Student and guardian links", "Confirm the right records are connected."],
+          ["Student and parent links", "Confirm the right records are connected."],
           ["Staff permissions", "Check school and role access for invited staff."],
           ["Opening balances", "Where applicable, reconcile against agreed source records."],
         ].map(([title, text]) => (

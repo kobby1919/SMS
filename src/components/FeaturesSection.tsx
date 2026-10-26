@@ -3,7 +3,7 @@
 import { ArrowRight, BookOpenCheck, ClipboardCheck, FileChartColumnIncreasing, FolderOpen, Receipt, UsersRound } from "lucide-react";
 
 const features = [
-  { title: "School Records", label: "School records", icon: FolderOpen, color: "#2563a6", description: "Organise students, guardians, classes, and staff in one place.", detail: "Student and guardian records" },
+  { title: "School Records", label: "School records", icon: FolderOpen, color: "#2563a6", description: "Organise students, parents, classes, and staff in one place.", detail: "Student and parent records" },
   { title: "Attendance & Teaching", label: "Daily teaching", icon: ClipboardCheck, color: "#087f68", description: "Record attendance and manage teaching schedules across your school.", detail: "Attendance and timetables" },
   { title: "Assessments & Reports", label: "Academic progress", icon: FileChartColumnIncreasing, color: "#936013", description: "Record assessment scores, review results, and prepare term reports.", detail: "Class assessments and term results" },
   { title: "Fees & Receipts", label: "School finance", icon: Receipt, color: "#b44261", description: "Manage bills, record confirmed payments, and track outstanding balances.", detail: "Bills, balances, and receipts" },
@@ -84,13 +84,13 @@ export default function FeaturesSection() {
           ))}
         </div>
         <div className="ej-feat-footer">
-          <p>Your school is set up before your team begins. Online payments require separate provider activation.</p>
+          <p>We guide your school through setup, including online payments where required.</p>
           <a className="ej-feat-link" href="/features">Explore all features <ArrowRight size={16} aria-hidden="true" /></a>
         </div>
         <section className="ej-feat-start" aria-labelledby="ej-feat-start-heading">
           <div className="ej-feat-start-header">
             <h3 id="ej-feat-start-heading">A guided start for your school.</h3>
-            <a className="ej-feat-link" href="/waitlist">Request school access <ArrowRight size={16} aria-hidden="true" /></a>
+            <a className="ej-feat-link" href="/request-access">Request school access <ArrowRight size={16} aria-hidden="true" /></a>
           </div>
           <ol className="ej-feat-steps">
             {steps.map((step, index) => (

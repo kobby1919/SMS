@@ -21,8 +21,14 @@ test("About names the four confirmed team members and the company", () => {
   for (const name of ["Samuel Kwabena Assan", "Robert Ankrah", "Yevgene Mawugbe", "Harriet", "MiqraTech Consult"]) assert.ok(html.includes(name));
   assert.match(html, /Creator &amp; Lead Software Engineer/);
   assert.match(html, /Founder, MiqraTech Consult/);
-  assert.match(html, /Co-Creator &amp; Software Engineering Collaborator/);
-  assert.match(html, /Administration Coordinator/);
+  assert.match(html, /Creator &amp; Lead Software Engineer, Edujay · MiqraTech Consult/);
+  assert.match(html, /Designed and built Edujay in its entirety/);
+  assert.match(html, /Software Engineer, Edujay/);
+  assert.match(html, /supporting future development and improvements/);
+  assert.doesNotMatch(html, /Co-Creator &amp; Software Engineering Collaborator/);
+  assert.match(html, /Administration Coordinator, MiqraTech Consult/);
+  assert.doesNotMatch(html, /\b(?:Mr\.?|Miss|Mrs\.?|Ms\.?)\s+(?:Robert|Samuel|Yevgene|Harriet)/);
+  assert.doesNotMatch(html, /Software Engineer, Edujay · MiqraTech Consult<\/div><p[^>]*>Helped shape/);
   assert.doesNotMatch(html, /Jay Mensah|Ama Boateng|Kweku Asante|Efua Darko|Founder &amp; CEO|We&#x27;re growing/);
 });
 

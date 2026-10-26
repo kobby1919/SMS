@@ -8,7 +8,7 @@ import Footer from "@/src/components/Footer";
 import HomepageNavbar from "@/src/components/HomepageNavbar"
 
 export const metadata = {
-  title: "About — Edujay",
+  title: "About",
   description: "Meet Edujay, a school management platform developed by MiqraTech Consult, and the people and principles behind it.",
 };
 

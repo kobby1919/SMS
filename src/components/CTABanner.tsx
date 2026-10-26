@@ -51,7 +51,7 @@ export default function CTABanner() {
           {/* CTAs */}
           <div className="flex flex-wrap items-center justify-center gap-4">
             <motion.a
-              href="/waitlist"
+              href="/request-access"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white font-semibold text-sm"
               style={{
                 background: "linear-gradient(135deg, #5B4FE9 0%, #A855F7 100%)",
@@ -69,7 +69,7 @@ export default function CTABanner() {
             </motion.a>
 
             <motion.a
-              href="#how-it-works"
+              href="/howItWorks"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-gray-700 font-medium text-sm border border-gray-200"
               style={{ fontFamily: "'DM Sans', sans-serif", background: "white" }}
               whileHover={{ y: -2, borderColor: "#8B7FF544", boxShadow: "0 8px 24px rgba(0,0,0,0.06)" }}

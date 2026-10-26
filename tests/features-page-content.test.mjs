@@ -36,7 +36,7 @@ test("finance and bursar examples use the same five-bill scope", () => {
 });
 
 test("records and roles examples reflect guardian links and finance permissions", () => {
-  assert.match(render("RecordsVisual"), /3 students · 2 classes · 3 guardian links/);
+  assert.match(render("RecordsVisual"), /3 students · 2 classes · 3 parent links/);
   const roles = render("RolesVisual");
   for (const role of ["Admin", "Teacher", "Bursar", "Parent"]) assert.ok(roles.includes(role));
   assert.match(roles, /Linked children only/);

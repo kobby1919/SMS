@@ -150,7 +150,7 @@ export default function HIWFAQ() {
           <p className="text-sm text-gray-400 mb-3" style={{ fontFamily: "'DM Sans', sans-serif" }}>
             Still have questions?
           </p>
-          <a href="/waitlist"
+          <a href="/request-access"
             className="inline-flex items-center gap-2 text-sm font-semibold transition-all duration-200 hover:gap-3"
             style={{ color: "#8B7FF5", fontFamily: "'DM Sans', sans-serif" }}>
             Discuss your school&apos;s needs

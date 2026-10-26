@@ -103,7 +103,7 @@ export default function FeaturesHero() {
 
           {/* CTA — single, smaller */}
           <a
-            href="/waitlist"
+            href="/request-access"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5"
             style={{
               background: "linear-gradient(135deg, #5B4FE9, #8B7FF5)",
@@ -123,6 +123,8 @@ export default function FeaturesHero() {
             </svg>
           </a>
         </motion.div>
+
+        <p className="mt-6 text-xs text-white/55">Feature illustrations use demonstration records.</p>
 
         {/* Feature anchor pills — bottom of header */}
         <motion.div

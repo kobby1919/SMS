@@ -5,7 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 export const metadata: Metadata = {
   title: {
     default: "Edujay",
-    template: "%s — Edujay",
+    template: "Edujay — %s",
   },
   description: "Modern School Management System",
   icons: {
