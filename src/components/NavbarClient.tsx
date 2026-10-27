@@ -408,6 +408,7 @@ const NavbarClient = ({ user, parentContext, appNotifications = [], appNotificat
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const pathname = usePathname();
   const isParent = user.role === "parent";
+  const isPlatformAdmin = user.role === "platform_admin";
   const children = parentContext?.children ?? [];
   const searchItems = isParent
     ? parentSearchItems(children, appNotifications)
@@ -428,8 +429,8 @@ const NavbarClient = ({ user, parentContext, appNotifications = [], appNotificat
       transition={{ duration: 0.25 }}
       className="sticky top-0 z-20 border-b border-gray-100 bg-white/95 px-3 py-3 backdrop-blur sm:px-4 lg:px-6"
     >
-      <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0">
+      <div className="flex min-w-0 items-center justify-between gap-2 sm:gap-3">
+        <div className="min-w-0 flex-1 md:flex-initial">
           <p className="truncate text-sm font-black text-gray-900 sm:text-base">
             {isParent ? contextLabel : user.schoolName ?? "Edujay"}
           </p>
@@ -438,19 +439,21 @@ const NavbarClient = ({ user, parentContext, appNotifications = [], appNotificat
           </p>
         </div>
 
-        <div className="hidden min-w-[16rem] max-w-md flex-1 md:block">
-          <SearchBox key={`desktop-${pathname}`} items={searchItems} />
-        </div>
+        {!isPlatformAdmin && (
+          <div className="hidden min-w-[16rem] max-w-md flex-1 md:block">
+            <SearchBox key={`desktop-${pathname}`} items={searchItems} />
+          </div>
+        )}
 
         <div className="flex shrink-0 items-center justify-end gap-2">
-          <button
+          {!isPlatformAdmin && <button
             type="button"
             onClick={() => setMobileSearchOpen(true)}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-600 shadow-sm md:hidden"
             aria-label="Open search"
           >
             <Search size={18} />
-          </button>
+          </button>}
 
           {isParent && <ParentQuickActions />}
           {user.role !== "student" && (
@@ -473,7 +476,7 @@ const NavbarClient = ({ user, parentContext, appNotifications = [], appNotificat
 
           <div className="hidden h-8 w-px bg-gray-100 sm:block" />
 
-          <div className="hidden min-w-0 flex-col items-end sm:flex">
+          <div className={`hidden min-w-0 flex-col items-end ${isPlatformAdmin ? "lg:flex" : "sm:flex"}`}>
             <span className="max-w-36 truncate text-xs font-black text-gray-800">
               {user.fullName || "User"}
             </span>
@@ -488,7 +491,7 @@ const NavbarClient = ({ user, parentContext, appNotifications = [], appNotificat
         </div>
       </div>
 
-      {mobileSearchOpen && (
+      {!isPlatformAdmin && mobileSearchOpen && (
         <div className="fixed inset-0 z-50 bg-white p-4 md:hidden">
           <div className="mb-4 flex items-center justify-between">
             <div>

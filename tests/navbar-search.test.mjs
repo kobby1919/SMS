@@ -8,13 +8,13 @@ import React from "react";
 const require = createRequire(import.meta.url);
 function load(query = "") {
   const compiled = { exports: {} };
-  const source = readFileSync("src/components/NavbarClient.tsx", "utf8") + "\nexport const testOnly = { roleShortcuts, parentSearchItems, SearchBox };";
+  const source = readFileSync("src/components/NavbarClient.tsx", "utf8") + "\nexport const testOnly = { roleShortcuts, parentSearchItems, SearchBox, NavbarClient };";
   const js = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true } }).outputText;
   const mocks = {
     react: { ...React, useState: (value) => [value === "" ? query : value, () => {}], useMemo: (fn) => fn(), useRef: () => ({ current: null }), useEffect: () => {} },
     "next/link": { __esModule: true, default: "a" },
-    "next/navigation": {},
-    "framer-motion": {},
+    "next/navigation": { usePathname: () => "/platform/onboarding" },
+    "framer-motion": { motion: { header: "header" } },
     "./UserButtonWrapper": {},
     "@/src/lib/actions/appNotificationActions": {},
   };
@@ -26,6 +26,23 @@ function links(node) {
   if (!React.isValidElement(node)) return [];
   return [...(node.type === "a" ? [node] : []), ...links(node.props.children)];
 }
+
+function elements(node) {
+  if (Array.isArray(node)) return node.flatMap(elements);
+  if (!React.isValidElement(node)) return [];
+  return [node, ...elements(node.props.children)];
+}
+
+test("platform admin has no desktop search or mobile search trigger; school roles retain both", () => {
+  const { NavbarClient, SearchBox } = load();
+  for (const role of ["platform_admin", "admin", "teacher", "parent", "bursar", "student"]) {
+    const nodes = elements(NavbarClient({ user: { role, fullName: "Test User", schoolName: "Edujay" } }));
+    assert.equal(nodes.filter((node) => node.type === SearchBox).length, role === "platform_admin" ? 0 : 1);
+    assert.equal(nodes.filter((node) => node.props["aria-label"] === "Open search").length, role === "platform_admin" ? 0 : 1);
+    assert.ok(nodes.some((node) => node.props.className?.includes("min-w-0 flex-1 md:flex-initial")));
+    if (role === "platform_admin") assert.ok(!nodes.some((node) => node.props.className?.includes("min-w-[16rem]")));
+  }
+});
 
 test("every role has one shortcut per destination and unique rendered search keys", () => {
   const { roleShortcuts, SearchBox } = load();
