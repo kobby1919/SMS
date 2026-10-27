@@ -1,8 +1,11 @@
 import OnboardingRequestsClient from "@/src/components/OnboardingRequestsClient";
 import RoleIdentityReadinessPanel from "@/src/components/RoleIdentityReadinessPanel";
+import RestoreBranchConnectionCheck from "@/src/components/RestoreBranchConnectionCheck";
 import { requirePageSession } from "@/src/lib/authz";
 import { listWaitlistEntriesForReview } from "@/src/lib/services/onboarding";
 import { getRoleIdentityReadiness } from "@/src/lib/services/role-identity-readiness";
+
+export const dynamic = "force-dynamic";
 
 export default async function PlatformOnboardingPage() {
   await requirePageSession(["platform_admin"]);
@@ -25,6 +28,8 @@ export default async function PlatformOnboardingPage() {
       </div>
 
       <RoleIdentityReadinessPanel readiness={identityReadiness} />
+
+      <RestoreBranchConnectionCheck />
 
       <OnboardingRequestsClient entries={entries} />
     </main>

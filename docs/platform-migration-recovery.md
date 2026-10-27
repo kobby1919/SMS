@@ -10,6 +10,23 @@ on a created school's request. The guarded page is
 authenticated operator; existing append-only audit history, inventory version checks,
 school-row locking and import/completion recovery gates remain unchanged.
 
+## October 23 restore-branch diagnostic
+
+School access requests also contains a platform-only, dynamically rendered
+connection check for the known October 23 restored endpoint. It reads the current
+deployment's environment locally; no connection strings, usernames, passwords,
+database names or API keys are returned. Only comparison outcomes and whitelisted
+public deployment metadata are rendered. The check makes no database or provider
+requests and does not modify readiness or delete anything.
+
+Check production and staging separately and retain the displayed release/deployment
+identity. A match means the branch must not be deleted. A different endpoint means
+only that this configuration points elsewhere, not that the entire branch is unused.
+Unrecognized/custom hosts fail as unknown. Consider alternate endpoints, older
+deployments, previews, workers, local verification tools and evidence retention
+before independently authorizing cleanup. Do not treat an idle database as proof
+that it is unused. Remove this narrowly targeted diagnostic after the cleanup review.
+
 ## Read-only Neon catalog check
 
 Configure these server-only environment variables in the correct deployment scope:
