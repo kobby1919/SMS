@@ -1,0 +1,37 @@
+.hero { padding-top:81px; background:#1d1f21; }
+.stage { position:relative; min-height:690px; height:calc(92svh - 81px); display:flex; align-items:center; isolation:isolate; background:#17191b; }
+.artwork { position:absolute; width:min(80%, 1180px, calc((92svh - 150px) * 1.777)); right:2%; top:50%; transform:translateY(-50%); aspect-ratio:1672/941; z-index:-1; mix-blend-mode:lighten; mask-image:linear-gradient(to right,transparent,rgba(0,0,0,.15) 5%,rgba(0,0,0,.6) 12%,#000 23%,#000 92%,rgba(0,0,0,.65) 97%,transparent),linear-gradient(to bottom,transparent,rgba(0,0,0,.3) 3%,rgba(0,0,0,.8) 7%,#000 12%,#000 92%,rgba(0,0,0,.7) 97%,transparent); mask-composite:intersect; }
+.background { object-fit:contain; object-position:right center; }
+.copy { position:relative; width:43%; max-width:660px; margin-left:5%; padding:48px 0 56px; }
+.signature { width:320px; max-width:100%; min-height:94px; margin-bottom:24px; }
+.heading { font-family:'Clash Display',sans-serif; font-size:72px; font-weight:600; line-height:1.04; letter-spacing:0; color:white; margin:0 0 26px; }
+.heading span { color:#b3a1ff; }
+.description { font-family:'DM Sans',sans-serif; font-size:18px; line-height:1.7; color:#d0d0d4; max-width:390px; margin:0 0 33px; }
+.actions { display:flex; align-items:center; flex-wrap:wrap; gap:24px; }
+.heading,.description,.actions,.attribution { opacity:0; }
+@keyframes slideUp { from { opacity:0; transform:translateY(26px); } to { opacity:1; transform:translateY(0); } }
+.stage[data-entered="true"] .heading { animation:slideUp .8s cubic-bezier(.22,1,.36,1) .3s both; }
+.stage[data-entered="true"] .description { animation:slideUp .75s ease .45s both; }
+.stage[data-entered="true"] .actions { animation:slideUp .7s ease .58s both; }
+.stage[data-entered="true"] .attribution { animation:slideUp .7s ease .72s both; }
+.primary,.secondary { display:inline-flex; align-items:center; justify-content:center; gap:12px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; text-decoration:none; }
+.primary { padding:15px 23px; border-radius:8px; background:#7662ee; color:white; }
+.primary:hover { background:#8571f8; }
+.secondary { color:#e1dee9; }
+.secondary:hover { color:#c7baff; }
+.primary:focus-visible,.secondary:focus-visible { outline:2px solid #c8bdff; outline-offset:5px; }
+.attribution { font-family:'DM Sans',sans-serif; font-size:11px; color:#b6b6be; margin:30px 0 0; }
+@media(min-width:1700px) { .copy { margin-left:5%; max-width:820px; } .heading { font-size:84px; } }
+@media(min-width:768px) and (max-width:1100px) { .heading { font-size:52px; } .copy { width:44%; } .signature { width:270px; min-height:80px; } .actions { gap:18px; } }
+@media(max-width:767px) {
+  .hero { padding-top:72px; background:#202123; }
+  .stage { height:auto; min-height:calc(92svh - 72px); display:flex; flex-direction:column; justify-content:center; background:#17191b; }
+  .copy { order:0; width:auto; max-width:none; align-self:stretch; margin:0; padding:48px 24px 56px; }
+  .signature { width:250px; min-height:74px; margin-bottom:23px; }
+  .heading { font-size:48px; max-width:480px; }
+  .description { font-size:16px; max-width:350px; margin-bottom:26px; }
+  .actions { gap:20px; }
+  .attribution { margin-top:24px; }
+  .artwork { display:none; }
+}
+@media(max-width:360px) { .heading { font-size:38px; } .copy { padding-left:20px; padding-right:20px; } }

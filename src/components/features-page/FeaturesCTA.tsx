@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 
 export default function FeaturesCTA() {
   return (
-    <section id="features-access" className="relative w-full py-24 lg:py-32 overflow-hidden" style={{ background: "#080B18" }}>
+    <section id="features-access" className="relative w-full py-24 lg:py-32 overflow-hidden" style={{ background: "#17191b" }}>
       <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse 72% 80% at 22% 42%, rgba(32,44,92,0.6) 0%, rgba(16,19,28,0.76) 52%, #10131C 100%)" }} />
+        style={{ background: "linear-gradient(110deg, rgba(139,127,245,0.045) 0%, rgba(139,127,245,0.015) 36%, transparent 70%)" }} />
 
       <div className="relative max-w-3xl mx-auto px-6 lg:px-10 text-center">
         <motion.div

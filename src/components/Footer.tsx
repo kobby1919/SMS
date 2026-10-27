@@ -25,7 +25,7 @@ export default function Footer() {
   const quote = quotes[0];
 
   return (
-    <footer className="relative w-full overflow-hidden" style={{ background: "#0a0916" }}>
+    <footer className="relative w-full overflow-hidden" style={{ background: "#17191b" }}>
 
       {/* Top glow */}
       <div className="absolute top-0 left-0 right-0 h-px"
@@ -33,7 +33,7 @@ export default function Footer() {
 
       {/* Ambient light */}
       <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(91,79,233,0.08) 0%, transparent 60%)" }} />
+        style={{ background: "linear-gradient(110deg, rgba(139,127,245,0.045) 0%, rgba(139,127,245,0.015) 36%, transparent 70%)" }} />
 
       <div className="relative max-w-7xl mx-auto px-6 lg:px-10">
 

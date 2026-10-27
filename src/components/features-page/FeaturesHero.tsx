@@ -8,15 +8,15 @@ export default function FeaturesHero() {
     <section
       id="features-overview"
       className="relative w-full overflow-hidden pt-36 pb-16"
-      style={{ background: "#080B18", isolation: "isolate" }}
+      style={{ background: "#17191b", isolation: "isolate" }}
     >
-      {/* Match the smooth background of the homepage hero. */}
+      {/* A restrained charcoal opening, related to the homepage without artwork. */}
       <div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 72% 80% at 22% 42%, rgba(32,44,92,0.6) 0%, rgba(16,19,28,0.76) 52%, #10131C 100%)",
+            "linear-gradient(110deg, rgba(139,127,245,0.045) 0%, rgba(139,127,245,0.015) 36%, transparent 70%)",
         }}
       />
 

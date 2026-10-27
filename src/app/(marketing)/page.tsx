@@ -1,5 +1,5 @@
 import HomepageNavbar from "../../components/HomepageNavbar";
-import HeroCarousel from "../../components/hero/HeroCarousel";
+import HeroStill from "../../components/hero/HeroStill";
 import FeaturesSection from "../../components/FeaturesSection";
 import HowItWorks from "../../components/HowItWorks";
 import DashboardPreview from "../../components/DashboardPreview";
@@ -14,7 +14,7 @@ export default function Home() {
       {/* ── DARK ZONE — navbar + hero share one seamless dark background ── */}
       <div className="w-full">
         <HomepageNavbar />
-        <HeroCarousel />
+        <HeroStill />
       </div>
 
       {/* ── LIGHT ZONE — all sections below the hero ── */}

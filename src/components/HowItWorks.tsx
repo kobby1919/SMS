@@ -9,7 +9,7 @@ const B = {
   blue:      "#5B4FE9",
   blueLight: "#8B7FF5",
   navy:      "#0D0B2B",
-  ink:       "#080B18",
+  ink:       "#17191b",
   green:     "#10B981",
   amber:     "#F59E0B",
 };
@@ -236,7 +236,7 @@ function DarkBlueBg() {
         inset: 0,
         zIndex: 0,
         background:
-          "radial-gradient(ellipse 72% 80% at 22% 42%, rgba(32,44,92,0.6) 0%, rgba(16,19,28,0.76) 52%, #10131C 100%)",
+          "linear-gradient(110deg, rgba(139,127,245,0.045) 0%, rgba(139,127,245,0.015) 36%, transparent 70%)",
         pointerEvents: "none",
       }}
     />
