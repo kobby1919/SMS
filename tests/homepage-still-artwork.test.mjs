@@ -34,6 +34,13 @@ test("homepage onboarding background follows charcoal without changing its conte
   assert.match(source, /Introduce Your School/);
 });
 
+test("school access form matches charcoal and retains the legacy waitlist redirect", () => {
+  const source = readFileSync("src/components/SchoolAccessRequest.tsx", "utf8");
+  assert.match(source, /background:\s*"#17191b"/);
+  assert.doesNotMatch(source, /#080B18|#0f1124|radial-gradient\(circle/);
+  assert.match(readFileSync("src/app/(marketing)/waitlist/page.tsx", "utf8"), /redirect\("\/request-access"\)/);
+});
+
 test("entrance reveals remain and mobile hides the book without a signature", () => {
   const css = readFileSync("src/components/hero/HeroStill.module.css", "utf8");
   assert.match(css, /\.artwork \{ display:none; \}/);

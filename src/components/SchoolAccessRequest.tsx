@@ -207,7 +207,7 @@ export default function SchoolAccessRequest() {
           border-color: rgba(248,113,113,0.5) !important;
         }
         .wl-input::placeholder { color: rgba(255,255,255,0.22); }
-        .wl-input option       { background: #0f1124; color: #fff; }
+        .wl-input option       { background: #202224; color: #fff; }
 
         .wl-submit {
           width:           100%;
@@ -230,7 +230,7 @@ export default function SchoolAccessRequest() {
 
       <main style={{
         minHeight:       "100svh",
-        background:      "#080B18",
+        background:      "#17191b",
         display:         "flex",
         flexDirection:   "column",
         alignItems:      "center",
@@ -240,20 +240,9 @@ export default function SchoolAccessRequest() {
         overflow:        "hidden",
       }}>
 
-        {/* Aurora blobs */}
-        <div style={{
-          position:     "absolute", top: "-10%", left: "-5%",
-          width:        "55vw",     height: "55vw",
-          borderRadius: "50%",      pointerEvents: "none",
-          background:   "radial-gradient(circle, rgba(91,79,233,0.28) 0%, transparent 70%)",
-          filter:       "blur(80px)",
-        }} />
-        <div style={{
-          position:     "absolute", bottom: "0%", right: "-5%",
-          width:        "45vw",     height: "45vw",
-          borderRadius: "50%",      pointerEvents: "none",
-          background:   "radial-gradient(circle, rgba(26,111,168,0.22) 0%, transparent 70%)",
-          filter:       "blur(90px)",
+        <div aria-hidden="true" style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          background: "linear-gradient(110deg, rgba(139,127,245,0.045) 0%, rgba(139,127,245,0.015) 36%, transparent 70%)",
         }} />
 
         {/* Top accent line */}
