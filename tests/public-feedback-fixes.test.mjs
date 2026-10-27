@@ -4,6 +4,13 @@ import test from "node:test";
 
 const read = path => readFileSync(path, "utf8");
 
+test("sign-in presents email without advertising username access", () => {
+  const source = read("src/components/auth/CustomSignInForm.tsx");
+  assert.match(source, />Email<\/span>/);
+  assert.match(source, /placeholder="you@school\.edu\.gh"/);
+  assert.doesNotMatch(source, /Email or username|you@school\.edu\.gh or username/);
+});
+
 test("public page titles rely on the shared Edujay template exactly once", () => {
   for (const [path, title] of [["features", "Features"], ["about", "About"], ["howItWorks", "How It Works"], ["pricing", "Pricing"]]) {
     assert.ok(read(`src/app/(marketing)/${path}/page.tsx`).includes(`title: "${title}"`));

@@ -454,12 +454,12 @@ export default function CustomSignInForm({ callbackUrl, initialEmail = "" }: Cus
       <SocialAuthButtons disabled={!isLoaded || isSubmitting} onSelect={handleSocialSignIn} />
 
       <label className="block space-y-2">
-        <span className="text-xs font-black uppercase tracking-wide text-slate-500">Email or username</span>
+        <span className="text-xs font-black uppercase tracking-wide text-slate-500">Email</span>
         <input
           type="text"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          placeholder="you@school.edu.gh or username"
+          placeholder="you@school.edu.gh"
           disabled={emailLocked || isSubmitting}
           required
           autoComplete="username"
