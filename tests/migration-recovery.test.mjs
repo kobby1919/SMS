@@ -126,5 +126,5 @@ test("imports and setup transitions gate recovery inside their locked transactio
   assert.ok(gate < importer.indexOf('await importClasses(tx'));
   const setup = readFileSync("src/lib/services/migration-reconciliation.ts", "utf8");
   assert.match(setup, /requireMigrationRecovery\(schoolId, inventory.version, tx\)/);
-  assert.match(readFileSync("src/lib/actions/migrationRecoveryActions.ts", "utf8"), /requireRole\(\["admin"\]\)/);
+  assert.match(readFileSync("src/lib/actions/migrationRecoveryActions.ts", "utf8"), /requireRole\(\["platform_admin"\]\)/);
 });

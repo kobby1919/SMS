@@ -34,6 +34,14 @@ export const recoveryInputSchema = z.object({
 
 export type RecoveryPlan = z.infer<typeof recoveryInputSchema>;
 
+export type MigrationRecoveryReadiness = "PENDING" | "HOLD" | "READY";
+
+export function migrationRecoveryReadiness(plan: RecoveryPlan | null, inventoryVersion: number, production: boolean, now = new Date(), databaseReference: string | null = null): MigrationRecoveryReadiness {
+  if (plan?.status === "HOLD") return "HOLD";
+  if (!plan || inventoryVersion < 1) return "PENDING";
+  return recoveryBlockers(plan, inventoryVersion, production, now, databaseReference).length ? "PENDING" : "READY";
+}
+
 export function recoveryBlockers(plan: RecoveryPlan | null, inventoryVersion: number, production: boolean, now = new Date(), databaseReference: string | null = null): string[] {
   if (!plan) return production ? ["Record backup and restore-drill evidence before production migration."] : [];
   // A hold remains effective even after the inventory is revised.

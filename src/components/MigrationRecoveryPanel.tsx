@@ -5,12 +5,13 @@ import { ShieldCheck } from "lucide-react";
 import type { getMigrationRecovery } from "@/src/lib/services/migration-recovery";
 import { recordMigrationRecovery } from "@/src/lib/actions/migrationRecoveryActions";
 import { recoveryBlockers } from "@/src/lib/migration/recovery";
+import NeonBackupCheck from "@/src/components/NeonBackupCheck";
 
 type Current = Awaited<ReturnType<typeof getMigrationRecovery>>;
-export default function MigrationRecoveryPanel({ initial, inventoryVersion, production, databaseReference }: { initial: Current; inventoryVersion: number; production: boolean; databaseReference: string | null }) {
+export default function MigrationRecoveryPanel({ schoolId, initial, inventoryVersion, production, databaseReference }: { schoolId: string; initial: Current; inventoryVersion: number; production: boolean; databaseReference: string | null }) {
   const router = useRouter();
   const [current, setCurrent] = useState(initial);
-  const [status, setStatus] = useState<"READY" | "HOLD">(initial?.plan.status ?? "READY");
+  const [status, setStatus] = useState<"READY" | "HOLD">(initial?.plan.status ?? "HOLD");
   const [decisionOwner, setOwner] = useState(initial?.plan.decisionOwner ?? "");
   const [point, setPoint] = useState(String(initial?.plan.recoveryPointMinutes ?? 60));
   const [time, setTime] = useState(String(initial?.plan.recoveryTimeMinutes ?? 240));
@@ -28,7 +29,7 @@ export default function MigrationRecoveryPanel({ initial, inventoryVersion, prod
   async function save() {
     setPending(true); setMessage("");
     try {
-      const result = await recordMigrationRecovery({ version: current?.plan.version ?? 0, inventoryVersion, status, decisionOwner, recoveryPointMinutes: Number(point), recoveryTimeMinutes: Number(time), cutoverNote, holdReason, acknowledged, evidence: hasEvidence && status === "READY" ? { ...fields, environment: "PRODUCTION", isolatedRestoreConfirmed: restoreConfirmed, encryptedKeyRecoveryConfirmed: keyConfirmed } : null });
+      const result = await recordMigrationRecovery(schoolId, { version: current?.plan.version ?? 0, inventoryVersion, status, decisionOwner, recoveryPointMinutes: Number(point), recoveryTimeMinutes: Number(time), cutoverNote, holdReason, acknowledged, evidence: hasEvidence && status === "READY" ? { ...fields, environment: "PRODUCTION", isolatedRestoreConfirmed: restoreConfirmed, encryptedKeyRecoveryConfirmed: keyConfirmed } : null });
       if (!result.ok) { setMessage(result.error); return; }
       setCurrent(result.recovery); setAcknowledged(false); setMessage("Recovery controls recorded."); router.refresh();
     } catch { setMessage("Unable to save. Refresh and try again."); }
@@ -41,6 +42,7 @@ export default function MigrationRecoveryPanel({ initial, inventoryVersion, prod
     {databaseReference && <p className="mt-2 break-words text-sm text-gray-600">Deployment database reference: {databaseReference}</p>}
     <p className="mt-2 text-sm font-medium">{current ? `Latest checkpoint: ${current.plan.status === "HOLD" ? "On hold" : "Recorded"} (${new Date(current.recordedAt).toLocaleString("en-GH", { timeZone: "UTC", dateStyle: "medium", timeStyle: "short" })} UTC).` : "No recovery checkpoint recorded."} {!production && "Development workspace: live backup evidence is still required before production migration."}</p>
     {blockers.length > 0 && <ul className="mt-3 list-inside list-disc text-sm text-amber-800">{blockers.map((item) => <li key={item}>{item}</li>)}</ul>}
+    <NeonBackupCheck schoolId={schoolId} />
     <details className="mt-4" open={production && !current}>
       <summary className="cursor-pointer text-sm font-semibold">{current ? "Review or update recovery controls" : "Record recovery controls"}</summary>
       <fieldset disabled={pending || inventoryVersion === 0} className="mt-4 min-w-0 space-y-4 disabled:opacity-60">

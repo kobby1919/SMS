@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import {
   approveWaitlistEntryAction,
   rejectWaitlistEntryAction,
@@ -133,9 +134,10 @@ export default function OnboardingRequestsClient({
                     </p>
                   )}
                   {entry.school && (
-                    <p className="mt-2 text-xs font-medium text-emerald-700">
-                      Tenant: {entry.school.slug}
-                    </p>
+                    <div className="mt-2 space-y-2 text-xs font-medium text-emerald-700">
+                      <p>Tenant: {entry.school.slug}</p>
+                      <Link href={`/platform/onboarding/recovery/${encodeURIComponent(entry.school.id)}`} className="inline-flex min-h-11 items-center rounded-md border border-gray-200 px-3 text-blue-700">Migration recovery</Link>
+                    </div>
                   )}
                   {latestInvite && (
                     <div className="mt-2 flex flex-wrap gap-2 text-[11px] font-semibold">
