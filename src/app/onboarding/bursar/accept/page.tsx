@@ -85,7 +85,7 @@ export default async function BursarAcceptInvitePage({
   const signInHref = `/sign-in?bursarInvite=${encodeURIComponent(token ?? "")}`;
 
   return (
-    <main className="min-h-screen bg-[#080B18] px-4 py-10 text-white sm:py-16">
+    <main className="min-h-screen bg-[#17191b] px-4 py-10 text-white sm:py-16">
       <section className="mx-auto flex w-full max-w-[920px] flex-col gap-6 lg:flex-row lg:items-stretch">
         <div className="flex-1 rounded-2xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl sm:p-8">
           <div className="mb-7 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-400/15 text-blue-200">

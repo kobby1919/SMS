@@ -13,7 +13,7 @@ export const metadata = {
 export default function FeaturesPage() {
   return (
     <div className="min-h-screen">
-      <div style={{ background: "#080B18" }}>
+      <div style={{ background: "#17191b" }}>
         <HomepageNavbar />
         <FeaturesHero />
       </div>

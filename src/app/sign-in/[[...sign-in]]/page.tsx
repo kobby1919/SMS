@@ -40,7 +40,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
   );
 
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#f0f4ff]" />}>
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
       <SignInView
         inviteContext={
           parentInvitePreview?.usable

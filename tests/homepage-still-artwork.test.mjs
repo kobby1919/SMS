@@ -41,6 +41,30 @@ test("school access form matches charcoal and retains the legacy waitlist redire
   assert.match(readFileSync("src/app/(marketing)/waitlist/page.tsx", "utf8"), /redirect\("\/request-access"\)/);
 });
 
+test("invite and public page backgrounds use charcoal without changing auth form surfaces", () => {
+  for (const role of ["", "teacher/", "parent/", "bursar/", "collector/"]) {
+    const source = readFileSync(`src/app/onboarding/${role}accept/page.tsx`, "utf8");
+    assert.match(source, /bg-\[#17191b\]/);
+    assert.doesNotMatch(source, /#080B18/i);
+  }
+  for (const page of ["features", "about", "pricing", "howItWorks"]) {
+    const source = readFileSync(`src/app/(marketing)/${page}/page.tsx`, "utf8");
+    assert.match(source, /background: "#17191b"/);
+    assert.doesNotMatch(source, /#080B18/i);
+  }
+  const auth = readFileSync("src/components/auth/AuthShell.tsx", "utf8");
+  assert.match(auth, /left-0 hidden w-1\/2 bg-\[#17191b\] lg:block/);
+  assert.match(auth, /bg-white text-slate-950/);
+  assert.match(auth, /edujay-auth-split-desktop\.png/);
+  assert.match(auth, /backgroundSize: "200% 100%"/);
+  assert.match(auth, /filter: "grayscale\(1\) brightness\(0\.65\)"/);
+  assert.doesNotMatch(auth, /#f8fbff|#edf7ff/);
+  for (const mode of ["sign-in", "sign-up"]) {
+    const source = readFileSync(`src/app/${mode}/[[...${mode}]]/page.tsx`, "utf8");
+    assert.match(source, /fallback=\{<div className="min-h-screen bg-white"/);
+  }
+});
+
 test("entrance reveals remain and mobile hides the book without a signature", () => {
   const css = readFileSync("src/components/hero/HeroStill.module.css", "utf8");
   assert.match(css, /\.artwork \{ display:none; \}/);

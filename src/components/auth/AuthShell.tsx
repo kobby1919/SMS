@@ -113,10 +113,15 @@ function AuthBackground() {
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
       <div
-        className="absolute inset-0 hidden bg-cover bg-center bg-no-repeat lg:block"
-        style={{ backgroundImage: "url('/edujay-auth-split-desktop.png')" }}
+        className="absolute inset-y-0 left-0 hidden w-1/2 bg-[#17191b] lg:block"
+        style={{
+          backgroundImage: "url('/edujay-auth-split-desktop.png')",
+          backgroundSize: "200% 100%",
+          backgroundPosition: "left center",
+          filter: "grayscale(1) brightness(0.65)",
+        }}
       />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,_#ffffff_0%,_#f8fbff_58%,_#edf7ff_100%)] lg:hidden" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,_#ffffff_0%,_#f7f7f7_100%)] lg:hidden" />
     </div>
   );
 }

@@ -44,7 +44,7 @@ export default async function AcceptInvitePage({
   const signInHref = `/sign-in?invite=${encodeURIComponent(token ?? "")}`;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#080B18] px-4 py-16">
+    <main className="flex min-h-screen items-center justify-center bg-[#17191b] px-4 py-16">
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/[0.04] p-8 text-white shadow-2xl">
         <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-400/15 text-xl font-black text-blue-200">
           E
