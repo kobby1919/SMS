@@ -24,13 +24,14 @@ try {
   assert.equal((await underline(features)).transform, "matrix(1, 0, 0, 1, 0, 0)");
   assert.equal((await underline(pricing)).transform, "matrix(0, 0, 0, 1, 0, 0)");
   const before = await pricing.boundingBox();
-  assert.equal((await underline(pricing)).duration, "0.42s");
+  const textColor = await pricing.evaluate((el) => getComputedStyle(el).color);
+  assert.equal((await underline(pricing)).duration, "0.8s, 0.4s");
   // Observe real animation frames, not just the completed hover state.
   const [frames] = await Promise.all([
     pricing.locator(".marketing-nav-label").evaluate(async (el) => {
       const frames = [];
       const start = performance.now();
-      while (performance.now() - start < 600) {
+      while (performance.now() - start < 1000) {
         await new Promise(requestAnimationFrame);
         const style = getComputedStyle(el, "::after");
         frames.push(new DOMMatrixReadOnly(style.transform).a);
@@ -41,21 +42,26 @@ try {
   ]);
   const intermediate = frames.filter((scale) => scale > 0.02 && scale < 0.98);
   assert.ok(new Set(intermediate.map((scale) => scale.toFixed(2))).size >= 4, "Underline must visibly grow through multiple animation frames");
-  assert.ok(intermediate.every((scale, i) => i === 0 || scale >= intermediate[i - 1]), "Underline must grow smoothly from left to right");
+  assert.ok(intermediate.every((scale, i) => i === 0 || scale >= intermediate[i - 1]), "Underline must grow smoothly");
   assert.equal((await underline(pricing)).transform, "matrix(1, 0, 0, 1, 0, 0)");
+  assert.equal(await pricing.evaluate((el) => getComputedStyle(el).color), textColor, "Hover must not change link text color");
+  assert.ok((await underline(pricing)).origin.startsWith("0px"), "Reveal must originate at the left");
   assert.deepEqual(await pricing.boundingBox(), before, "Hover must not shift navigation");
   await page.screenshot({ path: "tmp/marketing-navbar/desktop-hover.png" });
   await page.mouse.move(1400, 800);
+  await page.waitForTimeout(900);
+  assert.equal((await underline(pricing)).transform, "matrix(0, 0, 0, 1, 0, 0)");
+  assert.ok((await underline(pricing)).origin.startsWith("0px"), "Retraction must remain anchored at the left");
   await pricing.focus();
   await page.keyboard.press("Tab");
   await page.keyboard.press("Shift+Tab");
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(900);
   assert.equal(await pricing.evaluate((el) => el.matches(":focus-visible")), true);
   assert.equal((await underline(pricing)).transform, "matrix(1, 0, 0, 1, 0, 0)");
   await page.evaluate(() => window.scrollTo(0, 300));
   await page.waitForTimeout(450);
   assert.equal(await nav.getAttribute("data-marketing-light"), "true");
-  assert.equal(await pricing.evaluate((el) => getComputedStyle(el).color), "rgb(91, 79, 233)");
+  assert.equal(await pricing.evaluate((el) => getComputedStyle(el).color), "rgb(75, 85, 99)");
   await page.emulateMedia({ reducedMotion: "reduce" });
   assert.equal((await underline(pricing)).duration, "0s");
   await page.setViewportSize({ width: 390, height: 844 });
@@ -72,7 +78,7 @@ try {
   await panel.getByRole("link", { name: "Pricing", exact: true }).click();
   await page.waitForURL("**/pricing", { timeout: 120000 });
   assert.equal(await page.getByRole("button", { name: "Toggle menu" }).getAttribute("aria-expanded"), "false");
-  console.log("Passed: hover underline, active page, keyboard focus, light background, stable layout, reduced motion and mobile navigation.");
+  console.log("Passed: 800ms underline, unchanged hover text color, intermediate animation frames, active page, keyboard focus, light background, stable layout, reduced motion and mobile navigation.");
 } finally {
   await browser.close();
 }

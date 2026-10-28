@@ -39,11 +39,17 @@ export default function Navbar() {
     <>
       <style>{`
         .marketing-nav-link {
+          --nav-line: #c8c2ff;
           color: rgba(255,255,255,0.8);
-          transition: color 200ms ease, background-color 200ms ease;
         }
-        [data-marketing-light="true"] .marketing-nav-link { color: #4b5563; }
+        [data-marketing-light="true"] .marketing-nav-link {
+          --nav-line: #5b4fe9;
+          color: #4b5563;
+        }
+
         .marketing-nav-label { position: relative; display: inline-block; }
+
+        /* Line draws slowly under the link, left to right. Link text never changes colour. */
         .marketing-nav-label::after {
           content: "";
           position: absolute;
@@ -51,24 +57,26 @@ export default function Navbar() {
           right: 0;
           bottom: -6px;
           height: 2px;
-          background: currentColor;
+          border-radius: 9999px;
+          background: var(--nav-line);
           transform: scaleX(0);
           transform-origin: left;
-          transition: transform 420ms cubic-bezier(0.45, 0, 0.25, 1);
+          transition: transform 800ms cubic-bezier(0.65, 0, 0.35, 1),
+                      background-color 400ms ease;
           pointer-events: none;
         }
-        .marketing-nav-link:focus-visible,
-        .marketing-nav-link[aria-current="page"] { color: #c8c2ff; }
-        [data-marketing-light="true"] .marketing-nav-link:focus-visible,
-        [data-marketing-light="true"] .marketing-nav-link[aria-current="page"] { color: #5b4fe9; }
-        .marketing-nav-link:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+        /* Active page + keyboard focus keep the line drawn */
+        .marketing-nav-link:focus-visible { outline: 2px solid var(--nav-line); outline-offset: 2px; }
         .marketing-nav-link:focus-visible .marketing-nav-label::after,
-        .marketing-nav-link[aria-current="page"] .marketing-nav-label::after { transform: scaleX(1); }
-        .marketing-nav-mobile:active { background-color: rgba(91,79,233,0.08); }
+        .marketing-nav-link[aria-current="page"] .marketing-nav-label::after,
+        .marketing-nav-mobile:active .marketing-nav-label::after {
+          transform: scaleX(1);
+        }
+
         @media (hover: hover) {
-          .marketing-nav-link:hover { color: #c8c2ff; }
-          [data-marketing-light="true"] .marketing-nav-link:hover { color: #5b4fe9; }
-          .marketing-nav-link:hover .marketing-nav-label::after { transform: scaleX(1); }
+          .marketing-nav-link:hover .marketing-nav-label::after {
+            transform: scaleX(1);
+          }
         }
         @keyframes menuItemIn {
           from { opacity: 0; transform: translateX(-16px); }
@@ -91,7 +99,7 @@ export default function Navbar() {
                       width 0.3s ease;
         }
         @media (prefers-reduced-motion: reduce) {
-          .marketing-nav-link, .marketing-nav-label::after { transition: none; }
+          .marketing-nav-label::after { transition: none; }
           .nav-item-enter { animation: none; }
         }
       `}</style>
