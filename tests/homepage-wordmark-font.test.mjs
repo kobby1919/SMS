@@ -27,12 +27,14 @@ test("shared branding uses Clash Display and preserves the logo artwork", () => 
 
 test("global typography separates display headings from readable body and data text", () => {
   const css = readFileSync("src/app/globals.css", "utf8");
-  assert.match(css, /--font-body: var\(--font-inter\)/);
-  assert.match(css, /--font-heading: "Clash Display", "Inter"/);
+  assert.match(css, /--font-body: var\(--font-manrope\)/);
+  assert.match(css, /--font-inter: var\(--font-body\)/);
+  assert.match(css, /--font-heading: "Clash Display", "Manrope"/);
+  assert.match(css, /font-family: "Manrope";[\s\S]*?manrope-variable\.ttf[\s\S]*?font-weight: 200 800/);
   assert.match(css, /h1, h2, h3, h4, h5, h6, \[role="heading"\]/);
   assert.match(css, /font-synthesis: none/);
   assert.doesNotMatch(css, /fonts.googleapis.com|font-family: "Nunito"/);
-  assert.match(readFileSync("src/app/layout.tsx", "utf8"), /flex-col font-inter/);
+  assert.match(readFileSync("src/app/layout.tsx", "utf8"), /flex-col font-body/);
 });
 
 test("scoped marketing headings and component font imports follow the shared system", () => {

@@ -1,47 +1,7 @@
 @font-face {
-  font-family: "Inter";
-  src: url("/fonts/inter/inter-400.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/inter/inter-500.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/inter/inter-600.ttf") format("truetype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/inter/inter-700.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/inter/inter-800.ttf") format("truetype");
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/inter/inter-900.ttf") format("truetype");
-  font-weight: 900;
+  font-family: "Manrope";
+  src: url("/fonts/manrope/manrope-variable.ttf") format("truetype");
+  font-weight: 200 800;
   font-style: normal;
   font-display: swap;
 }
@@ -79,9 +39,11 @@
 }
 
 :root {
-  --font-inter: "Inter", Arial, sans-serif;
-  --font-body: var(--font-inter);
-  --font-heading: "Clash Display", "Inter", Arial, sans-serif;
+  --font-manrope: "Manrope", Arial, sans-serif;
+  --font-body: var(--font-manrope);
+  /* Compatibility for existing component utility classes. */
+  --font-inter: var(--font-body);
+  --font-heading: "Clash Display", "Manrope", Arial, sans-serif;
   --font-nunito: var(--font-body);
 }
 
@@ -164,7 +126,7 @@
 .react-calendar {
   width: 100% !important;
   border: none !important;
-  font-family: "Inter", sans-serif !important;
+  font-family: var(--font-body) !important;
 }
 
 .react-calendar__navigation__label__labelText {

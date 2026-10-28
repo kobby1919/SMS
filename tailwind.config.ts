@@ -9,6 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
+        manrope:        ["var(--font-manrope)", "sans-serif"],
         inter:          ["var(--font-inter)", "sans-serif"],
         heading:        ["var(--font-heading)"],
         body:           ["var(--font-body)"],

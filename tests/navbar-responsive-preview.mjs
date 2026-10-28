@@ -62,7 +62,7 @@ try {
       page.on("pageerror", (error) => errors.push(error.message));
       await page.route("http://typography.test/fonts/**", async (route) => {
         const requested = new URL(route.request().url()).pathname;
-        assert.match(requested, /^\/fonts\/(inter|clash-display)\/[a-z0-9.-]+$/);
+        assert.match(requested, /^\/fonts\/(manrope|clash-display)\/[a-z0-9.-]+$/);
         await route.fulfill({ body: readFileSync(path.join("public", requested)), contentType: requested.endsWith("woff2") ? "font/woff2" : "font/ttf" });
       });
       await page.setContent(`<html><head><base href="http://typography.test/"><style>${css}</style></head><body><div id="root"></div><script>window.fixtureRole=${JSON.stringify(role)}</script></body></html>`);
@@ -70,7 +70,8 @@ try {
       await page.getByRole("button", { name: "Account menu", exact: true }).waitFor();
       await page.evaluate(() => document.fonts.ready);
       assert.ok((await page.locator("#fixture-heading").evaluate((el) => getComputedStyle(el).fontFamily)).includes("Clash Display"));
-      for (const selector of ["#fixture-body", "#fixture-table", 'input[aria-label="Test field"]']) assert.ok((await page.locator(selector).evaluate((el) => getComputedStyle(el).fontFamily)).includes("Inter"));
+      for (const selector of ["#fixture-body", "#fixture-table", 'input[aria-label="Test field"]']) assert.ok((await page.locator(selector).evaluate((el) => getComputedStyle(el).fontFamily)).includes("Manrope"));
+      assert.equal(await page.evaluate(() => document.fonts.check('400 16px "Manrope"')), true);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${role}/${width} page overflow`);
       for (const name of ["Account menu", "Open notifications"]) {
         const box = await page.getByRole("button", { name, exact: true }).boundingBox();
