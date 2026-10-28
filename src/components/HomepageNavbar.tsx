@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import EdujayBrandLogo from "@/src/components/EdujayBrandLogo";
 
 const navLinks = [
@@ -12,6 +13,7 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -36,6 +38,38 @@ export default function Navbar() {
   return (
     <>
       <style>{`
+        .marketing-nav-link {
+          color: rgba(255,255,255,0.8);
+          transition: color 200ms ease, background-color 200ms ease;
+        }
+        [data-marketing-light="true"] .marketing-nav-link { color: #4b5563; }
+        .marketing-nav-label { position: relative; }
+        .marketing-nav-label::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: -6px;
+          height: 2px;
+          background: currentColor;
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 200ms ease;
+          pointer-events: none;
+        }
+        .marketing-nav-link:focus-visible,
+        .marketing-nav-link[aria-current="page"] { color: #c8c2ff; }
+        [data-marketing-light="true"] .marketing-nav-link:focus-visible,
+        [data-marketing-light="true"] .marketing-nav-link[aria-current="page"] { color: #5b4fe9; }
+        .marketing-nav-link:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+        .marketing-nav-link:focus-visible .marketing-nav-label::after,
+        .marketing-nav-link[aria-current="page"] .marketing-nav-label::after { transform: scaleX(1); }
+        .marketing-nav-mobile:active { background-color: rgba(91,79,233,0.08); }
+        @media (hover: hover) {
+          .marketing-nav-link:hover { color: #c8c2ff; }
+          [data-marketing-light="true"] .marketing-nav-link:hover { color: #5b4fe9; }
+          .marketing-nav-link:hover .marketing-nav-label::after { transform: scaleX(1); }
+        }
         @keyframes menuItemIn {
           from { opacity: 0; transform: translateX(-16px); }
           to   { opacity: 1; transform: translateX(0); }
@@ -56,9 +90,13 @@ export default function Navbar() {
                       background-color 0.3s ease,
                       width 0.3s ease;
         }
+        @media (prefers-reduced-motion: reduce) {
+          .marketing-nav-link, .marketing-nav-label::after { transition: none; }
+          .nav-item-enter { animation: none; }
+        }
       `}</style>
 
-      <nav className={`fixed top-0 left-0 right-0 z-50 nav-backdrop ${
+      <nav aria-label="Main navigation" data-marketing-light={isLight} className={`fixed top-0 left-0 right-0 z-50 nav-backdrop ${
         isLight
           ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100/80"
           : "bg-transparent border-b border-transparent"
@@ -81,14 +119,11 @@ export default function Navbar() {
                 <a
                   key={link.label}
                   href={link.href}
-                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                    isLight
-                      ? "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                      : "text-white/80 hover:text-white hover:bg-white/10"
-                  }`}
+                  aria-current={pathname === link.href ? "page" : undefined}
+                  className="marketing-nav-link px-4 py-2 text-sm font-medium rounded-lg"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
-                  {link.label}
+                  <span className="marketing-nav-label">{link.label}</span>
                 </a>
               ))}
             </div>
@@ -158,6 +193,8 @@ export default function Navbar() {
 
         {/* Mobile Dropdown Menu */}
         <div
+          inert={!menuOpen}
+          aria-hidden={!menuOpen}
           className="md:hidden overflow-hidden"
           style={{
             maxHeight: menuOpen ? "480px" : "0",
@@ -173,7 +210,8 @@ export default function Navbar() {
               <a
                 key={link.label}
                 href={link.href}
-                className="nav-item-enter px-4 py-3 text-sm font-medium text-gray-600 hover:text-[#5B4FE9] hover:bg-[#5B4FE9]/5 rounded-lg transition-colors duration-200 flex items-center gap-2"
+                aria-current={pathname === link.href ? "page" : undefined}
+                className="marketing-nav-link marketing-nav-mobile nav-item-enter px-4 py-3 text-sm font-medium rounded-lg flex items-center gap-2"
                 style={{
                   fontFamily: "var(--font-body)",
                   animationDelay: menuOpen ? `${i * 0.055}s` : "0s",
@@ -184,7 +222,7 @@ export default function Navbar() {
                   className="w-1 h-1 rounded-full shrink-0"
                   style={{ background: "#8B7FF5" }}
                 />
-                {link.label}
+                <span className="marketing-nav-label">{link.label}</span>
               </a>
             ))}
 
