@@ -43,7 +43,7 @@ export default function Navbar() {
           transition: color 200ms ease, background-color 200ms ease;
         }
         [data-marketing-light="true"] .marketing-nav-link { color: #4b5563; }
-        .marketing-nav-label { position: relative; }
+        .marketing-nav-label { position: relative; display: inline-block; }
         .marketing-nav-label::after {
           content: "";
           position: absolute;
@@ -54,7 +54,7 @@ export default function Navbar() {
           background: currentColor;
           transform: scaleX(0);
           transform-origin: left;
-          transition: transform 200ms ease;
+          transition: transform 420ms cubic-bezier(0.45, 0, 0.25, 1);
           pointer-events: none;
         }
         .marketing-nav-link:focus-visible,

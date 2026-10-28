@@ -9,7 +9,7 @@ const { chromium } = require(process.env.EDUJAY_PLAYWRIGHT_PATH ?? "C:/Users/KWA
 mkdirSync("tmp/marketing-navbar", { recursive: true });
 const browser = await chromium.launch({ channel: "msedge", headless: true });
 try {
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: "no-preference" });
   await page.goto(origin + "/features", { waitUntil: "domcontentloaded", timeout: 120000 });
   const nav = page.getByRole("navigation", { name: "Main navigation", exact: true });
   const features = nav.getByRole("link", { name: "Features", exact: true }).first();
@@ -24,8 +24,24 @@ try {
   assert.equal((await underline(features)).transform, "matrix(1, 0, 0, 1, 0, 0)");
   assert.equal((await underline(pricing)).transform, "matrix(0, 0, 0, 1, 0, 0)");
   const before = await pricing.boundingBox();
-  await pricing.hover();
-  await page.waitForTimeout(250);
+  assert.equal((await underline(pricing)).duration, "0.42s");
+  // Observe real animation frames, not just the completed hover state.
+  const [frames] = await Promise.all([
+    pricing.locator(".marketing-nav-label").evaluate(async (el) => {
+      const frames = [];
+      const start = performance.now();
+      while (performance.now() - start < 600) {
+        await new Promise(requestAnimationFrame);
+        const style = getComputedStyle(el, "::after");
+        frames.push(new DOMMatrixReadOnly(style.transform).a);
+      }
+      return frames;
+    }),
+    page.mouse.move(before.x + before.width / 2, before.y + before.height / 2),
+  ]);
+  const intermediate = frames.filter((scale) => scale > 0.02 && scale < 0.98);
+  assert.ok(new Set(intermediate.map((scale) => scale.toFixed(2))).size >= 4, "Underline must visibly grow through multiple animation frames");
+  assert.ok(intermediate.every((scale, i) => i === 0 || scale >= intermediate[i - 1]), "Underline must grow smoothly from left to right");
   assert.equal((await underline(pricing)).transform, "matrix(1, 0, 0, 1, 0, 0)");
   assert.deepEqual(await pricing.boundingBox(), before, "Hover must not shift navigation");
   await page.screenshot({ path: "tmp/marketing-navbar/desktop-hover.png" });
@@ -33,7 +49,7 @@ try {
   await pricing.focus();
   await page.keyboard.press("Tab");
   await page.keyboard.press("Shift+Tab");
-  await page.waitForTimeout(250);
+  await page.waitForTimeout(500);
   assert.equal(await pricing.evaluate((el) => el.matches(":focus-visible")), true);
   assert.equal((await underline(pricing)).transform, "matrix(1, 0, 0, 1, 0, 0)");
   await page.evaluate(() => window.scrollTo(0, 300));
