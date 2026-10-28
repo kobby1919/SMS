@@ -585,15 +585,16 @@ export async function acceptTeacherInviteForUser(input: {
   }
 
   const acceptedTeacher = await prisma.$transaction(async (tx) => {
+    const existingTeacher = teacherForUser ?? teacherForEmail;
     const teacherProfile = {
       name: invite.name,
       surname: invite.surname,
       sex: invite.sex,
       email: inviteEmail,
-      phone: invite.phone ?? teacherForUser?.phone ?? null,
-      address: teacherForUser?.address ?? null,
-      status: teacherForUser?.status ?? "INVITED",
-      img: user.imageUrl ?? teacherForUser?.img ?? null,
+      phone: invite.phone ?? existingTeacher?.phone ?? null,
+      address: existingTeacher?.address ?? null,
+      status: existingTeacher?.status ?? "INVITED",
+      img: user.imageUrl ?? existingTeacher?.img ?? null,
     } as const;
     const status = nextTeacherProfileStatus(teacherProfile);
 

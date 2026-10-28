@@ -31,6 +31,15 @@ function fixture() {
     migrationStagedUpload: { findMany: async ({ where }) => state.pending.filter((upload) => upload.schoolId === where.schoolId) },
     studentBill: { findMany: async ({ where }) => state.bills.filter((bill) => bill.schoolId === where.schoolId && where.id.in.includes(bill.id)) },
   };
+  state.accountLinks = { teachers: [], parents: [], bursars: [] };
+  for (const [key, model] of [["teachers", "teacherInviteAuditLog"], ["parents", "parentInviteAuditLog"], ["bursars", "bursarInviteAuditLog"]]) {
+    tx[model] = { findMany: async ({ where }) => {
+      assert.equal(where.schoolId, "a");
+      assert.equal(where.invite.schoolId, "a");
+      assert.equal(where.invite.status, "ACCEPTED");
+      return state.accountLinks[key];
+    } };
+  }
   const models = { classes: "class", subjects: "subject", students: "student", parents: "parent", parentLinks: "parentStudentRelationship", teachers: "teacher", bursars: "bursar", feeStructures: "feeItem", fees: "billLineItem", discounts: "discount" };
   for (const [key, model] of Object.entries(models)) tx[model] = { findMany: async ({ where }) => {
     const scope = where.schoolId ?? where.studentBill?.schoolId ?? where.feeStructure?.schoolId;
@@ -215,4 +224,46 @@ test("conflicting snapshots cannot be resolved by silently taking the latest", a
 test("oversized financial evidence is rejected before BigInt processing", () => {
   const evidence = core.newMigrationEvidence(); evidence.finance.gross = "9".repeat(10000);
   assert.equal(core.evidenceSchema.safeParse(evidence).success, false);
+});
+
+for (const [key, originalKey, targetKey] of [["teachers", "importedTeacherId", "acceptedTeacherId"], ["parents", "importedParentId", "acceptedParentId"], ["bursars", "importedBursarId", "acceptedBursarId"]]) {
+  test(`${key}: accepted account IDs retain imported provenance without rewriting audit history`, async () => {
+    const { state, evidence, service } = fixture();
+    Object.assign(state.inventory.rows.find((row) => row.key === key), { disposition: "INCLUDE", expectedRecords: 1, files: "people.csv" });
+    evidence.records[key] = ["imported-person"];
+    state.records[key] = [{ id: "user-account", schoolId: "a" }];
+    state.accountLinks[key].push({ metadata: { source: "post_import_bulk_invite", [originalKey]: "imported-person" }, invite: { schoolId: "a", acceptedBy: "user-account", [targetKey]: "user-account" } });
+    const report = await service.getMigrationReconciliation("a");
+    assert.equal(report.rows.find((row) => row.key === key).present, 1);
+    assert.equal(report.canApprove, true);
+    assert.deepEqual(evidence.records[key], ["imported-person"]);
+    state.records[key][0].schoolId = "other-school";
+    assert.equal((await service.getMigrationReconciliation("a")).canApprove, false);
+  });
+}
+
+test("account aliases reject conflicting and many-to-one provenance", () => {
+  const { service } = fixture();
+  const link = { schoolId: "a", source: "post_import_bulk_invite", sourceId: "old", targetId: "user", acceptedBy: "user" };
+  assert.throws(() => service.migrationAccountAliases("a", ["old"], [link, { ...link, targetId: "other", acceptedBy: "other" }]), /Conflicting/);
+  assert.throws(() => service.migrationAccountAliases("a", ["old", "other-old"], [link, { ...link, sourceId: "other-old" }]), /same account/);
+  assert.throws(() => service.migrationAccountAliases("a", ["old"], [{ ...link, acceptedBy: "different" }]), /inconsistent/);
+  assert.equal(service.migrationAccountAliases("a", ["old"], [{ ...link, schoolId: "b" }]).size, 0);
+});
+
+test("guardian controls follow accepted identity but still detect ward reassignment", async () => {
+  const { state, evidence, service } = fixture();
+  for (const key of ["parents", "students"]) Object.assign(state.inventory.rows.find((row) => row.key === key), { disposition: "INCLUDE", expectedRecords: 1, files: "students.csv" });
+  evidence.records.parents = ["old-parent"];
+  evidence.records.students = ["s1"];
+  evidence.records.parentLinks = ["link1"];
+  evidence.controls.studentPlacements = [{ id: "s1", classId: 1, gradeId: 1, parentId: "old-parent" }];
+  evidence.controls.guardianLinks = [{ id: "link1", studentId: "s1", parentId: "old-parent", role: "PRIMARY_GUARDIAN" }];
+  state.accountLinks.parents.push({ metadata: { source: "post_import_bulk_invite", importedParentId: "old-parent" }, invite: { schoolId: "a", acceptedBy: "user-parent", acceptedParentId: "user-parent" } });
+  state.records.parents = [{ id: "user-parent", schoolId: "a" }];
+  state.records.students = [{ id: "s1", schoolId: "a", classId: 1, gradeId: 1, parentId: "user-parent", class: { name: "Class 1" } }];
+  state.records.parentLinks = [{ id: "link1", schoolId: "a", studentId: "s1", parentId: "user-parent", role: "PRIMARY_GUARDIAN", status: "ACTIVE", parent: { name: "Parent", surname: "One" }, student: { admissionNumber: "EDJ-2026-0001" } }];
+  assert.equal((await service.getMigrationReconciliation("a")).canApprove, true);
+  state.records.parentLinks[0].studentId = "s2";
+  assert.equal((await service.getMigrationReconciliation("a")).canApprove, false);
 });

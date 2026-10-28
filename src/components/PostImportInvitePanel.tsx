@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CheckCircle2, Loader2, Mail, ShieldCheck, Users } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Loader2, Mail, ShieldCheck, Users } from "lucide-react";
 
 import type {
   PostImportInviteResult,
@@ -17,6 +17,7 @@ export default function PostImportInvitePanel({ summary }: Props) {
   const [pendingRole, setPendingRole] = useState<PostImportInviteRole | null>(null);
   const [result, setResult] = useState<PostImportInviteResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const needsAttention = result && (result.failed > 0 || result.emailsFailed > 0 || result.emailsNotSent > 0 || result.warnings.length > 0);
 
   const totalReady = useMemo(
     () => summary.items.reduce((total, item) => total + item.importedNeedsInvite, 0),
@@ -79,20 +80,23 @@ export default function PostImportInvitePanel({ summary }: Props) {
       ) : null}
 
       {result ? (
-        <div className="mt-4 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3">
+        <div role="status" className={`mt-4 rounded-lg border px-4 py-3 ${needsAttention ? "border-amber-200 bg-amber-50" : "border-emerald-100 bg-emerald-50"}`}>
           <div className="flex items-start gap-3">
-            <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-700" />
-            <div>
-              <p className="text-sm font-black text-emerald-950">
-                {result.created} {result.role} invite{result.created === 1 ? "" : "s"} prepared.
+            {needsAttention ? <AlertTriangle size={18} className="mt-0.5 shrink-0 text-amber-700" /> : <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-700" />}
+            <div className="min-w-0">
+              <p className={`text-sm font-black ${needsAttention ? "text-amber-950" : "text-emerald-950"}`}>
+                Invitations prepared: {result.created}.
               </p>
-              <p className="mt-1 text-xs font-semibold leading-5 text-emerald-800">
-                {result.skipped} skipped, {result.failed} failed. Any email provider warnings are shown below.
+              <p className="mt-1 text-xs font-semibold leading-5 text-gray-800">
+                Emails accepted by provider: {result.emailsAccepted}. Email sends failed: {result.emailsFailed}. Emails not sent: {result.emailsNotSent}.
+              </p>
+              <p className="mt-1 text-xs font-semibold leading-5 text-gray-700">
+                {result.skipped} profiles skipped · {result.failed} processing failures. Provider acceptance does not confirm delivery.
               </p>
               {result.warnings.length > 0 ? (
                 <div className="mt-2 space-y-1">
                   {result.warnings.slice(0, 5).map((warning) => (
-                    <p key={warning} className="text-xs font-bold leading-5 text-amber-800">
+                    <p key={warning} className="break-words text-xs font-bold leading-5 text-amber-800">
                       {warning}
                     </p>
                   ))}

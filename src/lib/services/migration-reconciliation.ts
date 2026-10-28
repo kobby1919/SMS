@@ -10,6 +10,22 @@ import { approvalSchema, evidenceKeys, evidenceSchema, moneyDisplay, moneyMinor,
 export class MigrationReconciliationError extends Error {}
 const metadata = (value: Prisma.JsonValue): Record<string, unknown> => value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 
+type AccountLink = { sourceId: unknown; targetId: string | null; acceptedBy: string | null; schoolId: string; source: unknown };
+export function migrationAccountAliases(schoolId: string, importedIds: string[], links: AccountLink[]) {
+  const aliases = new Map<string, string>();
+  const imported = new Set(importedIds);
+  for (const link of links) {
+    if (link.schoolId !== schoolId || link.source !== "post_import_bulk_invite" || typeof link.sourceId !== "string" || !imported.has(link.sourceId)) continue;
+    if (!link.targetId || link.acceptedBy !== link.targetId) throw new MigrationReconciliationError("An accepted migration invite has inconsistent account evidence.");
+    const previous = aliases.get(link.sourceId);
+    if (previous && previous !== link.targetId) throw new MigrationReconciliationError("Conflicting migration account links require review.");
+    aliases.set(link.sourceId, link.targetId);
+  }
+  const resolved = importedIds.map((id) => aliases.get(id) ?? id);
+  if (new Set(resolved).size !== imported.size) throw new MigrationReconciliationError("Multiple imported profiles resolve to the same account. Review their provenance.");
+  return aliases;
+}
+
 export async function buildMigrationReconciliation(schoolId: string, tx: Prisma.TransactionClient) {
   const inventory = await getMigrationInventory(schoolId, tx);
   const logs = await tx.onboardingAuditLog.findMany({ where: { schoolId, action: "IMPORT_RECORDED" }, orderBy: { id: "asc" }, take: 1001 });
@@ -62,6 +78,19 @@ export async function buildMigrationReconciliation(schoolId: string, tx: Prisma.
   }
   if (Object.values(ids).some((set) => set.size > 50000)) throw new MigrationReconciliationError("Record-level review limit exceeded. Arrange a dedicated reconciliation.");
   const stringIds = (key: typeof evidenceKeys[number]) => [...ids[key]].sort();
+  // Import audit IDs stay immutable; accepted invites provide the tenant-bound account transition.
+  const acceptedWhere = { schoolId, action: "INVITE_CREATED" as const, invite: { schoolId, status: "ACCEPTED" as const, acceptedAt: { not: null }, revokedAt: null } };
+  const teacherLinks = ids.teachers.size ? await tx.teacherInviteAuditLog.findMany({ where: acceptedWhere, select: { metadata: true, invite: { select: { schoolId: true, acceptedTeacherId: true, acceptedBy: true } } }, take: 50001 }) : [];
+  const parentLinks = ids.parents.size ? await tx.parentInviteAuditLog.findMany({ where: acceptedWhere, select: { metadata: true, invite: { select: { schoolId: true, acceptedParentId: true, acceptedBy: true } } }, take: 50001 }) : [];
+  const bursarLinks = ids.bursars.size ? await tx.bursarInviteAuditLog.findMany({ where: acceptedWhere, select: { metadata: true, invite: { select: { schoolId: true, acceptedBursarId: true, acceptedBy: true } } }, take: 50001 }) : [];
+  if ([teacherLinks, parentLinks, bursarLinks].some((links) => links.length > 50000)) throw new MigrationReconciliationError("Account-link review limit exceeded. Arrange a dedicated reconciliation.");
+  const aliases = {
+    teachers: migrationAccountAliases(schoolId, stringIds("teachers"), teacherLinks.map((log) => ({ ...log.invite, source: metadata(log.metadata).source, sourceId: metadata(log.metadata).importedTeacherId, targetId: log.invite.acceptedTeacherId }))),
+    parents: migrationAccountAliases(schoolId, stringIds("parents"), parentLinks.map((log) => ({ ...log.invite, source: metadata(log.metadata).source, sourceId: metadata(log.metadata).importedParentId, targetId: log.invite.acceptedParentId }))),
+    bursars: migrationAccountAliases(schoolId, stringIds("bursars"), bursarLinks.map((log) => ({ ...log.invite, source: metadata(log.metadata).source, sourceId: metadata(log.metadata).importedBursarId, targetId: log.invite.acceptedBursarId }))),
+  };
+  const accountIds = (key: keyof typeof aliases) => stringIds(key).map((id) => aliases[key].get(id) ?? id);
+  const parentId = (id: string) => aliases.parents.get(id) ?? id;
   const numberIds = (key: typeof evidenceKeys[number]) => stringIds(key).map((id) => {
     if (!/^[1-9]\d*$/.test(id) || !Number.isSafeInteger(Number(id))) throw new MigrationReconciliationError("Invalid numeric record provenance.");
     return Number(id);
@@ -71,10 +100,10 @@ export async function buildMigrationReconciliation(schoolId: string, tx: Prisma.
     classes: await tx.class.findMany({ where: { schoolId, id: { in: numberIds("classes") } }, orderBy: { id: "asc" } }),
     subjects: await tx.subject.findMany({ where: { schoolId, id: { in: numberIds("subjects") } }, orderBy: { id: "asc" } }),
     students: await tx.student.findMany({ where: { schoolId, class: { schoolId }, id: { in: stringIds("students") } }, include: { class: { select: { name: true } } }, orderBy: { id: "asc" } }),
-    parents: await tx.parent.findMany({ where: { schoolId, id: { in: stringIds("parents") } }, orderBy: { id: "asc" } }),
+    parents: await tx.parent.findMany({ where: { schoolId, id: { in: accountIds("parents") } }, orderBy: { id: "asc" } }),
     parentLinks: await tx.parentStudentRelationship.findMany({ where: { schoolId, parent: { schoolId }, student: { schoolId }, id: { in: stringIds("parentLinks") } }, include: { parent: { select: { name: true, surname: true } }, student: { select: { admissionNumber: true } } }, orderBy: { id: "asc" } }),
-    teachers: await tx.teacher.findMany({ where: { schoolId, id: { in: stringIds("teachers") } }, orderBy: { id: "asc" } }),
-    bursars: await tx.bursar.findMany({ where: { schoolId, id: { in: stringIds("bursars") } }, orderBy: { id: "asc" } }),
+    teachers: await tx.teacher.findMany({ where: { schoolId, id: { in: accountIds("teachers") } }, orderBy: { id: "asc" } }),
+    bursars: await tx.bursar.findMany({ where: { schoolId, id: { in: accountIds("bursars") } }, orderBy: { id: "asc" } }),
     feeStructures: await tx.feeItem.findMany({ where: { feeStructure: { schoolId }, id: { in: numberIds("feeStructures") } }, orderBy: { id: "asc" } }),
     fees: await tx.billLineItem.findMany({ where: { studentBill: { schoolId, student: { schoolId } }, feeItem: { feeStructure: { schoolId } }, id: { in: numberIds("fees") } }, orderBy: { id: "asc" } }),
     discounts: await tx.discount.findMany({ where: { schoolId, studentBill: { schoolId, student: { schoolId } }, id: { in: numberIds("discounts") } }, orderBy: { id: "asc" } }),
@@ -85,11 +114,11 @@ export async function buildMigrationReconciliation(schoolId: string, tx: Prisma.
   if (records.discounts.some((discount) => discount.status !== "ACTIVE")) blockers.push("An imported discount has been removed. Reconcile the approved opening controls.");
   if (records.parentLinks.some((link) => {
     const control = controls.guardianLinks.get(link.id);
-    return control && (link.parentId !== control.parentId || link.studentId !== control.studentId || link.role !== control.role);
+    return control && (link.parentId !== parentId(control.parentId) || link.studentId !== control.studentId || link.role !== control.role);
   })) blockers.push("A guardian relationship no longer matches its original parent, student or responsibility.");
   if (records.students.some((student) => {
     const control = controls.studentPlacements.get(student.id);
-    return control && (student.classId !== control.classId || student.gradeId !== control.gradeId || student.parentId !== control.parentId);
+    return control && (student.classId !== control.classId || student.gradeId !== control.gradeId || student.parentId !== parentId(control.parentId));
   })) blockers.push("A student placement no longer matches the committed class, grade or guardian.");
   if (records.fees.some((line) => {
     const control = controls.feeLines.get(String(line.id));

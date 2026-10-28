@@ -8,6 +8,7 @@ import {
   TeacherStatus,
 } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
+import { attemptInviteEmail, newInviteEmailCounts, recordInviteEmailOutcome } from "@/src/lib/migration/invite-email";
 import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
 import { createBursarInviteTokenBundle } from "@/src/lib/services/bursar-invite-tokens";
 import { createParentInviteTokenBundle } from "@/src/lib/services/parent-invite-tokens";
@@ -39,6 +40,9 @@ export type PostImportInviteResult = {
   created: number;
   skipped: number;
   failed: number;
+  emailsAccepted: number;
+  emailsFailed: number;
+  emailsNotSent: number;
   warnings: string[];
 };
 
@@ -419,6 +423,7 @@ async function bulkInviteTeachers(context: InviteContext): Promise<PostImportInv
   );
   let created = 0;
   let failed = 0;
+  const emailCounts = newInviteEmailCounts();
 
   for (const teacher of candidates) {
     const email = normalizeEmail(teacher.email);
@@ -470,13 +475,16 @@ async function bulkInviteTeachers(context: InviteContext): Promise<PostImportInv
         return createdInvite;
       });
 
-      const emailResult = await sendTeacherInviteEmail({
+      created += 1;
+      const emailResult = await attemptInviteEmail(() => sendTeacherInviteEmail({
         to: email,
         schoolName: schoolDisplayName(school),
         teacherName: displayName(invite),
         inviteUrl: tokenBundle.inviteUrl,
         expiresAt: tokenBundle.expiresAt,
-      });
+      }));
+      const emailWarning = recordInviteEmailOutcome(emailCounts, emailResult);
+      if (emailWarning) warnings.push(`${email}: ${emailWarning}`);
 
       await prisma.$transaction(async (tx) => {
         if (emailResult.ok) {
@@ -496,18 +504,16 @@ async function bulkInviteTeachers(context: InviteContext): Promise<PostImportInv
         });
       });
 
-      if (!emailResult.ok) warnings.push(`${email}: ${emailResult.message}`);
-      created += 1;
-    } catch (error) {
+    } catch {
       failed += 1;
-      warnings.push(`${email}: ${error instanceof Error ? error.message : "Invite failed."}`);
+      warnings.push(`${email}: Invitation processing failed. Review the existing invitation before retrying.`);
     }
   }
 
   revalidateReferenceData(context.schoolId, "teachers");
   revalidateDashboard(context.schoolId);
 
-  return { role: "teachers", created, skipped: teachers.length - candidates.length, failed, warnings };
+  return { role: "teachers", created, skipped: teachers.length - candidates.length, failed, ...emailCounts, warnings };
 }
 
 async function bulkInviteParents(context: InviteContext): Promise<PostImportInviteResult> {
@@ -559,6 +565,7 @@ async function bulkInviteParents(context: InviteContext): Promise<PostImportInvi
   );
   let created = 0;
   let failed = 0;
+  const emailCounts = newInviteEmailCounts();
 
   for (const parent of candidates) {
     const email = normalizeEmail(parent.email);
@@ -620,14 +627,17 @@ async function bulkInviteParents(context: InviteContext): Promise<PostImportInvi
         return createdInvite;
       });
 
-      const emailResult = await sendParentInviteEmail({
+      created += 1;
+      const emailResult = await attemptInviteEmail(() => sendParentInviteEmail({
         to: email,
         schoolName: schoolDisplayName(school),
         parentName: displayName(invite),
         wardNames,
         inviteUrl: tokenBundle.inviteUrl,
         expiresAt: tokenBundle.expiresAt,
-      });
+      }));
+      const emailWarning = recordInviteEmailOutcome(emailCounts, emailResult);
+      if (emailWarning) warnings.push(`${email}: ${emailWarning}`);
 
       await prisma.$transaction(async (tx) => {
         if (emailResult.ok) {
@@ -647,18 +657,16 @@ async function bulkInviteParents(context: InviteContext): Promise<PostImportInvi
         });
       });
 
-      if (!emailResult.ok) warnings.push(`${email}: ${emailResult.message}`);
-      created += 1;
-    } catch (error) {
+    } catch {
       failed += 1;
-      warnings.push(`${email}: ${error instanceof Error ? error.message : "Invite failed."}`);
+      warnings.push(`${email}: Invitation processing failed. Review the existing invitation before retrying.`);
     }
   }
 
   revalidateReferenceData(context.schoolId, "parents");
   revalidateDashboard(context.schoolId);
 
-  return { role: "parents", created, skipped: parents.length - candidates.length, failed, warnings };
+  return { role: "parents", created, skipped: parents.length - candidates.length, failed, ...emailCounts, warnings };
 }
 
 async function bulkInviteBursars(context: InviteContext): Promise<PostImportInviteResult> {
@@ -696,6 +704,7 @@ async function bulkInviteBursars(context: InviteContext): Promise<PostImportInvi
   );
   let created = 0;
   let failed = 0;
+  const emailCounts = newInviteEmailCounts();
 
   for (const bursar of candidates) {
     const email = normalizeEmail(bursar.email);
@@ -739,13 +748,16 @@ async function bulkInviteBursars(context: InviteContext): Promise<PostImportInvi
         return createdInvite;
       });
 
-      const emailResult = await sendBursarInviteEmail({
+      created += 1;
+      const emailResult = await attemptInviteEmail(() => sendBursarInviteEmail({
         to: email,
         schoolName: schoolDisplayName(school),
         bursarName: displayName(invite),
         inviteUrl: tokenBundle.inviteUrl,
         expiresAt: tokenBundle.expiresAt,
-      });
+      }));
+      const emailWarning = recordInviteEmailOutcome(emailCounts, emailResult);
+      if (emailWarning) warnings.push(`${email}: ${emailWarning}`);
 
       await prisma.$transaction(async (tx) => {
         if (emailResult.ok) {
@@ -765,18 +777,16 @@ async function bulkInviteBursars(context: InviteContext): Promise<PostImportInvi
         });
       });
 
-      if (!emailResult.ok) warnings.push(`${email}: ${emailResult.message}`);
-      created += 1;
-    } catch (error) {
+    } catch {
       failed += 1;
-      warnings.push(`${email}: ${error instanceof Error ? error.message : "Invite failed."}`);
+      warnings.push(`${email}: Invitation processing failed. Review the existing invitation before retrying.`);
     }
   }
 
   revalidateReferenceData(context.schoolId, "bursars");
   revalidateDashboard(context.schoolId);
 
-  return { role: "bursars", created, skipped: bursars.length - candidates.length, failed, warnings };
+  return { role: "bursars", created, skipped: bursars.length - candidates.length, failed, ...emailCounts, warnings };
 }
 
 export async function bulkInviteImportedProfiles(
