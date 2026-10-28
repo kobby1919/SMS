@@ -13,7 +13,7 @@ export default function Home() {
 
       {/* ── DARK ZONE — navbar + hero share one seamless dark background ── */}
       <div className="w-full">
-        <HomepageNavbar />
+        <HomepageNavbar clashWordmark />
         <HeroStill />
       </div>
 

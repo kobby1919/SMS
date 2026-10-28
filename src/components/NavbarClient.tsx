@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -184,6 +185,7 @@ function SearchBox({
       <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-2 text-sm transition focus-within:border-blue-200 focus-within:bg-white focus-within:ring-4 focus-within:ring-blue-50">
         <Search size={16} className="shrink-0 text-gray-400" />
         <input
+          aria-label="Search Edujay"
           value={query}
           onFocus={() => setOpen(true)}
           onChange={(event) => {
@@ -220,6 +222,33 @@ function SearchBox({
   );
 }
 
+function MobileSearchDialog({ items, contextLabel, onClose }: { items: SearchItem[]; contextLabel: string; onClose: () => void }) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    dialog.showModal();
+    dialog.querySelector("input")?.focus();
+    const desktop = window.matchMedia("(min-width: 1280px)");
+    const closeOnDesktop = () => { if (desktop.matches) onClose(); };
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => { desktop.removeEventListener("change", closeOnDesktop); dialog.close(); if (previousFocus?.isConnected) previousFocus.focus(); };
+  }, [onClose]);
+  return createPortal(
+    <dialog ref={dialogRef} aria-label="Search Edujay" onCancel={(event) => { event.preventDefault(); onClose(); }} className="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto border-0 bg-white p-4 text-gray-900">
+      <div className="mb-4 flex min-w-0 items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-base font-black">Search</p>
+          <p className="truncate text-xs font-semibold text-gray-400">{contextLabel}</p>
+        </div>
+        <button type="button" onClick={onClose} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gray-50 text-gray-600" aria-label="Close search" title="Close search"><X size={18} /></button>
+      </div>
+      <SearchBox items={items} mobile onNavigate={onClose} />
+    </dialog>, document.body,
+  );
+}
+
 function notificationTone(priority: string) {
   if (priority === "URGENT") return "bg-rose-600 text-white";
   if (priority === "HIGH") return "bg-amber-500 text-white";
@@ -239,6 +268,8 @@ function AppNotificationBell({
   const [localNotifications, setLocalNotifications] = useState(notifications);
   const [isPending, startTransition] = useTransition();
   const rootRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ top: 64, right: 12 });
   const [localUnreadCount, setLocalUnreadCount] = useState(unreadCount);
 
 
@@ -246,13 +277,32 @@ function AppNotificationBell({
     if (!open) return;
 
     const handlePointerDown = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) {
+      if (!rootRef.current?.contains(event.target as Node) && !panelRef.current?.contains(event.target as Node)) {
         setOpen(false);
       }
     };
-
+    const positionPanel = () => {
+      const rect = rootRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const width = Math.min(368, window.innerWidth - 24);
+      setPosition({ top: Math.max(12, Math.min(rect.bottom + 8, window.innerHeight - 120)), right: Math.min(Math.max(12, window.innerWidth - rect.right), window.innerWidth - width - 12) });
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      rootRef.current?.querySelector("button")?.focus();
+    };
+    positionPanel();
     document.addEventListener("pointerdown", handlePointerDown);
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", escape);
+    window.addEventListener("resize", positionPanel);
+    window.addEventListener("scroll", positionPanel, true);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", escape);
+      window.removeEventListener("resize", positionPanel);
+      window.removeEventListener("scroll", positionPanel, true);
+    };
   }, [open]);
 
   const markLocallyRead = (notificationIds: string[]) => {
@@ -289,8 +339,12 @@ function AppNotificationBell({
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="relative flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-600 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+        className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-600 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
         aria-label="Open notifications"
+        title="Notifications"
+        aria-expanded={open}
+        aria-controls={open ? "navbar-notifications" : undefined}
+        aria-haspopup="dialog"
       >
         <BellRing size={18} />
         {localUnreadCount > 0 && (
@@ -300,14 +354,14 @@ function AppNotificationBell({
         )}
       </button>
 
-      {open && (
-        <div className="fixed inset-x-3 top-16 z-40 max-h-[calc(100dvh-5rem)] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-[min(23rem,calc(100vw-1.5rem))]">
+      {open && createPortal(
+        <div ref={panelRef} id="navbar-notifications" role="dialog" aria-label="Notifications" style={{ top: position.top, right: position.right, maxHeight: `calc(100dvh - ${position.top + 12}px)` }} className="fixed z-50 flex w-[calc(100vw-1.5rem)] max-w-[23rem] flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-2xl">
           <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
             <div>
               <p className="text-sm font-black text-gray-900">Notifications</p>
               <p className="text-xs font-semibold text-gray-400">{localUnreadCount} unread</p>
             </div>
-            <button
+            <div className="flex shrink-0 items-center gap-1"><button
               type="button"
               disabled={isPending || localUnreadCount === 0}
               onClick={() => {
@@ -322,8 +376,9 @@ function AppNotificationBell({
             >
               Mark all read
             </button>
+            <button type="button" onClick={() => setOpen(false)} aria-label="Close notifications" title="Close notifications" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-gray-600 hover:bg-gray-50"><X size={18} /></button></div>
           </div>
-          <div className="max-h-[calc(100dvh-11rem)] overflow-y-auto sm:max-h-[24rem]">
+          <div className="min-h-0 overflow-y-auto sm:max-h-[24rem]">
             {localNotifications.length > 0 ? localNotifications.map((notification) => (
               <button
                 key={notification.id}
@@ -360,7 +415,7 @@ function AppNotificationBell({
               </div>
             )}
           </div>
-        </div>
+        </div>, document.body,
       )}
     </div>
   );
@@ -376,7 +431,7 @@ function ParentQuickActions() {
   ];
 
   return (
-    <div className="relative hidden sm:block">
+    <div className="relative hidden xl:block">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
@@ -430,7 +485,7 @@ const NavbarClient = ({ user, parentContext, appNotifications = [], appNotificat
       className="sticky top-0 z-20 border-b border-gray-100 bg-white/95 px-3 py-3 backdrop-blur sm:px-4 lg:px-6"
     >
       <div className="flex min-w-0 items-center justify-between gap-2 sm:gap-3">
-        <div className="min-w-0 flex-1 md:flex-initial">
+        <div className="min-w-0 flex-1 xl:max-w-56 xl:flex-initial">
           <p className="truncate text-sm font-black text-gray-900 sm:text-base">
             {isParent ? contextLabel : user.schoolName ?? "Edujay"}
           </p>
@@ -440,7 +495,7 @@ const NavbarClient = ({ user, parentContext, appNotifications = [], appNotificat
         </div>
 
         {!isPlatformAdmin && (
-          <div className="hidden min-w-[16rem] max-w-md flex-1 md:block">
+          <div className="hidden min-w-0 max-w-md flex-1 xl:block">
             <SearchBox key={`desktop-${pathname}`} items={searchItems} />
           </div>
         )}
@@ -449,8 +504,11 @@ const NavbarClient = ({ user, parentContext, appNotifications = [], appNotificat
           {!isPlatformAdmin && <button
             type="button"
             onClick={() => setMobileSearchOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-600 shadow-sm md:hidden"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-600 shadow-sm xl:hidden"
             aria-label="Open search"
+            title="Search"
+            aria-haspopup="dialog"
+            aria-expanded={mobileSearchOpen}
           >
             <Search size={18} />
           </button>}
@@ -476,7 +534,7 @@ const NavbarClient = ({ user, parentContext, appNotifications = [], appNotificat
 
           <div className="hidden h-8 w-px bg-gray-100 sm:block" />
 
-          <div className={`hidden min-w-0 flex-col items-end ${isPlatformAdmin ? "lg:flex" : "sm:flex"}`}>
+          <div className={`hidden min-w-0 flex-col items-end ${isPlatformAdmin ? "lg:flex" : "xl:flex"}`}>
             <span className="max-w-36 truncate text-xs font-black text-gray-800">
               {user.fullName || "User"}
             </span>
@@ -485,30 +543,14 @@ const NavbarClient = ({ user, parentContext, appNotifications = [], appNotificat
             </span>
           </div>
 
-          <div className="flex items-center rounded-full border border-gray-100 bg-white px-1.5 py-1 shadow-sm">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-gray-100 bg-white shadow-sm">
             <UserButtonWrapper />
           </div>
         </div>
       </div>
 
       {!isPlatformAdmin && mobileSearchOpen && (
-        <div className="fixed inset-0 z-50 bg-white p-4 md:hidden">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <p className="text-base font-black text-gray-900">Search</p>
-              <p className="text-xs font-semibold text-gray-400">{contextLabel}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setMobileSearchOpen(false)}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-gray-600"
-              aria-label="Close search"
-            >
-              <X size={18} />
-            </button>
-          </div>
-          <SearchBox key={`mobile-${pathname}`} items={searchItems} mobile onNavigate={() => setMobileSearchOpen(false)} />
-        </div>
+        <MobileSearchDialog key={`mobile-${pathname}`} items={searchItems} contextLabel={contextLabel} onClose={() => setMobileSearchOpen(false)} />
       )}
     </motion.header>
   );

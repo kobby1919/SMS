@@ -5,6 +5,7 @@ type EdujayBrandLogoProps = {
   showWordmark?: boolean;
   className?: string;
   wordmarkClassName?: string;
+  wordmarkFont?: "nunito" | "clash";
   priority?: boolean;
 };
 
@@ -25,6 +26,7 @@ export default function EdujayBrandLogo({
   showWordmark = true,
   className = "",
   wordmarkClassName = "text-[#061f5f]",
+  wordmarkFont = "nunito",
   priority = false,
 }: EdujayBrandLogoProps) {
   return (
@@ -39,7 +41,7 @@ export default function EdujayBrandLogo({
         unoptimized
       />
       {showWordmark && (
-        <span className={`font-nunito font-black leading-none tracking-tight ${wordSize[size]} ${wordmarkClassName}`}>
+        <span className={`${wordmarkFont === "clash" ? "font-clashDisplay font-bold tracking-normal" : "font-nunito font-black tracking-tight"} leading-none ${wordSize[size]} ${wordmarkClassName}`}>
           Edujay
         </span>
       )}

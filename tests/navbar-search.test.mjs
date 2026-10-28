@@ -39,7 +39,7 @@ test("platform admin has no desktop search or mobile search trigger; school role
     const nodes = elements(NavbarClient({ user: { role, fullName: "Test User", schoolName: "Edujay" } }));
     assert.equal(nodes.filter((node) => node.type === SearchBox).length, role === "platform_admin" ? 0 : 1);
     assert.equal(nodes.filter((node) => node.props["aria-label"] === "Open search").length, role === "platform_admin" ? 0 : 1);
-    assert.ok(nodes.some((node) => node.props.className?.includes("min-w-0 flex-1 md:flex-initial")));
+    assert.ok(nodes.some((node) => node.props.className?.includes("min-w-0 flex-1 xl:max-w-56")));
     if (role === "platform_admin") assert.ok(!nodes.some((node) => node.props.className?.includes("min-w-[16rem]")));
   }
 });

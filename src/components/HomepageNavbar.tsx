@@ -11,7 +11,7 @@ const navLinks = [
   { label: "About",        href: "/about" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ clashWordmark = false }: { clashWordmark?: boolean } = {}) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -71,6 +71,7 @@ export default function Navbar() {
               <EdujayBrandLogo
                 size="md"
                 priority
+                wordmarkFont={clashWordmark ? "clash" : "nunito"}
                 wordmarkClassName={isLight ? "text-gray-900" : "text-white"}
                 className="transition-transform duration-300 group-hover:scale-[1.02]"
               />
