@@ -53,12 +53,12 @@ export default function Footer() {
               &quot;
             </div>
             <p className="text-xl lg:text-2xl font-medium max-w-2xl leading-relaxed"
-              style={{ color: "rgba(255,255,255,0.75)", fontFamily: "'Clash Display', sans-serif", fontWeight: 500 }}>
+              style={{ color: "rgba(255,255,255,0.75)", fontFamily: "var(--font-heading)", fontWeight: 500 }}>
               {quote.text}
             </p>
             <div className="flex items-center gap-2 mt-1">
               <div className="h-px w-6 rounded-full" style={{ background: "#8B7FF555" }} />
-              <span className="text-sm" style={{ color: "#8B7FF5", fontFamily: "'Clash Display', sans-serif", fontWeight: 500 }}>
+              <span className="text-sm" style={{ color: "#8B7FF5", fontFamily: "var(--font-heading)", fontWeight: 500 }}>
                 {quote.author}
               </span>
               <div className="h-px w-6 rounded-full" style={{ background: "#8B7FF555" }} />
@@ -81,7 +81,7 @@ export default function Footer() {
             <EdujayBrandLogo size="md" wordmarkClassName="text-white" />
             {/* Tagline */}
             <p className="text-sm leading-relaxed max-w-xs"
-              style={{ color: "rgba(255,255,255,0.4)", fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+              style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-body)", fontWeight: 400 }}>
               The all-in-one school management platform built for Ghanaian schools.
               From Nursery to JHS — we&apos;ve got you covered.
             </p>
@@ -93,7 +93,7 @@ export default function Footer() {
           {Object.entries(footerLinks).map(([group, links]) => (
             <div key={group} className="flex flex-col gap-4">
               <h4 className="text-xs font-bold uppercase tracking-widest"
-                style={{ color: "rgba(255,255,255,0.25)", fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.18em" }}>
+                style={{ color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-heading)", letterSpacing: "0.18em" }}>
                 {group}
               </h4>
               <ul className="flex flex-col gap-3">
@@ -101,7 +101,7 @@ export default function Footer() {
                   <li key={link.label}>
                     <a href={link.href}
                       className="text-sm transition-colors duration-200"
-                      style={{ color: "rgba(255,255,255,0.45)", fontFamily: "'DM Sans', sans-serif" }}
+                      style={{ color: "rgba(255,255,255,0.45)", fontFamily: "var(--font-body)" }}
                       onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.color = "#8B7FF5"}
                       onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.45)"}
                     >
@@ -122,7 +122,7 @@ export default function Footer() {
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <p className="text-xs" style={{ color: "rgba(255,255,255,0.2)", fontFamily: "'DM Sans', sans-serif" }}>
+          <p className="text-xs" style={{ color: "rgba(255,255,255,0.2)", fontFamily: "var(--font-body)" }}>
             © {new Date().getFullYear()} Edujay · MiqraTech Consult.
           </p>
 

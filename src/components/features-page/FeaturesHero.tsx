@@ -37,14 +37,14 @@ export default function FeaturesHero() {
             <Link
               href="/"
               className="text-xs text-white/30 hover:text-white/60 transition-colors duration-200"
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
+              style={{ fontFamily: "var(--font-body)" }}
             >
               Home
             </Link>
             <span className="text-white/20 text-xs">/</span>
             <span
               className="text-xs"
-              style={{ color: "#8B7FF5", fontFamily: "'DM Sans', sans-serif" }}
+              style={{ color: "#8B7FF5", fontFamily: "var(--font-body)" }}
             >
               Features
             </span>
@@ -66,7 +66,7 @@ export default function FeaturesHero() {
               className="text-xs font-semibold uppercase tracking-widest"
               style={{
                 color: "#8B7FF5",
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "var(--font-body)",
                 letterSpacing: "0.14em",
               }}
             >
@@ -77,7 +77,7 @@ export default function FeaturesHero() {
           {/* Heading — compact */}
           <h1
             className="text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4"
-            style={{ fontFamily: "'Clash Display', sans-serif" }}
+            style={{ fontFamily: "var(--font-heading)" }}
           >
               Tools for your
             <span
@@ -95,7 +95,7 @@ export default function FeaturesHero() {
           {/* Subtext — one line, concise */}
           <p
             className="text-sm lg:text-base text-white/65 leading-relaxed mb-8 max-w-lg"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}
+            style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}
           >
             Manage school records, attendance, assessments, timetables, and fees,
             with access matched to your administrators, teachers, bursars, and parents.
@@ -107,7 +107,7 @@ export default function FeaturesHero() {
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5"
             style={{
               background: "linear-gradient(135deg, #5B4FE9, #8B7FF5)",
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "var(--font-body)",
               boxShadow: "0 6px 24px #8B7FF535",
             }}
           >
@@ -136,7 +136,7 @@ export default function FeaturesHero() {
         >
           <span
             className="text-[10px] text-white/25 mr-1 uppercase tracking-widest"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
+            style={{ fontFamily: "var(--font-body)" }}
           >
             Jump to
           </span>
@@ -158,7 +158,7 @@ export default function FeaturesHero() {
                 background: `${f.color}12`,
                 border: `1px solid ${f.color}25`,
                 color: f.color,
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "var(--font-body)",
               }}
             >
               {f.label}

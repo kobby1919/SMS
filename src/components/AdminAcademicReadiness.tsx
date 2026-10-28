@@ -11,7 +11,7 @@ export default function AdminAcademicReadiness({ snapshot }: { snapshot: Snapsho
   const reports = snapshot.finalReports?.totals;
   const setupIssues = [...new Set([...snapshot.issues, ...(snapshot.caRecording?.issues ?? []), ...(snapshot.examTracking?.issues ?? [])])];
   const setupHref = snapshot.code === "NO_ELIGIBLE_STUDENTS" ? "/list/students" : snapshot.period ? "/admin/timetable" : "/admin/ca-config";
-  return <section aria-labelledby="academic-readiness-heading" className="min-w-0 border-t border-gray-200 bg-white p-4 font-nunito sm:p-5">
+  return <section aria-labelledby="academic-readiness-heading" className="min-w-0 border-t border-gray-200 bg-white p-4 font-inter sm:p-5">
     <header className="flex min-w-0 flex-col gap-2">
       <h2 id="academic-readiness-heading" className="text-xl font-black text-gray-950">Academic Readiness</h2>
       <p className="break-words text-sm font-semibold text-gray-700">{snapshot.period ? `${snapshot.period.academicYear} · ${snapshot.period.term.replace("TERM_", "Term ")}` : snapshot.state === "UNAVAILABLE" ? "Academic period unavailable" : "Active academic period not configured"}</p>

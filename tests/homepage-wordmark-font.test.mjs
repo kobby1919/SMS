@@ -7,24 +7,30 @@ import { renderToStaticMarkup } from "react-dom/server";
 import React from "react";
 
 const require = createRequire(import.meta.url);
-test("the homepage opts into Clash Display without changing other marketing pages", () => {
-  assert.match(readFileSync("src/app/(marketing)/page.tsx", "utf8"), /<HomepageNavbar clashWordmark/);
-  for (const route of ["about", "features", "pricing", "howItWorks"]) {
-    assert.doesNotMatch(readFileSync(`src/app/(marketing)/${route}/page.tsx`, "utf8"), /<HomepageNavbar[^>]*clashWordmark/);
-  }
+test("marketing pages use the same shared brand typography without per-page switches", () => {
+  const navbar = readFileSync("src/components/HomepageNavbar.tsx", "utf8");
+  assert.doesNotMatch(navbar, /clashWordmark|wordmarkFont/);
+  assert.match(navbar, /<EdujayBrandLogo/);
 });
 
-test("the shared logo keeps Nunito by default and changes only the requested wordmark", () => {
+test("shared branding uses Clash Display and preserves the logo artwork", () => {
   const loaded = { exports: {} };
   const source = ts.transpileModule(readFileSync("src/components/EdujayBrandLogo.tsx", "utf8"), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true },
   }).outputText;
   new Function("require", "exports", source)((id) => id === "next/image" ? { __esModule: true, default: (props) => { const attrs = { ...props }; delete attrs.priority; delete attrs.unoptimized; return React.createElement("img", attrs); } } : require(id), loaded.exports);
   const normal = renderToStaticMarkup(React.createElement(loaded.exports.default));
-  const clash = renderToStaticMarkup(React.createElement(loaded.exports.default, { wordmarkFont: "clash" }));
-  assert.match(normal, /font-nunito/);
-  assert.doesNotMatch(normal, /font-clashDisplay/);
-  assert.match(clash, /font-clashDisplay font-bold tracking-normal/);
-  assert.doesNotMatch(clash, /font-nunito/);
-  for (const html of [normal, clash]) assert.match(html, /src="\/edujay-logo.png"/);
+  assert.match(normal, /font-clashDisplay font-bold/);
+  assert.doesNotMatch(normal, /font-nunito/);
+  assert.match(normal, /src="\/edujay-logo.png"/);
+});
+
+test("global typography separates display headings from readable body and data text", () => {
+  const css = readFileSync("src/app/globals.css", "utf8");
+  assert.match(css, /--font-body: var\(--font-inter\)/);
+  assert.match(css, /--font-heading: "Clash Display", "Inter"/);
+  assert.match(css, /h1, h2, h3, h4, h5, h6, \[role="heading"\]/);
+  assert.match(css, /font-synthesis: none/);
+  assert.doesNotMatch(css, /fonts.googleapis.com|font-family: "Nunito"/);
+  assert.match(readFileSync("src/app/layout.tsx", "utf8"), /flex-col font-inter/);
 });

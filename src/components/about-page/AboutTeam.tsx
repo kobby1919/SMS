@@ -27,18 +27,18 @@ export default function AboutTeam() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="h-px w-8 bg-gray-300 rounded-full" />
             <span className="text-xs font-semibold uppercase tracking-widest text-gray-400"
-              style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.18em" }}>
+              style={{ fontFamily: "var(--font-body)", letterSpacing: "0.18em" }}>
               MiqraTech Consult
             </span>
             <div className="h-px w-8 bg-gray-300 rounded-full" />
           </div>
           <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
-            style={{ fontFamily: "'Clash Display', sans-serif" }}>
+            style={{ fontFamily: "var(--font-heading)" }}>
             The people
             <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #10B981 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}> behind Edujay.</span>
           </h2>
           <p className="text-base text-gray-500 leading-relaxed"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+            style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
             Edujay is developed by MiqraTech Consult. Meet the people behind its
             creation, backing, and administration.
           </p>
@@ -58,21 +58,21 @@ export default function AboutTeam() {
             >
               {/* Avatar */}
               <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-extrabold text-white"
-                style={{ background: `linear-gradient(135deg, ${member.color}cc, ${member.color}88)`, fontFamily: "'Sora', sans-serif" }}>
+                style={{ background: `linear-gradient(135deg, ${member.color}cc, ${member.color}88)`, fontFamily: "var(--font-body)" }}>
                 {member.initials}
               </div>
 
               <div>
                 <div className="text-base font-extrabold text-gray-900 mb-0.5"
-                  style={{ fontFamily: "'Sora', sans-serif" }}>
+                  style={{ fontFamily: "var(--font-body)" }}>
                   {member.name}
                 </div>
                 <div className="text-xs font-semibold mb-3"
-                  style={{ color: member.color, fontFamily: "'DM Sans', sans-serif" }}>
+                  style={{ color: member.color, fontFamily: "var(--font-body)" }}>
                   {member.role}
                 </div>
                 <p className="text-sm text-gray-500 leading-relaxed"
-                  style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+                  style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
                   {member.bio}
                 </p>
               </div>
@@ -91,16 +91,16 @@ export default function AboutTeam() {
         >
           <div>
             <div className="text-base font-extrabold text-gray-900 mb-1"
-              style={{ fontFamily: "'Sora', sans-serif" }}>
+              style={{ fontFamily: "var(--font-body)" }}>
               Developed by MiqraTech Consult
             </div>
-            <p className="text-sm text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            <p className="text-sm text-gray-500" style={{ fontFamily: "var(--font-body)" }}>
               Discuss your school&apos;s needs, onboarding scope, and next steps before setup begins.
             </p>
           </div>
           <a href="/howItWorks"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-semibold flex-shrink-0 transition-all duration-300 hover:-translate-y-0.5"
-            style={{ background: "linear-gradient(135deg, #5B4FE9, #8B7FF5)", fontFamily: "'DM Sans', sans-serif", boxShadow: "0 4px 20px #8B7FF530" }}>
+            style={{ background: "linear-gradient(135deg, #5B4FE9, #8B7FF5)", fontFamily: "var(--font-body)", boxShadow: "0 4px 20px #8B7FF530" }}>
             How Onboarding Works
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
               <path d="M5 12H19M13 6L19 12L13 18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

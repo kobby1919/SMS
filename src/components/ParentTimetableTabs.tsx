@@ -75,7 +75,7 @@ const ParentTimetableTabs = ({ schedules }: Props) => {
           {/* Header */}
           <div className="mb-4 flex items-start justify-between">
             <div>
-              <h1 className="text-xl font-nunito font-extrabold text-gray-800">
+              <h1 className="text-xl font-clashDisplay font-extrabold text-gray-800">
                 {active.name} {active.surname}&apos;s Schedule
               </h1>
               <p className="text-sm text-gray-400 mt-0.5">

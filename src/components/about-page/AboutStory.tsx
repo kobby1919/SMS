@@ -28,12 +28,12 @@ export default function AboutStory() {
           <div className="flex items-center gap-3 mb-4">
             <div className="h-px w-8 bg-gray-300 rounded-full" />
             <span className="text-xs font-semibold uppercase tracking-widest text-gray-400"
-              style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.18em" }}>
+              style={{ fontFamily: "var(--font-body)", letterSpacing: "0.18em" }}>
               Our Approach
             </span>
           </div>
           <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
-            style={{ fontFamily: "'Clash Display', sans-serif" }}>
+            style={{ fontFamily: "var(--font-heading)" }}>
             How we approach
             <br />
             <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #10B981 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
@@ -41,7 +41,7 @@ export default function AboutStory() {
             </span>
           </h2>
           <p className="text-base text-gray-500 leading-relaxed"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+            style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
             Understand, prepare, review, and improve. A considered start helps school
             teams bring their structure, records, and responsibilities together.
           </p>
@@ -67,16 +67,16 @@ export default function AboutStory() {
                 <div className={`flex-1 min-w-0 pl-14 lg:pl-0 ${i % 2 === 0 ? "lg:pr-16 lg:text-right" : "lg:pl-16"}`}>
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3"
                     style={{ background: `${item.color}12`, border: `1px solid ${item.color}25` }}>
-                    <span className="text-xs font-bold" style={{ color: item.color, fontFamily: "'Sora', sans-serif" }}>
+                    <span className="text-xs font-bold" style={{ color: item.color, fontFamily: "var(--font-body)" }}>
                       {item.year}
                     </span>
                   </div>
                   <h3 className="text-xl font-extrabold text-gray-900 mb-2"
-                    style={{ fontFamily: "'Sora', sans-serif" }}>
+                    style={{ fontFamily: "var(--font-heading)" }}>
                     {item.title}
                   </h3>
                   <p className="text-sm text-gray-500 leading-relaxed"
-                    style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+                    style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
                     {item.description}
                   </p>
                 </div>

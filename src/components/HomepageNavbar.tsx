@@ -11,7 +11,7 @@ const navLinks = [
   { label: "About",        href: "/about" },
 ];
 
-export default function Navbar({ clashWordmark = false }: { clashWordmark?: boolean } = {}) {
+export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -71,7 +71,6 @@ export default function Navbar({ clashWordmark = false }: { clashWordmark?: bool
               <EdujayBrandLogo
                 size="md"
                 priority
-                wordmarkFont={clashWordmark ? "clash" : "nunito"}
                 wordmarkClassName={isLight ? "text-gray-900" : "text-white"}
                 className="transition-transform duration-300 group-hover:scale-[1.02]"
               />
@@ -87,7 +86,7 @@ export default function Navbar({ clashWordmark = false }: { clashWordmark?: bool
                       ? "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                       : "text-white/80 hover:text-white hover:bg-white/10"
                   }`}
-                  style={{ fontFamily: "'DM Sans', sans-serif" }}
+                  style={{ fontFamily: "var(--font-body)" }}
                 >
                   {link.label}
                 </a>
@@ -103,7 +102,7 @@ export default function Navbar({ clashWordmark = false }: { clashWordmark?: bool
                     ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
                     : "text-white/80 hover:text-white hover:bg-white/10"
                 }`}
-                style={{ fontFamily: "'DM Sans', sans-serif" }}
+                style={{ fontFamily: "var(--font-body)" }}
               >
                 Sign In
               </Link>
@@ -112,7 +111,7 @@ export default function Navbar({ clashWordmark = false }: { clashWordmark?: bool
                 className="text-sm font-semibold px-5 py-2.5 rounded-xl text-white shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
                 style={{
                   background: "linear-gradient(135deg, #5B4FE9 0%, #7C71F0 100%)",
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: "var(--font-body)",
                 }}
               >
                 Request School Access
@@ -176,7 +175,7 @@ export default function Navbar({ clashWordmark = false }: { clashWordmark?: bool
                 href={link.href}
                 className="nav-item-enter px-4 py-3 text-sm font-medium text-gray-600 hover:text-[#5B4FE9] hover:bg-[#5B4FE9]/5 rounded-lg transition-colors duration-200 flex items-center gap-2"
                 style={{
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: "var(--font-body)",
                   animationDelay: menuOpen ? `${i * 0.055}s` : "0s",
                 }}
                 onClick={() => setMenuOpen(false)}
@@ -194,7 +193,7 @@ export default function Navbar({ clashWordmark = false }: { clashWordmark?: bool
                 href="/sign-in"
                 className="nav-item-enter px-4 py-3 text-sm font-medium text-gray-600 hover:text-[#5B4FE9] hover:bg-[#5B4FE9]/5 rounded-lg text-center transition-colors duration-200"
                 style={{
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: "var(--font-body)",
                   animationDelay: menuOpen ? `${navLinks.length * 0.055}s` : "0s",
                 }}
               >
@@ -205,7 +204,7 @@ export default function Navbar({ clashWordmark = false }: { clashWordmark?: bool
                 className="nav-item-enter px-4 py-3 text-sm font-semibold text-white rounded-xl text-center shadow-md transition-all duration-300 hover:shadow-lg hover:shadow-[#5B4FE9]/20"
                 style={{
                   background: "linear-gradient(135deg, #5B4FE9 0%, #7C71F0 100%)",
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: "var(--font-body)",
                   animationDelay: menuOpen ? `${(navLinks.length + 1) * 0.055}s` : "0s",
                 }}
               >

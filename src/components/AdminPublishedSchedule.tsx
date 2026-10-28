@@ -13,7 +13,7 @@ export default async function AdminPublishedSchedule({ params }: { params: Recor
     for (const [key, value] of Object.entries(data.selection)) if (key !== "page" && value !== undefined) query.set(key, String(value));
     return `/admin/timetable?${query}`;
   };
-  return <section className="min-w-0 bg-white p-4 font-nunito text-sm font-semibold text-gray-700 sm:p-5">
+  return <section className="min-w-0 bg-white p-4 font-inter text-sm font-semibold text-gray-700 sm:p-5">
     <header className="border-b border-gray-200 pb-4"><h2 className="text-sm font-black text-gray-950">Published schedule</h2>
       <p className="mt-2 text-sm font-medium leading-6 text-gray-600">{data.publication ? `Version ${data.publication.version} · Published ${data.publication.publishedAt.toLocaleString("en-GH", { timeZone: "Africa/Accra", dateStyle: "medium", timeStyle: "short" })} · ${data.totalLessons} lesson slots` : "No timetable has been published."}</p>
     </header>

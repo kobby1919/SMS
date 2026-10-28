@@ -10,8 +10,10 @@ const config: Config = {
     extend: {
       fontFamily: {
         inter:          ["var(--font-inter)", "sans-serif"],
+        heading:        ["var(--font-heading)"],
+        body:           ["var(--font-body)"],
         nunito:         ["var(--font-nunito)", "sans-serif"],
-        clashDisplay:   ['"Clash Display"', "sans-serif"],
+        clashDisplay:   ["var(--font-heading)"],
         cabinetGrotesk: ['"Cabinet Grotesk"', "sans-serif"],
       },
       backgroundImage: {

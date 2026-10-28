@@ -40,7 +40,7 @@ function Label({ children }: { children: React.ReactNode }) {
   return (
     <label style={{
       display:       "block",
-      fontFamily:    "'DM Sans', sans-serif",
+      fontFamily:    "var(--font-body)",
       fontSize:      "13px",
       fontWeight:    500,
       color:         "rgba(255,255,255,0.60)",
@@ -56,7 +56,7 @@ function FieldError({ msg }: { msg?: string }) {
   if (!msg) return null;
   return (
     <p style={{
-      fontFamily: "'DM Sans', sans-serif",
+      fontFamily: "var(--font-body)",
       fontSize:   "12px",
       color:      "#f87171",
       marginTop:  5,
@@ -73,7 +73,7 @@ const inputBase: React.CSSProperties = {
   border:          "1px solid rgba(255,255,255,0.10)",
   borderRadius:    10,
   color:           "#fff",
-  fontFamily:      "'DM Sans', sans-serif",
+  fontFamily:      "var(--font-body)",
   fontSize:        "14px",
   fontWeight:      400,
   outline:         "none",
@@ -109,18 +109,18 @@ function SuccessCard() {
       </div>
 
       <h2 style={{
-        fontFamily:   "'Sora', sans-serif",
-        fontWeight:   800,
+        fontFamily:   "var(--font-heading)",
+        fontWeight:   700,
         fontSize:     "clamp(1.5rem,3vw,2rem)",
         color:        "#fff",
-        letterSpacing: "-0.02em",
+        letterSpacing: 0,
         marginBottom: 12,
       }}>
         Your school request is received.
       </h2>
 
       <p style={{
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "var(--font-body)",
         fontWeight: 400,
         fontSize:   "15px",
         color:      "rgba(255,255,255,0.48)",
@@ -138,7 +138,7 @@ function SuccessCard() {
           display:        "inline-flex",
           alignItems:     "center",
           gap:            6,
-          fontFamily:     "'DM Sans', sans-serif",
+          fontFamily:     "var(--font-body)",
           fontWeight:     500,
           fontSize:       "14px",
           color:          "rgba(255,255,255,0.38)",
@@ -214,7 +214,7 @@ export default function SchoolAccessRequest() {
           padding:         14px;
           background:      linear-gradient(135deg, #5B4FE9 0%, #7C71F0 100%);
           color:           #fff;
-          font-family:     'DM Sans', sans-serif;
+          font-family: var(--font-body);
           font-weight:     600;
           font-size:       15px;
           border-radius:   12px;
@@ -289,7 +289,7 @@ export default function SchoolAccessRequest() {
                     }} />
                   </span>
                   <span style={{
-                    fontFamily:    "'DM Sans', sans-serif",
+                    fontFamily:    "var(--font-body)",
                     fontSize:      "12px",
                     fontWeight:    500,
                     color:         "rgba(255,255,255,0.40)",
@@ -301,11 +301,11 @@ export default function SchoolAccessRequest() {
                 </div>
 
                 <h1 style={{
-                  fontFamily:    "'Sora', sans-serif",
-                  fontWeight:    800,
+                  fontFamily:    "var(--font-heading)",
+                  fontWeight:    700,
                   fontSize:      "clamp(1.6rem,4vw,2.1rem)",
                   color:         "#fff",
-                  letterSpacing: "-0.022em",
+                  letterSpacing: 0,
                   lineHeight:    1.1,
                   marginBottom:  10,
                 }}>
@@ -313,7 +313,7 @@ export default function SchoolAccessRequest() {
                 </h1>
 
                 <p style={{
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: "var(--font-body)",
                   fontWeight: 400,
                   fontSize:   "14px",
                   color:      "rgba(255,255,255,0.42)",
@@ -332,7 +332,7 @@ export default function SchoolAccessRequest() {
                   border:       "1px solid rgba(248,113,113,0.25)",
                   borderRadius: 10,
                   marginBottom: 20,
-                  fontFamily:   "'DM Sans', sans-serif",
+                  fontFamily:   "var(--font-body)",
                   fontSize:     "13px",
                   color:        "#f87171",
                 }}>
@@ -433,7 +433,7 @@ export default function SchoolAccessRequest() {
                     }}>
                       <FieldError msg={fieldErrors.message} />
                       <span style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "var(--font-body)",
                         fontSize:   "11px",
                         color:      "rgba(255,255,255,0.22)",
                         marginLeft: "auto",
@@ -458,7 +458,7 @@ export default function SchoolAccessRequest() {
 
               {/* Footer note */}
               <p style={{
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "var(--font-body)",
                 fontSize:   "12px",
                 color:      "rgba(255,255,255,0.22)",
                 textAlign:  "center",
@@ -478,7 +478,7 @@ export default function SchoolAccessRequest() {
             position:       "relative",
             zIndex:         2,
             marginTop:      24,
-            fontFamily:     "'DM Sans', sans-serif",
+            fontFamily:     "var(--font-body)",
             fontSize:       "13px",
             fontWeight:     500,
             color:          "rgba(255,255,255,0.28)",

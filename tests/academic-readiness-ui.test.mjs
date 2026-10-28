@@ -31,7 +31,7 @@ test("academic section has three distinct lanes and five one-action rows", () =>
   assert.ok(html.includes("scores remaining"));
   assert.ok(html.includes("required activity scores recorded"));
   assert.ok(html.includes("5 of 7 classes"));
-  assert.ok(html.includes("font-nunito"));
+  assert.ok(html.includes("font-inter"));
 });
 
 test("unavailable and setup states never render invented numeric readiness", () => {

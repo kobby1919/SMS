@@ -16,7 +16,7 @@ export default function AdminParentEngagement({ snapshot }: { snapshot: Snapshot
   const contacts = snapshot.contacts;
   const emailRoutes = snapshot.channelRoutes?.EMAIL;
   const partial = snapshot.state === "UNAVAILABLE" || snapshot.summaryTrackingState === "UNAVAILABLE" || snapshot.requestsTrackingState === "UNAVAILABLE";
-  return <section aria-labelledby="parent-engagement-heading" className="min-w-0 border-t border-gray-200 bg-white p-4 font-nunito sm:p-5 [overflow-wrap:anywhere]">
+  return <section aria-labelledby="parent-engagement-heading" className="min-w-0 border-t border-gray-200 bg-white p-4 font-inter sm:p-5 [overflow-wrap:anywhere]">
     <header>
       <h2 id="parent-engagement-heading" className="text-xl font-black text-gray-950">Parent Engagement</h2>
       <p className="mt-1 text-xs font-medium leading-5 text-gray-600">Updates, school responses and guardian contact readiness.</p>

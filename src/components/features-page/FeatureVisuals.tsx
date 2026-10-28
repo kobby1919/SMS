@@ -12,7 +12,7 @@ export function RecordsVisual({ color = "#2563a6" }: { color?: string }) {
       <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
         <FolderOpen size={24} color={color} aria-hidden="true" />
         <div>
-          <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>School Records</div>
+          <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "var(--font-body)" }}>School Records</div>
           <div className="text-xs text-gray-500 mt-1">Students, classes, and linked parents</div>
         </div>
       </div>
@@ -49,12 +49,12 @@ export function AttendanceVisual({ color = "#10B981" }: { color?: string }) {
         {/* Header */}
         <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: "1px solid #f1f1f3" }}>
           <div>
-            <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>Class 4B — Attendance</div>
-            <div className="text-xs text-gray-400 mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>Thursday, 14 May 2026</div>
+            <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "var(--font-body)" }}>Class 4B — Attendance</div>
+            <div className="text-xs text-gray-400 mt-0.5" style={{ fontFamily: "var(--font-body)" }}>Thursday, 14 May 2026</div>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#10B981" }} />
-            <span className="text-xs font-medium" style={{ color: "#10B981", fontFamily: "'DM Sans', sans-serif" }}>Example</span>
+            <span className="text-xs font-medium" style={{ color: "#10B981", fontFamily: "var(--font-body)" }}>Example</span>
           </div>
         </div>
         {/* Rows */}
@@ -65,9 +65,9 @@ export function AttendanceVisual({ color = "#10B981" }: { color?: string }) {
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: `${r.color}14`, color: r.color }}>
                   {r.name[0]}
                 </div>
-                <span className="text-sm text-gray-700" style={{ fontFamily: "'DM Sans', sans-serif" }}>{r.name}</span>
+                <span className="text-sm text-gray-700" style={{ fontFamily: "var(--font-body)" }}>{r.name}</span>
               </div>
-              <span className="text-xs font-semibold px-3 py-1 rounded-full" style={{ background: `${r.color}14`, color: r.color, fontFamily: "'DM Sans', sans-serif" }}>
+              <span className="text-xs font-semibold px-3 py-1 rounded-full" style={{ background: `${r.color}14`, color: r.color, fontFamily: "var(--font-body)" }}>
                 {r.status}
               </span>
             </div>
@@ -77,8 +77,8 @@ export function AttendanceVisual({ color = "#10B981" }: { color?: string }) {
         <div className="px-5 py-4 grid grid-cols-4 gap-2" style={{ borderTop: "1px solid #f1f1f3", background: "#fafafa" }}>
           {[["Present", "#10B981"], ["Absent", "#EF4444"], ["Late", "#F59E0B"], ["Excused", "#60A5FA"]].map(([l, c]) => (
             <div key={l} className="text-center">
-              <div className="text-base font-extrabold" style={{ color: c, fontFamily: "'Sora', sans-serif" }}>{rows.filter(row => row.status === l).length}</div>
-              <div className="text-[10px] text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>{l}</div>
+              <div className="text-base font-extrabold" style={{ color: c, fontFamily: "var(--font-body)" }}>{rows.filter(row => row.status === l).length}</div>
+              <div className="text-[10px] text-gray-400" style={{ fontFamily: "var(--font-body)" }}>{l}</div>
             </div>
           ))}
         </div>
@@ -103,22 +103,22 @@ export function GradingVisual({ color = "#F59E0B" }: { color?: string }) {
       <div className="rounded-2xl overflow-hidden" style={{ background: "white", border: `1px solid ${color}22`, boxShadow: `0 20px 60px ${color}18, 0 4px 20px rgba(0,0,0,0.06)` }}>
         <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: "1px solid #f1f1f3" }}>
           <div>
-            <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>Assessment Summary — Ama Boateng</div>
-            <div className="text-xs text-gray-400 mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>CA 30% · Exam 70% split</div>
+            <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "var(--font-body)" }}>Assessment Summary — Ama Boateng</div>
+            <div className="text-xs text-gray-400 mt-0.5" style={{ fontFamily: "var(--font-body)" }}>CA 30% · Exam 70% split</div>
           </div>
           <div className="text-right">
-            <div className="text-xl font-extrabold" style={{ color, fontFamily: "'Sora', sans-serif" }}>{(subjects.reduce((sum, subject) => sum + subject.ca + subject.exam, 0) / subjects.length).toFixed(1)}%</div>
-            <div className="text-[10px] text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>Subject average</div>
+            <div className="text-xl font-extrabold" style={{ color, fontFamily: "var(--font-body)" }}>{(subjects.reduce((sum, subject) => sum + subject.ca + subject.exam, 0) / subjects.length).toFixed(1)}%</div>
+            <div className="text-[10px] text-gray-400" style={{ fontFamily: "var(--font-body)" }}>Subject average</div>
           </div>
         </div>
         <div className="px-5 py-3 flex flex-col gap-3">
           {subjects.map((s) => (
             <div key={s.name}>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-gray-600" style={{ fontFamily: "'DM Sans', sans-serif" }}>{s.name}</span>
+                <span className="text-xs text-gray-600" style={{ fontFamily: "var(--font-body)" }}>{s.name}</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>{s.ca + s.exam}/100</span>
-                  <span className="text-xs font-bold w-5 text-center" style={{ color: gradeColors[s.grade], fontFamily: "'Sora', sans-serif" }}>{s.grade}</span>
+                  <span className="text-xs text-gray-400" style={{ fontFamily: "var(--font-body)" }}>{s.ca + s.exam}/100</span>
+                  <span className="text-xs font-bold w-5 text-center" style={{ color: gradeColors[s.grade], fontFamily: "var(--font-body)" }}>{s.grade}</span>
                 </div>
               </div>
               <div className="h-2 rounded-full overflow-hidden" style={{ background: "#f3f4f6" }}>
@@ -130,8 +130,8 @@ export function GradingVisual({ color = "#F59E0B" }: { color?: string }) {
         <div className="px-5 py-3 flex gap-2" style={{ borderTop: "1px solid #f1f1f3", background: "#fafafa" }}>
           {[["A", 3, "#10B981"], ["B", 1, "#60A5FA"], ["C", 1, "#F59E0B"]].map(([g, c, col]) => (
             <div key={g as string} className="flex-1 rounded-xl py-2 text-center" style={{ background: `${col}10` }}>
-              <div className="text-sm font-extrabold" style={{ color: col as string, fontFamily: "'Sora', sans-serif" }}>{c}</div>
-              <div className="text-[9px] text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>Grade {g}</div>
+              <div className="text-sm font-extrabold" style={{ color: col as string, fontFamily: "var(--font-body)" }}>{c}</div>
+              <div className="text-[9px] text-gray-400" style={{ fontFamily: "var(--font-body)" }}>Grade {g}</div>
             </div>
           ))}
         </div>
@@ -157,10 +157,10 @@ export function TimetableVisual({ color = "#8B7FF5" }: { color?: string }) {
       <div style={{ position: "absolute", bottom: "-16px", left: "10%", width: "80%", height: "20px", background: `radial-gradient(ellipse, ${color}33 0%, transparent 70%)`, filter: "blur(10px)" }} />
       <div className="rounded-2xl overflow-hidden" style={{ background: "white", border: `1px solid ${color}22`, boxShadow: `0 20px 60px ${color}18, 0 4px 20px rgba(0,0,0,0.06)` }}>
         <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: "1px solid #f1f1f3" }}>
-          <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>Class 4B Timetable</div>
+          <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "var(--font-body)" }}>Class 4B Timetable</div>
           <div className="flex gap-1.5">
             {["Week", "Day"].map((v, i) => (
-              <div key={v} className="px-3 py-1 rounded-lg text-xs font-medium" style={{ background: i === 0 ? color : "#f3f4f6", color: i === 0 ? "white" : "#9ca3af", fontFamily: "'DM Sans', sans-serif" }}>{v}</div>
+              <div key={v} className="px-3 py-1 rounded-lg text-xs font-medium" style={{ background: i === 0 ? color : "#f3f4f6", color: i === 0 ? "white" : "#9ca3af", fontFamily: "var(--font-body)" }}>{v}</div>
             ))}
           </div>
         </div>
@@ -169,16 +169,16 @@ export function TimetableVisual({ color = "#8B7FF5" }: { color?: string }) {
           <div className="grid gap-1.5 mb-1.5" style={{ gridTemplateColumns: "28px repeat(5, minmax(0, 1fr))" }}>
             <div />
             {days.map((d) => (
-              <div key={d} className="text-center text-[10px] font-bold text-gray-400 py-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>{d}</div>
+              <div key={d} className="text-center text-[10px] font-bold text-gray-400 py-1" style={{ fontFamily: "var(--font-body)" }}>{d}</div>
             ))}
           </div>
           {/* Period rows */}
           {periods.map((row, pi) => (
             <div key={pi} className="grid gap-1.5 mb-1.5" style={{ gridTemplateColumns: "28px repeat(5, minmax(0, 1fr))" }}>
-              <div className="flex items-center justify-center text-[9px] text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>P{pi + 1}</div>
+              <div className="flex items-center justify-center text-[9px] text-gray-400" style={{ fontFamily: "var(--font-body)" }}>P{pi + 1}</div>
               {row.map((subj, di) => (
                 <div key={di} className="rounded-lg py-2 text-center text-[9px] font-semibold"
-                  style={{ background: `${subjectColors[subj]}18`, color: subjectColors[subj], fontFamily: "'DM Sans', sans-serif" }}>
+                  style={{ background: `${subjectColors[subj]}18`, color: subjectColors[subj], fontFamily: "var(--font-body)" }}>
                   {subj}
                 </div>
               ))}
@@ -190,7 +190,7 @@ export function TimetableVisual({ color = "#8B7FF5" }: { color?: string }) {
           {Object.entries(subjectColors).map(([s, c]) => (
             <div key={s} className="flex items-center gap-1.5">
               <div className="w-2 h-2 rounded-full" style={{ background: c }} />
-              <span className="text-[9px] text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>{s}</span>
+              <span className="text-[9px] text-gray-500" style={{ fontFamily: "var(--font-body)" }}>{s}</span>
             </div>
           ))}
         </div>
@@ -206,17 +206,17 @@ export function ResultsVisual({ color = "#60A5FA" }: { color?: string }) {
       <div className="rounded-2xl overflow-hidden" style={{ background: "white", border: `1px solid ${color}22`, boxShadow: `0 20px 60px ${color}18, 0 4px 20px rgba(0,0,0,0.06)` }}>
         {/* Report header */}
         <div className="px-6 py-5 text-center" style={{ borderBottom: "1px solid #f1f1f3", background: `${color}08` }}>
-          <div className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>Edujay · Term 2 Report</div>
-          <div className="text-base font-extrabold text-gray-900" style={{ fontFamily: "'Sora', sans-serif" }}>Ama Boateng</div>
-          <div className="text-xs text-gray-400 mt-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>Class 4B · 2025/26 Academic Year</div>
+          <div className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1" style={{ fontFamily: "var(--font-body)" }}>Edujay · Term 2 Report</div>
+          <div className="text-base font-extrabold text-gray-900" style={{ fontFamily: "var(--font-body)" }}>Ama Boateng</div>
+          <div className="text-xs text-gray-400 mt-1" style={{ fontFamily: "var(--font-body)" }}>Class 4B · 2025/26 Academic Year</div>
           <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full" style={{ background: `${color}18`, border: `1px solid ${color}30` }}>
-            <span className="text-sm font-extrabold" style={{ color, fontFamily: "'Sora', sans-serif" }}>81.2%</span>
-            <span className="text-xs text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>Overall Average</span>
+            <span className="text-sm font-extrabold" style={{ color, fontFamily: "var(--font-body)" }}>81.2%</span>
+            <span className="text-xs text-gray-500" style={{ fontFamily: "var(--font-body)" }}>Overall Average</span>
           </div>
         </div>
         {/* Subject table */}
         <div className="px-5 py-3">
-          <div className="grid text-[10px] font-bold text-gray-400 mb-2 pb-2" style={{ gridTemplateColumns: "1fr 40px 40px 40px 24px", borderBottom: "1px solid #f3f4f6", fontFamily: "'DM Sans', sans-serif" }}>
+          <div className="grid text-[10px] font-bold text-gray-400 mb-2 pb-2" style={{ gridTemplateColumns: "1fr 40px 40px 40px 24px", borderBottom: "1px solid #f3f4f6", fontFamily: "var(--font-body)" }}>
             <span>Subject</span><span className="text-center">CA</span><span className="text-center">Exam</span><span className="text-center">Total</span><span className="text-center">Grd</span>
           </div>
           {[
@@ -229,11 +229,11 @@ export function ResultsVisual({ color = "#60A5FA" }: { color?: string }) {
             const gc: Record<string, string> = { A: "#10B981", B: "#60A5FA", C: "#F59E0B" };
             return (
               <div key={s} className="grid py-2 text-xs" style={{ gridTemplateColumns: "1fr 40px 40px 40px 24px", borderBottom: "1px solid #f9fafb" }}>
-                <span className="text-gray-700" style={{ fontFamily: "'DM Sans', sans-serif" }}>{s}</span>
-                <span className="text-center text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>{ca}</span>
-                <span className="text-center text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>{ex}</span>
-                <span className="text-center font-semibold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>{tot}</span>
-                <span className="text-center font-bold" style={{ color: gc[g] || "#6b7280", fontFamily: "'Sora', sans-serif" }}>{g}</span>
+                <span className="text-gray-700" style={{ fontFamily: "var(--font-body)" }}>{s}</span>
+                <span className="text-center text-gray-500" style={{ fontFamily: "var(--font-body)" }}>{ca}</span>
+                <span className="text-center text-gray-500" style={{ fontFamily: "var(--font-body)" }}>{ex}</span>
+                <span className="text-center font-semibold text-gray-800" style={{ fontFamily: "var(--font-body)" }}>{tot}</span>
+                <span className="text-center font-bold" style={{ color: gc[g] || "#6b7280", fontFamily: "var(--font-body)" }}>{g}</span>
               </div>
             );
           })}
@@ -241,7 +241,7 @@ export function ResultsVisual({ color = "#60A5FA" }: { color?: string }) {
         {/* Print button */}
         <div className="px-5 py-3 flex justify-end" style={{ borderTop: "1px solid #f1f1f3", background: "#fafafa" }}>
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold text-white"
-            style={{ background: `linear-gradient(135deg, ${color}, ${color}cc)`, fontFamily: "'DM Sans', sans-serif" }}>
+            style={{ background: `linear-gradient(135deg, ${color}, ${color}cc)`, fontFamily: "var(--font-body)" }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
               <path d="M6 9V2H18V9" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M6 18H4C3 18 2 17 2 16V11C2 10 3 9 4 9H20C21 9 22 10 22 11V16C22 17 21 18 20 18H18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -277,20 +277,20 @@ export function FinanceVisual({ color = "#FB7185" }: { color?: string }) {
           </svg>
         </div>
         <div>
-          <div className="text-sm font-extrabold text-gray-900" style={{ fontFamily: "'Sora', sans-serif" }}>GH₵ 2,550</div>
-          <div className="text-[9px] text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>Collected · 5 sample bills</div>
+          <div className="text-sm font-extrabold text-gray-900" style={{ fontFamily: "var(--font-body)" }}>GH₵ 2,550</div>
+          <div className="text-[9px] text-gray-400" style={{ fontFamily: "var(--font-body)" }}>Collected · 5 sample bills</div>
         </div>
       </div>
 
       <div className="rounded-2xl overflow-hidden mt-4" style={{ background: "white", border: `1px solid ${color}22`, boxShadow: `0 20px 60px ${color}18, 0 4px 20px rgba(0,0,0,0.06)` }}>
         <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: "1px solid #f1f1f3" }}>
           <div>
-            <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>Fee Bills</div>
-            <div className="text-xs text-gray-400 mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>Term 2 · 2025/26</div>
+            <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "var(--font-body)" }}>Fee Bills</div>
+            <div className="text-xs text-gray-400 mt-0.5" style={{ fontFamily: "var(--font-body)" }}>Term 2 · 2025/26</div>
           </div>
           <div className="flex gap-1.5">
             {[["Paid", "#10B981"], ["Pending", "#F59E0B"], ["Overdue", "#EF4444"]].map(([l, c]) => (
-              <div key={l} className="text-[9px] font-semibold px-2 py-0.5 rounded-full" style={{ background: `${c}14`, color: c, fontFamily: "'DM Sans', sans-serif" }}>{l}</div>
+              <div key={l} className="text-[9px] font-semibold px-2 py-0.5 rounded-full" style={{ background: `${c}14`, color: c, fontFamily: "var(--font-body)" }}>{l}</div>
             ))}
           </div>
         </div>
@@ -299,11 +299,11 @@ export function FinanceVisual({ color = "#FB7185" }: { color?: string }) {
             <div key={t.name} className="flex items-center justify-between px-5 py-3">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: `${t.sc}14`, color: t.sc }}>{t.name[0]}</div>
-                <span className="text-sm text-gray-700" style={{ fontFamily: "'DM Sans', sans-serif" }}>{t.name}</span>
+                <span className="text-sm text-gray-700" style={{ fontFamily: "var(--font-body)" }}>{t.name}</span>
               </div>
               <div className="text-right">
-                <div className="text-sm font-semibold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>{t.amount}</div>
-                <div className="text-[10px]" style={{ color: t.sc, fontFamily: "'DM Sans', sans-serif" }}>{t.status}</div>
+                <div className="text-sm font-semibold text-gray-800" style={{ fontFamily: "var(--font-body)" }}>{t.amount}</div>
+                <div className="text-[10px]" style={{ color: t.sc, fontFamily: "var(--font-body)" }}>{t.status}</div>
               </div>
             </div>
           ))}
@@ -316,7 +316,7 @@ export function FinanceVisual({ color = "#FB7185" }: { color?: string }) {
           </div>
           <div className="flex justify-between mt-1.5">
             {[["60% Paid", "#10B981"], ["20% Pending", "#F59E0B"], ["20% Overdue", "#EF4444"]].map(([l, c]) => (
-              <span key={l} className="text-[9px]" style={{ color: c, fontFamily: "'DM Sans', sans-serif" }}>{l}</span>
+              <span key={l} className="text-[9px]" style={{ color: c, fontFamily: "var(--font-body)" }}>{l}</span>
             ))}
           </div>
         </div>
@@ -340,12 +340,12 @@ export function BursarVisual({ color = "#A855F7" }: { color?: string }) {
             </svg>
           </div>
           <div>
-            <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>Bursar Dashboard</div>
-            <div className="text-xs text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>Thursday, 14 May 2026</div>
+            <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "var(--font-body)" }}>Bursar Dashboard</div>
+            <div className="text-xs text-gray-400" style={{ fontFamily: "var(--font-body)" }}>Thursday, 14 May 2026</div>
           </div>
           <div className="ml-auto flex items-center gap-1.5 px-3 py-1 rounded-full" style={{ background: `${color}14`, border: `1px solid ${color}28` }}>
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
-            <span className="text-[10px] font-semibold" style={{ color, fontFamily: "'DM Sans', sans-serif" }}>Term 2</span>
+            <span className="text-[10px] font-semibold" style={{ color, fontFamily: "var(--font-body)" }}>Term 2</span>
           </div>
         </div>
 
@@ -357,16 +357,16 @@ export function BursarVisual({ color = "#A855F7" }: { color?: string }) {
             { label: "Term Total",           value: "GH₵ 2,550", sub: "60% collected",color },
           ].map((k) => (
             <div key={k.label} className="px-4 py-4">
-              <div className="text-[9px] text-gray-400 mb-1 uppercase tracking-wide" style={{ fontFamily: "'DM Sans', sans-serif" }}>{k.label}</div>
-              <div className="text-base font-extrabold" style={{ color: k.color, fontFamily: "'Sora', sans-serif" }}>{k.value}</div>
-              <div className="text-[9px] text-gray-400 mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>{k.sub}</div>
+              <div className="text-[9px] text-gray-400 mb-1 uppercase tracking-wide" style={{ fontFamily: "var(--font-body)" }}>{k.label}</div>
+              <div className="text-base font-extrabold" style={{ color: k.color, fontFamily: "var(--font-body)" }}>{k.value}</div>
+              <div className="text-[9px] text-gray-400 mt-0.5" style={{ fontFamily: "var(--font-body)" }}>{k.sub}</div>
             </div>
           ))}
         </div>
 
         {/* Recent payments */}
         <div className="px-5 py-3">
-          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>Recent Payments</div>
+          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2" style={{ fontFamily: "var(--font-body)" }}>Recent Payments</div>
           {[
             { name: "Ama Boateng",  time: "9:14 AM",  amount: "GH₵ 850", method: "Mobile Money" },
             { name: "Efua Asante",  time: "10:02 AM", amount: "GH₵ 850", method: "Bank Transfer" },
@@ -376,21 +376,21 @@ export function BursarVisual({ color = "#A855F7" }: { color?: string }) {
               <div className="flex items-center gap-3">
                 <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ background: `${color}14`, color }}>{p.name[0]}</div>
                 <div>
-                  <div className="text-xs font-medium text-gray-700" style={{ fontFamily: "'DM Sans', sans-serif" }}>{p.name}</div>
-                  <div className="text-[9px] text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>{p.method} · {p.time}</div>
+                  <div className="text-xs font-medium text-gray-700" style={{ fontFamily: "var(--font-body)" }}>{p.name}</div>
+                  <div className="text-[9px] text-gray-400" style={{ fontFamily: "var(--font-body)" }}>{p.method} · {p.time}</div>
                 </div>
               </div>
-              <span className="text-xs font-semibold" style={{ color: "#10B981", fontFamily: "'Sora', sans-serif" }}>{p.amount}</span>
+              <span className="text-xs font-semibold" style={{ color: "#10B981", fontFamily: "var(--font-body)" }}>{p.amount}</span>
             </div>
           ))}
         </div>
 
         {/* Export bar */}
         <div className="px-5 py-3 flex items-center justify-between" style={{ borderTop: "1px solid #f1f1f3", background: "#fafafa" }}>
-          <span className="text-xs text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>5 sample bills · GH₵ 4,250 billed</span>
+          <span className="text-xs text-gray-400" style={{ fontFamily: "var(--font-body)" }}>5 sample bills · GH₵ 4,250 billed</span>
           <div className="flex gap-2">
             {["Collection summary"].map((f) => (
-              <div key={f} className="px-3 py-1.5 rounded-lg text-[10px] font-semibold" style={{ background: `${color}12`, color, border: `1px solid ${color}22`, fontFamily: "'DM Sans', sans-serif" }}>
+              <div key={f} className="px-3 py-1.5 rounded-lg text-[10px] font-semibold" style={{ background: `${color}12`, color, border: `1px solid ${color}22`, fontFamily: "var(--font-body)" }}>
                 {f}
               </div>
             ))}
@@ -417,8 +417,8 @@ export function RolesVisual() {
           <div className="flex items-center gap-2 mb-3">
             <Icon size={22} color={r.color} className="flex-shrink-0" aria-hidden="true" />
             <div>
-              <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>{r.label}</div>
-              <div className="text-[9px] text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>{r.desc}</div>
+              <div className="text-sm font-bold text-gray-800" style={{ fontFamily: "var(--font-body)" }}>{r.label}</div>
+              <div className="text-[9px] text-gray-400" style={{ fontFamily: "var(--font-body)" }}>{r.desc}</div>
             </div>
           </div>
           <ul className="flex flex-col gap-1.5">
@@ -429,7 +429,7 @@ export function RolesVisual() {
                     <path d="M5 13L9 17L19 7" stroke={r.color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
-                <span className="text-[9px] text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>{p}</span>
+                <span className="text-[9px] text-gray-500" style={{ fontFamily: "var(--font-body)" }}>{p}</span>
               </li>
             ))}
           </ul>

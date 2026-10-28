@@ -20,24 +20,24 @@ export default function PricingPlans() {
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="min-w-0">
-            <p className="text-xs font-semibold uppercase text-[#6654bd] mb-5" style={{ fontFamily: "'DM Sans', sans-serif" }}>One annual school package</p>
-            <h2 className="text-3xl min-[360px]:text-4xl xl:text-5xl font-extrabold text-gray-900 leading-tight mb-5" style={{ fontFamily: "'Clash Display', sans-serif" }}>Quoted for<br /><span className="text-[#7960d9]">your school.</span></h2>
-            <p className="text-base text-gray-600 leading-relaxed mb-6" style={{ fontFamily: "'DM Sans', sans-serif" }}>Tell us about your school, the setup you need, and any existing records. MiqraTech Consult will provide an annual Edujay package quotation with the agreed scope before onboarding begins.</p>
+            <p className="text-xs font-semibold uppercase text-[#6654bd] mb-5" style={{ fontFamily: "var(--font-body)" }}>One annual school package</p>
+            <h2 className="text-3xl min-[360px]:text-4xl xl:text-5xl font-extrabold text-gray-900 leading-tight mb-5" style={{ fontFamily: "var(--font-heading)" }}>Quoted for<br /><span className="text-[#7960d9]">your school.</span></h2>
+            <p className="text-base text-gray-600 leading-relaxed mb-6" style={{ fontFamily: "var(--font-body)" }}>Tell us about your school, the setup you need, and any existing records. MiqraTech Consult will provide an annual Edujay package quotation with the agreed scope before onboarding begins.</p>
             <dl className="border-y border-[#ded9ee] py-5 space-y-4 text-sm">
               <div className="flex flex-wrap justify-between gap-2"><dt className="text-gray-500">Billing basis</dt><dd className="font-semibold text-gray-800">Annual school package</dd></div>
               <div className="flex flex-wrap justify-between gap-2"><dt className="text-gray-500">Package payment to</dt><dd className="font-semibold text-gray-800">MiqraTech Consult</dd></div>
               <div className="flex flex-wrap justify-between gap-2"><dt className="text-gray-500">Price and scope</dt><dd className="font-semibold text-gray-800">Agreed in writing</dd></div>
             </dl>
-            <a href="/request-access" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-white text-sm font-semibold mt-7 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6654bd]" style={{ background: "linear-gradient(135deg, #5B4FE9, #8B7FF5)", fontFamily: "'DM Sans', sans-serif" }}>Request a School Quote <ArrowRight size={16} aria-hidden="true" /></a>
+            <a href="/request-access" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-white text-sm font-semibold mt-7 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6654bd]" style={{ background: "linear-gradient(135deg, #5B4FE9, #8B7FF5)", fontFamily: "var(--font-body)" }}>Request a School Quote <ArrowRight size={16} aria-hidden="true" /></a>
             <p className="mt-4 text-xs text-gray-500 leading-relaxed">Requesting a quote does not take a payment or activate your school.</p>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="min-w-0">
-            <h3 className="text-xl font-bold text-gray-900 mb-6" style={{ fontFamily: "'Sora', sans-serif" }}>What the standard package covers</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-6" style={{ fontFamily: "var(--font-heading)" }}>What the standard package covers</h3>
             <ul className="divide-y divide-[#ded9ee] border-y border-[#ded9ee]">
               {inclusions.map(item => (
                 <li key={item.title} className="flex gap-3 py-4">
                   <Check size={18} className="text-[#078568] flex-shrink-0 mt-1" aria-hidden="true" />
-                  <div className="min-w-0"><h4 className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>{item.title}</h4><p className="mt-1 text-sm text-gray-600 leading-relaxed">{item.detail}</p></div>
+                  <div className="min-w-0"><h4 className="text-sm font-bold text-gray-800" style={{ fontFamily: "var(--font-heading)" }}>{item.title}</h4><p className="mt-1 text-sm text-gray-600 leading-relaxed">{item.detail}</p></div>
                 </li>
               ))}
             </ul>

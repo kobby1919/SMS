@@ -24,7 +24,7 @@ const FinanceChart = ({ data }: { data: MonthData[] }) => {
       className="bg-white rounded-2xl w-full h-full p-5 shadow-sm"
     >
       <div className="flex justify-between items-center mb-2">
-        <h1 className="font-nunito font-extrabold text-lg text-gray-800">Finance Overview</h1>
+        <h1 className="font-clashDisplay font-extrabold text-lg text-gray-800">Finance Overview</h1>
         <Image src="/moreDark.png" alt="" width={18} height={18} />
       </div>
       <ResponsiveContainer width="100%" height="90%">

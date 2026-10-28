@@ -12,7 +12,7 @@ export default function AdminReportReview({ data }: { data: Data }) {
   const stage = position ? workflowLabels[position.workflowState] : "Not submitted";
   const field = "mt-1 min-h-11 w-full min-w-0 rounded-md border border-gray-200 bg-white px-3 text-sm font-semibold";
   function pageHref(page: number) { const q = new URLSearchParams({ year: data.year, term: data.term, page: String(page) }); if (data.classId !== undefined) q.set("classId", String(data.classId)); return `/list/report-cards?${q}`; }
-  return <main className="m-3 mt-0 min-w-0 flex-1 space-y-5 bg-white p-4 font-nunito text-sm font-semibold text-gray-700 sm:m-4 sm:mt-0 sm:p-5">
+  return <main className="m-3 mt-0 min-w-0 flex-1 space-y-5 bg-white p-4 font-inter text-sm font-semibold text-gray-700 sm:m-4 sm:mt-0 sm:p-5">
     <header><h1 className="text-xl font-black text-gray-950">Reports &amp; Approval</h1><p className="mt-1 text-sm font-medium text-gray-600">Class readiness, assessment gaps and release decisions.</p></header>
     <form className="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <label className="min-w-0 text-xs font-bold">Academic year<select name="year" defaultValue={data.year} className={field}><option value="" disabled>Select year</option>{data.configs.map((config) => <option key={config.academicYear} value={config.academicYear}>{config.academicYear}</option>)}</select></label>

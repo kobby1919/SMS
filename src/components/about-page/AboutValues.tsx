@@ -71,18 +71,18 @@ export default function AboutValues() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="h-px w-8 bg-gray-200 rounded-full" />
             <span className="text-xs font-semibold uppercase tracking-widest text-gray-400"
-              style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.18em" }}>
+              style={{ fontFamily: "var(--font-body)", letterSpacing: "0.18em" }}>
               What drives us
             </span>
             <div className="h-px w-8 bg-gray-200 rounded-full" />
           </div>
           <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
-            style={{ fontFamily: "'Clash Display', sans-serif" }}>
+            style={{ fontFamily: "var(--font-heading)" }}>
             Our guiding
             <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #A855F7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}> principles.</span>
           </h2>
           <p className="text-base text-gray-500 leading-relaxed"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+            style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
             The commitments that guide how we develop Edujay and prepare schools to use it.
           </p>
         </motion.div>
@@ -104,11 +104,11 @@ export default function AboutValues() {
                 {v.icon}
               </div>
               <h3 className="text-xl font-extrabold text-gray-900 mb-3"
-                style={{ fontFamily: "'Sora', sans-serif" }}>
+                style={{ fontFamily: "var(--font-heading)" }}>
                 {v.title}
               </h3>
               <p className="text-sm text-gray-500 leading-relaxed"
-                style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+                style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
                 {v.description}
               </p>
             </motion.div>

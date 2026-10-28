@@ -8,7 +8,7 @@ export default function UnavailablePage({
   label = "Return to your workspace",
 }: { title?: string; message?: string; href?: string; label?: string }) {
   return (
-    <main className="mx-auto flex w-full min-w-0 max-w-xl flex-col items-start gap-4 p-5 py-12 font-nunito text-sm text-gray-700 sm:p-8 sm:py-16">
+    <main className="mx-auto flex w-full min-w-0 max-w-xl flex-col items-start gap-4 p-5 py-12 font-inter text-sm text-gray-700 sm:p-8 sm:py-16">
       <FileSearch aria-hidden="true" size={32} className="text-blue-700" />
       <h1 className="break-words text-xl font-black text-gray-950">{title}</h1>
       <p className="break-words leading-relaxed">{message}</p>

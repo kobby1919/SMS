@@ -63,7 +63,7 @@ const UpcomingExams = async ({ teacherId }: Props) => {
           <div className="w-8 h-8 bg-amber-50 rounded-xl flex items-center justify-center">
             <Calendar size={15} className="text-amber-600" />
           </div>
-          <h2 className="font-nunito text-base font-extrabold text-edujay-ink">Exam Dates</h2>
+          <h2 className="font-clashDisplay text-base font-extrabold text-edujay-ink">Exam Dates</h2>
         </div>
         <Link
           href="/list/exams"

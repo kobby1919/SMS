@@ -21,7 +21,7 @@ export function parentEngagementFixture() {
 
 test("parent section renders three lanes and at most five one-action issues", () => {
   const html = render(parentEngagementFixture());
-  for (const label of ["Parent Updates", "Requests Needing Response", "Parent Contact Readiness", "font-nunito", "queued / retrying", "Provider-confirmed", "5 of 7 issues"]) assert.ok(html.includes(label));
+  for (const label of ["Parent Updates", "Requests Needing Response", "Parent Contact Readiness", "font-inter", "queued / retrying", "Provider-confirmed", "5 of 7 issues"]) assert.ok(html.includes(label));
   assert.equal((html.match(/<li /g) ?? []).length, 5);
   assert.equal((html.match(/<a /g) ?? []).length, 5);
   assert.equal(html.includes("unread"), false);

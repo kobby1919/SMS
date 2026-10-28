@@ -1,6 +1,3 @@
-/* ── FONT IMPORTS ──────────────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-
 @font-face {
   font-family: "Inter";
   src: url("/fonts/inter/inter-400.ttf") format("truetype");
@@ -50,54 +47,6 @@
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("/fonts/nunito/nunito-400.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Nunito";
-  src: url("/fonts/nunito/nunito-500.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Nunito";
-  src: url("/fonts/nunito/nunito-600.ttf") format("truetype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Nunito";
-  src: url("/fonts/nunito/nunito-700.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Nunito";
-  src: url("/fonts/nunito/nunito-800.ttf") format("truetype");
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Nunito";
-  src: url("/fonts/nunito/nunito-900.ttf") format("truetype");
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
   font-family: "Clash Display";
   src: url("/fonts/clash-display/clash-display-400.woff2") format("woff2");
   font-weight: 400;
@@ -131,7 +80,9 @@
 
 :root {
   --font-inter: "Inter", Arial, sans-serif;
-  --font-nunito: "Nunito", "Inter", Arial, sans-serif;
+  --font-body: var(--font-inter);
+  --font-heading: "Clash Display", "Inter", Arial, sans-serif;
+  --font-nunito: var(--font-body);
 }
 
 @tailwind base;
@@ -151,6 +102,22 @@
 }
 
 @layer base {
+  body,
+  input,
+  textarea,
+  select,
+  button,
+  table {
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6, [role="heading"] {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-synthesis: none;
+    letter-spacing: 0;
+  }
+
   html {
     font-size: 18px;
   }

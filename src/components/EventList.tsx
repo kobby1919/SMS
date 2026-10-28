@@ -33,7 +33,7 @@ const EventList = async ({ dateParam }: { dateParam: string | undefined }) => {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="font-nunito font-extrabold text-base text-gray-800">Events</h1>
+          <h1 className="font-clashDisplay font-extrabold text-base text-gray-800">Events</h1>
           <p className="text-[11px] text-gray-400 mt-0.5">{displayDate}</p>
         </div>
         <span className="text-xs text-jayPurple font-semibold cursor-pointer hover:underline">View All</span>

@@ -56,10 +56,10 @@ function FAQItem({ item, index }: { item: typeof faqs[0]; index: number }) {
         onClick={() => setOpen(!open)}>
         <div className="flex items-start gap-4">
           <span className="text-xs font-bold mt-0.5 flex-shrink-0"
-            style={{ color: "#8B7FF5", fontFamily: "'DM Sans', sans-serif" }}>
+            style={{ color: "#8B7FF5", fontFamily: "var(--font-body)" }}>
             {String(index + 1).padStart(2, "0")}
           </span>
-          <span className="text-sm font-semibold text-gray-900" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+          <span className="text-sm font-semibold text-gray-900" style={{ fontFamily: "var(--font-heading)" }}>
             {item.q}
           </span>
         </div>
@@ -85,7 +85,7 @@ function FAQItem({ item, index }: { item: typeof faqs[0]; index: number }) {
             className="overflow-hidden"
           >
             <p className="px-6 pb-5 text-sm text-gray-500 leading-relaxed pl-14"
-              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+              style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
               {item.a}
             </p>
           </motion.div>
@@ -112,17 +112,17 @@ export default function PricingFAQ() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="h-px w-8 bg-gray-300 rounded-full" />
             <span className="text-xs font-semibold uppercase tracking-widest text-gray-400"
-              style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.18em" }}>
+              style={{ fontFamily: "var(--font-body)", letterSpacing: "0.18em" }}>
               Pricing questions
             </span>
             <div className="h-px w-8 bg-gray-300 rounded-full" />
           </div>
           <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-900 leading-tight mb-3"
-            style={{ fontFamily: "'Clash Display', sans-serif" }}>
+            style={{ fontFamily: "var(--font-heading)" }}>
             Pricing, clarified.
           </h2>
           <p className="text-sm text-gray-500 leading-relaxed"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+            style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
             Practical answers about the annual package, quotations, and separate costs.
           </p>
         </motion.div>
@@ -140,12 +140,12 @@ export default function PricingFAQ() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <p className="text-sm text-gray-400 mb-3" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          <p className="text-sm text-gray-400 mb-3" style={{ fontFamily: "var(--font-body)" }}>
             Have a question that&apos;s not here?
           </p>
           <a href="/request-access"
             className="inline-flex items-center gap-2 text-sm font-semibold transition-all duration-200 hover:gap-3"
-            style={{ color: "#8B7FF5", fontFamily: "'DM Sans', sans-serif" }}>
+            style={{ color: "#8B7FF5", fontFamily: "var(--font-body)" }}>
             Discuss Your School Quote
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
               <path d="M5 12H19M13 6L19 12L13 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

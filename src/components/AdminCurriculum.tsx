@@ -11,7 +11,7 @@ export default async function AdminCurriculum({ params }: { params: Record<strin
     if (data.selection.subjectId) query.set("subjectId", String(data.selection.subjectId));
     return `/list/syllabus?${query}`;
   }
-  return <main className="m-3 mt-0 min-w-0 flex-1 bg-white p-4 font-nunito text-sm font-semibold text-gray-700 sm:m-4 sm:mt-0 sm:p-5">
+  return <main className="m-3 mt-0 min-w-0 flex-1 bg-white p-4 font-inter text-sm font-semibold text-gray-700 sm:m-4 sm:mt-0 sm:p-5">
     <header className="flex flex-wrap items-start justify-between gap-3 border-b border-gray-200 pb-4"><div><h1 className="text-xl font-black text-gray-950">Curriculum</h1><p className="mt-2 font-medium leading-6 text-gray-600">{data.year || "No academic year configured"} · {data.term.replace("TERM_", "Term ")}</p></div><Link href="/list/syllabus/new" className="inline-flex min-h-11 items-center gap-2 text-xs font-black text-blue-800"><Plus size={16} /> New teaching guide</Link></header>
     <nav aria-label="Curriculum views" className="flex flex-wrap gap-5 border-b border-gray-200">{[{ view: "coverage", label: "Recorded coverage" }, { view: "guides", label: "Teaching guides" }].map(({ view, label }) => <Link key={view} href={href(view)} aria-current={data.view === view ? "page" : undefined} className={`inline-flex min-h-12 items-center border-b-2 text-xs font-black ${data.view === view ? "border-blue-800 text-blue-800" : "border-transparent text-gray-600"}`}>{label}</Link>)}</nav>
     <form action="/list/syllabus" className="grid min-w-0 grid-cols-1 gap-3 border-b border-gray-200 py-4 sm:grid-cols-2 xl:grid-cols-5"><input type="hidden" name="view" value={data.view} />

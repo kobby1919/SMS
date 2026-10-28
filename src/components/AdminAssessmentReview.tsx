@@ -46,7 +46,7 @@ export default async function AdminAssessmentReview({ params }: { params: Record
     if (data.activityId !== undefined) query.set("activityId", String(data.activityId));
     return `/list/ca?${query}`;
   }
-  return <main className="m-3 mt-0 min-w-0 flex-1 bg-white p-4 font-nunito text-sm font-semibold text-gray-700 sm:m-4 sm:mt-0 sm:p-5">
+  return <main className="m-3 mt-0 min-w-0 flex-1 bg-white p-4 font-inter text-sm font-semibold text-gray-700 sm:m-4 sm:mt-0 sm:p-5">
     <header className="border-b border-gray-200 pb-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div><h1 className="text-xl font-black text-gray-950">Assessments</h1><p className="mt-2 text-sm font-medium leading-6 text-gray-600">{termLabel(data.term)} · {data.year}</p></div>

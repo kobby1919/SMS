@@ -100,7 +100,7 @@ const WelcomeBanner = ({ role, name, subtitle, tag }: Props) => {
               {date}
             </p>
 
-            <h1 className="font-nunito font-extrabold text-xl sm:text-2xl text-edujay-ink leading-tight">
+            <h1 className="font-clashDisplay font-extrabold text-xl sm:text-2xl text-edujay-ink leading-tight">
               {cfg.greeting}, {name}
             </h1>
 

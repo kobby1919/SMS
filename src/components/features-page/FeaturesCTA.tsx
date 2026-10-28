@@ -16,7 +16,7 @@ export default function FeaturesCTA() {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
           <h2 className="text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-5"
-            style={{ fontFamily: "'Clash Display', sans-serif" }}>
+            style={{ fontFamily: "var(--font-heading)" }}>
             Let&apos;s plan the right setup
             <br />
             <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #A855F7 60%, #FB7185 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
@@ -24,13 +24,13 @@ export default function FeaturesCTA() {
             </span>
           </h2>
           <p className="text-base text-white/50 leading-relaxed mb-10 max-w-lg mx-auto"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+            style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
             Discuss your school&apos;s needs, package, and onboarding scope before your team begins.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <motion.a href="/request-access"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white font-semibold text-sm"
-              style={{ background: "linear-gradient(135deg, #5B4FE9, #A855F7)", fontFamily: "'DM Sans', sans-serif", boxShadow: "0 8px 30px #8B7FF540" }}
+              style={{ background: "linear-gradient(135deg, #5B4FE9, #A855F7)", fontFamily: "var(--font-body)", boxShadow: "0 8px 30px #8B7FF540" }}
               whileHover={{ y: -2, boxShadow: "0 14px 40px #8B7FF550" }}
               whileTap={{ y: 0 }}
               transition={{ duration: 0.2 }}>
@@ -41,14 +41,14 @@ export default function FeaturesCTA() {
             </motion.a>
             <motion.a href="/howItWorks"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white/60 font-medium text-sm border border-white/12"
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
+              style={{ fontFamily: "var(--font-body)" }}
               whileHover={{ y: -2, borderColor: "rgba(139,127,245,0.4)", color: "rgba(255,255,255,0.9)" }}
               whileTap={{ y: 0 }}
               transition={{ duration: 0.2 }}>
               How Onboarding Works
             </motion.a>
           </div>
-          <p className="mt-6 text-xs text-white/25" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          <p className="mt-6 text-xs text-white/25" style={{ fontFamily: "var(--font-body)" }}>
             Built for Ghanaian schools. Start fresh or bring existing records.
           </p>
         </motion.div>

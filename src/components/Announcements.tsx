@@ -72,7 +72,7 @@ const Announcements = async () => {
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-nunito text-base font-extrabold text-edujay-ink">Notices</h1>
+        <h1 className="font-clashDisplay text-base font-extrabold text-edujay-ink">Notices</h1>
         <Link href="/list/announcements" className="text-xs font-bold text-edujay-primary hover:underline">
           View All
         </Link>

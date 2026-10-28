@@ -94,27 +94,27 @@ function StepBlock({ step }: { step: Step }) {
                 style={{ background: `${step.color}12`, border: `1px solid ${step.color}28` }}>
                 <div className="w-1.5 h-1.5 rounded-full" style={{ background: step.color }} />
                 <span className="text-xs font-bold uppercase tracking-widest"
-                  style={{ color: step.color, fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.15em" }}>
+                  style={{ color: step.color, fontFamily: "var(--font-body)", letterSpacing: "0.15em" }}>
                   Step {step.number} — {step.label}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
                 style={{ background: "#f3f4f6", border: "1px solid #e5e7eb" }}>
                 <ClipboardCheck size={12} color="#6b7280" aria-hidden="true" />
-                <span className="text-[10px] font-medium text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>{step.stage}</span>
+                <span className="text-[10px] font-medium text-gray-500" style={{ fontFamily: "var(--font-body)" }}>{step.stage}</span>
               </div>
             </div>
 
             {/* Heading */}
             <h2 className="text-3xl min-[360px]:text-4xl xl:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
-              style={{ fontFamily: "'Clash Display', sans-serif" }}>
+              style={{ fontFamily: "var(--font-heading)" }}>
               {step.heading}{" "}
               <span style={{ color: step.color }}>{step.headingAccent}</span>
             </h2>
 
             {/* Description */}
             <p className="text-base text-gray-500 leading-relaxed mb-8"
-              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+              style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
               {step.description}
             </p>
 
@@ -137,8 +137,8 @@ function StepBlock({ step }: { step: Step }) {
                     </svg>
                   </div>
                   <div className="min-w-0">
-                    <div className="text-sm font-bold text-gray-800 mb-0.5" style={{ fontFamily: "'Sora', sans-serif" }}>{d.heading}</div>
-                    <div className="text-xs text-gray-500 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>{d.text}</div>
+                    <div className="text-sm font-bold text-gray-800 mb-0.5" style={{ fontFamily: "var(--font-body)" }}>{d.heading}</div>
+                    <div className="text-xs text-gray-500 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{d.text}</div>
                   </div>
                 </motion.div>
               ))}

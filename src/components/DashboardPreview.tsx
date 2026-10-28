@@ -86,7 +86,7 @@ export default function DashboardPreview() {
             <div className="h-px w-8 bg-gray-200 rounded-full" />
             <span
               className="text-xs font-semibold uppercase tracking-widest text-gray-400"
-              style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.18em" }}
+              style={{ fontFamily: "var(--font-body)", letterSpacing: "0.18em" }}
             >
               Inside Edujay
             </span>
@@ -95,7 +95,7 @@ export default function DashboardPreview() {
 
           <h2
             className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
-            style={{ fontFamily: "'Clash Display', sans-serif" }}
+            style={{ fontFamily: "var(--font-heading)" }}
           >
             Your school day,
             <br />
@@ -110,7 +110,7 @@ export default function DashboardPreview() {
 
           <p
             className="text-base lg:text-lg text-gray-500 leading-relaxed"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}
+            style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}
           >
             Review your school&apos;s daily status, attendance overview, and student and
             class counts from the administrator dashboard. Teachers, bursars, and
@@ -156,7 +156,7 @@ export default function DashboardPreview() {
               </div>
               <span
                 className="text-xs font-medium text-gray-700 whitespace-nowrap"
-                style={{ fontFamily: "'DM Sans', sans-serif" }}
+                style={{ fontFamily: "var(--font-body)" }}
               >
                 {c.label}
               </span>
@@ -182,7 +182,7 @@ export default function DashboardPreview() {
               </div>
               <div className="flex-1 flex items-center gap-2 px-3 py-1.5 rounded-md mx-4"
                 style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                <span className="text-xs" style={{ color: "rgba(255,255,255,0.35)", fontFamily: "'DM Sans', sans-serif" }}>
+                <span className="text-xs" style={{ color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-body)" }}>
                   edujay.app
                 </span>
               </div>
@@ -208,10 +208,10 @@ export default function DashboardPreview() {
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <p className="text-sm font-semibold text-gray-600 text-center" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          <p className="text-sm font-semibold text-gray-600 text-center" style={{ fontFamily: "var(--font-body)" }}>
             Administrator dashboard preview
           </p>
-          <p className="text-sm text-gray-500 text-center max-w-2xl" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          <p className="text-sm text-gray-500 text-center max-w-2xl" style={{ fontFamily: "var(--font-body)" }}>
             Shown with demonstration records. Your dashboard reflects your school&apos;s setup and permissions.
           </p>
           <a
@@ -219,7 +219,7 @@ export default function DashboardPreview() {
             className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-white text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
             style={{
               background: "linear-gradient(135deg, #5B4FE9 0%, #8B7FF5 100%)",
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "var(--font-body)",
               boxShadow: "0 4px 20px #8B7FF530",
             }}
           >

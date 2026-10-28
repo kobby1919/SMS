@@ -239,7 +239,7 @@ function MobileSearchDialog({ items, contextLabel, onClose }: { items: SearchIte
     <dialog ref={dialogRef} aria-label="Search Edujay" onCancel={(event) => { event.preventDefault(); onClose(); }} className="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto border-0 bg-white p-4 text-gray-900">
       <div className="mb-4 flex min-w-0 items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-base font-black">Search</p>
+          <h2 className="text-base font-bold">Search</h2>
           <p className="truncate text-xs font-semibold text-gray-400">{contextLabel}</p>
         </div>
         <button type="button" onClick={onClose} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gray-50 text-gray-600" aria-label="Close search" title="Close search"><X size={18} /></button>
@@ -358,7 +358,7 @@ function AppNotificationBell({
         <div ref={panelRef} id="navbar-notifications" role="dialog" aria-label="Notifications" style={{ top: position.top, right: position.right, maxHeight: `calc(100dvh - ${position.top + 12}px)` }} className="fixed z-50 flex w-[calc(100vw-1.5rem)] max-w-[23rem] flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-2xl">
           <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
             <div>
-              <p className="text-sm font-black text-gray-900">Notifications</p>
+              <h2 className="text-sm font-bold text-gray-900">Notifications</h2>
               <p className="text-xs font-semibold text-gray-400">{localUnreadCount} unread</p>
             </div>
             <div className="flex shrink-0 items-center gap-1"><button
@@ -486,7 +486,7 @@ const NavbarClient = ({ user, parentContext, appNotifications = [], appNotificat
     >
       <div className="flex min-w-0 items-center justify-between gap-2 sm:gap-3">
         <div className="min-w-0 flex-1 xl:max-w-56 xl:flex-initial">
-          <p className="truncate text-sm font-black text-gray-900 sm:text-base">
+          <p className="truncate font-clashDisplay text-sm font-bold text-gray-900 sm:text-base">
             {isParent ? contextLabel : user.schoolName ?? "Edujay"}
           </p>
           <p className="truncate text-[11px] font-bold capitalize text-gray-400">

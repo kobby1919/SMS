@@ -39,7 +39,7 @@ export default function AuthShell({
             <p className="text-xs font-black uppercase tracking-[0.24em] text-white/65">
               Edujay school access
             </p>
-            <h1 className="mt-5 font-nunito text-4xl font-black leading-[1.05] tracking-tight xl:text-5xl">
+            <h1 className="mt-5 font-clashDisplay text-4xl font-black leading-[1.05] tracking-tight xl:text-5xl">
               One secure login for every school role.
             </h1>
             <p className="mt-5 max-w-sm text-base font-semibold leading-8 text-white/72">
@@ -65,7 +65,7 @@ export default function AuthShell({
                   {eyebrow}
                 </span>
               )}
-              <h1 className="font-nunito text-[2rem] font-black leading-tight tracking-tight text-slate-950 sm:text-[2.25rem]">
+              <h1 className="font-clashDisplay text-[2rem] font-black leading-tight tracking-tight text-slate-950 sm:text-[2.25rem]">
                 {title}
               </h1>
               <p className="mt-2 text-lg font-medium leading-7 text-slate-500">

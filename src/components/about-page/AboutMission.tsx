@@ -28,13 +28,13 @@ export default function AboutMission() {
             <div className="flex items-center gap-3 mb-5">
               <div className="h-px w-8 bg-gray-200 rounded-full" />
               <span className="text-xs font-semibold uppercase tracking-widest text-gray-400"
-                style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.18em" }}>
+                style={{ fontFamily: "var(--font-body)", letterSpacing: "0.18em" }}>
                 Our Purpose
               </span>
             </div>
 
             <h2 className="text-3xl min-[360px]:text-4xl xl:text-5xl font-extrabold text-gray-900 leading-tight mb-6"
-              style={{ fontFamily: "'Clash Display', sans-serif" }}>
+              style={{ fontFamily: "var(--font-heading)" }}>
               Connect the work.
               <br />
               <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #A855F7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
@@ -44,19 +44,19 @@ export default function AboutMission() {
 
             <div className="flex flex-col gap-4">
               <p className="text-base text-gray-500 leading-relaxed"
-                style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+                style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
                 When records sit across separate books, spreadsheets, and conversations,
                 keeping information consistent takes extra effort. Edujay aims to connect
                 that work so school teams can record, review, and follow up more clearly.
               </p>
               <p className="text-base text-gray-500 leading-relaxed"
-                style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+                style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
                 Our purpose is to support the people responsible for school administration,
                 teaching, finance, and parent communication, with tools organised around
                 their responsibilities and the records they need.
               </p>
               <p className="text-base text-gray-500 leading-relaxed"
-                style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+                style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
                 Developed by MiqraTech Consult, Edujay brings school records, attendance,
                 assessments, and fee management into a connected platform, with guided
                 setup and review before a school begins daily work.
@@ -82,10 +82,10 @@ export default function AboutMission() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.1 }}
               >
-                <h3 className="text-base font-bold leading-snug" style={{ color: s.color, fontFamily: "'Sora', sans-serif" }}>
+                <h3 className="text-base font-bold leading-snug" style={{ color: s.color, fontFamily: "var(--font-heading)" }}>
                   {s.title}
                 </h3>
-                <div className="text-sm text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                <div className="text-sm text-gray-500" style={{ fontFamily: "var(--font-body)" }}>
                   {s.description}
                 </div>
               </motion.div>

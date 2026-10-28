@@ -327,7 +327,7 @@ const StudentPage = async ({
         {/* ── TIMETABLE (unchanged from original) ── */}
         <div className="bg-white p-5 rounded-2xl shadow-sm">
           <div className="mb-4">
-            <h1 className="text-xl font-nunito font-extrabold text-gray-800">My Schedule</h1>
+            <h1 className="text-xl font-clashDisplay font-extrabold text-gray-800">My Schedule</h1>
             <p className="text-sm text-gray-400 mt-0.5">
               Class {student.class?.name ?? ""} — weekly timetable
             </p>

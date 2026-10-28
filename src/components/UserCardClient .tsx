@@ -44,7 +44,7 @@ const UserCardClient = ({ type, count }: Props) => {
       {/* Icon + count */}
       <div className="flex items-center gap-3">
         <Icon className={colors.accent} size={32} strokeWidth={2.5} />
-        <h1 className="font-nunito font-extrabold text-3xl text-gray-800">{count}</h1>
+        <h1 className="font-clashDisplay font-extrabold text-3xl text-gray-800">{count}</h1>
       </div>
 
       {/* Label + trend */}

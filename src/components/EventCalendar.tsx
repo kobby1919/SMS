@@ -55,7 +55,7 @@ const EventCalendar = () => {
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-nunito font-extrabold text-base text-gray-800">
+        <h2 className="font-clashDisplay font-extrabold text-base text-gray-800">
           {MONTHS[current.month]} {current.year}
         </h2>
         <div className="flex gap-2">

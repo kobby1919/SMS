@@ -59,14 +59,14 @@ export default function Testimonials() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="h-px w-8 rounded-full" style={{ background: "rgba(255,255,255,0.15)" }} />
             <span className="text-xs font-semibold uppercase tracking-widest"
-              style={{ color: "rgba(255,255,255,0.35)", fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.18em" }}>
+              style={{ color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-body)", letterSpacing: "0.18em" }}>
               From the schools
             </span>
             <div className="h-px w-8 rounded-full" style={{ background: "rgba(255,255,255,0.15)" }} />
           </div>
 
           <h2 className="text-4xl lg:text-5xl font-extrabold leading-tight mb-4"
-            style={{ fontFamily: "'Sora', sans-serif", color: "white" }}>
+            style={{ fontFamily: "var(--font-heading)", color: "white" }}>
             Schools love
             <br />
             <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #A855F7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
@@ -75,7 +75,7 @@ export default function Testimonials() {
           </h2>
 
           <p className="text-base text-white/50 leading-relaxed"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+            style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
             Real feedback from administrators and teachers across Ghana.
           </p>
         </motion.div>
@@ -109,7 +109,7 @@ export default function Testimonials() {
 
               {/* Quote */}
               <p className="text-sm text-white/70 leading-relaxed flex-1"
-                style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+                style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
                 {t.quote}
               </p>
 
@@ -123,10 +123,10 @@ export default function Testimonials() {
                   {t.initials}
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
+                  <div className="text-sm font-semibold text-white" style={{ fontFamily: "var(--font-body)" }}>
                     {t.name}
                   </div>
-                  <div className="text-xs text-white/40" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                  <div className="text-xs text-white/40" style={{ fontFamily: "var(--font-body)" }}>
                     {t.role} · {t.school}
                   </div>
                 </div>

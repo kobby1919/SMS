@@ -38,7 +38,7 @@ export default async function SyllabusViewPage({ params, searchParams }: { param
   const visibleIds = new Set(classes.map((cls) => cls.id));
   const topics = syllabus.topics.map((topic) => ({ ...topic, progress: topic.progress.filter((record) => visibleIds.has(record.classId)) }));
   const hasHistory = syllabus.topics.some((topic) => topic.progress.length > 0);
-  return <main className="m-3 mt-0 min-w-0 flex-1 bg-white p-4 font-nunito text-sm font-semibold text-gray-700 sm:m-4 sm:mt-0 sm:p-5">
+  return <main className="m-3 mt-0 min-w-0 flex-1 bg-white p-4 font-inter text-sm font-semibold text-gray-700 sm:m-4 sm:mt-0 sm:p-5">
     <header className="border-b border-gray-200 pb-4"><Link href="/list/syllabus" className="inline-flex min-h-11 items-center gap-2 text-xs font-black text-blue-800"><ArrowLeft size={16} />{role === "admin" ? "Curriculum" : "Teaching guides"}</Link>
       <div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0 flex-1"><h1 className="break-words text-xl font-black text-gray-950">{syllabus.subject.name}</h1><p className="mt-2 break-words text-xs leading-6">{syllabus.grade.level} · {syllabus.term.replace("TERM_", "Term ")} · {syllabus.academicYear} · {syllabus.status === "PUBLISHED" ? "Published" : "Draft"}</p></div><div className="flex flex-wrap gap-4">
         {role === "admin" && !hasHistory && <Link href={`/list/syllabus/${id}/edit`} className="inline-flex min-h-11 items-center gap-2 text-xs font-black text-blue-800"><Edit size={15} />Manage guide</Link>}

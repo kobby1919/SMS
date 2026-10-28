@@ -10,7 +10,7 @@ function ExampleFrame({ title, subtitle, color, icon, children }: {
       <div className="px-5 py-4 flex items-center gap-3 border-b border-gray-100" style={{ background: `${color}06` }}>
         <span className="w-8 h-8 flex-shrink-0 rounded-xl flex items-center justify-center" style={{ color, background: `${color}14` }}>{icon}</span>
         <div className="min-w-0">
-          <h3 className="text-sm font-bold text-gray-800" style={{ fontFamily: "'Sora', sans-serif" }}>{title}</h3>
+          <h3 className="text-sm font-bold text-gray-800" style={{ fontFamily: "var(--font-heading)" }}>{title}</h3>
           <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
         </div>
       </div>

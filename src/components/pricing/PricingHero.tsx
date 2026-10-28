@@ -34,14 +34,14 @@ export default function PricingHero() {
             <Link
               href="/"
               className="text-xs text-white/30 hover:text-white/60 transition-colors duration-200"
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
+              style={{ fontFamily: "var(--font-body)" }}
             >
               Home
             </Link>
             <span className="text-white/20 text-xs">/</span>
             <span
               className="text-xs"
-              style={{ color: "#8B7FF5", fontFamily: "'DM Sans', sans-serif" }}
+              style={{ color: "#8B7FF5", fontFamily: "var(--font-body)" }}
             >
               Pricing
             </span>
@@ -63,7 +63,7 @@ export default function PricingHero() {
               className="text-xs font-semibold uppercase tracking-widest"
               style={{
                 color: "#8B7FF5",
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "var(--font-body)",
                 letterSpacing: "0.14em",
               }}
             >
@@ -73,7 +73,7 @@ export default function PricingHero() {
 
           <h1
             className="text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4"
-            style={{ fontFamily: "'Clash Display', sans-serif" }}
+            style={{ fontFamily: "var(--font-heading)" }}
           >
             One school package.
             <span
@@ -90,7 +90,7 @@ export default function PricingHero() {
 
           <p
             className="text-sm lg:text-base text-white/65 leading-relaxed mb-8 max-w-lg"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}
+            style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}
           >
             Discuss your school&apos;s size, setup needs, and existing records with us.
             We&apos;ll provide an annual package quotation and agree the onboarding
@@ -103,7 +103,7 @@ export default function PricingHero() {
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5"
               style={{
                 background: "linear-gradient(135deg, #5B4FE9, #8B7FF5)",
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "var(--font-body)",
                 boxShadow: "0 6px 24px #8B7FF535",
               }}
             >
@@ -121,7 +121,7 @@ export default function PricingHero() {
             <a
               href="#package-details"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white/60 text-sm font-medium border border-white/12 transition-all duration-300 hover:border-white/25 hover:text-white/80"
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
+              style={{ fontFamily: "var(--font-body)" }}
             >
               What the Package Covers
             </a>
@@ -161,7 +161,7 @@ export default function PricingHero() {
               </svg>
               <span
                 className="text-[11px] font-medium"
-                style={{ color: p.color, fontFamily: "'DM Sans', sans-serif" }}
+                style={{ color: p.color, fontFamily: "var(--font-body)" }}
               >
                 {p.text}
               </span>

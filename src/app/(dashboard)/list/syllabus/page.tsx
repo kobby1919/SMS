@@ -30,7 +30,7 @@ export default async function SyllabusListPage({ searchParams }: { searchParams:
   ]);
   const periods = await prisma.syllabus.findMany({ where: { schoolId, status: "PUBLISHED", ...pairWhere }, select: { academicYear: true }, distinct: ["academicYear"], orderBy: { academicYear: "desc" } });
   const field = "mt-1 min-h-11 w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 text-sm font-semibold";
-  return <main className="m-3 mt-0 min-w-0 flex-1 bg-white p-4 font-nunito text-sm font-semibold text-gray-700 sm:m-4 sm:mt-0 sm:p-5">
+  return <main className="m-3 mt-0 min-w-0 flex-1 bg-white p-4 font-inter text-sm font-semibold text-gray-700 sm:m-4 sm:mt-0 sm:p-5">
     <header className="border-b border-gray-200 pb-4"><h1 className="text-xl font-black text-gray-950">Teaching guides</h1><p className="mt-2 font-medium leading-6 text-gray-600">Published guides for your timetable assignments.</p></header>
     <form action="/list/syllabus" className="grid grid-cols-1 gap-3 border-b border-gray-200 py-4 sm:grid-cols-2 xl:grid-cols-5">
       <label className="min-w-0 text-xs">Academic year<select className={field} name="year" defaultValue={selection.year ?? ""}><option value="">All years</option>{periods.map((period) => <option key={period.academicYear}>{period.academicYear}</option>)}</select></label>

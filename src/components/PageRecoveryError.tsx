@@ -5,7 +5,7 @@ import { RotateCcw, ArrowLeft } from "lucide-react";
 
 export default function PageRecoveryError({ reset }: { reset: () => void }) {
   return (
-    <main className="mx-auto w-full min-w-0 max-w-xl space-y-4 p-5 py-12 font-nunito text-sm text-gray-700 sm:p-8">
+    <main className="mx-auto w-full min-w-0 max-w-xl space-y-4 p-5 py-12 font-inter text-sm text-gray-700 sm:p-8">
       <h1 className="break-words text-xl font-black text-gray-950">We could not load this page</h1>
       <p className="leading-relaxed">Try again. If the problem continues, return to your workspace and reopen the record.</p>
       <div className="flex flex-wrap gap-3">

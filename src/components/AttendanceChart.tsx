@@ -35,7 +35,7 @@ const AttendanceChart = ({ data }: { data: DayData[] }) => {
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-1">
-        <h1 className="font-nunito font-extrabold text-[15px] text-gray-800">Attendance</h1>
+        <h1 className="font-clashDisplay font-extrabold text-[15px] text-gray-800">Attendance</h1>
         <div className="flex items-center gap-4 text-[11px] text-gray-400">
           <span className="flex items-center gap-1.5">
             <span className="inline-block w-2 h-2 rounded-sm bg-jaySky" />Present
@@ -56,7 +56,7 @@ const AttendanceChart = ({ data }: { data: DayData[] }) => {
         ].map(({ label, value }) => (
           <div key={label} className="bg-[#F7F8FA] rounded-xl p-2.5">
             <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-0.5">{label}</p>
-            <p className="font-nunito font-extrabold text-lg text-gray-800 leading-tight">{value}</p>
+            <p className="font-inter font-extrabold text-lg text-gray-800 leading-tight">{value}</p>
           </div>
         ))}
       </div>

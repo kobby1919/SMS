@@ -96,7 +96,7 @@ function StepRow({ step, index, isLast }: { step: Step; index: number; isLast: b
       }}>
         {/* Giant watermark number */}
         <div style={{
-          fontFamily: "'Sora', sans-serif",
+          fontFamily: "var(--font-body)",
           fontSize: "clamp(5rem, 9vw, 7.5rem)",
           fontWeight: 900,
           lineHeight: 1,
@@ -159,7 +159,7 @@ function StepRow({ step, index, isLast }: { step: Step; index: number; isLast: b
       }}>
         {/* Step label */}
         <div style={{
-          fontFamily: "'DM Sans', sans-serif",
+          fontFamily: "var(--font-body)",
           fontSize: 10,
           fontWeight: 700,
           letterSpacing: "0.22em",
@@ -173,12 +173,12 @@ function StepRow({ step, index, isLast }: { step: Step; index: number; isLast: b
 
         {/* Title */}
         <h3 style={{
-          fontFamily: "'Clash Display', sans-serif",
+          fontFamily: "var(--font-heading)",
           fontSize: "clamp(1.5rem, 3vw, 2.1rem)",
-          fontWeight: 800,
+          fontWeight: 700,
           color: "#F0F2FF",
           lineHeight: 1.12,
-          letterSpacing: "-0.025em",
+          letterSpacing: 0,
           marginBottom: 14,
         }}>
           {step.title}
@@ -186,7 +186,7 @@ function StepRow({ step, index, isLast }: { step: Step; index: number; isLast: b
 
         {/* Body */}
         <p style={{
-          fontFamily: "'DM Sans', sans-serif",
+          fontFamily: "var(--font-body)",
           fontSize: "clamp(0.9rem, 1.3vw, 1rem)",
           fontWeight: 300,
           color: "rgba(220,224,255,0.52)",
@@ -208,7 +208,7 @@ function StepRow({ step, index, isLast }: { step: Step; index: number; isLast: b
               borderRadius: 999,
               background: `${step.color}0e`,
               border: `1px solid ${step.color}28`,
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "var(--font-body)",
               fontSize: 12,
               fontWeight: 500,
               color: step.color,
@@ -285,7 +285,7 @@ export default function HowItWorks() {
           }}>
             <div style={{ height: 1, width: 32, background: `${B.blueLight}50`, borderRadius: 1 }} />
             <span style={{
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "var(--font-body)",
               fontSize: 11,
               fontWeight: 600,
               letterSpacing: "0.2em",
@@ -306,11 +306,11 @@ export default function HowItWorks() {
           className="hiw-header-grid"
           >
             <h2 style={{
-              fontFamily: "'Clash Display', sans-serif",
-              fontWeight: 800,
+              fontFamily: "var(--font-heading)",
+              fontWeight: 700,
               fontSize: "clamp(2.4rem, 4.5vw, 3.8rem)",
               lineHeight: 1.05,
-              letterSpacing: "-0.03em",
+              letterSpacing: 0,
               color: "#fff",
               margin: 0,
             }}>
@@ -328,7 +328,7 @@ export default function HowItWorks() {
 
             <div>
               <p style={{
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "var(--font-body)",
                 fontSize: "clamp(0.95rem, 1.3vw, 1.05rem)",
                 fontWeight: 300,
                 color: "rgba(200,204,255,0.5)",
@@ -384,7 +384,7 @@ export default function HowItWorks() {
         >
           <div>
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: "var(--font-body)",
               fontSize: "clamp(1rem, 1.6vw, 1.2rem)",
               fontWeight: 700,
               color: "#F0F2FF",
@@ -393,7 +393,7 @@ export default function HowItWorks() {
               Let&apos;s plan your school&apos;s start.
             </div>
             <div style={{
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "var(--font-body)",
               fontSize: 13,
               color: "rgba(200,204,255,0.4)",
             }}>
@@ -412,7 +412,7 @@ export default function HowItWorks() {
                 borderRadius: 12,
                 background: `linear-gradient(135deg, ${B.blue}, ${B.blueLight})`,
                 color: "#fff",
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "var(--font-body)",
                 fontSize: 14,
                 fontWeight: 600,
                 textDecoration: "none",
@@ -444,7 +444,7 @@ export default function HowItWorks() {
                 borderRadius: 12,
                 background: "rgba(255,255,255,0.06)",
                 color: "rgba(220,224,255,0.7)",
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "var(--font-body)",
                 fontSize: 14,
                 fontWeight: 500,
                 textDecoration: "none",

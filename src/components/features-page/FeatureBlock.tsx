@@ -58,14 +58,14 @@ export default function FeatureBlock({
               style={{ background: `${color}12`, border: `1px solid ${color}28` }}>
               <div className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
               <span className="text-xs font-semibold uppercase tracking-widest"
-                style={{ color, fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.14em" }}>
+                style={{ color, fontFamily: "var(--font-body)", letterSpacing: "0.14em" }}>
                 {label}
               </span>
             </div>
 
             {/* Heading */}
             <h2 className="text-3xl min-[360px]:text-4xl xl:text-5xl font-extrabold text-gray-900 leading-tight mb-3"
-              style={{ fontFamily: "'Clash Display', sans-serif" }}>
+              style={{ fontFamily: "var(--font-heading)" }}>
               {heading}
               <br />
               <span style={{ color }}>{headingAccent}</span>
@@ -73,7 +73,7 @@ export default function FeatureBlock({
 
             {/* Description */}
             <p className="text-base text-gray-500 leading-relaxed mb-8"
-              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
+              style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}>
               {description}
             </p>
 
@@ -95,7 +95,7 @@ export default function FeatureBlock({
                     </svg>
                   </div>
                   <span className="text-sm text-gray-600 leading-relaxed"
-                    style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                    style={{ fontFamily: "var(--font-body)" }}>
                     {b.text}
                   </span>
                 </motion.li>
@@ -105,7 +105,7 @@ export default function FeatureBlock({
             {/* Learn more link */}
             <a href="/request-access"
               className="inline-flex items-center gap-2 text-sm font-semibold transition-all duration-200 hover:gap-3"
-              style={{ color, fontFamily: "'DM Sans', sans-serif" }}>
+              style={{ color, fontFamily: "var(--font-body)" }}>
               Request School Access
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
                 <path d="M5 12H19M13 6L19 12L13 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

@@ -19,13 +19,13 @@ const CountChart = ({ boys, girls }: Props) => {
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-5">
-        <h1 className="font-nunito font-extrabold text-[15px] text-gray-800">Students</h1>
+        <h1 className="font-clashDisplay font-extrabold text-[15px] text-gray-800">Students</h1>
         <Image src="/moreDark.png" alt="" width={18} height={18} />
       </div>
 
       {/* Total */}
       <div className="text-center mb-5">
-        <p className="font-nunito font-extrabold text-4xl text-gray-800 leading-none">
+        <p className="font-inter font-extrabold text-4xl text-gray-800 leading-none">
           {total.toLocaleString()}
         </p>
         <p className="text-[11px] text-gray-400 uppercase tracking-widest mt-1">Enrolled</p>
@@ -44,7 +44,7 @@ const CountChart = ({ boys, girls }: Props) => {
             <div className="w-2 h-2 rounded-full bg-jaySky" />
             <span className="text-[11px] text-gray-400">Boys</span>
           </div>
-          <p className="font-nunito font-extrabold text-xl text-gray-800 leading-tight">
+          <p className="font-inter font-extrabold text-xl text-gray-800 leading-tight">
             {boys.toLocaleString()}
           </p>
           <p className="text-[11px] text-gray-400">{boysPct}% of total</p>
@@ -54,7 +54,7 @@ const CountChart = ({ boys, girls }: Props) => {
             <div className="w-2 h-2 rounded-full bg-jayYellow" />
             <span className="text-[11px] text-gray-400">Girls</span>
           </div>
-          <p className="font-nunito font-extrabold text-xl text-gray-800 leading-tight">
+          <p className="font-inter font-extrabold text-xl text-gray-800 leading-tight">
             {girls.toLocaleString()}
           </p>
           <p className="text-[11px] text-gray-400">{girlsPct}% of total</p>
