@@ -16,7 +16,6 @@ export default function AboutHero() {
 {/* Font Imports: Added Fontshare's CDN for Clash Display */}
 <style>{`
   @import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 `}</style>
       <div className="relative max-w-7xl mx-auto px-6 lg:px-10">
         <motion.div

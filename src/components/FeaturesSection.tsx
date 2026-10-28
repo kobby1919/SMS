@@ -22,14 +22,13 @@ export default function FeaturesSection() {
   return (
     <section id="features" className="ej-feat" aria-labelledby="ej-features-heading">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
         .ej-feat, .ej-feat * { box-sizing: border-box; letter-spacing: 0; }
         .ej-feat { scroll-margin-top: 88px; background: #f8f7ff; padding: 80px 0 64px; color: #111827; font-family: var(--font-body); }
         .ej-feat-inner { max-width: 1280px; padding: 0 40px; margin: 0 auto; }
         .ej-feat-header { max-width: 680px; margin-bottom: 36px; }
         .ej-feat-eyebrow { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #626478; }
         .ej-feat-eyebrow::before { content: ''; width: 32px; height: 1px; background: #b5b5c9; }
-        .ej-feat h2 { font-family: 'Clash Display', 'Sora', sans-serif; font-size: 48px; font-weight: 800; line-height: 1.16; margin: 0 0 18px; }
+        .ej-feat h2 { font-family: var(--font-heading); font-size: 48px; font-weight: 800; line-height: 1.16; margin: 0 0 18px; }
         .ej-feat h2 span { color: #7960d9; }
         .ej-feat-intro { font-size: 17px; line-height: 1.8; color: #565b6d; margin: 0; }
         .ej-feat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid #dcdce8; border-left: 1px solid #dcdce8; }
@@ -38,7 +37,7 @@ export default function FeaturesSection() {
         .ej-feat-card-top { display: flex; align-items: center; gap: 14px; min-height: 42px; margin-bottom: 22px; }
         .ej-feat-icon { width: 42px; height: 42px; flex: 0 0 42px; display: grid; place-items: center; border: 1px solid currentColor; background: #fff; }
         .ej-feat-label { font-size: 11px; font-weight: 700; text-transform: uppercase; line-height: 1.5; }
-        .ej-feat h3 { font-family: var(--font-body); font-size: 18px; font-weight: 700; line-height: 1.5; margin: 0 0 12px; }
+        .ej-feat h3 { font-family: var(--font-heading); font-size: 18px; font-weight: 700; line-height: 1.5; margin: 0 0 12px; }
         .ej-feat-description { margin: 0 0 24px; font-size: 15px; line-height: 1.75; color: #535969; }
         .ej-feat-detail { margin: auto 0 0; padding-top: 14px; border-top: 1px solid #e7e7ef; font-size: 12px; line-height: 1.6; color: #646879; }
         .ej-feat-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px 0 36px; }
@@ -48,11 +47,11 @@ export default function FeaturesSection() {
         .ej-feat a:focus-visible { outline: 3px solid #6655c4; outline-offset: 5px; }
         .ej-feat-start { border-top: 1px solid #dcdce8; padding-top: 32px; }
         .ej-feat-start-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
-        .ej-feat-start h3 { font-family: 'Clash Display', 'Sora', sans-serif; font-size: 26px; margin: 0; }
+        .ej-feat-start h3 { font-family: var(--font-heading); font-size: 26px; margin: 0; }
         .ej-feat-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; list-style: none; margin: 0; padding: 0; }
         .ej-feat-step { min-width: 0; border-top: 2px solid #d8d3ee; padding-top: 16px; }
         .ej-feat-step-number { color: #7960d9; font-family: var(--font-body); font-size: 12px; font-weight: 700; }
-        .ej-feat-step h4 { margin: 12px 0 8px; font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+        .ej-feat-step h4 { margin: 12px 0 8px; font-family: var(--font-heading); font-size: 15px; line-height: 1.5; }
         .ej-feat-step p { margin: 0; font-size: 14px; line-height: 1.75; color: #626778; }
         @media (max-width: 1000px) { .ej-feat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ej-feat-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         @media (max-width: 600px) {

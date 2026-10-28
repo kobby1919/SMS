@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import ts from "typescript";
+import postcss from "postcss";
 
 const list = (args) => execFileSync("git", args, { encoding: "utf8" }).split("\0").filter(Boolean);
 const dirty = new Set(list(["diff", "--name-only", "-z"]));
@@ -14,17 +15,28 @@ for (const name of files) {
   const replace = (node, value) => edits.set(`${node.getStart(file)}:${node.end}`, { start: node.getStart(file), end: node.end, value });
   function heading(node) {
     for (let current = node.parent; current; current = current.parent) {
-      if (ts.isJsxOpeningElement(current) || ts.isJsxSelfClosingElement(current)) return /^h[1-6]$/.test(current.tagName.getText(file));
+      if (ts.isJsxOpeningElement(current) || ts.isJsxSelfClosingElement(current)) return /(?:^|\.)h[1-6]$/.test(current.tagName.getText(file));
     }
     return false;
   }
   function visit(node) {
+    if (ts.isNoSubstitutionTemplateLiteral(node) && /font-family:|@import.*fonts.googleapis/.test(node.text)) {
+      const raw = node.getText(file).slice(1, -1);
+      const css = postcss.parse(raw);
+      css.walkAtRules("import", (rule) => { if (rule.params.includes("fonts.googleapis.com")) rule.remove(); });
+      css.walkDecls("font-family", (declaration) => {
+        const selector = declaration.parent.type === "rule" ? declaration.parent.selector : "";
+        const isHeading = /(?:^|[\s>,])h[1-6](?:$|[\s:.,#>])/.test(selector);
+        if (isHeading) declaration.value = "var(--font-heading)";
+      });
+      if (css.toString() !== raw) replace(node, "`" + css.toString() + "`");
+    }
     if (ts.isStringLiteral(node) && node.text.includes("font-nunito")) {
       replace(node, JSON.stringify(node.text.replaceAll("font-nunito", heading(node) ? "font-clashDisplay" : "font-inter")));
     }
     if (ts.isPropertyAssignment(node) && node.name.getText(file) === "fontFamily" && ts.isStringLiteral(node.initializer)) {
       const value = node.initializer.text;
-      if (/DM Sans|Sora|Nunito|Inter|Clash Display/.test(value)) {
+      if (/DM Sans|Sora|Nunito|Inter|Clash Display/.test(value) || (heading(node) && value === "var(--font-body)")) {
         replace(node.initializer, JSON.stringify(heading(node) || /Clash Display/.test(value) ? "var(--font-heading)" : "var(--font-body)"));
       }
     }

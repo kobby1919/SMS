@@ -34,3 +34,14 @@ test("global typography separates display headings from readable body and data t
   assert.doesNotMatch(css, /fonts.googleapis.com|font-family: "Nunito"/);
   assert.match(readFileSync("src/app/layout.tsx", "utf8"), /flex-col font-inter/);
 });
+
+test("scoped marketing headings and component font imports follow the shared system", () => {
+  const features = readFileSync("src/components/FeaturesSection.tsx", "utf8");
+  for (const selector of [".ej-feat h3", ".ej-feat-step h4"]) {
+    const rule = features.slice(features.indexOf(selector)).split("}")[0];
+    assert.match(rule, /font-family: var\(--font-heading\)/);
+  }
+  for (const file of ["FeaturesSection", "SchoolAccessRequest", "about-page/AboutHero", "features-page/FeaturesHero", "howItWorks/HowItWorksHero", "pricing/PricingHero"]) {
+    assert.doesNotMatch(readFileSync(`src/components/${file}.tsx`, "utf8"), /@import.*fonts.googleapis.com/);
+  }
+});

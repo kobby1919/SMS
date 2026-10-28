@@ -192,8 +192,6 @@ export default function SchoolAccessRequest() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
-
         @keyframes wl-fadein { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
         @keyframes wl-linegrow { from{transform:scaleX(0);transform-origin:left} to{transform:scaleX(1);transform-origin:left} }
 

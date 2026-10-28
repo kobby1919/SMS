@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY} appearance={{ variables: { fontFamily: "Inter, Arial, sans-serif" }, elements: { headerTitle: { fontFamily: '"Clash Display", Inter, sans-serif', fontWeight: 700, letterSpacing: "0" } } }}>
+    <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY} appearance={{ variables: { fontFamily: "var(--font-body)" }, elements: { headerTitle: { fontFamily: "var(--font-heading)", fontWeight: 700, letterSpacing: "0" } } }}>
       <html
         lang="en"
         className="h-full antialiased"
