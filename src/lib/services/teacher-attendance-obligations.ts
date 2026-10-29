@@ -9,6 +9,7 @@ import { getTeacherAccountabilitySettings } from "@/src/lib/services/teacher-acc
 import { getActiveTimetablePublication, getLiveTimetableLessonBySourceId, listLiveTimetableLessons } from "@/src/lib/services/timetable";
 import { saveTeacherObligation } from "@/src/lib/services/teacher-obligation-store";
 import { getSchoolOperatingWindowStatus } from "@/src/lib/services/school-operating-hours";
+import { attendanceWindowForLesson } from "@/src/lib/attendance-window";
 
 const DAY_BY_INDEX: Record<number, Day | null> = {
   0: null,
@@ -33,14 +34,7 @@ type AttendanceObligationSnapshot = {
   attendanceCount: number;
 };
 
-type AttendanceWindowEvaluation = {
-  allowed: boolean;
-  status: "UPCOMING" | "OPEN" | "LATE" | "MISSED";
-  openAt: Date;
-  deadlineAt: Date;
-  missedAt: Date;
-  message?: string;
-};
+type AttendanceWindowEvaluation = ReturnType<typeof attendanceWindowForLesson>;
 
 function dateKey(date: Date) {
   return date.toISOString().slice(0, 10);
@@ -79,47 +73,14 @@ export async function evaluateAttendanceWindow({
   date: Date;
   now?: Date;
 }): Promise<AttendanceWindowEvaluation> {
-  const settings = await getTeacherAccountabilitySettings(schoolId);
-  const lesson = await getLiveTimetableLessonBySourceId(schoolId, lessonId);
+  const [settings, lesson, publication] = await Promise.all([
+    getTeacherAccountabilitySettings(schoolId),
+    getLiveTimetableLessonBySourceId(schoolId, lessonId),
+    getActiveTimetablePublication(schoolId),
+  ]);
   if (!lesson) throw new Error("This lesson is not part of the published timetable.");
-
-  const startAt = combineDateWithLessonTime(date, lesson.startTime);
-  const endAt = combineDateWithLessonTime(date, lesson.endTime);
-  const openAt = settings.allowEarlyAttendanceMarking
-    ? addMinutes(startAt, -settings.attendanceOpenMinutesBeforeLesson)
-    : startAt;
-  const deadlineAt = addMinutes(endAt, settings.attendanceGraceMinutesAfterLesson);
-  const missedAt = addMinutes(endAt, settings.attendanceEscalateMinutesAfterLesson);
-
-  if (now < openAt) {
-    return {
-      allowed: false,
-      status: "UPCOMING",
-      openAt,
-      deadlineAt,
-      missedAt,
-      message: `Attendance opens at ${openAt.toLocaleTimeString("en-GH", { hour: "2-digit", minute: "2-digit" })}.`,
-    };
-  }
-
-  if (now > missedAt) {
-    return {
-      allowed: false,
-      status: "MISSED",
-      openAt,
-      deadlineAt,
-      missedAt,
-      message: "This attendance window has closed. Ask an admin to correct or approve late entry.",
-    };
-  }
-
-  return {
-    allowed: true,
-    status: now > deadlineAt ? "LATE" : "OPEN",
-    openAt,
-    deadlineAt,
-    missedAt,
-  };
+  if (!publication) throw new Error("The timetable is no longer published. Refresh before marking attendance.");
+  return attendanceWindowForLesson({ date, lesson, settings, now, publishedAt: publication.publishedAt });
 }
 
 function statusForAttendanceObligation({

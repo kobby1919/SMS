@@ -25,6 +25,8 @@ import {
   Users,
 } from "lucide-react";
 import type { TeacherDutyRow } from "@/src/lib/queries/teacher-self-accountability";
+import { attendanceWindowForLesson } from "@/src/lib/attendance-window";
+import { getTeacherAccountabilitySettings } from "@/src/lib/services/teacher-accountability-settings";
 
 const dayNames = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"] as const;
 const schoolDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"] as const;
@@ -132,7 +134,7 @@ const TeacherPage = async () => {
     now: today,
   });
 
-  const [teacher, liveLessons, activeTimetablePublication, activePeriod, accountability, teacherScope] = await Promise.all([
+  const [teacher, liveLessons, activeTimetablePublication, activePeriod, accountability, teacherScope, accountabilitySettings] = await Promise.all([
     prisma.teacher.findFirst({
       where: { id: userId, schoolId, status: "ACTIVE" },
       include: { classes: { select: { id: true, name: true } } },
@@ -142,6 +144,7 @@ const TeacherPage = async () => {
     getActiveAcademicPeriod(schoolId),
     getTeacherSelfAccountabilityOverview({ schoolId, teacherId: userId }),
     getTeacherScope({ schoolId, teacherId: userId }),
+    getTeacherAccountabilitySettings(schoolId),
   ]);
   const timetablePublished = Boolean(activeTimetablePublication);
   const liveClassIds = [...new Set(liveLessons.map((lesson) => lesson.classId))];
@@ -166,6 +169,9 @@ const TeacherPage = async () => {
   }));
 
   const todayLessons = lessons.filter((lesson) => lesson.day === todayDay);
+  const attendanceWindows = new Map(todayLessons.map((lesson) => [lesson.id, attendanceWindowForLesson({
+    date: today, lesson, settings: accountabilitySettings, now: today, publishedAt: activeTimetablePublication?.publishedAt,
+  })]));
   const todayLessonIds = todayLessons.map((lesson) => lesson.id);
   const liveLessonIds = liveLessons.map((lesson) => lesson.id);
 
@@ -375,9 +381,8 @@ const TeacherPage = async () => {
     ? needsManagementReview(firstActiveDuty)
       ? obligationReviewHref(firstActiveDuty.id)
       : firstActiveDuty.actionHref
-    : todayLessons[0]
-      ? `/list/attendance/take?lessonId=${todayLessons[0].id}`
-      : "/teacher/accountability";
+    : "/teacher/accountability";
+  const weeklyAssessedDuties = accountability.totals.completed + accountability.totals.completedLate + accountability.totals.missed + accountability.totals.escalated;
   const todaySummaryStats = [
     { label: "Lessons", value: todayLessons.length },
     {
@@ -505,8 +510,10 @@ const TeacherPage = async () => {
               <p className="mt-1 max-w-2xl text-sm font-medium text-gray-500">
                 {accountabilityAttentionCount > 0
                   ? `${accountabilityAttentionCount} thing${accountabilityAttentionCount === 1 ? "" : "s"} need action.`
-                  : `All ${completedTodayDuties} required dut${completedTodayDuties === 1 ? "y" : "ies"} are clear.`}
-                {" "}Reliability this week is {accountability.totals.reliabilityScore}%.
+                  : accountability.todayDuties.some((duty) => duty.status !== "CANCELLED")
+                    ? `All ${completedTodayDuties} required dut${completedTodayDuties === 1 ? "y" : "ies"} are clear.`
+                    : "No required duties are recorded for today."}
+                {weeklyAssessedDuties > 0 ? ` Reliability this week is ${accountability.totals.reliabilityScore}%.` : " Reliability is not rated yet this week."}
               </p>
             </div>
 
@@ -593,11 +600,16 @@ const TeacherPage = async () => {
               {lessonWork.map(({ lesson, expected, attendance, attendanceState }) => {
                 const attendanceDuty = attendanceDutyByLessonId.get(lesson.id);
                 const attendanceEscalated = needsManagementReview(attendanceDuty);
+                const window = attendanceWindows.get(lesson.id)!;
                 const displayAttendanceState = attendanceEscalated
                   ? "Escalated"
+                  : window.status === "NOT_REQUIRED"
+                    ? "Not required"
                   : attendanceDuty?.status === "MISSED"
                     ? "Missed"
-                    : attendanceState;
+                    : !window.allowed && attendance.total < expected
+                      ? window.status === "UPCOMING" ? "Upcoming" : "Window closed"
+                      : attendanceState;
 
                 return (
                   <div
@@ -621,6 +633,8 @@ const TeacherPage = async () => {
                         <span className={`inline-flex items-center justify-center rounded-xl px-3 py-2 text-xs font-black ${
                           displayAttendanceState === "Completed"
                             ? "bg-emerald-50 text-emerald-700"
+                            : displayAttendanceState === "Not required" || displayAttendanceState === "Upcoming"
+                              ? "bg-gray-100 text-gray-600"
                             : displayAttendanceState === "Partial"
                               ? "bg-amber-50 text-amber-700"
                               : "bg-rose-50 text-rose-700"
@@ -628,7 +642,7 @@ const TeacherPage = async () => {
                           <CalendarCheck2 size={14} className="mr-1.5" />
                           {displayAttendanceState}
                         </span>
-                        {!attendanceEscalated ? (
+                        {!attendanceEscalated && window.allowed && attendanceDuty?.status !== "CANCELLED" ? (
                           <Link
                             href={`/list/attendance/take?lessonId=${lesson.id}`}
                             className="inline-flex items-center justify-center gap-2 rounded-xl bg-edujay-primary px-3 py-2 text-xs font-black text-white transition hover:bg-edujay-primaryDark"
@@ -655,6 +669,9 @@ const TeacherPage = async () => {
                       <p className="mt-2 rounded-xl bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700">
                         This attendance duty has been escalated. Normal marking is closed from the dashboard.
                       </p>
+                    ) : null}
+                    {!attendanceEscalated && !window.allowed ? (
+                      <p className="mt-2 rounded-xl bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-600">{window.message}</p>
                     ) : null}
                   </div>
                 );

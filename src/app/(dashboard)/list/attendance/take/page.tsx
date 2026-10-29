@@ -4,6 +4,8 @@ import AttendanceTaker from "@/src/components/AttendanceTaker";
 import { AttendanceStatus, Day } from "@/src/generated/prisma";
 import { syncAttendanceObligationsForDate } from "@/src/lib/services/teacher-attendance-obligations";
 import { getActiveTimetablePublication, listLiveTimetableLessons } from "@/src/lib/services/timetable";
+import { attendanceWindowForLesson } from "@/src/lib/attendance-window";
+import { getTeacherAccountabilitySettings } from "@/src/lib/services/teacher-accountability-settings";
 
 
 const TakeAttendancePage = async ({
@@ -12,6 +14,8 @@ const TakeAttendancePage = async ({
   searchParams: Promise<{ lessonId?: string; date?: string }>;
 }) => {
   const { userId, role, schoolId } = await requirePageSession(["teacher"]);
+  const now = new Date();
+  const accountabilitySettings = await getTeacherAccountabilitySettings(schoolId);
   const params = await searchParams;
 
   const todayStr = new Date().toISOString().split("T")[0];
@@ -141,6 +145,10 @@ const TakeAttendancePage = async ({
       ) : (
         <AttendanceTaker
           teacherLessons={teacherLessons.map((l) => ({
+            markingWindow: (() => {
+              const window = attendanceWindowForLesson({ date: new Date(dateStr), lesson: l, settings: accountabilitySettings, now, publishedAt: activeTimetablePublication.publishedAt });
+              return { allowed: window.allowed, status: window.status, message: window.message, openAt: window.openAt.toISOString(), missedAt: window.missedAt.toISOString() };
+            })(),
             accountability: obligationByLessonId.get(l.id)
               ? {
                   status: obligationByLessonId.get(l.id)!.status,

@@ -7,7 +7,7 @@ const nodeRequire = createRequire(import.meta.url);
 function load(path, mocks = {}) {
   const loaded = { exports: {} };
   const code = ts.transpileModule(readFileSync(path, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true } }).outputText;
-  new Function("require", "module", "exports", code)((id) => Object.hasOwn(mocks, id) ? mocks[id] : id === "server-only" ? {} : id === "@/src/lib/dashboard-read-budget" ? load("src/lib/dashboard-read-budget.ts") : nodeRequire(id), loaded, loaded.exports);
+  new Function("require", "module", "exports", code)((id) => Object.hasOwn(mocks, id) ? mocks[id] : id === "server-only" ? {} : id === "@/src/lib/dashboard-read-budget" ? load("src/lib/dashboard-read-budget.ts") : id === "@/src/lib/attendance-window" ? load("src/lib/attendance-window.ts") : nodeRequire(id), loaded, loaded.exports);
   return loaded.exports;
 }
 const core = load("src/lib/attendance-review.ts");

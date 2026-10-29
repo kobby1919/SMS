@@ -22,6 +22,13 @@ type TeacherLesson = {
   startTime:   string;
   endTime:     string;
   day:         string;
+  markingWindow?: {
+    allowed: boolean;
+    status: "NOT_REQUIRED" | "UPCOMING" | "OPEN" | "LATE" | "MISSED";
+    message?: string;
+    openAt: string;
+    missedAt: string;
+  };
   accountability?: {
     status: "PENDING" | "COMPLETED" | "COMPLETED_LATE" | "MISSED" | "ESCALATED" | "CANCELLED";
     openAt: string;
@@ -116,6 +123,7 @@ const formatTime = (iso: string) => {
 };
 
 const accountabilityLabel = (lesson: TeacherLesson) => {
+  if (lesson.markingWindow?.status === "NOT_REQUIRED") return "Not required";
   const status = lesson.accountability?.status;
   if (status === "COMPLETED") return "Submitted";
   if (status === "COMPLETED_LATE") return "Submitted late";
@@ -133,12 +141,15 @@ const accountabilityClassName = (status?: AttendanceAccountabilityStatus) => {
   return "bg-sky-50 text-sky-700";
 };
 
-type LessonUiGroup = "open" | "upcoming" | "submitted" | "issue";
+type LessonUiGroup = "open" | "upcoming" | "submitted" | "issue" | "notRequired";
 
 function getLessonUiGroup(lesson: TeacherLesson, now = new Date()): LessonUiGroup {
   const status = lesson.accountability?.status;
   if (status === "COMPLETED" || status === "COMPLETED_LATE") return "submitted";
   if (status === "MISSED" || status === "ESCALATED" || status === "CANCELLED") return "issue";
+  if (lesson.markingWindow?.status === "NOT_REQUIRED") return "notRequired";
+  if (lesson.markingWindow && now > new Date(lesson.markingWindow.missedAt)) return "issue";
+  if (lesson.markingWindow && now < new Date(lesson.markingWindow.openAt)) return "upcoming";
   if (lesson.accountability?.openAt && now < new Date(lesson.accountability.openAt)) {
     return "upcoming";
   }
@@ -161,6 +172,10 @@ const lessonGroupMeta: Record<LessonUiGroup, { title: string; empty: string }> =
   issue: {
     title: "Late / Missed",
     empty: "No late or missed attendance.",
+  },
+  notRequired: {
+    title: "Not required",
+    empty: "No lessons outside the published timetable's effective dates.",
   },
 };
 
@@ -226,7 +241,7 @@ const AttendanceTaker = ({
   )?.accountability;
   const selectedTeacherLesson = teacherLessons.find((lesson) => lesson.id === selectedLessonId);
   const selectedLessonGroup = selectedTeacherLesson ? getLessonUiGroup(selectedTeacherLesson) : null;
-  const selectedLessonWindowClosed = selectedLessonGroup === "issue";
+  const selectedLessonWindowClosed = selectedLessonGroup === "issue" || selectedLessonGroup === "notRequired";
   const selectedLessonNotOpenYet = selectedLessonGroup === "upcoming";
   const selectedLessonSubmitted = selectedLessonGroup === "submitted";
   const initiallyLocked = hasStoredAttendance || selectedLessonSubmitted;
@@ -243,6 +258,7 @@ const AttendanceTaker = ({
       upcoming: [] as TeacherLesson[],
       submitted: [] as TeacherLesson[],
       issue: [] as TeacherLesson[],
+      notRequired: [] as TeacherLesson[],
     },
   );
 
@@ -460,7 +476,7 @@ const AttendanceTaker = ({
               </div>
             ) : (
               <div className="divide-y divide-gray-50">
-                {(["open", "upcoming", "submitted", "issue"] as const).map((group) => {
+                {(["open", "upcoming", "submitted", "issue", "notRequired"] as const).map((group) => {
                   const lessons = lessonGroups[group];
                   if (lessons.length === 0) return null;
 
@@ -485,6 +501,8 @@ const AttendanceTaker = ({
                               ? `Opens at ${lesson.accountability?.openAt ? formatTime(lesson.accountability.openAt) : formatTime(lesson.startTime)}`
                               : lessonGroup === "submitted"
                                 ? "Already submitted"
+                                : lessonGroup === "notRequired"
+                                  ? "Timetable published after this lesson"
                                 : lessonGroup === "issue"
                                   ? "Admin correction needed"
                                   : null;
@@ -511,7 +529,7 @@ const AttendanceTaker = ({
                                 </p>
                                 <div className="mt-2 flex flex-wrap items-center gap-2">
                                   <span
-                                    className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${accountabilityClassName(lesson.accountability?.status)}`}
+                                    className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${accountabilityClassName(lesson.markingWindow?.status === "NOT_REQUIRED" ? "CANCELLED" : lesson.accountability?.status)}`}
                                   >
                                     {accountabilityLabel(lesson)}
                                   </span>
@@ -547,6 +565,11 @@ const AttendanceTaker = ({
               </div>
               <p className="text-gray-500 font-bold text-base">Select a lesson</p>
               <p className="text-gray-400 text-sm mt-1">to start taking attendance</p>
+            </div>
+          ) : selectedLessonGroup === "notRequired" ? (
+            <div className="rounded-2xl border border-gray-100 bg-white p-5" role="status">
+              <h2 className="text-base font-black text-gray-800">Attendance not required</h2>
+              <p className="mt-2 text-sm leading-relaxed text-gray-500">{selectedTeacherLesson?.markingWindow?.message}</p>
             </div>
           ) : (
             <div className="flex flex-col gap-4">
@@ -747,7 +770,7 @@ const AttendanceTaker = ({
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <p className="text-xs text-gray-400 font-medium">
                   {selectedLessonWindowClosed
-                    ? "Attendance window closed. Ask an admin to approve correction."
+                    ? selectedTeacherLesson?.markingWindow?.message ?? "Attendance window closed. Ask an admin to approve correction."
                     : selectedLessonNotOpenYet
                       ? `Attendance opens at ${selectedLessonAccountability?.openAt ? formatTime(selectedLessonAccountability.openAt) : "the scheduled time"}.`
                       : saved
