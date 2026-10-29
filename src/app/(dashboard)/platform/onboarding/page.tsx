@@ -1,4 +1,5 @@
 import OnboardingRequestsClient from "@/src/components/OnboardingRequestsClient";
+import Link from "next/link";
 import RoleIdentityReadinessPanel from "@/src/components/RoleIdentityReadinessPanel";
 import RestoreBranchConnectionCheck from "@/src/components/RestoreBranchConnectionCheck";
 import { requirePageSession } from "@/src/lib/authz";
@@ -30,6 +31,7 @@ export default async function PlatformOnboardingPage() {
       <RoleIdentityReadinessPanel readiness={identityReadiness} />
 
       <RestoreBranchConnectionCheck />
+      <Link href="/platform/invite-emails" className="inline-flex min-h-11 items-center rounded-md border border-gray-200 px-4 text-sm font-semibold text-gray-700">Invitation email activity</Link>
 
       <OnboardingRequestsClient entries={entries} />
     </main>

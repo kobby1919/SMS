@@ -2,6 +2,7 @@ import { createHmac, timingSafeEqual } from "crypto";
 import prisma from "@/src/lib/prisma";
 import { markDelivered, markFailed, markSent } from "@/src/lib/services/app-notifications";
 import type { Prisma } from "@/src/generated/prisma";
+import { handleInviteEmailWebhook } from "@/src/lib/services/invite-email-tracking";
 
 type ResendWebhookStatus = "SENT" | "DELIVERED" | "FAILED" | "IGNORED";
 
@@ -184,6 +185,8 @@ export async function handleResendEmailWebhook(payload: ResendWebhookPayload): P
   });
 
   if (!delivery) {
+    const invitation = await handleInviteEmailWebhook(payload);
+    if (invitation) return invitation;
     return {
       ok: false,
       status: "IGNORED",

@@ -361,7 +361,7 @@ export async function createParentInvite(
   });
 
   await prisma.$transaction(async (tx) => {
-    if (emailResult.ok) {
+    if (emailResult.ok && emailResult.provider === "resend") {
       await tx.parentInvite.update({
         where: { id: invite.id },
         data: { lastSentAt: new Date() },
@@ -492,7 +492,7 @@ export async function resendParentInvite(
   });
 
   await prisma.$transaction(async (tx) => {
-    if (email.ok) {
+    if (email.ok && email.provider === "resend") {
       await tx.parentInvite.update({
         where: { id: invite.id },
         data: { lastSentAt: new Date() },

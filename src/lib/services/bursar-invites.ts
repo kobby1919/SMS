@@ -290,7 +290,7 @@ export async function createBursarInvite(
   });
 
   await prisma.$transaction(async (tx) => {
-    if (emailResult.ok) {
+    if (emailResult.ok && emailResult.provider === "resend") {
       await tx.bursarInvite.update({
         where: { id: invite.id },
         data: { lastSentAt: new Date() },
@@ -409,7 +409,7 @@ export async function resendBursarInvite(
   });
 
   await prisma.$transaction(async (tx) => {
-    if (emailResult.ok) {
+    if (emailResult.ok && emailResult.provider === "resend") {
       await tx.bursarInvite.update({
         where: { id: invite.id },
         data: { lastSentAt: new Date() },

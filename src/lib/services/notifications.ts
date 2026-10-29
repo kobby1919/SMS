@@ -1,12 +1,15 @@
+import { beginInviteEmail, updateInviteEmail, type InviteEmailKind } from "@/src/lib/services/invite-email-tracking";
+
 type EmailInput = {
   to: string;
   subject: string;
   html: string;
   text: string;
+  invitation?: { kind: InviteEmailKind; inviteUrl: string };
 };
 
 type EmailResult =
-  | { ok: true; provider: "resend" | "console" }
+  | { ok: true; provider: "resend" | "console"; providerMessageId?: string }
   | { ok: false; provider: "resend"; message: string };
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
@@ -16,22 +19,27 @@ function emailFromAddress() {
 }
 
 export async function sendEmail(input: EmailInput): Promise<EmailResult> {
+  const attempt = input.invitation ? await beginInviteEmail(input.invitation.kind, input.invitation.inviteUrl, input.to) : null;
   const apiKey = process.env.RESEND_API_KEY;
 
   if (!apiKey) {
     console.info("[email:console]", {
       to: input.to,
       subject: input.subject,
-      text: input.text,
+      ...(attempt ? {} : { text: input.text }),
     });
+    if (attempt) await updateInviteEmail(attempt, "NOT_SENT");
     return { ok: true, provider: "console" };
   }
 
+  try {
   const response = await fetch(RESEND_ENDPOINT, {
     method: "POST",
+    signal: AbortSignal.timeout(15000),
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
+      ...(attempt ? { "Idempotency-Key": `invite-email-${attempt.attemptId}` } : {}),
     },
     body: JSON.stringify({
       from: emailFromAddress(),
@@ -39,18 +47,28 @@ export async function sendEmail(input: EmailInput): Promise<EmailResult> {
       subject: input.subject,
       html: input.html,
       text: input.text,
+      ...(attempt ? { tags: [{ name: "edujay_invite_attempt", value: attempt.attemptId }] } : {}),
     }),
   });
 
   if (!response.ok) {
+    if (attempt) await updateInviteEmail(attempt, "FAILED");
     return {
       ok: false,
       provider: "resend",
-      message: await response.text(),
+      message: "Email sending failed. Review the recipient address and resend the existing invitation.",
     };
   }
 
-  return { ok: true, provider: "resend" };
+  const body: unknown = await response.json();
+  const providerMessageId = body && typeof body === "object" && "id" in body && typeof body.id === "string" ? body.id : undefined;
+  if (attempt && !providerMessageId) throw new Error("Provider acceptance could not be verified.");
+  if (attempt) await updateInviteEmail(attempt, "ACCEPTED", providerMessageId);
+  return { ok: true, provider: "resend", providerMessageId };
+  } catch {
+    if (attempt) await updateInviteEmail(attempt, "UNKNOWN");
+    return { ok: false, provider: "resend", message: "Email sending could not be confirmed. Check email activity before resending this invitation." };
+  }
 }
 
 export function appBaseUrl() {
@@ -74,6 +92,7 @@ export async function sendFirstAdminInviteEmail(input: {
   });
 
   return sendEmail({
+    invitation: { kind: "ADMIN", inviteUrl: input.inviteUrl },
     to: input.to,
     subject: `Set up ${input.schoolName} on Edujay`,
     text: [
@@ -111,6 +130,7 @@ export async function sendSchoolAdminInviteEmail(input: {
   });
 
   return sendEmail({
+    invitation: { kind: "ADMIN", inviteUrl: input.inviteUrl },
     to: input.to,
     subject: `${input.schoolName} invited you as an Edujay admin`,
     text: [
@@ -150,6 +170,7 @@ export async function sendTeacherInviteEmail(input: {
   });
 
   return sendEmail({
+    invitation: { kind: "TEACHER", inviteUrl: input.inviteUrl },
     to: input.to,
     subject: `${input.schoolName} invited you to Edujay`,
     text: [
@@ -193,6 +214,7 @@ export async function sendParentInviteEmail(input: {
   const wards = input.wardNames.length > 0 ? input.wardNames.join(", ") : "your ward";
 
   return sendEmail({
+    invitation: { kind: "PARENT", inviteUrl: input.inviteUrl },
     to: input.to,
     subject: `${input.schoolName} invited you to Edujay`,
     text: [
@@ -234,6 +256,7 @@ export async function sendBursarInviteEmail(input: {
   });
 
   return sendEmail({
+    invitation: { kind: "BURSAR", inviteUrl: input.inviteUrl },
     to: input.to,
     subject: `${input.schoolName} invited you to Edujay finance`,
     text: [
@@ -276,6 +299,7 @@ export async function sendCollectorInviteEmail(input: {
   });
 
   return sendEmail({
+    invitation: { kind: "COLLECTOR", inviteUrl: input.inviteUrl },
     to: input.to,
     subject: `${input.schoolName} invited you to Edujay daily collections`,
     text: [

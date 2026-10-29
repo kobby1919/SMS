@@ -10,6 +10,7 @@ import {
   isTeacherInviteExpired,
 } from "@/src/lib/services/teacher-invite-tokens";
 import { sendTeacherInviteEmail } from "@/src/lib/services/notifications";
+import { attemptInviteEmail } from "@/src/lib/migration/invite-email";
 import type { Prisma, TeacherInviteAuditAction } from "@/src/generated/prisma";
 import { normalizeAppRole } from "@/src/lib/roles";
 
@@ -25,6 +26,9 @@ export type CreatedTeacherInvite = {
   invitePath: string;
   inviteUrl: string;
   expiresAt: Date;
+  emailStatus: "SENT" | "FAILED" | "NOT_SENT";
+  emailProvider: "resend" | "console";
+  emailWarning?: string;
 };
 
 export class TeacherInviteServiceError extends Error {
@@ -96,6 +100,39 @@ function schoolDisplayName(school: {
 
 function teacherDisplayName(invite: { name: string; surname: string }) {
   return `${invite.name} ${invite.surname}`.trim();
+}
+
+async function sendTeacherInvitation(
+  invite: { id: string; email: string; name: string; surname: string },
+  schoolName: string,
+  tokenBundle: ReturnType<typeof createTeacherInviteTokenBundle>,
+  context: AuthzContext,
+) {
+  const email = await attemptInviteEmail(() => sendTeacherInviteEmail({
+    to: invite.email,
+    schoolName,
+    teacherName: teacherDisplayName(invite),
+    inviteUrl: tokenBundle.inviteUrl,
+    expiresAt: tokenBundle.expiresAt,
+  }));
+  const emailStatus = !email.ok ? "FAILED" : email.provider === "resend" ? "SENT" : "NOT_SENT";
+  const emailWarning = !email.ok ? email.message : emailStatus === "NOT_SENT"
+    ? "Email sending is not configured. No invitation email was sent."
+    : undefined;
+
+  await prisma.$transaction(async (tx) => {
+    if (emailStatus === "SENT") {
+      await tx.teacherInvite.update({ where: { id: invite.id }, data: { lastSentAt: new Date() } });
+    }
+    await writeTeacherInviteAudit(tx, {
+      schoolId: context.schoolId,
+      inviteId: invite.id,
+      action: "INVITE_SENT",
+      performedBy: context.userId,
+      metadata: { email: invite.email, provider: email.provider, outcome: emailStatus, warning: emailWarning },
+    });
+  });
+  return { emailStatus, emailProvider: email.provider, emailWarning } as const;
 }
 
 export async function getTeacherInvitePreview(
@@ -201,7 +238,7 @@ export async function createTeacherInvite(
   const [school, existingTeacher, activeInvite] = await Promise.all([
     prisma.school.findUnique({
       where: { id: context.schoolId },
-      select: { id: true },
+      select: { id: true, name: true, displayName: true, emailFromName: true },
     }),
     prisma.teacher.findFirst({
       where: { schoolId: context.schoolId, email },
@@ -289,6 +326,8 @@ export async function createTeacherInvite(
     return createdInvite;
   });
 
+  const delivery = await sendTeacherInvitation(invite, schoolDisplayName(school), tokenBundle, context);
+
   revalidateReferenceData(context.schoolId, "teachers");
   revalidateDashboard(context.schoolId);
 
@@ -304,6 +343,7 @@ export async function createTeacherInvite(
     invitePath: tokenBundle.invitePath,
     inviteUrl: tokenBundle.inviteUrl,
     expiresAt: invite.expiresAt,
+    ...delivery,
   };
 }
 
@@ -342,7 +382,6 @@ export async function resendTeacherInvite(
   }
 
   const tokenBundle = createTeacherInviteTokenBundle(now);
-  const teacherName = `${invite.name} ${invite.surname}`.trim();
   const schoolName =
     invite.school.emailFromName ||
     invite.school.displayName ||
@@ -383,34 +422,7 @@ export async function resendTeacherInvite(
     });
   });
 
-  const email = await sendTeacherInviteEmail({
-    to: invite.email,
-    schoolName,
-    teacherName,
-    inviteUrl: tokenBundle.inviteUrl,
-    expiresAt: tokenBundle.expiresAt,
-  });
-
-  await prisma.$transaction(async (tx) => {
-    if (email.ok) {
-      await tx.teacherInvite.update({
-        where: { id: invite.id },
-        data: { lastSentAt: new Date() },
-      });
-    }
-
-    await writeTeacherInviteAudit(tx, {
-      schoolId: context.schoolId,
-      inviteId: invite.id,
-      action: "INVITE_SENT",
-      performedBy: context.userId,
-      metadata: {
-        email: invite.email,
-        provider: email.provider,
-        warning: email.ok ? undefined : email.message,
-      },
-    });
-  });
+  const delivery = await sendTeacherInvitation(invite, schoolName, tokenBundle, context);
 
   revalidateReferenceData(context.schoolId, "teachers");
   revalidateDashboard(context.schoolId);
@@ -425,8 +437,7 @@ export async function resendTeacherInvite(
     invitePath: tokenBundle.invitePath,
     inviteUrl: tokenBundle.inviteUrl,
     expiresAt: tokenBundle.expiresAt,
-    emailProvider: email.provider,
-    emailWarning: email.ok ? undefined : email.message,
+    ...delivery,
   };
 }
 

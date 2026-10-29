@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { CheckCircle2, Copy, Loader2, MailPlus, X } from "lucide-react";
+import { Loader2, MailPlus, X } from "lucide-react";
+import TeacherInviteResult from "@/src/components/TeacherInviteResult";
 import {
   createTeacherInviteAction,
   type TeacherInviteCreateActionResult,
@@ -76,8 +77,6 @@ export default function TeacherInviteModal() {
     setTimeout(() => setCopied(false), 1600);
   }
 
-  const inviteUrl = result?.ok ? result.invite.inviteUrl : null;
-
   return (
     <>
       <button
@@ -122,35 +121,7 @@ export default function TeacherInviteModal() {
                 </div>
               )}
 
-              {inviteUrl && (
-                <div className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="mt-0.5 text-emerald-600" size={18} />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-black text-emerald-800">
-                        Invite created
-                      </p>
-                      <p className="mt-1 text-xs font-semibold text-emerald-700">
-                        Copy this test link for now. Email/SMS delivery comes in
-                        the next parts.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-3 flex flex-col gap-2 rounded-xl bg-white p-3 sm:flex-row sm:items-center">
-                    <code className="min-w-0 flex-1 overflow-x-auto text-xs font-semibold text-gray-600">
-                      {inviteUrl}
-                    </code>
-                    <button
-                      type="button"
-                      onClick={() => copyInviteLink(inviteUrl)}
-                      className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-950 px-3 py-2 text-xs font-black text-white"
-                    >
-                      <Copy size={14} />
-                      {copied ? "Copied" : "Copy"}
-                    </button>
-                  </div>
-                </div>
-              )}
+              {result?.ok && <TeacherInviteResult invite={result.invite} copied={copied} onCopy={copyInviteLink} />}
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <Input
@@ -243,7 +214,7 @@ export default function TeacherInviteModal() {
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-edujay-primary px-4 py-2.5 text-sm font-black text-white transition hover:bg-edujay-primaryDark disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {isPending && <Loader2 size={16} className="animate-spin" />}
-                  {isPending ? "Creating invite..." : "Create invite"}
+                  {isPending ? "Sending invitation..." : "Send invitation"}
                 </button>
               </div>
             </div>

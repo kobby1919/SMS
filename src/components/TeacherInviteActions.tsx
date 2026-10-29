@@ -13,11 +13,13 @@ export default function TeacherInviteActions({ inviteId }: { inviteId: string })
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
+  const [warning, setWarning] = useState(false);
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
   function handleResult(result: TeacherInviteActionResult, fallback: string) {
     if (!result.ok) {
+      setWarning(true);
       setMessage(result.message);
       return;
     }
@@ -28,7 +30,12 @@ export default function TeacherInviteActions({ inviteId }: { inviteId: string })
         : null;
 
     setInviteUrl(nextInviteUrl);
-    setMessage(fallback);
+    setWarning(Boolean(result.invite && result.invite.emailStatus !== "SENT"));
+    setMessage(result.invite
+      ? result.invite.emailStatus === "SENT"
+        ? "Invitation email sent. Inbox delivery is not yet confirmed."
+        : result.invite.emailWarning || "Email sending could not be confirmed. The invitation is saved."
+      : fallback);
     router.refresh();
   }
 
@@ -39,7 +46,7 @@ export default function TeacherInviteActions({ inviteId }: { inviteId: string })
 
     startTransition(async () => {
       const result = await resendTeacherInviteAction({ inviteId });
-      handleResult(result, "Invite resent. Copy the new link if needed.");
+      handleResult(result, "Invitation updated.");
     });
   }
 
@@ -89,7 +96,7 @@ export default function TeacherInviteActions({ inviteId }: { inviteId: string })
       </div>
 
       {message && (
-        <p className="max-w-[240px] text-right text-[11px] font-bold text-gray-500">
+        <p role="status" className={`max-w-[240px] text-right text-[11px] font-bold ${warning ? "text-amber-800" : "text-gray-500"}`}>
           {message}
         </p>
       )}

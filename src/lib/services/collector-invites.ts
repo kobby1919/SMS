@@ -289,7 +289,7 @@ export async function createCollectorInvite(
   });
 
   await prisma.$transaction(async (tx) => {
-    if (emailResult.ok) {
+    if (emailResult.ok && emailResult.provider === "resend") {
       await tx.collectorInvite.update({
         where: { id: invite.id },
         data: { lastSentAt: new Date() },
@@ -408,7 +408,7 @@ export async function resendCollectorInvite(
   });
 
   await prisma.$transaction(async (tx) => {
-    if (emailResult.ok) {
+    if (emailResult.ok && emailResult.provider === "resend") {
       await tx.collectorInvite.update({
         where: { id: invite.id },
         data: { lastSentAt: new Date() },

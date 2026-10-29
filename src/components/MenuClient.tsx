@@ -440,6 +440,12 @@ const menuItems = [
     title: "Settings And Follow-Up",
     items: [
       {
+        icon: BellRing,
+        label: "Invitation Emails",
+        href: "/admin/invite-emails",
+        visible: ["admin"],
+      },
+      {
         icon: SlidersHorizontal,
         label: "CA Settings",
         href: "/admin/ca-config",

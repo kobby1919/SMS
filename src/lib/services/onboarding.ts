@@ -1153,7 +1153,7 @@ export async function recordInviteSent(
 ) {
   const invite = await prisma.schoolInvite.update({
     where: { id: input.inviteId },
-    data: { lastSentAt: new Date() },
+    data: input.provider === "resend" && !input.warning ? { lastSentAt: new Date() } : {},
     select: {
       id: true,
       schoolId: true,
