@@ -1,4 +1,13 @@
-type InviteEmailResult = { ok: true; provider: "resend" | "console" } | { ok: false; provider: "resend"; message: string };
+type InviteEmailResult = { ok: true; provider: "resend" | "console"; trackingWarning?: string } | { ok: false; provider: "resend"; message: string };
+
+export async function recordInviteEmailSideEffects(record: () => Promise<unknown>) {
+  try {
+    await record();
+    return undefined;
+  } catch {
+    return "The invitation is saved, but its send log could not be updated. Check email activity before resending.";
+  }
+}
 
 export const newInviteEmailCounts = () => ({ emailsAccepted: 0, emailsFailed: 0, emailsNotSent: 0 });
 
@@ -15,5 +24,5 @@ export function recordInviteEmailOutcome(counts: ReturnType<typeof newInviteEmai
   if (!result.ok) counts.emailsFailed++;
   else if (result.provider === "resend") counts.emailsAccepted++;
   else counts.emailsNotSent++;
-  return !result.ok ? result.message : result.provider === "console" ? "Email delivery is not configured. The invitation was prepared but no email was sent." : null;
+  return !result.ok ? result.message : result.provider === "console" ? "Email delivery is not configured. The invitation was prepared but no email was sent." : result.trackingWarning || null;
 }

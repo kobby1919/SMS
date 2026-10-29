@@ -32,6 +32,7 @@ export default function TeacherInviteResult({ invite, copied, onCopy }: Props) {
               : invite.emailWarning || "Review the email address and resend the existing invitation from the teacher list."}
           </p>
           {!sent && <p className="mt-2 text-xs font-medium">The invitation is saved. Resend it from the teacher list rather than creating a duplicate.</p>}
+          {sent && invite.emailWarning && <p className="mt-2 text-xs font-medium text-amber-800">{invite.emailWarning}</p>}
         </div>
       </div>
       <details className="mt-3 text-sm">

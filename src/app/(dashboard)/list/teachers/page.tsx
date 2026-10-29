@@ -22,6 +22,7 @@ import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 import TeacherInviteActions from "@/src/components/TeacherInviteActions";
 import TeacherInviteModal from "@/src/components/TeacherInviteModal";
+import { isCurrentTeacher } from "@/src/lib/teacher-lifecycle-rules";
 import {
   getTeacherReadiness,
   teacherReadinessToneClass,
@@ -47,7 +48,7 @@ const statusTabs: Array<{
   key: TeacherLifecycleTab;
   label: string;
 }> = [
-  { key: "all", label: "All teachers" },
+  { key: "all", label: "Current teachers" },
   { key: "ready", label: "Ready" },
   { key: "needs-setup", label: "Needs setup" },
   { key: "active", label: "Active" },
@@ -183,7 +184,8 @@ const TeacherListPage = async ({
     return { teacher, taughtClasses, classBadges, setupStatus, missingSetup, readiness };
   });
 
-  const readyTeachers = enrichedTeachers.filter((item) => item.readiness.isReady);
+  const currentTeachers = enrichedTeachers.filter((item) => isCurrentTeacher(item.teacher));
+  const readyTeachers = currentTeachers.filter((item) => item.readiness.isReady);
   const teachersNeedingSetup = enrichedTeachers.filter((item) => item.readiness.status === "NEEDS_SETUP" || item.readiness.status === "INVITED");
   const activeTeachers = enrichedTeachers.filter((item) => item.teacher.status === "ACTIVE");
   const incompleteTeachers = enrichedTeachers.filter((item) => item.teacher.status === "INCOMPLETE_SETUP");
@@ -204,9 +206,9 @@ const TeacherListPage = async ({
                 ? leftSchoolTeachers
                 : selectedStatus === "pending-invites"
                   ? []
-                  : enrichedTeachers;
+                  : currentTeachers;
   const tabCounts: Record<TeacherLifecycleTab, number> = {
-    all: enrichedTeachers.length,
+    all: currentTeachers.length,
     ready: readyTeachers.length,
     "needs-setup": teachersNeedingSetup.length,
     active: activeTeachers.length,
@@ -257,7 +259,7 @@ const TeacherListPage = async ({
       {/* ── Stats — all from DB, no hardcoded values ── */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
         {[
-          { label: "Registered", value: allTeachers.length, icon: <Users size={16} />, color: "bg-indigo-50 text-indigo-600" },
+          { label: "Current teachers", value: currentTeachers.length, icon: <Users size={16} />, color: "bg-indigo-50 text-indigo-600" },
           { label: "Active", value: activeTeachers.length, icon: <CheckCircle2 size={16} />, color: "bg-emerald-50 text-emerald-600" },
           { label: "Ready", value: readyTeachers.length, icon: <GraduationCap size={16} />, color: "bg-blue-50 text-blue-600" },
           { label: "Needs setup", value: teachersNeedingSetup.length, icon: <AlertCircle size={16} />, color: "bg-amber-50 text-amber-600" },

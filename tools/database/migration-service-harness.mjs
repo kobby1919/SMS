@@ -7,7 +7,7 @@ import * as generated from "../../src/generated/prisma/index.js";
 
 const require = createRequire(import.meta.url);
 const files = new Set([
-  "migration/inventory", "migration/staging", "migration/reconciliation", "migration/recovery", "migration/column-mapping",
+  "migration/inventory", "migration/staging", "migration/reconciliation", "migration/recovery", "migration/column-mapping", "migration/invite-email",
   "validation/data-migration", "admission-number", "prisma-conflicts", "services/migration-inventory", "services/migration-recovery",
   "services/migration-staging", "services/migration-staging-storage", "services/migration-staging-parser",
   "services/data-migration-validation", "services/data-migration-import", "services/migration-reconciliation", "services/onboarding", "roles",

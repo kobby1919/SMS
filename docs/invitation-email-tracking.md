@@ -28,6 +28,13 @@ The callback verifies Svix signature headers and timestamp before processing. Pr
 
 Open/click tracking is not added. No automatic resend is triggered by callbacks. Existing app-notification delivery callbacks continue through their existing path.
 
+## Safety Invariants
+
+- Persist a rotated school-admin invite token with a compare-and-swap before email tracking or sending begins. Concurrent acceptance, revocation or another rotation must stop the send.
+- Reject accepted, revoked and expired invitations in the shared send path. Signed callbacks must match both the recipient and any supplied attempt tag.
+- Escape dynamic HTML fields in every invitation template; plain-text content remains unchanged.
+- Treat provider acceptance separately from subsequent log writes. Retry only status persistence, never the provider send. A logging outage must return a warning, not falsely claim that an already-sent email failed or that the saved invitation was not created.
+
 Reference: [Resend email webhooks and message correlation](https://resend.com/changelog/message-id-for-sent-emails).
 
 ## Verification Before Pilot

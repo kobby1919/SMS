@@ -10,7 +10,7 @@ import {
   isTeacherInviteExpired,
 } from "@/src/lib/services/teacher-invite-tokens";
 import { sendTeacherInviteEmail } from "@/src/lib/services/notifications";
-import { attemptInviteEmail } from "@/src/lib/migration/invite-email";
+import { attemptInviteEmail, recordInviteEmailSideEffects } from "@/src/lib/migration/invite-email";
 import type { Prisma, TeacherInviteAuditAction } from "@/src/generated/prisma";
 import { normalizeAppRole } from "@/src/lib/roles";
 
@@ -118,9 +118,9 @@ async function sendTeacherInvitation(
   const emailStatus = !email.ok ? "FAILED" : email.provider === "resend" ? "SENT" : "NOT_SENT";
   const emailWarning = !email.ok ? email.message : emailStatus === "NOT_SENT"
     ? "Email sending is not configured. No invitation email was sent."
-    : undefined;
+    : email.ok ? email.trackingWarning : undefined;
 
-  await prisma.$transaction(async (tx) => {
+  const sendLogWarning = await recordInviteEmailSideEffects(() => prisma.$transaction(async (tx) => {
     if (emailStatus === "SENT") {
       await tx.teacherInvite.update({ where: { id: invite.id }, data: { lastSentAt: new Date() } });
     }
@@ -131,8 +131,8 @@ async function sendTeacherInvitation(
       performedBy: context.userId,
       metadata: { email: invite.email, provider: email.provider, outcome: emailStatus, warning: emailWarning },
     });
-  });
-  return { emailStatus, emailProvider: email.provider, emailWarning } as const;
+  }));
+  return { emailStatus, emailProvider: email.provider, emailWarning: emailWarning || sendLogWarning } as const;
 }
 
 export async function getTeacherInvitePreview(

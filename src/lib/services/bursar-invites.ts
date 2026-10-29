@@ -9,6 +9,7 @@ import {
   isBursarInviteExpired,
 } from "@/src/lib/services/bursar-invite-tokens";
 import { sendBursarInviteEmail } from "@/src/lib/services/notifications";
+import { recordInviteEmailSideEffects } from "@/src/lib/migration/invite-email";
 import type { BursarInviteAuditAction, Prisma } from "@/src/generated/prisma";
 import { normalizeAppRole } from "@/src/lib/roles";
 
@@ -289,7 +290,7 @@ export async function createBursarInvite(
     expiresAt: tokenBundle.expiresAt,
   });
 
-  await prisma.$transaction(async (tx) => {
+  const sendLogWarning = await recordInviteEmailSideEffects(() => prisma.$transaction(async (tx) => {
     if (emailResult.ok && emailResult.provider === "resend") {
       await tx.bursarInvite.update({
         where: { id: invite.id },
@@ -308,7 +309,7 @@ export async function createBursarInvite(
         warning: emailResult.ok ? undefined : emailResult.message,
       },
     });
-  });
+  }));
 
   revalidateReferenceData(context.schoolId, "bursars");
   revalidateDashboard(context.schoolId);
@@ -325,7 +326,7 @@ export async function createBursarInvite(
     inviteUrl: tokenBundle.inviteUrl,
     expiresAt: invite.expiresAt,
     emailProvider: emailResult.provider,
-    emailWarning: emailResult.ok ? undefined : emailResult.message,
+    emailWarning: emailResult.ok ? emailResult.trackingWarning || sendLogWarning : emailResult.message,
   };
 }
 
@@ -408,7 +409,7 @@ export async function resendBursarInvite(
     expiresAt: tokenBundle.expiresAt,
   });
 
-  await prisma.$transaction(async (tx) => {
+  const sendLogWarning = await recordInviteEmailSideEffects(() => prisma.$transaction(async (tx) => {
     if (emailResult.ok && emailResult.provider === "resend") {
       await tx.bursarInvite.update({
         where: { id: invite.id },
@@ -427,7 +428,7 @@ export async function resendBursarInvite(
         warning: emailResult.ok ? undefined : emailResult.message,
       },
     });
-  });
+  }));
 
   revalidateReferenceData(context.schoolId, "bursars");
   revalidateDashboard(context.schoolId);
@@ -444,7 +445,7 @@ export async function resendBursarInvite(
     inviteUrl: tokenBundle.inviteUrl,
     expiresAt: tokenBundle.expiresAt,
     emailProvider: emailResult.provider,
-    emailWarning: emailResult.ok ? undefined : emailResult.message,
+    emailWarning: emailResult.ok ? emailResult.trackingWarning || sendLogWarning : emailResult.message,
   };
 }
 

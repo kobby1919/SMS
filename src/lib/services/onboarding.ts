@@ -7,6 +7,7 @@ import { appBaseUrl, sendFirstAdminInviteEmail, sendSchoolAdminInviteEmail } fro
 import { getSchoolAdminInviteAccountSafety } from "@/src/lib/services/onboarding-policy";
 import type { OnboardingAuditAction, Prisma } from "@/src/generated/prisma";
 import { withApprovedMigration } from "@/src/lib/services/migration-reconciliation";
+import { recordInviteEmailSideEffects } from "@/src/lib/migration/invite-email";
 
 const INVITE_TOKEN_BYTES = 32;
 
@@ -55,10 +56,30 @@ export type CreatedSchoolInvite = {
   inviteToken: string;
   invitePath: string;
   expiresAt: Date;
+  emailProvider?: string;
+  emailWarning?: string;
 };
 
 export function hashInviteToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
+}
+
+async function rotateSchoolInviteForResend(
+  invite: { id: string; schoolId: string; tokenHash: string; email: string },
+  tokenHash: string,
+  context: AuthzContext,
+) {
+  await prisma.$transaction(async (tx) => {
+    const changed = await tx.schoolInvite.updateMany({
+      where: { id: invite.id, schoolId: invite.schoolId, tokenHash: invite.tokenHash, acceptedAt: null, revokedAt: null, expiresAt: { gt: new Date() } },
+      data: { tokenHash },
+    });
+    if (changed.count !== 1) throw new Error("This invitation changed while resending. Refresh and review its current status.");
+    await tx.onboardingAuditLog.create({ data: {
+      action: "INVITE_RESENT", performedBy: context.userId, schoolId: invite.schoolId, inviteId: invite.id,
+      metadata: { email: invite.email, rotatedToken: true },
+    } });
+  });
 }
 
 async function writeOnboardingAudit(input: {
@@ -908,38 +929,9 @@ export async function resendCurrentSchoolAdminInvite(
   const invitePath = `/onboarding/accept?token=${encodeURIComponent(inviteToken)}`;
   const inviteUrl = `${appBaseUrl()}${invitePath}`;
 
-  const email = await sendSchoolAdminInviteEmail({
-    to: invite.email,
-    schoolName: invite.school.name,
-    inviteUrl,
-    expiresAt: invite.expiresAt,
-  });
-
-  await prisma.$transaction(async (tx) => {
-    await tx.schoolInvite.update({
-      where: { id: invite.id },
-      data: {
-        tokenHash,
-        lastSentAt: new Date(),
-      },
-    });
-
-    await tx.onboardingAuditLog.create({
-      data: {
-        action: "INVITE_RESENT",
-        performedBy: context.userId,
-        schoolId: invite.schoolId,
-        inviteId: invite.id,
-        metadata: {
-          email: invite.email,
-          provider: email.provider,
-          warning: email.ok ? undefined : email.message,
-          rotatedToken: true,
-          purpose: "existing-school-admin",
-        },
-      },
-    });
-  });
+  await rotateSchoolInviteForResend(invite, tokenHash, context);
+  const email = await sendSchoolAdminInviteEmail({ to: invite.email, schoolName: invite.school.name, inviteUrl, expiresAt: invite.expiresAt });
+  const logWarning = await recordInviteSent({ inviteId: invite.id, provider: email.provider, warning: email.ok ? undefined : email.message }, context);
 
   return {
     schoolId: invite.schoolId,
@@ -949,6 +941,8 @@ export async function resendCurrentSchoolAdminInvite(
     inviteToken,
     invitePath,
     expiresAt: invite.expiresAt,
+    emailProvider: email.provider,
+    emailWarning: email.ok ? email.trackingWarning || logWarning : email.message,
   };
 }
 
@@ -1043,6 +1037,7 @@ export async function resendSchoolInvite(
   input: { inviteId: string },
   context: AuthzContext,
 ): Promise<CreatedSchoolInvite> {
+  if (context.role !== "platform_admin") throw new Error("Only a platform admin can resend school onboarding invites.");
   const invite = await prisma.schoolInvite.findUnique({
     where: { id: input.inviteId },
     include: { school: { select: { id: true, name: true } } },
@@ -1069,28 +1064,15 @@ export async function resendSchoolInvite(
   const invitePath = `/onboarding/accept?token=${encodeURIComponent(inviteToken)}`;
   const inviteUrl = `${appBaseUrl()}${invitePath}`;
 
-  await sendFirstAdminInviteEmail({
+  await rotateSchoolInviteForResend(invite, tokenHash, context);
+  const email = await sendFirstAdminInviteEmail({
     to: invite.email,
     schoolName: invite.school.name,
     inviteUrl,
     expiresAt: invite.expiresAt,
   });
 
-  await prisma.schoolInvite.update({
-    where: { id: invite.id },
-    data: {
-      tokenHash,
-      lastSentAt: new Date(),
-    },
-  });
-
-  await writeOnboardingAudit({
-    action: "INVITE_RESENT",
-    performedBy: context.userId,
-    schoolId: invite.schoolId,
-    inviteId: invite.id,
-    metadata: { email: invite.email, rotatedToken: true },
-  });
+  const logWarning = await recordInviteSent({ inviteId: invite.id, provider: email.provider, warning: email.ok ? undefined : email.message }, context);
 
   return {
     schoolId: invite.schoolId,
@@ -1100,6 +1082,8 @@ export async function resendSchoolInvite(
     inviteToken,
     invitePath,
     expiresAt: invite.expiresAt,
+    emailProvider: email.provider,
+    emailWarning: email.ok ? email.trackingWarning || logWarning : email.message,
   };
 }
 
@@ -1151,6 +1135,7 @@ export async function recordInviteSent(
   input: { inviteId: string; provider: string; warning?: string },
   context: AuthzContext,
 ) {
+  return recordInviteEmailSideEffects(async () => {
   const invite = await prisma.schoolInvite.update({
     where: { id: input.inviteId },
     data: input.provider === "resend" && !input.warning ? { lastSentAt: new Date() } : {},
@@ -1171,6 +1156,7 @@ export async function recordInviteSent(
       provider: input.provider,
       warning: input.warning,
     },
+  });
   });
 }
 

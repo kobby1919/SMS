@@ -1,4 +1,5 @@
 import prisma from "@/src/lib/prisma";
+import { currentTeacherWhere } from "@/src/lib/teacher-lifecycle-rules";
 import {
   getFlaggedAttendanceStudents,
   normalizeAttendanceStatusCounts,
@@ -140,7 +141,7 @@ export async function getAdminDashboardData(
     allStudents,
   ] = await Promise.all([
     prisma.admin.count({ where: tenantWhere }),
-    prisma.teacher.count({ where: tenantWhere }),
+    prisma.teacher.count({ where: currentTeacherWhere(schoolId) }),
     prisma.student.count({ where: tenantWhere }),
     prisma.parent.count({ where: tenantWhere }),
     prisma.student.count({ where: { ...tenantWhere, sex: "MALE" } }),

@@ -31,11 +31,13 @@ function fixture() {
   const queries = [];
   let conflict = false;
   const db = {};
+  const invitations = {};
   const hash = createHash("sha256").update("PRIVATE-TOKEN").digest("hex");
   for (const [kind, model, audit] of [["TEACHER", "teacherInvite", "teacherInviteAuditLog"], ["PARENT", "parentInvite", "parentInviteAuditLog"], ["BURSAR", "bursarInvite", "bursarInviteAuditLog"], ["COLLECTOR", "collectorInvite", "collectorInviteAuditLog"], ["ADMIN", "schoolInvite", "onboardingAuditLog"]]) {
     logs[kind] = [];
+    invitations[kind] = { id: `invite-${kind}`, schoolId: "school-a", email: "recipient@example.com", acceptedAt: null, revokedAt: null, expiresAt: new Date("2030-01-01") };
     db[model] = {
-      findUnique: async ({ where }) => where.tokenHash === hash ? { id: `invite-${kind}`, schoolId: "school-a", email: "recipient@example.com" } : null,
+      findUnique: async ({ where }) => where.tokenHash === hash ? invitations[kind] : null,
       findMany: async ({ where }) => { queries.push(where); return [{ id: `invite-${kind}`, acceptedAt: null, revokedAt: null, expiresAt: new Date("2030-01-01") }]; },
     };
     db[audit] = {
@@ -51,7 +53,7 @@ function fixture() {
     };
   }
   const tracking = load("src/lib/services/invite-email-tracking.ts", { "@/src/lib/prisma": { default: db } });
-  return { tracking, logs, queries, db, conflict: () => { conflict = true; } };
+  return { tracking, logs, queries, db, invitations, conflict: (value = true) => { conflict = value; } };
 }
 const url = "https://example.com/onboarding/accept?token=PRIVATE-TOKEN";
 function event(type, attempt, messageId = "message-one") {
@@ -182,3 +184,56 @@ test("shared webhook dispatch tracks invitations without changing existing app-n
   await hooks.handleResendEmailWebhook(event("email.delivered", attempt));
   assert.equal(deliveredCalls, 1);
 });
+
+test("accepted email remains accepted when tracking writes fail, without sending twice", async () => {
+  const f = fixture();
+  f.conflict();
+  let sends = 0;
+  const notifications = load("src/lib/services/notifications.ts", { "@/src/lib/services/invite-email-tracking": f.tracking }, {
+    process: { env: { RESEND_API_KEY: "unit-test-key" } },
+    fetch: async () => { sends++; return { ok: true, json: async () => ({ id: "message-one" }) }; },
+  });
+  const result = await notifications.sendTeacherInviteEmail({ to: "recipient@example.com", teacherName: "Test", schoolName: "Test", inviteUrl: url, expiresAt: new Date("2030-01-01") });
+  assert.equal(result.ok, true);
+  assert.equal(result.providerMessageId, "message-one");
+  assert.match(result.trackingWarning, /temporarily unavailable/);
+  assert.equal(sends, 1);
+  f.conflict(false);
+  await f.tracking.handleInviteEmailWebhook(event("email.delivered", f.logs.TEACHER[0].metadata));
+  assert.equal(f.logs.TEACHER[0].metadata.status, "DELIVERED");
+});
+
+for (const [field, value] of [["acceptedAt", new Date()], ["revokedAt", new Date()], ["expiresAt", new Date("2000-01-01")]]) {
+  test(`send guard: ${field} prevents a stale invitation from being emailed`, async () => {
+    const f = fixture();
+    f.invitations.TEACHER[field] = value;
+    await assert.rejects(f.tracking.beginInviteEmail("TEACHER", url, "recipient@example.com"), /no longer available/);
+    assert.equal(f.logs.TEACHER.length, 0);
+  });
+}
+test("callback correlation requires a recipient and matching attempt tag", async () => {
+  const f = fixture();
+  const first = await f.tracking.beginInviteEmail("TEACHER", url, "recipient@example.com");
+  await f.tracking.updateInviteEmail(first, "ACCEPTED", "message-one");
+  const second = await f.tracking.beginInviteEmail("TEACHER", url, "recipient@example.com");
+  await assert.rejects(f.tracking.handleInviteEmailWebhook(event("email.delivered", second)), /attempt does not match/);
+  const missing = event("email.delivered", first);
+  delete missing.data.to;
+  await assert.rejects(f.tracking.handleInviteEmailWebhook(missing), /recipient/);
+  assert.equal(f.logs.TEACHER[0].metadata.status, "ACCEPTED");
+});
+for (const fn of ["sendFirstAdminInviteEmail", "sendSchoolAdminInviteEmail", "sendTeacherInviteEmail", "sendParentInviteEmail", "sendBursarInviteEmail", "sendCollectorInviteEmail"]) {
+  test(`${fn}: names cannot inject links or markup into invitation HTML`, async () => {
+    const f = fixture();
+    const malicious = '<img src=x onerror="alert(1)"><a href="https://untrusted.invalid">Click</a>';
+    let body;
+    const notifications = load("src/lib/services/notifications.ts", { "@/src/lib/services/invite-email-tracking": f.tracking }, {
+      process: { env: { RESEND_API_KEY: "unit-test-key" } },
+      fetch: async (_url, input) => { body = JSON.parse(input.body); return { ok: true, json: async () => ({ id: "message-one" }) }; },
+    });
+    await notifications[fn]({ to: "recipient@example.com", schoolName: malicious, teacherName: malicious, parentName: malicious, bursarName: malicious, collectorName: malicious, wardNames: [malicious], inviteUrl: url, expiresAt: new Date("2030-01-01") });
+    assert.doesNotMatch(body.html, /<img|<a href="https:\/\/untrusted/);
+    assert.match(body.html, /&lt;img/);
+    assert.ok(body.text.includes(malicious));
+  });
+}

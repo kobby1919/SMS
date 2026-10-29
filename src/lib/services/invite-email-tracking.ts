@@ -51,7 +51,7 @@ function auditUpdate(kind: InviteEmailKind, where: AuditWhere, metadata: Prisma.
   }
 }
 async function findInvite(kind: InviteEmailKind, tokenHash: string) {
-  const args = { where: { tokenHash }, select: { id: true, schoolId: true, email: true } } as const;
+  const args = { where: { tokenHash }, select: { id: true, schoolId: true, email: true, acceptedAt: true, revokedAt: true, expiresAt: true } } as const;
   switch (kind) {
     case "TEACHER": return prisma.teacherInvite.findUnique(args);
     case "PARENT": return prisma.parentInvite.findUnique(args);
@@ -67,6 +67,7 @@ export async function beginInviteEmail(kind: InviteEmailKind, inviteUrl: string,
   if (!token) throw new Error("Invitation token is missing.");
   const invite = await findInvite(kind, createHash("sha256").update(token).digest("hex"));
   if (!invite || invite.email.toLowerCase() !== email.toLowerCase()) throw new Error("Invitation email does not match its recipient.");
+  if (invite.acceptedAt || invite.revokedAt || invite.expiresAt <= new Date()) throw new Error("This invitation is no longer available to send.");
   const attempt = { kind, schoolId: invite.schoolId, inviteId: invite.id, attemptId: randomUUID(), email };
   await auditCreate(kind, {
     schoolId: invite.schoolId, inviteId: invite.id, action: "INVITE_SENT", performedBy: "system:invite-email",
@@ -123,7 +124,8 @@ export async function handleInviteEmailWebhook(payload: { type?: unknown; data?:
     ] });
     if (!log?.schoolId || !log.inviteId) continue;
     const meta = log.metadata as Metadata;
-    if (Array.isArray(data.to) && !data.to.some((email) => typeof email === "string" && email.toLowerCase() === String(meta.email).toLowerCase())) throw new Error("Invitation recipient does not match.");
+    if (attemptTag && meta.attemptId !== attemptTag) throw new Error("Invitation attempt does not match.");
+    if (!Array.isArray(data.to) || !data.to.some((email) => typeof email === "string" && email.toLowerCase() === String(meta.email).toLowerCase())) throw new Error("Invitation recipient does not match.");
     const status = typeof payload.type === "string" ? eventStatuses[payload.type] : undefined;
     if (status) await updateInviteEmail({ kind, schoolId: log.schoolId, inviteId: log.inviteId, attemptId: String(meta.attemptId), email: String(meta.email) }, status, messageId,
       typeof payload.created_at === "string" && Number.isFinite(Date.parse(payload.created_at)) ? payload.created_at : undefined);

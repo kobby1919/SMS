@@ -25,7 +25,9 @@ export default function ParentInviteActions({ inviteId }: { inviteId: string }) 
     const nextInviteUrl =
       result.invite && "inviteUrl" in result.invite ? result.invite.inviteUrl : null;
     setInviteUrl(nextInviteUrl);
-    setMessage(nextInviteUrl ? "Invite resent. Copy the new link below." : fallback);
+    setMessage(result.invite ? result.invite.emailWarning || (result.invite.emailProvider === "resend"
+      ? "Invitation email accepted by the email provider. Inbox delivery is not yet confirmed."
+      : "Invitation saved. Email was not sent because sending is not configured.") : fallback);
     router.refresh();
   }
 
@@ -36,7 +38,7 @@ export default function ParentInviteActions({ inviteId }: { inviteId: string }) 
 
     startTransition(async () => {
       const result = await resendParentInviteAction({ inviteId });
-      handleResult(result, "Invite resent.");
+      handleResult(result, "Invitation updated.");
     });
   }
 

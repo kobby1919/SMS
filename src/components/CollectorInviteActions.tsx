@@ -13,21 +13,34 @@ export default function CollectorInviteActions({ inviteId }: { inviteId: string 
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [warning, setWarning] = useState(false);
   const [busyKey, setBusyKey] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  function handleResult(result: CollectorInviteActionResult, fallback: string) {
+  async function handleResult(result: CollectorInviteActionResult, fallback: string) {
     if (!result.ok) {
       setError(result.message);
       return;
     }
 
     if (result.invite?.inviteUrl) {
-      navigator.clipboard.writeText(result.invite.inviteUrl).catch(() => undefined);
-      setMessage("Invite resent. Link copied.");
+      const warning = result.invite.emailWarning || (result.invite.emailProvider !== "resend" ? "Invitation saved. Email was not sent because sending is not configured." : undefined);
+      setWarning(Boolean(warning));
+      if (warning) {
+        setMessage(warning);
+        return;
+      }
+      const notice = "Invitation email accepted by the email provider. Inbox delivery is not yet confirmed.";
+      try {
+        await navigator.clipboard.writeText(result.invite.inviteUrl);
+        setMessage(`${notice} Link copied.`);
+      } catch {
+        setMessage(`${notice} The link could not be copied.`);
+      }
       return;
     }
 
+    setWarning(false);
     setMessage(fallback);
   }
 
@@ -37,7 +50,7 @@ export default function CollectorInviteActions({ inviteId }: { inviteId: string 
     setBusyKey("resend");
     startTransition(async () => {
       const result = await resendCollectorInviteAction({ inviteId });
-      handleResult(result, "Collector invite resent.");
+      await handleResult(result, "Invitation updated.");
       setBusyKey(null);
       router.refresh();
     });
@@ -49,7 +62,7 @@ export default function CollectorInviteActions({ inviteId }: { inviteId: string 
     setBusyKey("revoke");
     startTransition(async () => {
       const result = await revokeCollectorInviteAction({ inviteId });
-      handleResult(result, "Collector invite revoked.");
+      await handleResult(result, "Collector invite revoked.");
       setBusyKey(null);
       router.refresh();
     });
@@ -57,7 +70,7 @@ export default function CollectorInviteActions({ inviteId }: { inviteId: string 
 
   return (
     <div className="grid gap-2">
-      {message && <p className="rounded-lg bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700">{message}</p>}
+      {message && <p role="status" className={`rounded-lg px-2 py-1 text-xs font-bold ${warning ? "bg-amber-50 text-amber-800" : "bg-emerald-50 text-emerald-700"}`}>{message}</p>}
       {error && <p className="rounded-lg bg-rose-50 px-2 py-1 text-xs font-bold text-rose-700">{error}</p>}
       <div className="flex flex-wrap gap-2">
         <button

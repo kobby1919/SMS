@@ -71,7 +71,7 @@ export default function OnboardingRequestsClient({
             ? "The invite email was sent."
             : "Email delivery is in console mode, so copy or send the invite manually.";
         setBanner(
-          `School created for ${result.invite.schoolName}. ${result.emailWarning ?? delivery}`,
+          `Invitation for ${result.invite.schoolName}. ${result.emailWarning ?? delivery}`,
         );
         return;
       }

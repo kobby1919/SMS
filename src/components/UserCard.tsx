@@ -1,4 +1,5 @@
 import prisma from "@/src/lib/prisma";
+import { currentTeacherWhere } from "@/src/lib/teacher-lifecycle-rules";
 import { requirePageSession } from "@/src/lib/authz";
 import UserCardClient from "./UserCardClient ";
 
@@ -13,7 +14,7 @@ export default async function UserCard({ type }: { type: UserCardType }) {
       count = await prisma.admin.count({ where: { schoolId } });
       break;
     case "teacher":
-      count = await prisma.teacher.count({ where: { schoolId } });
+      count = await prisma.teacher.count({ where: currentTeacherWhere(schoolId) });
       break;
     case "student":
       count = await prisma.student.count({ where: { schoolId } });

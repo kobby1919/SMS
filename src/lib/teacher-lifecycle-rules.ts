@@ -1,5 +1,13 @@
 import type { TeacherStatus } from "@/src/generated/prisma";
 
+export function isCurrentTeacher(teacher: { status: TeacherStatus }) {
+  return teacher.status !== "LEFT_SCHOOL";
+}
+
+export function currentTeacherWhere(schoolId: string) {
+  return { schoolId, status: { not: "LEFT_SCHOOL" as const } };
+}
+
 export type TeacherLifecycleAvailability = {
   canSuspend: boolean;
   canReactivate: boolean;

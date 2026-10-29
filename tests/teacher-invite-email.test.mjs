@@ -18,7 +18,7 @@ function load(file, modules = {}) {
 const emailHelpers = load("src/lib/migration/invite-email.ts");
 const resultComponent = load("src/components/TeacherInviteResult.tsx").default;
 
-function fixture(sendResult, duplicate = false) {
+function fixture(sendResult, duplicate = false, failSendLog = false) {
   const events = [];
   const audits = [];
   const updates = [];
@@ -31,7 +31,7 @@ function fixture(sendResult, duplicate = false) {
     teacherInvite: {
       findFirst: async () => resend ? { ...invite, status: "PENDING", school } : duplicate ? invite : null,
       create: async () => { events.push("created"); return invite; },
-      update: async ({ data }) => updates.push(data),
+      update: async ({ data }) => { if (failSendLog) throw new Error("PRIVATE database failure"); updates.push(data); },
       updateMany: async () => ({ count: 1 }),
     },
     teacherInviteAuditLog: { create: async ({ data }) => audits.push(data) },
@@ -120,4 +120,13 @@ test("teacher modal no longer shows the obsolete test-link message", () => {
   const resend = readFileSync("src/components/TeacherInviteActions.tsx", "utf8");
   assert.match(resend, /result.invite.emailStatus === "SENT"/);
   assert.doesNotMatch(resend, /Invite resent\. Copy/);
+});
+
+test("post-send log failure cannot turn an accepted teacher email into a failed creation", async () => {
+  const f = fixture({ ok: true, provider: "resend" }, false, true);
+  const result = await f.service.createTeacherInvite(input, context);
+  assert.equal(result.emailStatus, "SENT");
+  assert.match(result.emailWarning, /send log could not be updated/);
+  assert.deepEqual(f.events, ["created", "email"]);
+  assert.doesNotMatch(result.emailWarning, /PRIVATE/);
 });

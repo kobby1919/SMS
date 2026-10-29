@@ -52,7 +52,7 @@ export async function approveWaitlistEntryAction(
       inviteUrl,
       expiresAt: invite.expiresAt,
     });
-    await recordInviteSent({
+    const logWarning = await recordInviteSent({
       inviteId: invite.inviteId,
       provider: email.provider,
       warning: email.ok ? undefined : email.message,
@@ -62,7 +62,7 @@ export async function approveWaitlistEntryAction(
       ok: true,
       invite,
       emailProvider: email.provider,
-      emailWarning: email.ok ? undefined : email.message,
+      emailWarning: email.ok ? email.trackingWarning || logWarning : email.message,
     };
   } catch (error) {
     return {
@@ -85,7 +85,7 @@ export async function createSchoolAdminInviteAction(
       inviteUrl,
       expiresAt: invite.expiresAt,
     });
-    await recordInviteSent({
+    const logWarning = await recordInviteSent({
       inviteId: invite.inviteId,
       provider: email.provider,
       warning: email.ok ? undefined : email.message,
@@ -95,7 +95,7 @@ export async function createSchoolAdminInviteAction(
       ok: true,
       invite,
       emailProvider: email.provider,
-      emailWarning: email.ok ? undefined : email.message,
+      emailWarning: email.ok ? email.trackingWarning || logWarning : email.message,
     };
   } catch (error) {
     return {
@@ -113,7 +113,7 @@ export async function resendCurrentSchoolAdminInviteAction(
     const data = parseActionInput(inviteIdSchema, input);
     const invite = await resendCurrentSchoolAdminInvite(data, context);
     revalidatePath("/list/admins");
-    return { ok: true, invite };
+    return { ok: true, invite, emailProvider: invite.emailProvider, emailWarning: invite.emailWarning };
   } catch (error) {
     return {
       ok: false,
@@ -147,7 +147,7 @@ export async function resendSchoolInviteAction(
     const data = parseActionInput(inviteIdSchema, input);
     const invite = await resendSchoolInvite(data, context);
     revalidatePath("/platform/onboarding");
-    return { ok: true, invite };
+    return { ok: true, invite, emailProvider: invite.emailProvider, emailWarning: invite.emailWarning };
   } catch (error) {
     return {
       ok: false,

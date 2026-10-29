@@ -28,7 +28,9 @@ export default function BursarInviteActions({ inviteId }: { inviteId: string }) 
         : null;
 
     setInviteUrl(nextInviteUrl);
-    setMessage(fallback);
+    setMessage(result.invite ? result.invite.emailWarning || (result.invite.emailProvider === "resend"
+      ? "Invitation email accepted by the email provider. Inbox delivery is not yet confirmed."
+      : "Invitation saved. Email was not sent because sending is not configured.") : fallback);
     router.refresh();
   }
 
@@ -39,7 +41,7 @@ export default function BursarInviteActions({ inviteId }: { inviteId: string }) 
 
     startTransition(async () => {
       const result = await resendBursarInviteAction({ inviteId });
-      handleResult(result, "Invite resent. Copy the new link if needed.");
+      handleResult(result, "Invitation updated.");
     });
   }
 

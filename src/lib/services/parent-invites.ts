@@ -9,6 +9,7 @@ import {
   isParentInviteExpired,
 } from "@/src/lib/services/parent-invite-tokens";
 import { sendParentInviteEmail } from "@/src/lib/services/notifications";
+import { recordInviteEmailSideEffects } from "@/src/lib/migration/invite-email";
 import type { ParentInviteAuditAction, Prisma } from "@/src/generated/prisma";
 import { normalizeAppRole } from "@/src/lib/roles";
 import { writeParentAccessAudit } from "@/src/lib/services/parent-access-audit";
@@ -360,7 +361,7 @@ export async function createParentInvite(
     expiresAt: tokenBundle.expiresAt,
   });
 
-  await prisma.$transaction(async (tx) => {
+  const sendLogWarning = await recordInviteEmailSideEffects(() => prisma.$transaction(async (tx) => {
     if (emailResult.ok && emailResult.provider === "resend") {
       await tx.parentInvite.update({
         where: { id: invite.id },
@@ -378,7 +379,7 @@ export async function createParentInvite(
         warning: emailResult.ok ? undefined : emailResult.message,
       },
     });
-  });
+  }));
 
   revalidateReferenceData(context.schoolId, "parents");
   revalidateDashboard(context.schoolId);
@@ -397,7 +398,7 @@ export async function createParentInvite(
     inviteUrl: tokenBundle.inviteUrl,
     expiresAt: invite.expiresAt,
     emailProvider: emailResult.provider,
-    emailWarning: emailResult.ok ? undefined : emailResult.message,
+    emailWarning: emailResult.ok ? emailResult.trackingWarning || sendLogWarning : emailResult.message,
   };
 }
 
@@ -491,7 +492,7 @@ export async function resendParentInvite(
     expiresAt: tokenBundle.expiresAt,
   });
 
-  await prisma.$transaction(async (tx) => {
+  const sendLogWarning = await recordInviteEmailSideEffects(() => prisma.$transaction(async (tx) => {
     if (email.ok && email.provider === "resend") {
       await tx.parentInvite.update({
         where: { id: invite.id },
@@ -509,7 +510,7 @@ export async function resendParentInvite(
         warning: email.ok ? undefined : email.message,
       },
     });
-  });
+  }));
 
   revalidateReferenceData(context.schoolId, "parents");
   revalidateDashboard(context.schoolId);
@@ -525,7 +526,7 @@ export async function resendParentInvite(
     inviteUrl: tokenBundle.inviteUrl,
     expiresAt: tokenBundle.expiresAt,
     emailProvider: email.provider,
-    emailWarning: email.ok ? undefined : email.message,
+    emailWarning: email.ok ? email.trackingWarning || sendLogWarning : email.message,
   };
 }
 

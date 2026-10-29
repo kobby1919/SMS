@@ -9,6 +9,7 @@ import {
   isCollectorInviteExpired,
 } from "@/src/lib/services/collector-invite-tokens";
 import { sendCollectorInviteEmail } from "@/src/lib/services/notifications";
+import { recordInviteEmailSideEffects } from "@/src/lib/migration/invite-email";
 import type { CollectorInviteAuditAction, Prisma } from "@/src/generated/prisma";
 import { normalizeAppRole } from "@/src/lib/roles";
 
@@ -288,7 +289,7 @@ export async function createCollectorInvite(
     expiresAt: tokenBundle.expiresAt,
   });
 
-  await prisma.$transaction(async (tx) => {
+  const sendLogWarning = await recordInviteEmailSideEffects(() => prisma.$transaction(async (tx) => {
     if (emailResult.ok && emailResult.provider === "resend") {
       await tx.collectorInvite.update({
         where: { id: invite.id },
@@ -307,7 +308,7 @@ export async function createCollectorInvite(
         warning: emailResult.ok ? undefined : emailResult.message,
       },
     });
-  });
+  }));
 
   revalidateReferenceData(context.schoolId, "collectors");
   revalidateDashboard(context.schoolId);
@@ -324,7 +325,7 @@ export async function createCollectorInvite(
     inviteUrl: tokenBundle.inviteUrl,
     expiresAt: invite.expiresAt,
     emailProvider: emailResult.provider,
-    emailWarning: emailResult.ok ? undefined : emailResult.message,
+    emailWarning: emailResult.ok ? emailResult.trackingWarning || sendLogWarning : emailResult.message,
   };
 }
 
@@ -407,7 +408,7 @@ export async function resendCollectorInvite(
     expiresAt: tokenBundle.expiresAt,
   });
 
-  await prisma.$transaction(async (tx) => {
+  const sendLogWarning = await recordInviteEmailSideEffects(() => prisma.$transaction(async (tx) => {
     if (emailResult.ok && emailResult.provider === "resend") {
       await tx.collectorInvite.update({
         where: { id: invite.id },
@@ -426,7 +427,7 @@ export async function resendCollectorInvite(
         warning: emailResult.ok ? undefined : emailResult.message,
       },
     });
-  });
+  }));
 
   revalidateReferenceData(context.schoolId, "collectors");
   revalidateDashboard(context.schoolId);
@@ -443,7 +444,7 @@ export async function resendCollectorInvite(
     inviteUrl: tokenBundle.inviteUrl,
     expiresAt: invite.expiresAt,
     emailProvider: emailResult.provider,
-    emailWarning: emailResult.ok ? undefined : emailResult.message,
+    emailWarning: emailResult.ok ? emailResult.trackingWarning || sendLogWarning : emailResult.message,
   };
 }
 

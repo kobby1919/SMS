@@ -27,7 +27,11 @@ export default function AdminInviteActions({ inviteId }: { inviteId: string }) {
       : null;
 
     setInviteUrl(nextInviteUrl);
-    setMessage(fallback);
+    setMessage(result.invite
+      ? result.emailWarning || (result.emailProvider === "resend"
+        ? "Invitation email accepted by the email provider. Inbox delivery is not yet confirmed."
+        : "Invitation saved. Email was not sent because sending is not configured.")
+      : fallback);
     router.refresh();
   }
 
@@ -38,7 +42,7 @@ export default function AdminInviteActions({ inviteId }: { inviteId: string }) {
 
     startTransition(async () => {
       const result = await resendCurrentSchoolAdminInviteAction({ inviteId });
-      handleResult(result, "Invite resent. Copy the new local test link if needed.");
+      handleResult(result, "Invitation updated.");
     });
   }
 
