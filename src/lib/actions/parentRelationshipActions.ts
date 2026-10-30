@@ -132,15 +132,9 @@ export async function addParentWardLinkAction(input: unknown): Promise<ParentRel
       };
     }
 
-    const relationship = await prisma.parentStudentRelationship.upsert({
-      where: {
-        schoolId_parentId_studentId: {
-          schoolId,
-          parentId: data.parentId,
-          studentId: data.studentId,
-        },
-      },
-      create: {
+    if (existingRelationship) return { ok: false, message: existingRelationship.status === "ACTIVE" ? "This ward is already linked. Refresh the parent profile." : "This ward has a previous link. Review and restore it from the parent's Wards controls." };
+    const relationship = await prisma.parentStudentRelationship.create({
+      data: {
         schoolId,
         parentId: data.parentId,
         studentId: data.studentId,
@@ -153,28 +147,18 @@ export async function addParentWardLinkAction(input: unknown): Promise<ParentRel
         createdById: userId,
         updatedById: userId,
       },
-      update: {
-        status: "ACTIVE",
-        role: data.role,
-        canViewFees: data.canViewFees,
-        canViewReports: data.canViewReports,
-        canMessageSchool: data.canMessageSchool,
-        note: data.note ?? null,
-        endedAt: null,
-        updatedById: userId,
-      },
       select: { id: true, status: true },
     });
 
     await writeParentAccessAudit(prisma, {
       schoolId,
-      action: existingRelationship ? "ACCESS_RESTORED" : "CHILD_LINKED",
+      action: "CHILD_LINKED",
       performedBy: userId,
       parentId: data.parentId,
       studentId: data.studentId,
       relationshipId: relationship.id,
       metadata: {
-        previousStatus: existingRelationship?.status ?? null,
+        previousStatus: null,
         role: data.role,
         canViewFees: data.canViewFees,
         canViewReports: data.canViewReports,

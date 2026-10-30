@@ -101,22 +101,32 @@ export default function ParentWardLinkManager({
   parentId,
   relationships,
   students,
+  addOnly = false,
+  linkedStudentIds: currentLinkedStudentIds = [],
+  onChanged,
+  onPendingChange,
 }: {
   parentId: string;
   relationships: WardRelationship[];
   students: StudentOption[];
+  addOnly?: boolean;
+  linkedStudentIds?: string[];
+  onChanged?: () => Promise<void> | void;
+  onPendingChange?: (pending: boolean) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [result, setResult] = useState<ParentRelationshipActionResult | null>(null);
   const [pendingKey, setPendingKey] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const linkedStudentIds = useMemo(() => new Set(relationships.map((relationship) => relationship.student.id)), [relationships]);
-  const availableStudents = students.filter((student) => !linkedStudentIds.has(student.id));
+  const availableStudents = students.filter((student) => !linkedStudentIds.has(student.id) && !currentLinkedStudentIds.includes(student.id));
 
   function submitAdd(formData: FormData) {
     setResult(null);
     setPendingKey("add");
+    onPendingChange?.(true);
     startTransition(async () => {
+      try {
       const response = await addParentWardLinkAction({
         parentId,
         studentId: String(formData.get("studentId") ?? ""),
@@ -127,7 +137,13 @@ export default function ParentWardLinkManager({
         note: String(formData.get("note") ?? ""),
       });
       setResult(response);
-      setPendingKey(null);
+      if (response.ok) await onChanged?.();
+      } catch {
+        setResult({ ok: false, message: "Ward linking could not be confirmed. Refresh the parent profile before retrying." });
+      } finally {
+        setPendingKey(null);
+        onPendingChange?.(false);
+      }
     });
   }
 
@@ -157,12 +173,12 @@ export default function ParentWardLinkManager({
         className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg bg-slate-50 px-3 py-2 text-xs font-black text-slate-700 ring-1 ring-slate-100 transition hover:bg-slate-100"
       >
         <Link2 size={14} />
-        {open ? "Close" : "Wards"}
+        {open ? "Close" : addOnly ? "Add another ward" : "Wards"}
       </button>
 
       {open && (
         <div className="mt-3 w-full max-w-[42rem] rounded-2xl border border-slate-100 bg-slate-50 p-3 text-left shadow-sm sm:w-[min(82vw,42rem)]">
-          <div className="space-y-3">
+          {!addOnly && <div className="space-y-3">
             {relationships.length > 0 ? (
               relationships.map((relationship) => (
                 <div key={relationship.id} className="rounded-xl bg-white p-3 ring-1 ring-slate-100">
@@ -259,7 +275,7 @@ export default function ParentWardLinkManager({
                 No ward links yet. Add the first child below.
               </p>
             )}
-          </div>
+          </div>}
 
           <form action={submitAdd} className="mt-3 rounded-xl bg-white p-3 ring-1 ring-slate-100">
             <p className="text-xs font-black uppercase tracking-wide text-slate-400">Add another ward</p>

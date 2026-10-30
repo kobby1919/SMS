@@ -242,15 +242,22 @@ export async function createParentInvite(
       select: { id: true, name: true, surname: true },
     });
     if (students.length !== uniqueStudentIds.length) throw new ParentInviteServiceError("One or more selected wards are not active or do not belong to this school.", 409);
+    const phone = input.phone === undefined ? profile?.phone ?? null : input.phone;
+    const profileCorrections = profile && (profile.sex !== input.sex || profile.phone !== phone) ? {
+      before: { sex: profile.sex, phone: profile.phone }, after: { sex: input.sex, phone },
+    } : null;
+    if (profileCorrections && profile) {
+      await tx.parent.update({ where: { id: profile.id, schoolId: context.schoolId }, data: profileCorrections.after });
+    }
     const wardNames = students.map((student) => `${student.name} ${student.surname}`.trim());
     const createdInvite = await tx.parentInvite.create({
       data: {
         schoolId: context.schoolId,
         name: profile?.name ?? input.name,
         surname: profile?.surname ?? input.surname,
-        sex: profile?.sex ?? input.sex,
+        sex: input.sex,
         email,
-        phone: profile?.phone ?? input.phone ?? null,
+        phone,
         tokenHash: tokenBundle.tokenHash,
         expiresAt: tokenBundle.expiresAt,
         createdBy: context.userId,
@@ -288,6 +295,7 @@ export async function createParentInvite(
         phone: input.phone ?? null,
         studentIds: uniqueStudentIds,
         ...(profile ? { importedParentId: profile.id } : {}),
+        ...(profileCorrections ? { profileCorrections } : {}),
         wardNames,
         expiresAt: createdInvite.expiresAt.toISOString(),
       },

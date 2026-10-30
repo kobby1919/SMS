@@ -10,6 +10,7 @@ import {
   type ParentInviteCreateActionResult,
 } from "@/src/lib/actions/parentInviteActions";
 import type { ParentInviteCreateInput } from "@/src/lib/validation/parent-invites";
+import ParentWardLinkManager from "@/src/components/ParentWardLinkManager";
 
 type StudentOption = {
   id: string;
@@ -36,6 +37,7 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
   const [copied, setCopied] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [profileLookup, setProfileLookup] = useState<{ email: string; result: ParentInviteProfileActionResult } | null>(null);
+  const [wardChangesPending, setWardChangesPending] = useState(false);
   const normalizedEmail = form.email.trim().toLowerCase();
   const currentLookup = profileLookup?.email === normalizedEmail ? profileLookup.result : null;
   const matchedProfile = currentLookup?.ok ? currentLookup.profile : null;
@@ -95,6 +97,7 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
   }
 
   function submitInvite() {
+    if (wardChangesPending) return;
     setResult(null);
     setCopied(false);
 
@@ -214,7 +217,7 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
                   </label>
                   <select
                     required
-                    disabled={Boolean(matchedProfile)}
+                    disabled={isPending || wardChangesPending}
                     value={form.sex}
                     onChange={(event) => updateField("sex", event.target.value)}
                     className="h-11 rounded-xl border border-gray-200 bg-white px-3 text-sm font-semibold text-gray-700 outline-none transition focus:border-edujay-primary focus:ring-2 focus:ring-edujay-ring"
@@ -237,7 +240,7 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
                 <Input
                   label="Phone"
                   value={form.phone}
-                  disabled={Boolean(matchedProfile)}
+                  disabled={isPending || wardChangesPending}
                   onChange={(value) => updateField("phone", value)}
                   placeholder="0240000000"
                 />
@@ -254,6 +257,22 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
                       {matchedProfile.wards.map((ward) => <li key={ward.id} className="py-2 text-sm text-gray-700"><span className="font-bold">{ward.name} {ward.surname}</span><span className="ml-2 text-gray-500">{ward.className}</span></li>)}
                     </ul>
                   ) : <p className="mt-2 text-sm text-amber-800">No active ward links. Link a ward on this parent&apos;s profile before inviting.</p>}
+                  {!matchedProfile.hasAccount && !isPending && <div className="mt-3">
+                    <ParentWardLinkManager
+                      key={matchedProfile.id}
+                      parentId={matchedProfile.id}
+                      relationships={[]}
+                      students={students}
+                      addOnly
+                      linkedStudentIds={matchedProfile.wards.map((ward) => ward.id)}
+                      onPendingChange={setWardChangesPending}
+                      onChanged={async () => {
+                        const result = await lookupParentInviteProfileAction({ email: normalizedEmail }).catch(() => ({ ok: false as const, message: "Ward saved, but the refreshed links could not be loaded. Reopen the invite form before continuing." }));
+                        setProfileLookup({ email: normalizedEmail, result });
+                        router.refresh();
+                      }}
+                    />
+                  </div>}
                 </div>
               ) : <div className="mt-5 rounded-2xl border border-gray-100 bg-gray-50 p-4">
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
@@ -336,7 +355,7 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
                 <button
                   type="button"
                   onClick={submitInvite}
-                  disabled={isPending || checkingProfile || Boolean(currentLookup && !currentLookup.ok) || Boolean(matchedProfile && (matchedProfile.hasAccount || matchedProfile.wards.length === 0))}
+                  disabled={isPending || wardChangesPending || checkingProfile || Boolean(currentLookup && !currentLookup.ok) || Boolean(matchedProfile && (matchedProfile.hasAccount || matchedProfile.wards.length === 0))}
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-edujay-primary px-4 py-2.5 text-sm font-black text-white transition hover:bg-edujay-primaryDark disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {isPending && <Loader2 size={16} className="animate-spin" />}

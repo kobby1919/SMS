@@ -10,7 +10,7 @@ const require = createRequire(import.meta.url);
 const file = "src/components/ParentInviteModal.tsx";
 const email = "guardian@example.com";
 const wards = ["one", "two"].map((id) => ({ id, name: "Child", surname: id, className: "Primary 1" }));
-const profile = { name: "Saved", surname: "Guardian", sex: "FEMALE", phone: "0240000000", hasAccount: false, wards };
+const profile = { id: "par_imported", name: "Saved", surname: "Guardian", sex: "FEMALE", phone: "0240000000", hasAccount: false, wards };
 function render({ formEmail = email, result = { ok: true, profile } } = {}) {
   let state = 0;
   const values = [true, { name: "Saved", surname: "Guardian", sex: "FEMALE", email: formEmail, phone: "0240000000", studentIds: [] }, "", null, false, { email, result }];
@@ -19,6 +19,7 @@ function render({ formEmail = email, result = { ok: true, profile } } = {}) {
     react: { ...React, useState: () => [values[state++], () => {}], useMemo: (fn) => fn(), useEffect() {}, useTransition: () => [false, () => {}] },
     "next/navigation": { useRouter: () => ({ refresh() {} }) },
     "@/src/lib/actions/parentInviteActions": {},
+    "@/src/components/ParentWardLinkManager": { __esModule: true, default: () => React.createElement("button", { type: "button" }, "Add another ward") },
   };
   const source = ts.transpileModule(readFileSync(file, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX } }).outputText;
   new Function("require", "module", "exports", source)((id) => mocks[id] ?? require(id), loaded, loaded.exports);
@@ -34,6 +35,9 @@ test("matched parent shows saved wards without asking for ward selection", async
   assert.match(html, /Child one/);
   assert.match(html, /Child two/);
   assert.doesNotMatch(html, /type="checkbox"/);
+  assert.match(html, /Add another ward/);
+  assert.doesNotMatch(html.match(/<select[^>]*>/)?.[0] ?? "", /disabled=""/);
+  assert.doesNotMatch(html.match(/<input[^>]*placeholder="0240000000"[^>]*>/)?.[0] ?? "", /disabled=""/);
   assert.doesNotMatch(createButton(html)[1], / disabled=""/);
   if (process.env.EDUJAY_PARENT_INVITE_PREVIEW === "1") {
     const postcss = require("postcss"), tailwindcss = require("tailwindcss");

@@ -12,7 +12,7 @@ function load(file, mocks = {}) {
   return loaded.exports;
 }
 const context = { role: "admin", schoolId: "school-a", userId: "admin-a" };
-const input = { name: "Typed", surname: "Name", sex: "FEMALE", email: "guardian@example.com", phone: "", studentIds: [] };
+const input = { name: "Typed", surname: "Name", sex: "MALE", email: "guardian@example.com", phone: "0240000000", studentIds: [] };
 function fixture(options = {}) {
   const children = ["one", "two"].map((id) => ({ id, schoolId: "school-a", status: "ACTIVE", name: "Child", surname: id, class: { name: "Primary 1" } }));
   let profile = options.newParent ? null : { id: "par_imported", schoolId: "school-a", name: "Saved", surname: "Guardian", sex: "MALE", email: input.email, phone: "0240000000", acceptedInvites: [], ...options.profile };
@@ -31,7 +31,7 @@ function fixture(options = {}) {
       },
       findUnique: async ({ where }) => profile?.id === where.id ? profile : null,
       findFirst: async () => profile,
-      update: async ({ data }) => { parentWrites.push("update"); profile = { ...profile, ...data }; links = links.map((link) => ({ ...link, parentId: data.id })); return { id: data.id }; },
+      update: async ({ data }) => { parentWrites.push("update"); profile = { ...profile, ...data }; if (data.id) links = links.map((link) => ({ ...link, parentId: data.id })); return { id: profile.id }; },
       create: async ({ data }) => { parentWrites.push("create"); profile = data; return { id: data.id }; },
     },
     student: {
@@ -102,6 +102,22 @@ test("selecting only one existing ward does not drop the parent's other ward", a
   const f = fixture();
   const result = await f.service.createParentInvite({ ...input, studentIds: ["one"] }, context);
   assert.deepEqual(result.studentIds, ["one", "two"]);
+});
+
+test("sex and phone corrections save with the invite and are audited without changing ward links", async () => {
+  const f = fixture();
+  const before = structuredClone(f.links);
+  const result = await f.service.createParentInvite({ ...input, sex: "FEMALE", phone: "0201234567" }, context);
+  assert.equal(f.profile.sex, "FEMALE");
+  assert.equal(f.profile.phone, "0201234567");
+  assert.equal(result.sex, "FEMALE");
+  assert.equal(f.invites[0].phone, "0201234567");
+  assert.deepEqual(f.links, before);
+  const audit = f.audits.find((row) => row.action === "INVITE_CREATED");
+  assert.deepEqual(audit.metadata.profileCorrections, { before: { sex: "MALE", phone: "0240000000" }, after: { sex: "FEMALE", phone: "0201234567" } });
+  await f.service.acceptParentInviteForUser({ token: "token", userId: "user_guardian" });
+  assert.equal(f.profile.sex, "FEMALE");
+  assert.equal(f.profile.phone, "0201234567");
 });
 
 test("ended, inactive and cross-school links cannot be inherited", async () => {
