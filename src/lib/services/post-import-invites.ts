@@ -13,6 +13,7 @@ import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTag
 import { createBursarInviteTokenBundle } from "@/src/lib/services/bursar-invite-tokens";
 import { createParentInviteTokenBundle } from "@/src/lib/services/parent-invite-tokens";
 import { createTeacherInviteTokenBundle } from "@/src/lib/services/teacher-invite-tokens";
+import { findParentInviteProfile, parentProfileHasAccount } from "@/src/lib/services/parent-invite-profile";
 import {
   sendBursarInviteEmail,
   sendParentInviteEmail,
@@ -290,7 +291,7 @@ export async function getPostImportInviteSummary(
       select: {
         email: true,
         studentRelationships: {
-          where: { schoolId, status: "ACTIVE" },
+            where: { schoolId, status: "ACTIVE", endedAt: null, student: { schoolId, status: "ACTIVE" } },
           select: { id: true },
           take: 1,
         },
@@ -532,7 +533,7 @@ async function bulkInviteParents(context: InviteContext): Promise<PostImportInvi
       where: {
         schoolId: context.schoolId,
         email: { not: null },
-        studentRelationships: { some: { schoolId: context.schoolId, status: "ACTIVE" } },
+          studentRelationships: { some: { schoolId: context.schoolId, status: "ACTIVE", endedAt: null, student: { schoolId: context.schoolId, status: "ACTIVE" } } },
       },
       select: {
         id: true,
@@ -542,7 +543,7 @@ async function bulkInviteParents(context: InviteContext): Promise<PostImportInvi
         email: true,
         phone: true,
         studentRelationships: {
-          where: { schoolId: context.schoolId, status: "ACTIVE" },
+          where: { schoolId: context.schoolId, status: "ACTIVE", endedAt: null, student: { schoolId: context.schoolId, status: "ACTIVE" } },
           select: {
             studentId: true,
             student: { select: { name: true, surname: true, status: true } },
@@ -569,10 +570,10 @@ async function bulkInviteParents(context: InviteContext): Promise<PostImportInvi
 
   for (const parent of candidates) {
     const email = normalizeEmail(parent.email);
-    const studentIds = parent.studentRelationships
+    let studentIds = parent.studentRelationships
       .filter((relationship) => relationship.student.status === "ACTIVE")
       .map((relationship) => relationship.studentId);
-    const wardNames = parent.studentRelationships
+    let wardNames = parent.studentRelationships
       .filter((relationship) => relationship.student.status === "ACTIVE")
       .map((relationship) => displayName(relationship.student));
 
@@ -584,6 +585,13 @@ async function bulkInviteParents(context: InviteContext): Promise<PostImportInvi
         if (await hasParentInviteConflict(tx, context.schoolId, email, now)) {
           throw new PostImportInviteError("An active or accepted parent invite already exists for this email.", 409);
         }
+        const currentProfile = await findParentInviteProfile(tx, context.schoolId, email);
+        if (!currentProfile || currentProfile.id !== parent.id || parentProfileHasAccount(currentProfile)) {
+          throw new PostImportInviteError("This parent profile has changed or already has access. Review it before inviting.", 409);
+        }
+        studentIds = [...new Set(currentProfile.studentRelationships.map((link) => link.studentId))];
+        wardNames = currentProfile.studentRelationships.map((link) => displayName(link.student));
+        if (!studentIds.length) throw new PostImportInviteError("No active ward links remain for this parent.", 409);
 
         const createdInvite = await tx.parentInvite.create({
           data: {
@@ -625,7 +633,7 @@ async function bulkInviteParents(context: InviteContext): Promise<PostImportInvi
         });
 
         return createdInvite;
-      });
+      }, { isolationLevel: "Serializable" });
 
       created += 1;
       const emailResult = await attemptInviteEmail(() => sendParentInviteEmail({
@@ -666,7 +674,7 @@ async function bulkInviteParents(context: InviteContext): Promise<PostImportInvi
   revalidateReferenceData(context.schoolId, "parents");
   revalidateDashboard(context.schoolId);
 
-  return { role: "parents", created, skipped: parents.length - candidates.length, failed, ...emailCounts, warnings };
+    return { role: "parents", created, skipped: parents.length - candidates.length, failed, ...emailCounts, warnings };
 }
 
 async function bulkInviteBursars(context: InviteContext): Promise<PostImportInviteResult> {

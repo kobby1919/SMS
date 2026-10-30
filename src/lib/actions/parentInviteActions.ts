@@ -16,6 +16,28 @@ import {
   parentInviteTokenSchema,
 } from "@/src/lib/validation/parent-invites";
 import { parseActionInput } from "@/src/lib/validation/parse";
+import prisma from "@/src/lib/prisma";
+import { findParentInviteProfile, parentProfileHasAccount, ParentInviteProfileError } from "@/src/lib/services/parent-invite-profile";
+
+export type ParentInviteProfileActionResult =
+  | { ok: true; profile: { name: string; surname: string; sex: "MALE" | "FEMALE"; phone: string | null; hasAccount: boolean; wards: { id: string; name: string; surname: string; className: string }[] } | null }
+  | { ok: false; message: string };
+
+export async function lookupParentInviteProfileAction(input: unknown): Promise<ParentInviteProfileActionResult> {
+  try {
+    const context = await requireRole(["admin"]);
+    const parsed = parentInviteCreateSchema.pick({ email: true }).safeParse(input);
+    if (!parsed.success) return { ok: false, message: "Enter a valid parent email address." };
+    const { email } = parsed.data;
+    const profile = await findParentInviteProfile(prisma, context.schoolId, email);
+    return { ok: true, profile: profile ? {
+      name: profile.name, surname: profile.surname, sex: profile.sex, phone: profile.phone, hasAccount: parentProfileHasAccount(profile),
+      wards: profile.studentRelationships.map(({ student }) => ({ id: student.id, name: student.name, surname: student.surname, className: student.class.name })),
+    } : null };
+  } catch (error) {
+    return { ok: false, message: error instanceof ParentInviteProfileError ? error.message : "Could not check existing parent links. Please try again." };
+  }
+}
 
 export type ParentInviteCreateActionResult =
   | { ok: true; invite: CreatedParentInvite }

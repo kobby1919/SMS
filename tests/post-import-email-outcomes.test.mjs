@@ -11,6 +11,7 @@ function load(file, modules = {}) {
   return exports;
 }
 const outcomes = load("src/lib/migration/invite-email.ts");
+const profiles = load("src/lib/services/parent-invite-profile.ts");
 
 test("teacher access still requires contact details and acceptance preserves imported profile data", () => {
   const completion = load("src/lib/services/teacher-profile-completion.ts");
@@ -43,16 +44,16 @@ test("provider rejection, network uncertainty and console mode are not counted a
 
 for (const role of ["teachers", "parents", "bursars"]) {
   test(`${role}: bulk invitation creation and provider outcomes are separate and reruns skip pending invites`, async () => {
-    const records = ["accepted", "rejected"].map((name) => ({ id: name, name, surname: "Test", email: `${name}@example.com`, phone: null, sex: "FEMALE", classes: [], subjects: [], studentRelationships: [{ studentId: name, student: { name: "Child", surname: "Test", status: "ACTIVE" } }] }));
+    const records = ["accepted", "rejected"].map((name) => ({ id: name, name, surname: "Test", email: `${name}@example.com`, phone: null, sex: "FEMALE", acceptedInvites: [], classes: [], subjects: [], studentRelationships: [{ studentId: name, student: { id: name, name: "Child", surname: "Test", status: "ACTIVE", class: { name: "Class" } } }] }));
     const pending = [];
     const db = { school: { findUnique: async () => ({ name: "School" }) }, parentInviteStudent: { createMany: async () => {} } };
-    const modules = { "@/src/lib/prisma": { default: db }, "@/src/lib/migration/invite-email": outcomes,
+    const modules = { "@/src/lib/prisma": { default: db }, "@/src/lib/migration/invite-email": outcomes, "@/src/lib/services/parent-invite-profile": profiles,
       "@/src/generated/prisma": { TeacherStatus: { ACTIVE: "ACTIVE" }, BursarStatus: { ACTIVE: "ACTIVE" }, TeacherInviteType: { SUBJECT_TEACHER: "SUBJECT_TEACHER" } },
       "@/src/lib/cacheTags": { revalidateDashboard() {}, revalidateReferenceData() {} },
     };
     let sends = 0;
     for (const model of ["teacher", "parent", "bursar"]) {
-      db[model] = { findMany: async () => records, updateMany: async () => ({ count: 1 }) };
+      db[model] = { findMany: async ({ where }) => where.email?.equals ? records.filter((row) => row.email === where.email.equals) : records, updateMany: async () => ({ count: 1 }) };
       db[model + "Invite"] = {
         findMany: async ({ where }) => where.status === "PENDING" ? pending : [],
         findFirst: async () => null,

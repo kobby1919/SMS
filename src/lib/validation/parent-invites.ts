@@ -39,7 +39,7 @@ export const parentInviteCreateSchema = z.object({
   phone: phoneSchema,
   studentIds: z
     .array(z.string().trim().min(1, "Student id is required."))
-    .min(1, "Select at least one ward for this parent."),
+    .default([]),
 });
 
 export const parentInviteIdSchema = z.object({

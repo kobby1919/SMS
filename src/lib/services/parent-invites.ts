@@ -13,6 +13,7 @@ import { recordInviteEmailSideEffects } from "@/src/lib/migration/invite-email";
 import type { ParentInviteAuditAction, Prisma } from "@/src/generated/prisma";
 import { normalizeAppRole } from "@/src/lib/roles";
 import { writeParentAccessAudit } from "@/src/lib/services/parent-access-audit";
+import { findParentInviteProfile, parentProfileHasAccount } from "@/src/lib/services/parent-invite-profile";
 
 export type CreatedParentInvite = {
   inviteId: string;
@@ -96,7 +97,7 @@ function clerkPrimaryEmail(
     (email) => email.id === user.primaryEmailAddressId,
   );
 
-  return primaryEmail?.emailAddress.toLowerCase();
+  return primaryEmail?.verification?.status === "verified" ? primaryEmail.emailAddress.trim().toLowerCase() : undefined;
 }
 function parentDisplayName(invite: { name: string; surname: string }) {
   return `${invite.name} ${invite.surname}`.trim();
@@ -207,10 +208,8 @@ export async function createParentInvite(
 ): Promise<CreatedParentInvite> {
   const now = new Date();
   const email = input.email.trim().toLowerCase();
-  const uniqueStudentIds = Array.from(new Set(input.studentIds));
-
-  const [school, existingParent, activeInvite, students] = await Promise.all([
-    prisma.school.findUnique({
+  if (context.role !== "admin") throw new ParentInviteServiceError("Only school admins can invite parents.");
+  const school = await prisma.school.findUnique({
       where: { id: context.schoolId },
       select: {
         id: true,
@@ -218,77 +217,40 @@ export async function createParentInvite(
         displayName: true,
         emailFromName: true,
       },
-    }),
-    prisma.parent.findFirst({
-      where: { schoolId: context.schoolId, email },
-      select: { id: true },
-    }),
-    prisma.parentInvite.findFirst({
-      where: {
-        schoolId: context.schoolId,
-        email,
-        status: "PENDING",
-        acceptedAt: null,
-        revokedAt: null,
-        expiresAt: { gt: now },
-      },
-      select: { id: true, expiresAt: true },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.student.findMany({
-      where: {
-        schoolId: context.schoolId,
-        id: { in: uniqueStudentIds },
-        status: "ACTIVE",
-      },
-      select: {
-        id: true,
-        name: true,
-        surname: true,
-        class: { select: { name: true } },
-      },
-    }),
-  ]);
+    });
 
   if (!school) {
     throw new ParentInviteServiceError("School not found.", 404);
   }
 
-  if (existingParent) {
-    throw new ParentInviteServiceError(
-      "A parent with this email already exists in this school.",
-      409,
-    );
-  }
-
-  if (activeInvite) {
-    throw new ParentInviteServiceError(
-      "This parent already has an active pending invite.",
-      409,
-    );
-  }
-
-  if (students.length !== uniqueStudentIds.length) {
-    throw new ParentInviteServiceError(
-      "One or more selected wards are not active or do not belong to this school.",
-      409,
-    );
-  }
-
   const tokenBundle = createParentInviteTokenBundle(now);
-  const wardNames = students.map((student) =>
-    `${student.name} ${student.surname}`.trim(),
-  );
-
-  const invite = await prisma.$transaction(async (tx) => {
+  const { invite, uniqueStudentIds, wardNames } = await prisma.$transaction(async (tx) => {
+    const profile = await findParentInviteProfile(tx, context.schoolId, email);
+    if (profile && parentProfileHasAccount(profile)) throw new ParentInviteServiceError("This parent already has an account. Use the existing parent profile.", 409);
+    const activeInvite = await tx.parentInvite.findFirst({
+      where: { schoolId: context.schoolId, email: { equals: email, mode: "insensitive" }, OR: [
+        { acceptedAt: { not: null } },
+        { status: "PENDING", acceptedAt: null, revokedAt: null, expiresAt: { gt: now } },
+      ] }, select: { id: true },
+    });
+    if (activeInvite) throw new ParentInviteServiceError("This parent already has an active or accepted invite. Resend the existing pending invite when needed.", 409);
+    const uniqueStudentIds = [...new Set(profile ? profile.studentRelationships.map((link) => link.studentId) : input.studentIds)];
+    if (!uniqueStudentIds.length) throw new ParentInviteServiceError(profile ? "This parent has no active ward links. Link a ward on the parent profile before inviting." : "Select at least one ward for this new parent.");
+    if (profile && input.studentIds.some((id) => !uniqueStudentIds.includes(id))) throw new ParentInviteServiceError("Ward links for existing parents must be changed on the parent profile, not through an invitation.", 409);
+    const students = profile ? profile.studentRelationships.map((link) => link.student) : await tx.student.findMany({
+      where: { schoolId: context.schoolId, id: { in: uniqueStudentIds }, status: "ACTIVE", class: { schoolId: context.schoolId } },
+      select: { id: true, name: true, surname: true },
+    });
+    if (students.length !== uniqueStudentIds.length) throw new ParentInviteServiceError("One or more selected wards are not active or do not belong to this school.", 409);
+    const wardNames = students.map((student) => `${student.name} ${student.surname}`.trim());
     const createdInvite = await tx.parentInvite.create({
       data: {
         schoolId: context.schoolId,
-        name: input.name,
-        surname: input.surname,
-        sex: input.sex,
+        name: profile?.name ?? input.name,
+        surname: profile?.surname ?? input.surname,
+        sex: profile?.sex ?? input.sex,
         email,
-        phone: input.phone ?? null,
+        phone: profile?.phone ?? input.phone ?? null,
         tokenHash: tokenBundle.tokenHash,
         expiresAt: tokenBundle.expiresAt,
         createdBy: context.userId,
@@ -325,6 +287,7 @@ export async function createParentInvite(
         sex: createdInvite.sex,
         phone: input.phone ?? null,
         studentIds: uniqueStudentIds,
+        ...(profile ? { importedParentId: profile.id } : {}),
         wardNames,
         expiresAt: createdInvite.expiresAt.toISOString(),
       },
@@ -347,8 +310,8 @@ export async function createParentInvite(
       },
     });
 
-    return createdInvite;
-  });
+    return { invite: createdInvite, uniqueStudentIds, wardNames };
+  }, { isolationLevel: "Serializable" });
 
   const schoolName = schoolDisplayName(school);
   const parentName = parentDisplayName(invite);
@@ -692,25 +655,46 @@ export async function acceptParentInviteForUser(input: {
     );
   }
 
-  const [parentForUser, parentForEmail] = await Promise.all([
-    prisma.parent.findUnique({
+  const acceptedParent = await prisma.$transaction(async (tx) => {
+  const [parentForUser, parentEmailMatches, creationAudit] = await Promise.all([
+    tx.parent.findUnique({
       where: { id: input.userId },
       select: { id: true, schoolId: true, email: true },
     }),
-    prisma.parent.findFirst({
+    tx.parent.findMany({
       where: {
         schoolId: invite.schoolId,
-        OR: [{ email: inviteEmail }, { username: inviteEmail }],
+        OR: [{ email: { equals: inviteEmail, mode: "insensitive" } }, { username: { equals: inviteEmail, mode: "insensitive" } }],
       },
+      take: 2,
       select: { id: true, schoolId: true, email: true },
     }),
+    tx.parentInviteAuditLog.findFirst({
+      where: { schoolId: invite.schoolId, inviteId: invite.id, action: "INVITE_CREATED" },
+      orderBy: { createdAt: "asc" }, select: { metadata: true },
+    }),
   ]);
+  if (parentEmailMatches.length > 1) throw new ParentInviteServiceError("Multiple parent profiles match this invitation. Ask the admin to resolve duplicate contacts.", 409);
+  const parentForEmail = parentEmailMatches[0] ?? null;
+  if (!creationAudit) throw new ParentInviteServiceError("This invitation's source could not be verified. Ask the admin to send a fresh invitation.", 409);
+  const origin = creationAudit.metadata;
+  if (origin && typeof origin === "object" && !Array.isArray(origin) && "importedParentId" in origin) {
+    if (typeof origin.importedParentId !== "string" || !origin.importedParentId || parentForEmail?.id !== origin.importedParentId) {
+      throw new ParentInviteServiceError("The parent profile for this invitation has changed. Ask the admin to review the current profile and send a fresh invitation.", 409);
+    }
+  }
 
   if (parentForUser && parentForUser.schoolId !== invite.schoolId) {
     throw new ParentInviteServiceError(
       "This account already belongs to another school on Edujay.",
       409,
     );
+  }
+  if (parentForUser && parentForUser.email?.trim().toLowerCase() !== inviteEmail) {
+    throw new ParentInviteServiceError("This account's saved parent email no longer matches the invitation. Ask the admin to review it.", 409);
+  }
+  if (parentForEmail && parentForEmail.id.startsWith("user_") && parentForEmail.id !== input.userId) {
+    throw new ParentInviteServiceError("This parent profile already belongs to another account. Sign in with that account.", 409);
   }
 
   if (parentForUser && parentForEmail && parentForEmail.id !== parentForUser.id) {
@@ -720,7 +704,6 @@ export async function acceptParentInviteForUser(input: {
     );
   }
 
-  const acceptedParent = await prisma.$transaction(async (tx) => {
     const importedParent = !parentForUser && parentForEmail ? parentForEmail : null;
     const parent = parentForUser
       ? await tx.parent.update({
@@ -728,11 +711,7 @@ export async function acceptParentInviteForUser(input: {
           data: {
             schoolId: invite.schoolId,
             username: inviteEmail,
-            name: invite.name,
-            surname: invite.surname,
-            sex: invite.sex,
             email: inviteEmail,
-            phone: invite.phone ?? null,
           },
           select: { id: true },
         })
@@ -743,11 +722,7 @@ export async function acceptParentInviteForUser(input: {
               id: input.userId,
               schoolId: invite.schoolId,
               username: inviteEmail,
-              name: invite.name,
-              surname: invite.surname,
-              sex: invite.sex,
               email: inviteEmail,
-              phone: invite.phone ?? null,
             },
             select: { id: true },
           })
@@ -767,6 +742,8 @@ export async function acceptParentInviteForUser(input: {
         });
 
     for (const student of inviteStudents) {
+      const currentStudent = await tx.student.findFirst({ where: { id: student.id, schoolId: invite.schoolId, status: "ACTIVE" }, select: { id: true } });
+      if (!currentStudent) throw new ParentInviteServiceError("A ward in this invitation is no longer active in this school.", 409);
       const existingRelationship = await tx.parentStudentRelationship.findUnique({
         where: {
           schoolId_parentId_studentId: {
@@ -775,8 +752,14 @@ export async function acceptParentInviteForUser(input: {
             studentId: student.id,
           },
         },
-        select: { id: true, status: true },
+        select: { id: true, status: true, endedAt: true },
       });
+      if (existingRelationship && (existingRelationship.status !== "ACTIVE" || existingRelationship.endedAt)) {
+        throw new ParentInviteServiceError("A ward link in this invitation has been ended. Ask the admin to review the current parent profile.", 409);
+      }
+      if (!existingRelationship && (parentForUser || importedParent)) {
+        throw new ParentInviteServiceError("A ward link in this invitation is no longer attached to this parent. Ask the admin to send a current invitation.", 409);
+      }
 
       const relationship = await tx.parentStudentRelationship.upsert({
         where: {
@@ -799,19 +782,14 @@ export async function acceptParentInviteForUser(input: {
           updatedById: input.userId,
         },
         update: {
-          status: "ACTIVE",
-          endedAt: null,
-          canViewFees: true,
-          canViewReports: true,
-          canMessageSchool: true,
           updatedById: input.userId,
         },
         select: { id: true },
       });
 
-      await writeParentAccessAudit(tx, {
+      if (!existingRelationship) await writeParentAccessAudit(tx, {
         schoolId: invite.schoolId,
-        action: existingRelationship ? "ACCESS_RESTORED" : "CHILD_LINKED",
+        action: "CHILD_LINKED",
         performedBy: input.userId,
         parentId: parent.id,
         studentId: student.id,
@@ -819,7 +797,7 @@ export async function acceptParentInviteForUser(input: {
         relationshipId: relationship.id,
         metadata: {
           source: "parent_invite_acceptance",
-          previousStatus: existingRelationship?.status ?? null,
+          previousStatus: null,
           email: inviteEmail,
         },
       });
@@ -828,13 +806,16 @@ export async function acceptParentInviteForUser(input: {
     const updated = await tx.parentInvite.updateMany({
       where: {
         id: invite.id,
+        schoolId: invite.schoolId,
+        tokenHash,
+        expiresAt: { gt: new Date() },
         status: "PENDING",
         acceptedAt: null,
         revokedAt: null,
       },
       data: {
         status: "ACCEPTED",
-        acceptedAt: now,
+        acceptedAt: new Date(),
         acceptedBy: input.userId,
         acceptedParentId: parent.id,
       },
@@ -869,12 +850,12 @@ export async function acceptParentInviteForUser(input: {
       metadata: {
         email: inviteEmail,
         studentIds: inviteStudents.map((student) => student.id),
-        createdNewParentRecord: !parentForUser,
+        createdNewParentRecord: !parentForUser && !importedParent,
       },
     });
 
     return parent;
-  });
+  }, { isolationLevel: "Serializable" });
 
   await client.users.updateUserMetadata(input.userId, {
     publicMetadata: {

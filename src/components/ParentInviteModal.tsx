@@ -1,10 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { CheckCircle2, Copy, Loader2, MailPlus, X } from "lucide-react";
 import {
   createParentInviteAction,
+  lookupParentInviteProfileAction,
+  type ParentInviteProfileActionResult,
   type ParentInviteCreateActionResult,
 } from "@/src/lib/actions/parentInviteActions";
 import type { ParentInviteCreateInput } from "@/src/lib/validation/parent-invites";
@@ -33,6 +35,28 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
   const [result, setResult] = useState<ParentInviteCreateActionResult | null>(null);
   const [copied, setCopied] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [profileLookup, setProfileLookup] = useState<{ email: string; result: ParentInviteProfileActionResult } | null>(null);
+  const normalizedEmail = form.email.trim().toLowerCase();
+  const currentLookup = profileLookup?.email === normalizedEmail ? profileLookup.result : null;
+  const matchedProfile = currentLookup?.ok ? currentLookup.profile : null;
+  const checkingProfile = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail) && !currentLookup;
+
+  useEffect(() => {
+    if (!open || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) return;
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      const result = await lookupParentInviteProfileAction({ email: normalizedEmail }).catch(() => ({ ok: false as const, message: "Could not check existing ward links. Please try again." }));
+      if (cancelled) return;
+      setProfileLookup({ email: normalizedEmail, result });
+      if (result.ok && result.profile) {
+        const profile = result.profile;
+        setForm((current) => current.email.trim().toLowerCase() === normalizedEmail ? {
+          ...current, name: profile.name, surname: profile.surname, sex: profile.sex, phone: profile.phone ?? "", studentIds: [],
+        } : current);
+      }
+    }, 350);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [open, normalizedEmail]);
 
   const filteredStudents = useMemo(() => {
     const query = studentSearch.trim().toLowerCase();
@@ -54,8 +78,9 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
   }
 
   function updateField(field: keyof Omit<typeof form, "studentIds">, value: string) {
+    if (field === "email") setProfileLookup(null);
     setForm((current) => ({
-      ...current,
+      ...(field === "email" && matchedProfile ? initialForm : current),
       [field]: field === "sex" ? (value as ParentInviteCreateInput["sex"]): value,
     }));
   }
@@ -127,7 +152,7 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
                   Invite parent
                 </h2>
                 <p className="mt-2 text-sm font-medium leading-6 text-gray-500">
-                  Create a secure invite and connect the parent to the right ward.
+                  Invite the parent to access their linked wards.
                   The parent must accept with this same email before Edujay grants access.
                 </p>
               </div>
@@ -172,12 +197,14 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
                 <Input
                   label="First name"
                   value={form.name}
+                  disabled={Boolean(matchedProfile)}
                   onChange={(value) => updateField("name", value)}
                   placeholder="Ama"
                 />
                 <Input
                   label="Surname"
                   value={form.surname}
+                  disabled={Boolean(matchedProfile)}
                   onChange={(value) => updateField("surname", value)}
                   placeholder="Owusu"
                 />
@@ -187,6 +214,7 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
                   </label>
                   <select
                     required
+                    disabled={Boolean(matchedProfile)}
                     value={form.sex}
                     onChange={(event) => updateField("sex", event.target.value)}
                     className="h-11 rounded-xl border border-gray-200 bg-white px-3 text-sm font-semibold text-gray-700 outline-none transition focus:border-edujay-primary focus:ring-2 focus:ring-edujay-ring"
@@ -209,12 +237,25 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
                 <Input
                   label="Phone"
                   value={form.phone}
+                  disabled={Boolean(matchedProfile)}
                   onChange={(value) => updateField("phone", value)}
                   placeholder="0240000000"
                 />
               </div>
 
-              <div className="mt-5 rounded-2xl border border-gray-100 bg-gray-50 p-4">
+              {checkingProfile && <p role="status" className="mt-4 text-sm text-gray-500">Checking existing parent and ward links...</p>}
+              {currentLookup && !currentLookup.ok && <p role="alert" className="mt-4 text-sm text-rose-700">{currentLookup.message}</p>}
+              {matchedProfile ? (
+                <div className="mt-5 border-t border-gray-100 pt-4">
+                  <h3 className="text-sm font-black text-gray-800">Linked wards</h3>
+                  {matchedProfile.hasAccount ? <p className="mt-2 text-sm text-amber-800">This parent already has an account. Use the existing parent profile.</p> : null}
+                  {matchedProfile.wards.length ? (
+                    <ul className="mt-2 divide-y divide-gray-100">
+                      {matchedProfile.wards.map((ward) => <li key={ward.id} className="py-2 text-sm text-gray-700"><span className="font-bold">{ward.name} {ward.surname}</span><span className="ml-2 text-gray-500">{ward.className}</span></li>)}
+                    </ul>
+                  ) : <p className="mt-2 text-sm text-amber-800">No active ward links. Link a ward on this parent&apos;s profile before inviting.</p>}
+                </div>
+              ) : <div className="mt-5 rounded-2xl border border-gray-100 bg-gray-50 p-4">
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
                   <div>
                     <p className="text-xs font-black uppercase tracking-wide text-gray-500">
@@ -281,7 +322,7 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
                     ))}
                   </div>
                 )}
-              </div>
+              </div>}
 
               <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                 <button
@@ -295,7 +336,7 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
                 <button
                   type="button"
                   onClick={submitInvite}
-                  disabled={isPending}
+                  disabled={isPending || checkingProfile || Boolean(currentLookup && !currentLookup.ok) || Boolean(matchedProfile && (matchedProfile.hasAccount || matchedProfile.wards.length === 0))}
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-edujay-primary px-4 py-2.5 text-sm font-black text-white transition hover:bg-edujay-primaryDark disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {isPending && <Loader2 size={16} className="animate-spin" />}
@@ -316,12 +357,14 @@ function Input({
   onChange,
   placeholder,
   type = "text",
+  disabled = false,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   type?: string;
+  disabled?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-1">
@@ -329,6 +372,7 @@ function Input({
         {label}
       </label>
       <input
+        disabled={disabled}
         type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}
