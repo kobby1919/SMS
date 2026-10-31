@@ -291,31 +291,33 @@ const Navbar = async ({ role, userId, schoolId }: Props) => {
   };
 
   if (role === "teacher") {
-    await prepareTeacherAccountabilityForView({ schoolId, teacherId: userId });
-    const overview = await getTeacherSelfAccountabilityOverview({ schoolId, teacherId: userId });
-    const alerts = overview.todayDuties
-      .filter((duty) => !["COMPLETED", "COMPLETED_LATE", "CANCELLED"].includes(duty.status))
-      .map((duty) => ({
-        id: duty.id,
-        title: duty.title,
-        description: [
-          duty.className && duty.subjectName ? `${duty.className} - ${duty.subjectName}` : null,
-          duty.escalationReason ?? null,
-          `Due ${duty.expectedAt.toLocaleTimeString("en-GH", { hour: "2-digit", minute: "2-digit" })}`,
-        ].filter(Boolean).join("\n"),
-        href: needsTeacherReview(duty.status, duty.escalationStatus)
-          ? obligationReviewHref(duty.id)
-          : duty.actionHref,
-        priority:
-          duty.status === "MISSED" || duty.status === "ESCALATED" || duty.escalationStatus
-            ? "HIGH"
-            : duty.priority,
-        status: duty.status,
-        dueAt: duty.expectedAt.toISOString(),
-      }))
-      .slice(0, 8);
+    const accountabilityReady = await prepareTeacherAccountabilityForView({ schoolId, teacherId: userId });
+    if (accountabilityReady) {
+      const overview = await getTeacherSelfAccountabilityOverview({ schoolId, teacherId: userId });
+      const alerts = overview.todayDuties
+        .filter((duty) => !["COMPLETED", "COMPLETED_LATE", "CANCELLED"].includes(duty.status))
+        .map((duty) => ({
+          id: duty.id,
+          title: duty.title,
+          description: [
+            duty.className && duty.subjectName ? `${duty.className} - ${duty.subjectName}` : null,
+            duty.escalationReason ?? null,
+            `Due ${duty.expectedAt.toLocaleTimeString("en-GH", { hour: "2-digit", minute: "2-digit" })}`,
+          ].filter(Boolean).join("\n"),
+          href: needsTeacherReview(duty.status, duty.escalationStatus)
+            ? obligationReviewHref(duty.id)
+            : duty.actionHref,
+          priority:
+            duty.status === "MISSED" || duty.status === "ESCALATED" || duty.escalationStatus
+              ? "HIGH"
+              : duty.priority,
+          status: duty.status,
+          dueAt: duty.expectedAt.toISOString(),
+        }))
+        .slice(0, 8);
 
-    await syncTeacherAlertsToAppNotifications({ schoolId, teacherId: userId, alerts });
+      await syncTeacherAlertsToAppNotifications({ schoolId, teacherId: userId, alerts });
+    }
     const notificationContext = await getNavbarNotificationContext({ schoolId, userId, role });
 
     return <NavbarClient user={userData} appNotifications={notificationContext.items} appNotificationUnreadCount={notificationContext.unreadCount} />;

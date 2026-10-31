@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { requirePageSession } from "@/src/lib/authz";
 import { prepareTeacherAccountabilityForView } from "@/src/lib/services/teacher-accountability-view";
+import TeacherAccountabilityBusy from "@/src/components/TeacherAccountabilityBusy";
 import {
   getTeacherSelfAccountabilityOverview,
   type TeacherHistoryWeekGroup,
@@ -560,10 +561,11 @@ const TeacherAccountabilityPage = async ({
 }) => {
   const { obligationId: focusedObligationId } = await searchParams;
   const { userId, schoolId } = await requirePageSession(["teacher"]);
-  await prepareTeacherAccountabilityForView({
+  const accountabilityReady = await prepareTeacherAccountabilityForView({
     schoolId,
     teacherId: userId,
   });
+  if (!accountabilityReady) return <TeacherAccountabilityBusy href="/teacher/accountability" />;
   const [overview, settings] = await Promise.all([
     getTeacherSelfAccountabilityOverview({
       schoolId,

@@ -20,20 +20,21 @@ const duty = { id: "duty-1", schoolId: "school-a", teacherId: "teacher-a", type:
 
 function storeFixture(overrides = {}) {
   let row = overrides.row ?? null;
-  const audits = [], skips = [];
+  const audits = [], skips = [], writes = [];
   const tx = {
     teacher: { findFirst: async () => overrides.inactive ? null : { id: duty.teacherId } },
     teacherObligation: {
-      createMany: async ({ data, skipDuplicates }) => { assert.equal(skipDuplicates, true); if (row) return { count: 0 }; row = { ...duty, ...data[0] }; return { count: 1 }; },
+      findUnique: async () => row,
+      createMany: async ({ data, skipDuplicates }) => { writes.push("create"); assert.equal(skipDuplicates, true); if (row) return { count: 0 }; row = { ...duty, ...data[0] }; return { count: 1 }; },
       findUniqueOrThrow: async ({ where }) => { assert.equal(where.schoolId_teacherId_sourceKey.schoolId, duty.schoolId); return row; },
-      update: async ({ data }) => { row = { ...row, ...data }; return row; },
+      update: async ({ data }) => { writes.push("update"); row = { ...row, ...data }; return row; },
     },
     teacherEscalation: { findFirst: async () => overrides.closed ? { id: "closed" } : null },
     teacherReminder: { updateMany: async (q) => { skips.push(q); return { count: 1 }; } },
     teacherAccountabilityAuditLog: { create: async (q) => { audits.push(q.data); return q.data; } },
   };
   const service = load("src/lib/services/teacher-obligation-store.ts", { "@/src/lib/prisma": { $transaction: async (work, options) => { assert.equal(options.isolationLevel, "Serializable"); return work(tx); } } });
-  return { service, audits, skips, get row() { return row; } };
+  return { service, audits, skips, writes, get row() { return row; } };
 }
 
 test("synchronization creates one duty and one creation audit across retries", async () => {
@@ -67,7 +68,217 @@ test("serialization retries are bounded and unrelated failures are not swallowed
   let attempts = 0;
   const service = load("src/lib/services/teacher-obligation-store.ts", { "@/src/lib/prisma": { $transaction: async () => { attempts++; throw Object.assign(new Error("conflict"), { code: "P2034" }); } } });
   await assert.rejects(service.accountabilityTransaction(async () => true), /conflict/);
-  assert.equal(attempts, 3);
+  assert.equal(attempts, 5);
+});
+
+test("unchanged dashboard refreshes do not rewrite duties or reminders", async () => {
+  const f = storeFixture({ row: { ...duty, status: "ESCALATED", priority: "HIGH" } });
+  for (let i = 0; i < 3; i++) {
+    await f.service.saveTeacherObligation({ ...duty, status: "MISSED", metadata: { ...duty.metadata }, expectedAt: new Date(duty.expectedAt) });
+  }
+  assert.deepEqual(f.writes, []);
+  assert.deepEqual(f.skips, []);
+  assert.equal(f.row.status, "ESCALATED");
+});
+
+test("changed duty metadata is still saved without reopening an escalation", async () => {
+  const f = storeFixture({ row: { ...duty, status: "ESCALATED", priority: "HIGH" } });
+  await f.service.saveTeacherObligation({ ...duty, status: "MISSED", metadata: { ...duty.metadata, attendanceCount: 1 } });
+  assert.deepEqual(f.writes, ["update"]);
+  assert.equal(f.row.metadata.attendanceCount, 1);
+  assert.equal(f.row.status, "ESCALATED");
+});
+
+test("write conflict retries rerun the whole transaction and can recover", async () => {
+  let attempts = 0;
+  const service = load("src/lib/services/teacher-obligation-store.ts", {
+    "@/src/lib/prisma": { $transaction: async (work) => {
+      attempts++;
+      if (attempts < 4) throw Object.assign(new Error("conflict"), { code: "P2034" });
+      return work({ verifiedRetry: true });
+    } },
+  });
+  assert.equal(await service.accountabilityTransaction(async (tx) => tx.verifiedRetry), true);
+  assert.equal(attempts, 4);
+});
+
+test("unrelated database errors are not retried or swallowed", async () => {
+  let attempts = 0;
+  const failure = Object.assign(new Error("denied"), { code: "P2010" });
+  const service = load("src/lib/services/teacher-obligation-store.ts", {
+    "@/src/lib/prisma": { $transaction: async () => { attempts++; throw failure; } },
+  });
+  await assert.rejects(service.accountabilityTransaction(async () => true), (error) => error === failure);
+  assert.equal(attempts, 1);
+});
+
+test("weekly dashboard catch-up does not overlap attendance synchronization writes", async () => {
+  let active = 0, peak = 0, days = 0, escalated = false;
+  const service = load("src/lib/services/teacher-accountability-view.ts", {
+    "@/src/lib/services/teacher-obligation-store": { isAccountabilityWriteConflict: () => false },
+    "@/src/lib/services/teacher-attendance-obligations": { syncAttendanceObligationsForDate: async () => {
+      active++; peak = Math.max(peak, active); days++;
+      await new Promise((resolve) => setTimeout(resolve, 1));
+      active--;
+    } },
+    "@/src/lib/services/teacher-ca-obligations": { syncCAActivityScorePublishingObligationsForSchool: async () => {} },
+    "@/src/lib/services/teacher-homework-obligations": { syncHomeworkCheckingObligationsForSchool: async () => {} },
+    "@/src/lib/services/teacher-accountability": { processTeacherWeekEscalationCatchup: async () => { escalated = true; } },
+  });
+  await service.prepareTeacherAccountabilityForView({ schoolId: "school-a", teacherId: "teacher-a", now: new Date("2026-10-30T12:00:00Z") });
+  assert.equal(days, 5);
+  assert.equal(peak, 1);
+  assert.equal(escalated, true);
+});
+
+test("concurrent first loads commit one duty and one creation audit", async () => {
+  let row = null, version = 0, conflicts = 0;
+  const audits = [];
+  const service = load("src/lib/services/teacher-obligation-store.ts", {
+    "node:timers/promises": { setTimeout: async () => {} },
+    "@/src/lib/prisma": { $transaction: async (work, options) => {
+      assert.equal(options.isolationLevel, "Serializable");
+      const readVersion = version;
+      let local = row ? { ...row } : null, changed = false;
+      const pendingAudits = [];
+      const tx = {
+        teacher: { findFirst: async () => ({ id: duty.teacherId }) },
+        teacherObligation: {
+          findUnique: async () => local,
+          createMany: async ({ data }) => { changed = true; local = { ...duty, ...data[0] }; return { count: 1 }; },
+          findUniqueOrThrow: async () => local,
+          update: async ({ data }) => { changed = true; local = { ...local, ...data }; return local; },
+        },
+        teacherEscalation: { findFirst: async () => null },
+        teacherReminder: { updateMany: async () => ({ count: 0 }) },
+        teacherAccountabilityAuditLog: { create: async ({ data }) => { pendingAudits.push(data); return data; } },
+      };
+      const result = await work(tx);
+      await new Promise((resolve) => setImmediate(resolve));
+      if (changed && version !== readVersion) {
+        conflicts++;
+        throw Object.assign(new Error("serialization conflict"), { code: "P2034" });
+      }
+      if (changed) { row = local; audits.push(...pendingAudits); version++; }
+      return result;
+    } },
+  });
+  const results = await Promise.all(Array.from({ length: 10 }, () => service.saveTeacherObligation({ ...duty })));
+  assert.equal(results.length, 10);
+  assert.equal(conflicts, 9);
+  assert.equal(version, 1);
+  assert.equal(audits.length, 1);
+  assert.equal(audits[0].action, "OBLIGATION_CREATED");
+  assert.equal(row.status, "PENDING");
+});
+
+test("retries wait outside transactions with bounded exponential backoff", async () => {
+  const pauses = [];
+  let attempts = 0, transactionActive = false;
+  const service = load("src/lib/services/teacher-obligation-store.ts", {
+    "node:timers/promises": { setTimeout: async (ms) => { assert.equal(transactionActive, false); pauses.push(ms); } },
+    "@/src/lib/prisma": { $transaction: async () => {
+      attempts++; transactionActive = true;
+      try { throw Object.assign(new Error("conflict"), { code: "P2034" }); }
+      finally { transactionActive = false; }
+    } },
+  });
+  await assert.rejects(service.accountabilityTransaction(async () => true), /conflict/);
+  assert.equal(attempts, 5);
+  assert.equal(pauses.length, 4);
+  pauses.forEach((ms, index) => assert.ok(ms >= 50 * 2 ** index && ms < 50 * 2 ** index + 50));
+});
+
+test("a retry rereads a duty completed by a competing request instead of overwriting it", async () => {
+  let attempts = 0, updates = 0;
+  const completed = { ...duty, status: "COMPLETED", completedAt: now };
+  const service = load("src/lib/services/teacher-obligation-store.ts", {
+    "node:timers/promises": { setTimeout: async () => {} },
+    "@/src/lib/prisma": { $transaction: async (work) => {
+      attempts++;
+      if (attempts === 1) throw Object.assign(new Error("conflict"), { code: "P2034" });
+      return work({
+        teacher: { findFirst: async () => ({ id: duty.teacherId }) },
+        teacherObligation: { findUnique: async () => completed, update: async () => { updates++; } },
+      });
+    } },
+  });
+  assert.equal(await service.saveTeacherObligation({ ...duty, status: "MISSED" }), completed);
+  assert.equal(attempts, 2);
+  assert.equal(updates, 0);
+});
+
+function viewFixture(failure) {
+  const store = load("src/lib/services/teacher-obligation-store.ts", { "@/src/lib/prisma": {} });
+  return load("src/lib/services/teacher-accountability-view.ts", {
+    "@/src/lib/services/teacher-obligation-store": store,
+    "@/src/lib/services/teacher-attendance-obligations": { syncAttendanceObligationsForDate: async () => { if (failure) throw failure; } },
+    "@/src/lib/services/teacher-ca-obligations": { syncCAActivityScorePublishingObligationsForSchool: async () => {} },
+    "@/src/lib/services/teacher-homework-obligations": { syncHomeworkCheckingObligationsForSchool: async () => {} },
+    "@/src/lib/services/teacher-accountability": { processTeacherWeekEscalationCatchup: async () => {} },
+  });
+}
+
+test("exhausted write conflicts yield an explicit busy state without leaking personal data", async (t) => {
+  const warning = t.mock.method(console, "warn", () => {});
+  const service = viewFixture(Object.assign(new Error("private database detail"), { code: "P2034" }));
+  assert.equal(await service.prepareTeacherAccountabilityForView({ schoolId: "school-a", teacherId: "teacher-a", now }), false);
+  assert.deepEqual(warning.mock.calls[0].arguments, ["TEACHER_ACCOUNTABILITY_SYNC_BUSY", { code: "P2034" }]);
+});
+
+test("successful synchronization reports ready; other errors never become a busy state", async () => {
+  const input = { schoolId: "school-a", teacherId: "teacher-a", now };
+  assert.equal(await viewFixture().prepareTeacherAccountabilityForView(input), true);
+  for (const failure of [new Error("unexpected"), Object.assign(new Error("denied"), { code: "P2010" }), Object.assign(new Error("timeout"), { code: "P2028" })]) {
+    await assert.rejects(viewFixture(failure).prepareTeacherAccountabilityForView(input), (error) => error === failure);
+  }
+});
+
+test("both teacher pages require authentication and withhold duty controls while synchronization is busy", () => {
+  for (const path of ["src/app/(dashboard)/teacher/page.tsx", "src/app/(dashboard)/teacher/accountability/page.tsx"]) {
+    const page = readFileSync(path, "utf8");
+    assert.ok(page.indexOf('requirePageSession(["teacher"])') < page.indexOf("const accountabilityReady ="));
+    assert.ok(page.includes("if (!accountabilityReady) return <TeacherAccountabilityBusy"));
+    assert.ok(page.indexOf("if (!accountabilityReady)") < page.indexOf("const [", page.indexOf("const accountabilityReady =")));
+  }
+  const Busy = load("src/components/TeacherAccountabilityBusy.tsx").default;
+  const markup = renderToStaticMarkup(React.createElement(Busy, { href: "/teacher" }));
+  assert.match(markup, /Your duties are updating/);
+  assert.match(markup, /href="\/teacher"/);
+  assert.doesNotMatch(markup, /All.*duties.*clear|100%|<form/);
+});
+
+test("navbar and page share a sync with primitive tenant keys, but new requests resynchronize", async () => {
+  let requestCache = new Map();
+  const synced = [];
+  const service = load("src/lib/services/teacher-accountability-view.ts", {
+    react: { cache: (work) => (...args) => {
+      assert.ok(args.every((arg) => typeof arg === "string"));
+      const key = JSON.stringify(args);
+      if (!requestCache.has(key)) requestCache.set(key, work(...args));
+      return requestCache.get(key);
+    } },
+    "@/src/lib/services/teacher-obligation-store": { isAccountabilityWriteConflict: () => false },
+    "@/src/lib/services/teacher-attendance-obligations": { syncAttendanceObligationsForDate: async () => {} },
+    "@/src/lib/services/teacher-ca-obligations": { syncCAActivityScorePublishingObligationsForSchool: async ({ schoolId, teacherId }) => { synced.push([schoolId, teacherId]); } },
+    "@/src/lib/services/teacher-homework-obligations": { syncHomeworkCheckingObligationsForSchool: async () => {} },
+    "@/src/lib/services/teacher-accountability": { processTeacherWeekEscalationCatchup: async () => {} },
+  });
+  await Promise.all([
+    service.prepareTeacherAccountabilityForView({ schoolId: "school-a", teacherId: "teacher-a" }),
+    service.prepareTeacherAccountabilityForView({ schoolId: "school-a", teacherId: "teacher-a" }),
+    service.prepareTeacherAccountabilityForView({ schoolId: "school-a", teacherId: "teacher-b" }),
+    service.prepareTeacherAccountabilityForView({ schoolId: "school-b", teacherId: "teacher-a" }),
+  ]);
+  assert.equal(synced.length, 3);
+  requestCache = new Map();
+  await service.prepareTeacherAccountabilityForView({ schoolId: "school-a", teacherId: "teacher-a" });
+  assert.equal(synced.length, 4);
+  const page = readFileSync("src/app/(dashboard)/teacher/page.tsx", "utf8");
+  const preparation = page.slice(page.indexOf("const accountabilityReady ="), page.indexOf("if (!accountabilityReady)"));
+  assert.doesNotMatch(preparation, /now:/);
+  const navbar = readFileSync("src/components/Navbar.tsx", "utf8");
+  assert.match(navbar, /if \(accountabilityReady\) \{[\s\S]*?syncTeacherAlertsToAppNotifications/);
 });
 test("only one competing correction reviewer can claim a pending request", async () => {
   const service = storeFixture().service;

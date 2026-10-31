@@ -1,13 +1,21 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
+import { setTimeout as delay } from "node:timers/promises";
 import prisma from "@/src/lib/prisma";
 import type { Prisma, TeacherAccountabilityAuditAction, TeacherObligationStatus } from "@/src/generated/prisma";
+
+export function isAccountabilityWriteConflict(error: unknown): boolean {
+  return Boolean(error && typeof error === "object" && "code" in error && error.code === "P2034");
+}
 
 export async function accountabilityTransaction<T>(work: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
   for (let attempt = 0; ; attempt += 1) {
     try {
       return await prisma.$transaction(work, { isolationLevel: "Serializable" });
     } catch (error) {
-      if (attempt >= 2 || !error || typeof error !== "object" || !("code" in error) || error.code !== "P2034") throw error;
+      if (attempt >= 4 || !isAccountabilityWriteConflict(error)) throw error;
+      // Wait outside the rolled-back transaction so competing requests can finish.
+      await delay(50 * 2 ** attempt + Math.floor(Math.random() * 50));
     }
   }
 }
@@ -33,9 +41,14 @@ export async function saveTeacherObligation(data: Prisma.TeacherObligationUnchec
     const teacher = await tx.teacher.findFirst({ where: { id: data.teacherId, schoolId: data.schoolId, status: "ACTIVE" }, select: { id: true } });
     if (!teacher) return null;
     const key = { schoolId_teacherId_sourceKey: { schoolId: data.schoolId, teacherId: data.teacherId, sourceKey: data.sourceKey } };
-    const created = await tx.teacherObligation.createMany({ data: [data], skipDuplicates: true });
-    const existing = await tx.teacherObligation.findUniqueOrThrow({ where: key });
-    if (created.count) {
+    let existing = await tx.teacherObligation.findUnique({ where: key });
+    let created = false;
+    if (!existing) {
+      const result = await tx.teacherObligation.createMany({ data: [data], skipDuplicates: true });
+      created = result.count > 0;
+      existing = await tx.teacherObligation.findUniqueOrThrow({ where: key });
+    }
+    if (created) {
       await tx.teacherAccountabilityAuditLog.create({ data: {
         schoolId: data.schoolId, teacherId: data.teacherId, action: "OBLIGATION_CREATED", actorRole: "SYSTEM",
         sourceModel: "TeacherObligation", sourceId: existing.id,
@@ -48,11 +61,16 @@ export async function saveTeacherObligation(data: Prisma.TeacherObligationUnchec
     const closed = await tx.teacherEscalation.findFirst({ where: { schoolId: data.schoolId, obligationId: existing.id, status: { in: ["RESOLVED", "DISMISSED"] } }, select: { id: true } });
     if (closed) return existing;
     const status = existing.status === "ESCALATED" && !["COMPLETED", "COMPLETED_LATE", "CANCELLED"].includes(data.status ?? "PENDING") ? "ESCALATED" : data.status ?? "PENDING";
-    const updated = await tx.teacherObligation.update({ where: { id: existing.id }, data: {
+    const changes = {
       status, priority: status === "ESCALATED" ? "HIGH" : data.priority,
       title: data.title, description: data.description, expectedAt: data.expectedAt,
       completedAt: data.completedAt, metadata: data.metadata,
-    } });
+    } satisfies Prisma.TeacherObligationUncheckedUpdateInput;
+    // A page refresh must not turn an unchanged duty into another database write.
+    if (Object.entries(changes).every(([field, value]) =>
+      value === undefined || isDeepStrictEqual(existing[field as keyof typeof existing], value),
+    )) return existing;
+    const updated = await tx.teacherObligation.update({ where: { id: existing.id }, data: changes });
     if (status !== "PENDING" || existing.expectedAt.getTime() !== updated.expectedAt.getTime()) {
       await tx.teacherReminder.updateMany({ where: { schoolId: data.schoolId, obligationId: existing.id, status: "PENDING" }, data: { status: "SKIPPED", errorMessage: "Superseded by duty completion, review or schedule change." } });
     }

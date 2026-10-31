@@ -7,6 +7,7 @@ import WelcomeBanner from "@/src/components/WelcomeBanner";
 import UpcomingExams from "@/src/components/UpcomingExams";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { prepareTeacherAccountabilityForView } from "@/src/lib/services/teacher-accountability-view";
+import TeacherAccountabilityBusy from "@/src/components/TeacherAccountabilityBusy";
 import { getTeacherSelfAccountabilityOverview } from "@/src/lib/queries/teacher-self-accountability";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 import { getActiveTimetablePublication, listLiveTimetableLessons } from "@/src/lib/services/timetable";
@@ -128,11 +129,11 @@ const TeacherPage = async () => {
   todayEnd.setHours(23, 59, 59, 999);
   const todayDay = dayNames[today.getDay()];
 
-  await prepareTeacherAccountabilityForView({
+  const accountabilityReady = await prepareTeacherAccountabilityForView({
     schoolId,
     teacherId: userId,
-    now: today,
   });
+  if (!accountabilityReady) return <TeacherAccountabilityBusy href="/teacher" />;
 
   const [teacher, liveLessons, activeTimetablePublication, activePeriod, accountability, teacherScope, accountabilitySettings] = await Promise.all([
     prisma.teacher.findFirst({
