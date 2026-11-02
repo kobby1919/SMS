@@ -190,10 +190,10 @@ export default function DashboardPreview() {
 
             {/* Real screenshot */}
             <Image
-              src="/dashboard-admin-sample-20261024.png"
-              alt="Edujay administrator dashboard with sample school data, showing School Pulse, a school-closed status, attendance categories, and student and class counts."
-              width={1908}
-              height={910}
+              src="/dashboard-admin-sample-20261102.jpg"
+              alt="Edujay administrator dashboard with demonstration school records, showing School Pulse awaiting attendance marking, attendance categories, and student and class counts."
+              width={1280}
+              height={610}
               sizes="(max-width: 1008px) calc(100vw - 48px), 960px"
               className="w-full h-auto"
             />
