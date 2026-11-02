@@ -62,7 +62,7 @@ test("empty curriculum and guide view remain honest", async () => {
   assert.equal(result.pageCount, 1);
 });
 
-function actions({ role = "teacher", history = 0, draft = false, wrongGrade = false, assigned = true, otherTeacher = false, historical = false, savedTopic } = {}) {
+function actions({ role = "teacher", history = 0, draft = false, wrongGrade = false, assigned = true, otherTeacher = false, historical = false, savedTopic, operatingFailure } = {}) {
   const writes = [];
   const db = {
     syllabus: { findFirst: async (q) => { assert.equal(q.where.subject.is.schoolId, "a"); assert.equal(q.where.grade.is.schoolId, "a"); return { id: 1, status: draft ? "DRAFT" : "PUBLISHED" }; }, updateMany: async (q) => { writes.push(q); return { count: 1 }; }, deleteMany: async (q) => { writes.push(q); return { count: 1 }; } },
@@ -77,13 +77,39 @@ function actions({ role = "teacher", history = 0, draft = false, wrongGrade = fa
   const service = load("src/lib/actions/syllabusActions.ts", {
     "@/src/lib/authz": { requireRole: async (roles) => { if (!roles.includes(role)) throw new Error("Forbidden"); return { schoolId: "a", userId: "t1", role }; } },
     "next/cache": { revalidatePath: () => {} }, "@/src/lib/cacheTags": { revalidateDocument: () => {}, revalidateDashboard: () => {} },
-    "@/src/lib/services/school-operating-hours": { assertWithinSchoolOperatingHours: async () => {} },
+    "@/src/lib/services/school-operating-hours": { SchoolOperatingHoursError, assertWithinSchoolOperatingHours: async () => { if (operatingFailure) throw operatingFailure; } },
     "@/src/lib/services/curriculum-write": { withCurriculumWrite: async (work) => work(db) },
     "@/src/lib/validation/parse": { parseActionInput: (schema, data) => schema.parse(data) },
     "@/src/lib/validation/syllabus": validation, "@/src/lib/validation/common": { positiveIntSchema: nodeRequire("zod").z.coerce.number().int().positive() },
   });
   return { service, writes };
 }
+
+const { SchoolOperatingHoursError } = load("src/lib/services/school-operating-hours.ts", { "@/src/lib/prisma": {} });
+
+test("outside-hours coverage and note updates return a readable error without writing", async () => {
+  const message = "Updating syllabus progress is locked outside school hours. This action is only allowed during school hours (07:30-15:00, Africa/Accra).";
+  const f = actions({ operatingFailure: new SchoolOperatingHoursError(message) });
+  for (const result of [await f.service.markTopicCovered(1, 1), await f.service.markTopicCovered(1, 1, "Edited note"), await f.service.unmarkTopicCovered(1, 1)]) {
+    assert.deepEqual(JSON.parse(JSON.stringify(result)), { success: false, error: message });
+  }
+  assert.equal(f.writes.length, 0);
+});
+
+test("unexpected coverage errors are not exposed as safe business messages", async () => {
+  const failure = new Error("private infrastructure detail");
+  const f = actions({ operatingFailure: failure });
+  await assert.rejects(f.service.markTopicCovered(1, 1), (error) => error === failure);
+  await assert.rejects(f.service.unmarkTopicCovered(1, 1), (error) => error === failure);
+  assert.equal(f.writes.length, 0);
+});
+
+test("allowed coverage changes return success", async () => {
+  const f = actions();
+  assert.deepEqual(await f.service.markTopicCovered(1, 1), { success: true });
+  assert.deepEqual(await f.service.unmarkTopicCovered(1, 1), { success: true });
+  assert.equal(f.writes.length, 2);
+});
 test("admin cannot record or remove teacher coverage", async () => {
   const f = actions({ role: "admin" });
   await assert.rejects(() => f.service.markTopicCovered(1, 1), /Forbidden/);

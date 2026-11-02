@@ -153,10 +153,17 @@ export function evaluateSchoolOperatingWindow(settings: { timezone: string; open
   };
 }
 
+export class SchoolOperatingHoursError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "SchoolOperatingHoursError";
+  }
+}
+
 export async function assertWithinSchoolOperatingHours(schoolId: string, actionLabel = "This action", db: Pick<Prisma.TransactionClient, "schoolNotificationSetting"> = prisma) {
   const status = await getSchoolOperatingWindowStatus(schoolId, new Date(), db);
   if (!status.allowed) {
-    throw new Error(`${actionLabel} is locked outside school hours. ${status.reason}`);
+    throw new SchoolOperatingHoursError(`${actionLabel} is locked outside school hours. ${status.reason}`);
   }
   return status;
 }

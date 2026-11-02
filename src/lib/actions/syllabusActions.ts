@@ -5,7 +5,7 @@ import { requireRole } from "@/src/lib/authz";
 import { revalidatePath } from "next/cache";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import { revalidateDashboard, revalidateDocument } from "@/src/lib/cacheTags";
-import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
+import { assertWithinSchoolOperatingHours, SchoolOperatingHoursError } from "@/src/lib/services/school-operating-hours";
 import { withCurriculumWrite } from "@/src/lib/services/curriculum-write";
 import { syllabusCreateSchema, syllabusProgressSchema, syllabusTopicDeleteSchema, syllabusTopicOrderSchema, syllabusTopicUpsertSchema, syllabusTopicSchema, syllabusUpdateSchema } from "@/src/lib/validation/syllabus";
 import { positiveIntSchema } from "@/src/lib/validation/common";
@@ -138,20 +138,32 @@ async function progressAccess(db: Prisma.TransactionClient, schoolId: string, us
 export async function markTopicCovered(syllabusTopicId: number, classId: number, notes?: string | null) {
   const { userId, schoolId } = await requireRole(["teacher"]);
   ({ syllabusTopicId, classId, notes } = parseActionInput(syllabusProgressSchema, { syllabusTopicId, classId, notes }));
-  const topic = await withCurriculumWrite(async (db) => {
-    const topic = await progressAccess(db, schoolId, userId, syllabusTopicId, classId);
-    await db.syllabusTopicProgress.upsert({ where: { schoolId_syllabusTopicId_classId: { schoolId, syllabusTopicId, classId } }, create: { schoolId, syllabusTopicId, classId, teacherId: userId, coveredDate: new Date(), notes: notes ?? "" }, update: { notes: notes ?? "" } });
-    return topic;
-  });
-  refresh(schoolId, topic.syllabusId);
+  try {
+    const topic = await withCurriculumWrite(async (db) => {
+      const topic = await progressAccess(db, schoolId, userId, syllabusTopicId, classId);
+      await db.syllabusTopicProgress.upsert({ where: { schoolId_syllabusTopicId_classId: { schoolId, syllabusTopicId, classId } }, create: { schoolId, syllabusTopicId, classId, teacherId: userId, coveredDate: new Date(), notes: notes ?? "" }, update: { notes: notes ?? "" } });
+      return topic;
+    });
+    refresh(schoolId, topic.syllabusId);
+    return { success: true } as const;
+  } catch (error) {
+    if (error instanceof SchoolOperatingHoursError) return { success: false, error: error.message } as const;
+    throw error;
+  }
 }
 export async function unmarkTopicCovered(syllabusTopicId: number, classId: number) {
   const { userId, schoolId } = await requireRole(["teacher"]);
   ({ syllabusTopicId, classId } = parseActionInput(syllabusProgressSchema, { syllabusTopicId, classId }));
-  const topic = await withCurriculumWrite(async (db) => {
-    const topic = await progressAccess(db, schoolId, userId, syllabusTopicId, classId);
-    await db.syllabusTopicProgress.deleteMany({ where: { schoolId, syllabusTopicId, classId, teacherId: userId } });
-    return topic;
-  });
-  refresh(schoolId, topic.syllabusId);
+  try {
+    const topic = await withCurriculumWrite(async (db) => {
+      const topic = await progressAccess(db, schoolId, userId, syllabusTopicId, classId);
+      await db.syllabusTopicProgress.deleteMany({ where: { schoolId, syllabusTopicId, classId, teacherId: userId } });
+      return topic;
+    });
+    refresh(schoolId, topic.syllabusId);
+    return { success: true } as const;
+  } catch (error) {
+    if (error instanceof SchoolOperatingHoursError) return { success: false, error: error.message } as const;
+    throw error;
+  }
 }

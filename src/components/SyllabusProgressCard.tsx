@@ -50,17 +50,19 @@ const SyllabusProgressCard = ({
       try {
         const className = teacherClasses.find((cls) => cls.id === classId)?.name ?? "Class";
         if (isCovered(classId)) {
-          await unmarkTopicCovered(topicId, classId);
+          const result = await unmarkTopicCovered(topicId, classId);
+          if (!result.success) { setError(result.error); return; }
           setCoveredIds((prev) => prev.filter((id) => id !== classId));
           setSuccess(`${className} marked as not covered.`);
         } else {
-          await markTopicCovered(topicId, classId, notes[classId] ?? "");
+          const result = await markTopicCovered(topicId, classId, notes[classId] ?? "");
+          if (!result.success) { setError(result.error); return; }
           setCoveredIds((prev) => [...prev, classId]);
           setSuccess(`${className} marked as covered.`);
         }
         router.refresh();
-      } catch (e: unknown) {
-        setError(e instanceof Error ? e.message : "Failed to update progress.");
+      } catch {
+        setError("Coverage could not be updated. Refresh the page and try again.");
       }
     });
   };
@@ -70,12 +72,13 @@ const SyllabusProgressCard = ({
     setSuccess(null);
     startTransition(async () => {
       try {
-        await markTopicCovered(topicId, classId, notes[classId] ?? "");
+        const result = await markTopicCovered(topicId, classId, notes[classId] ?? "");
+        if (!result.success) { setError(result.error); return; }
         setShowNotes((prev) => ({ ...prev, [classId]: false }));
         setSuccess("Progress note saved.");
         router.refresh();
-      } catch (e: unknown) {
-        setError(e instanceof Error ? e.message : "Failed to save note.");
+      } catch {
+        setError("The coverage note could not be saved. Refresh the page and try again.");
       }
     });
   };
@@ -87,7 +90,7 @@ const SyllabusProgressCard = ({
       </p>
 
       {error && (
-        <p className="text-xs text-rose-500 font-semibold mb-2">{error}</p>
+        <p role="alert" className="text-xs text-rose-500 font-semibold mb-2">{error}</p>
       )}
       {success && (
         <p className="text-xs text-emerald-600 font-semibold mb-2">{success}</p>
