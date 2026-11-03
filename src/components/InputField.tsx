@@ -1,3 +1,7 @@
+"use client";
+
+import { useId } from "react";
+import PasswordInput from "@/src/components/auth/PasswordInput";
 import type { FieldError, FieldValues, Path, UseFormRegister } from "react-hook-form";
 
 type InputFieldProps<T extends FieldValues> = {
@@ -19,16 +23,19 @@ const InputField = <T extends FieldValues>({
   error,
   inputProps,
 }: InputFieldProps<T>) => {
+  const generatedId = useId();
+  const id = inputProps?.id ?? generatedId;
+  const props = {
+    ...register(name),
+    className: "ring-[1.5px] ring-gray-200 p-2.5 rounded-xl text-sm focus:ring-indigo-600 outline-none transition-all",
+    ...inputProps,
+    id,
+    defaultValue,
+  };
   return (
     <div className="flex flex-col gap-1 w-full md:w-[31%]">
-      <label className="text-xs text-gray-500 font-semibold">{label}</label>
-      <input
-        type={type}
-        {...register(name)}
-        className="ring-[1.5px] ring-gray-200 p-2.5 rounded-xl text-sm focus:ring-indigo-600 outline-none transition-all"
-        {...inputProps}
-        defaultValue={defaultValue}
-      />
+      <label htmlFor={id} className="text-xs text-gray-500 font-semibold">{label}</label>
+      {type === "password" ? <PasswordInput {...props} className={`${props.className} w-full`} /> : <input type={type} {...props} />}
       {error?.message && (
         <p className="text-[10px] text-red-500 font-medium">
           {error.message.toString()}

@@ -1,4 +1,5 @@
 "use client";
+import PasswordInput from "@/src/components/auth/PasswordInput";
 
 import { useState, type FormEvent } from "react";
 import { useSignIn } from "@clerk/nextjs";
@@ -404,10 +405,10 @@ export default function CustomSignInForm({ callbackUrl, initialEmail = "" }: Cus
     return (
       <form onSubmit={handleSubmitNewPassword} className="space-y-5">
         <AuthMessages notice={notice} error={error} />
-        <label className="block space-y-2">
-          <span className="text-xs font-black uppercase tracking-wide text-slate-500">New password</span>
-          <input
-            type="password"
+        <div className="block space-y-2">
+          <label htmlFor="reset-password" className="text-xs font-black uppercase tracking-wide text-slate-500">New password</label>
+          <PasswordInput
+            id="reset-password"
             value={newPassword}
             onChange={(event) => setNewPassword(event.target.value)}
             placeholder="Enter new password"
@@ -415,11 +416,11 @@ export default function CustomSignInForm({ callbackUrl, initialEmail = "" }: Cus
             autoComplete="new-password"
             className="h-14 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-base font-semibold text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
           />
-        </label>
-        <label className="block space-y-2">
-          <span className="text-xs font-black uppercase tracking-wide text-slate-500">Confirm new password</span>
-          <input
-            type="password"
+        </div>
+        <div className="block space-y-2">
+          <label htmlFor="reset-password-confirmation" className="text-xs font-black uppercase tracking-wide text-slate-500">Confirm new password</label>
+          <PasswordInput
+            id="reset-password-confirmation"
             value={confirmNewPassword}
             onChange={(event) => setConfirmNewPassword(event.target.value)}
             placeholder="Confirm new password"
@@ -427,7 +428,7 @@ export default function CustomSignInForm({ callbackUrl, initialEmail = "" }: Cus
             autoComplete="new-password"
             className="h-14 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-base font-semibold text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
           />
-        </label>
+        </div>
         <button
           type="submit"
           disabled={!isLoaded || isSubmitting}
@@ -467,10 +468,10 @@ export default function CustomSignInForm({ callbackUrl, initialEmail = "" }: Cus
         />
       </label>
 
-      <label className="block space-y-2">
-        <span className="text-xs font-black uppercase tracking-wide text-slate-500">Password</span>
-        <input
-          type="password"
+      <div className="block space-y-2">
+        <label htmlFor="sign-in-password" className="text-xs font-black uppercase tracking-wide text-slate-500">Password</label>
+        <PasswordInput
+          id="sign-in-password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           placeholder="••••••••"
@@ -478,7 +479,7 @@ export default function CustomSignInForm({ callbackUrl, initialEmail = "" }: Cus
           autoComplete="current-password"
           className="h-14 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-base font-semibold text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
         />
-      </label>
+      </div>
 
       <div className="flex justify-end">
         <button

@@ -1,4 +1,5 @@
 "use client";
+import PasswordInput from "@/src/components/auth/PasswordInput";
 
 import { useState, type FormEvent } from "react";
 import { useSignUp } from "@clerk/nextjs";
@@ -150,10 +151,10 @@ export default function CustomSignUpForm({ callbackUrl, initialEmail = "" }: Cus
         />
       </label>
 
-      <label className="block space-y-2">
-        <span className="text-xs font-black uppercase tracking-wide text-slate-500">Password</span>
-        <input
-          type="password"
+      <div className="block space-y-2">
+        <label htmlFor="sign-up-password" className="text-xs font-black uppercase tracking-wide text-slate-500">Password</label>
+        <PasswordInput
+          id="sign-up-password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           placeholder="••••••••"
@@ -161,12 +162,12 @@ export default function CustomSignUpForm({ callbackUrl, initialEmail = "" }: Cus
           autoComplete="new-password"
           className="h-14 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-base font-semibold text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
         />
-      </label>
+      </div>
 
-      <label className="block space-y-2">
-        <span className="text-xs font-black uppercase tracking-wide text-slate-500">Confirm password</span>
-        <input
-          type="password"
+      <div className="block space-y-2">
+        <label htmlFor="sign-up-password-confirmation" className="text-xs font-black uppercase tracking-wide text-slate-500">Confirm password</label>
+        <PasswordInput
+          id="sign-up-password-confirmation"
           value={confirmPassword}
           onChange={(event) => setConfirmPassword(event.target.value)}
           placeholder="••••••••"
@@ -174,7 +175,7 @@ export default function CustomSignUpForm({ callbackUrl, initialEmail = "" }: Cus
           autoComplete="new-password"
           className="h-14 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-base font-semibold text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
         />
-      </label>
+      </div>
 
       <div id="clerk-captcha" />
 
