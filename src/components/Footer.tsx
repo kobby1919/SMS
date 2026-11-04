@@ -82,8 +82,7 @@ export default function Footer() {
             {/* Tagline */}
             <p className="text-sm leading-relaxed max-w-xs"
               style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-body)", fontWeight: 400 }}>
-              The all-in-one school management platform built for Ghanaian schools.
-              From Nursery to JHS — we&apos;ve got you covered.
+              The all-in-one school management platform for Ghanaian schools, from Nursery through JHS 3.
             </p>
 
             <a href="mailto:miqratechc@gmail.com" className="text-sm text-white/60 hover:text-white transition-colors break-all">miqratechc@gmail.com</a>

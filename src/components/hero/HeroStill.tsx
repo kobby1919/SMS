@@ -46,7 +46,7 @@ export default function HeroStill() {
             School management,<br /><span>in one place.</span>
           </h1>
           <p className={styles.description}>
-            One platform. Every part of your school, finally connected.
+            One platform for Ghanaian schools, from Nursery through JHS 3.
           </p>
           <div className={styles.actions}>
             <Link href="/request-access" className={styles.primary}>Request School Access <ArrowRight size={17} aria-hidden="true" /></Link>
