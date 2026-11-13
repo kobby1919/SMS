@@ -1,5 +1,7 @@
 "use client";
 
+import { useCAEntryWindow } from "@/src/components/useCAEntryWindow";
+
 // src/components/CAEntryForm.tsx
 // Batch CA entry form — class supervisor enters scores for all students
 // in their class for one subject in one go.
@@ -75,6 +77,7 @@ type Props = {
     allowed: boolean;
     label: string;
     reason: string | null;
+    closesAt?: string;
   }>;
   existingCA?:  ExistingCA[]; // pre-loaded when editing
   activityCAProgress?: ActivityCAProgress[];
@@ -151,14 +154,14 @@ const CAEntryForm = ({
   const selectedTerm = activeTerm;
   const selectedYear = activeYear || "2025/26";
   const examEntryOpen = examEntryStatus === "OPEN";
-  const scoreEntryWindow =
+  const scoreEntryWindow = useCAEntryWindow(
     selectedSubjectId === ""
       ? { allowed: false, label: "your published lesson period", reason: "Choose a subject first." }
       : scoreEntryWindowsBySubjectId[selectedSubjectId] ?? {
           allowed: false,
           label: "your published lesson period",
           reason: "CA entry is closed because Edujay could not find a published lesson window for this subject.",
-        };
+        });
 
   // Load CA config when year changes
   useEffect(() => {

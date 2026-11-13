@@ -1,4 +1,5 @@
 import "server-only";
+import { CAScoreEntryError } from "@/src/lib/ca-score-error";
 import prisma from "@/src/lib/prisma";
 import { activityEligibility } from "@/src/lib/academic-readiness-rules";
 import { requireActiveAcademicConfig } from "@/src/lib/services/academic-period";
@@ -9,45 +10,45 @@ import { evaluateTeacherCAEntryWindowStatus } from "@/src/lib/services/teacher-c
 
 export async function recordCAActivityScores(input: { schoolId: string; teacherId: string; activityId: number; rows: { studentId: string; rawScore: number; comment?: string }[] }, now = new Date()) {
   const { schoolId, teacherId, activityId, rows } = input;
-  if (!rows.length || new Set(rows.map((r) => r.studentId)).size !== rows.length) throw new Error("Each student must appear once in the score batch.");
+  if (!rows.length || new Set(rows.map((r) => r.studentId)).size !== rows.length) throw new CAScoreEntryError("Each student must appear once in the score batch.");
   try {
     return await prisma.$transaction(async (tx) => {
       const config = await requireActiveAcademicConfig(schoolId, tx);
-      if (config.classworkWeight <= 0) throw new Error("This academic period does not require CA scores.");
+      if (config.classworkWeight <= 0) throw new CAScoreEntryError("This academic period does not require CA scores.");
       const activity = await tx.cAActivity.findFirst({ where: { id: activityId, schoolId, teacherId, class: { schoolId }, subject: { schoolId }, teacher: { schoolId, status: "ACTIVE" }, bucket: { schoolId, academicYear: config.academicYear, term: config.currentTerm } }, include: { bucket: true } });
-      if (!activity || activity.bucket.classId !== activity.classId || activity.bucket.subjectId !== activity.subjectId) throw new Error("Activity is outside your active academic scope.");
-      if (activity.activityDate > now) throw new Error("Scores cannot be recorded before the activity takes place.");
-      if (activity.isLocked || activity.bucket.isLocked) throw new Error("This activity is locked. Use the correction workflow.");
+      if (!activity || activity.bucket.classId !== activity.classId || activity.bucket.subjectId !== activity.subjectId) throw new CAScoreEntryError("Activity is outside your active academic scope.");
+      if (activity.activityDate > now) throw new CAScoreEntryError("Scores cannot be recorded before the activity takes place.");
+      if (activity.isLocked || activity.bucket.isLocked) throw new CAScoreEntryError("This activity is locked. Refresh to check the saved scores and use the correction workflow for changes.");
       const publications = await tx.timetablePublication.findMany({ where: { schoolId, status: "ACTIVE" }, take: 2, select: { id: true } });
       const publication = publications.length === 1 ? publications[0] : null;
       const lessons = publication ? await tx.publishedTimetableLesson.findMany({ where: { schoolId, publicationId: publication.id, classId: activity.classId, subjectId: activity.subjectId, teacherId }, select: { day: true, startTime: true, endTime: true, subjectId: true, subjectName: true } }) : [];
-      if (!lessons.length) throw new Error("This activity is outside your published teaching assignment.");
+      if (!lessons.length) throw new CAScoreEntryError("This activity is outside your published teaching assignment.");
       const policy = await tx.teacherAccountabilitySetting.findUnique({ where: { schoolId } });
       const operating = await tx.schoolNotificationSetting.findUnique({ where: { schoolId }, select: { timezone: true } });
-      if (!policy) throw new Error("Configure CA recording policy before saving scores.");
+      if (!policy) throw new CAScoreEntryError("Configure CA recording policy before saving scores.");
       const window = evaluateTeacherCAEntryWindowStatus({ settings: policy, now, timezone: operating?.timezone, subjectId: activity.subjectId, lessons: lessons.map((lesson) => ({ ...lesson, subject: { name: lesson.subjectName } })) });
-      if (!window.allowed) throw new Error(window.reason ?? "CA entry is outside the published lesson window.");
+      if (!window.allowed) throw new CAScoreEntryError(window.reason ?? "CA entry is outside the published lesson window.");
       const context = { schoolId, classId: activity.classId, subjectId: activity.subjectId, term: config.currentTerm, academicYear: config.academicYear };
       await assertReportSetEditable(tx, context);
       const buckets = await tx.cABucket.findMany({ where: context, include: { activities: { where: { schoolId, classId: activity.classId }, include: { teacher: { select: { id: true, schoolId: true, name: true, surname: true } } } } } });
-      if (buckets.some((bucket) => bucket.activities.some((entry) => entry.subjectId !== bucket.subjectId || entry.teacher.schoolId !== schoolId || entry.teacher.id !== entry.teacherId))) throw new Error("CA evidence is outside this school's assessment scope.");
+      if (buckets.some((bucket) => bucket.activities.some((entry) => entry.subjectId !== bucket.subjectId || entry.teacher.schoolId !== schoolId || entry.teacher.id !== entry.teacherId))) throw new CAScoreEntryError("CA evidence is outside this school's assessment scope.");
       const planning = buildSubjectCAProgress(config, buckets.map((bucket) => ({ ...bucket, activities: bucket.activities.map((entry) => ({ ...entry, scores: [] })) })));
-      if (assessmentPosition(planning, null, config.examWeight).status === "Needs review") throw new Error("Invalid CA allocation or activity setup must be reviewed before recording scores.");
+      if (assessmentPosition(planning, null, config.examWeight).status === "Needs review") throw new CAScoreEntryError("Invalid CA allocation or activity setup must be reviewed before recording scores.");
       const students = await tx.student.findMany({ where: { schoolId, classId: activity.classId, status: "ACTIVE" }, select: { id: true, createdAt: true, classJoinedAt: true } });
       const eligible = new Set(students.filter((s) => activityEligibility(s, activity.activityDate) === "ELIGIBLE").map((s) => s.id));
-      if (rows.length !== eligible.size || rows.some((r) => !eligible.has(r.studentId))) throw new Error("Save one score for every eligible student, without earlier duties for later class joins.");
+      if (rows.length !== eligible.size || rows.some((r) => !eligible.has(r.studentId))) throw new CAScoreEntryError("Save one score for every eligible student, without earlier duties for later class joins.");
       const maximum = Number(activity.rawMaxScore);
-      if (!Number.isFinite(maximum) || maximum <= 0 || rows.some((r) => !Number.isFinite(r.rawScore) || r.rawScore < 0 || r.rawScore > maximum)) throw new Error("A raw score is outside this activity's valid maximum.");
+      if (!Number.isFinite(maximum) || maximum <= 0 || rows.some((r) => !Number.isFinite(r.rawScore) || r.rawScore < 0 || r.rawScore > maximum)) throw new CAScoreEntryError("A raw score is outside this activity's valid maximum.");
       const results = [];
       for (const row of rows) results.push(await upsertCAActivityScore({ ...row, schoolId, activityId, recordedBy: teacherId }, tx));
       for (const row of rows) await syncComputedCARecord({ ...context, studentId: row.studentId, teacherId }, tx);
       const lock = await tx.cAActivity.updateMany({ where: { id: activityId, schoolId, isLocked: false, updatedAt: activity.updatedAt }, data: { isLocked: true } });
-      if (lock.count !== 1) throw new Error("The activity changed while saving. Refresh before continuing.");
+      if (lock.count !== 1) throw new CAScoreEntryError("The activity changed while saving. Refresh before continuing.");
       await tx.cAAuditLog.create({ data: { schoolId, actorId: teacherId, action: "CA_ACTIVITY_SCORES_SUBMITTED_AND_LOCKED", entityType: "CAActivity", entityId: String(activityId), message: "Eligible student scores, computed totals and activity lock saved together.", metadata: { studentIds: rows.map((r) => r.studentId), scoreIds: results.map((r) => r.score.id) } } });
       return results;
     }, { isolationLevel: "Serializable", timeout: 60000 });
   } catch (error) {
-    if (error && typeof error === "object" && "code" in error && ["P2034", "P2002"].includes(String(error.code))) throw new Error("Scores changed during saving. Refresh and check the saved activity before retrying.");
+    if (error && typeof error === "object" && "code" in error && ["P2034", "P2002"].includes(String(error.code))) throw new CAScoreEntryError("Scores changed during saving. Refresh and check the saved activity before retrying.");
     throw error;
   }
 }

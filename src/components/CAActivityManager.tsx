@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   AlertCircle,
@@ -28,6 +28,8 @@ import {
 } from "@/src/lib/actions/caActions";
 import { TERM_LABELS } from "@/src/lib/caGrades";
 import { activityEligibility } from "@/src/lib/academic-readiness-rules";
+import { currentCAEntryWindow } from "@/src/lib/ca-entry-window-status";
+import { useCAEntryWindow } from "@/src/components/useCAEntryWindow";
 
 type Student = {
   createdAt: Date;
@@ -89,6 +91,7 @@ type Props = {
     allowed: boolean;
     label: string;
     reason: string | null;
+    closesAt?: string;
   }>;
 };
 
@@ -127,14 +130,14 @@ const CAActivityManager = ({
 }: Props) => {
   const router = useRouter();
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | "">(subjects[0]?.id ?? "");
-  const scoreEntryWindow =
+  const scoreEntryWindow = useCAEntryWindow(
     selectedSubjectId === ""
       ? { allowed: false, label: "your published lesson period", reason: "Choose a subject first." }
       : scoreEntryWindowsBySubjectId[selectedSubjectId] ?? {
           allowed: false,
           label: "your published lesson period",
           reason: "CA entry is closed because Edujay could not find a published lesson window for this subject.",
-        };
+        });
   const selectedTerm = activeTerm;
   const selectedYear = activeYear || "2025/26";
   const [bucketName, setBucketName] = useState("Midterm Exam");
@@ -153,6 +156,9 @@ const CAActivityManager = ({
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
+  const scoreSaveInFlight = useRef(false);
+  const [refreshPending, startTransition] = useTransition();
+  const isBusy = pendingAction !== null || refreshPending;
 
   const scopedBuckets = useMemo(
     () =>
@@ -271,8 +277,8 @@ const CAActivityManager = ({
       return;
     }
 
-    if (!scoreEntryWindow.allowed) {
-      setError(scoreEntryWindow.reason ?? "CA buckets can only be created during the published lesson period.");
+    if (!currentCAEntryWindow(scoreEntryWindow).allowed) {
+      setError(currentCAEntryWindow(scoreEntryWindow).reason ?? "CA buckets can only be created during the published lesson period.");
       return;
     }
 
@@ -311,8 +317,8 @@ const CAActivityManager = ({
       setError("This CA bucket is locked. Admin correction is required before adding activities.");
       return;
     }
-    if (!scoreEntryWindow.allowed) {
-      setError(scoreEntryWindow.reason ?? "CA activities can only be created during the published lesson period.");
+    if (!currentCAEntryWindow(scoreEntryWindow).allowed) {
+      setError(currentCAEntryWindow(scoreEntryWindow).reason ?? "CA activities can only be created during the published lesson period.");
       return;
     }
 
@@ -338,7 +344,7 @@ const CAActivityManager = ({
   };
 
   const handleSaveScores = async () => {
-    if (pendingAction) return;
+    if (pendingAction || scoreSaveInFlight.current || refreshPending) return;
     setError(null);
     setMessage(null);
     if (!selectedActivity) {
@@ -349,8 +355,8 @@ const CAActivityManager = ({
       setError("Scores for this CA activity have already been saved. Corrections must go through an admin-approved correction process.");
       return;
     }
-    if (!scoreEntryWindow.allowed) {
-      setError(scoreEntryWindow.reason ?? "CA scores can only be saved during the published lesson period.");
+    if (!currentCAEntryWindow(scoreEntryWindow).allowed) {
+      setError(currentCAEntryWindow(scoreEntryWindow).reason ?? "CA scores can only be saved during the published lesson period.");
       return;
     }
 
@@ -367,19 +373,28 @@ const CAActivityManager = ({
       setError("Enter at least one student score.");
       return;
     }
+    if (rows.length !== requiredStudentIds.size) {
+      setError(`Enter a score for all ${requiredStudentIds.size} eligible students before saving this activity.`);
+      return;
+    }
 
+    scoreSaveInFlight.current = true;
+    const activityId = selectedActivity.id;
     setPendingAction("scores");
-    setMessage("Saving scores and preparing parent updates...");
 
     try {
       const result = await bulkUpsertCAActivityScores({
-        activityId: selectedActivity.id,
+        activityId,
         rows,
       });
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      setLocallyLockedActivityIds((current) => new Set(current).add(activityId));
       if (result.changedCount === 0) {
-        setMessage("No score changes detected. Nothing new was sent to parents.");
+        setMessage("Scores confirmed and activity locked. No new score changes were needed.");
       } else {
-        setLocallyLockedActivityIds((current) => new Set(current).add(selectedActivity.id));
         setMessage(
           `Scores saved successfully. Updated ${result.changedCount} of ${result.count} score${result.count === 1 ? "" : "s"}. ${
             result.eventCount > 0
@@ -388,10 +403,16 @@ const CAActivityManager = ({
           } This activity is now locked to protect the record.`,
         );
       }
+      if (result.warning) {
+        setMessage("Scores saved successfully. This activity is now locked to protect the record.");
+        setError(result.warning);
+      }
       router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not save scores.");
+    } catch {
+      setMessage(null);
+      setError("The save could not be confirmed. Your entered scores are still here. Refresh and check this activity before trying again; if it is locked, use the correction process. If the problem continues, contact your admin.");
     } finally {
+      scoreSaveInFlight.current = false;
       setPendingAction(null);
     }
   };
@@ -413,8 +434,8 @@ const CAActivityManager = ({
       setError("Add a reason for the correction request.");
       return;
     }
-    if (!scoreEntryWindow.allowed) {
-      setError(scoreEntryWindow.reason ?? "CA score corrections can only be requested during the published lesson period.");
+    if (!currentCAEntryWindow(scoreEntryWindow).allowed) {
+      setError(currentCAEntryWindow(scoreEntryWindow).reason ?? "CA score corrections can only be requested during the published lesson period.");
       return;
     }
 
@@ -479,9 +500,15 @@ const CAActivityManager = ({
       </div>
 
       {error && (
-        <div className="flex items-start gap-2.5 p-3.5 bg-amber-50 border border-amber-200 rounded-xl">
+        <div role="alert" className="flex items-start gap-2.5 p-3.5 bg-amber-50 border border-amber-200 rounded-xl">
           <AlertCircle size={15} className="text-amber-500 shrink-0 mt-0.5" />
           <p className="text-xs font-semibold text-amber-800">{error}</p>
+        </div>
+      )}
+      {pendingAction === "scores" && (
+        <div role="status" aria-live="polite" className="flex items-center gap-2.5 rounded-xl border border-blue-200 bg-blue-50 p-3.5 text-blue-800">
+          <Loader2 size={15} className="animate-spin" />
+          <p className="text-xs font-semibold">Saving scores and preparing parent updates...</p>
         </div>
       )}
       {message && (
@@ -500,7 +527,7 @@ const CAActivityManager = ({
         <p className="font-black">CA score entry window: {scoreEntryWindow.allowed ? "Open" : "Closed"}</p>
         <p className="mt-1 leading-relaxed">
           Teachers can create CA activities, publish CA scores, and request CA score corrections during {scoreEntryWindow.label}.
-          {!scoreEntryWindow.allowed && scoreEntryWindow.reason ? ` ${scoreEntryWindow.reason}` : ""}
+          {scoreEntryWindow.reason ? ` ${scoreEntryWindow.reason}` : ""}
         </p>
       </div>
 
@@ -510,6 +537,7 @@ const CAActivityManager = ({
             <BookOpen size={11} /> Subject
           </span>
           <select
+            disabled={isBusy}
             value={selectedSubjectId}
             onChange={(event) => {
               setSelectedSubjectId(Number(event.target.value) || "");
@@ -606,6 +634,7 @@ const CAActivityManager = ({
               <button
                 key={bucket.id}
                 type="button"
+                disabled={isBusy}
                 onClick={() => {
                   setSelectedBucketId(bucket.id);
                   setSelectedActivityId("");
@@ -716,6 +745,7 @@ const CAActivityManager = ({
               <button
                 key={activity.id}
                 type="button"
+                disabled={isBusy}
                 onClick={() => {
                   setSelectedActivityId(activity.id);
                   setScoreEdits(
@@ -786,12 +816,13 @@ const CAActivityManager = ({
           </div>
           <button
             type="button"
-            onClick={handleSaveScores}
-            disabled={pendingAction !== null || !selectedActivity || selectedActivityLockedForEntry || !scoreEntryWindow.allowed || hasInvalidScores}
+            onClick={() => startTransition(handleSaveScores)}
+            aria-busy={pendingAction === "scores" || refreshPending}
+            disabled={isBusy || !selectedActivity || selectedActivityLockedForEntry || !scoreEntryWindow.allowed || hasInvalidScores}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-black text-white hover:bg-emerald-700 disabled:opacity-50 sm:w-auto"
           >
-            {pendingAction === "scores" ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
-            {pendingAction === "scores"
+            {pendingAction === "scores" || refreshPending ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+            {pendingAction === "scores" || refreshPending
               ? "Saving Scores..."
               : selectedActivityLockedForEntry
                 ? "Scores Locked"
@@ -838,7 +869,7 @@ const CAActivityManager = ({
                         max={selectedActivity.rawMaxScore}
                         step={0.5}
                         value={value}
-                        disabled={selectedActivityLockedForEntry || !scoreEntryWindow.allowed || !requiredStudentIds.has(student.id)}
+                        disabled={isBusy || selectedActivityLockedForEntry || !scoreEntryWindow.allowed || !requiredStudentIds.has(student.id)}
                         onChange={(event) =>
                           setScoreEdits((prev) => ({ ...prev, [student.id]: event.target.value }))
                         }
@@ -879,7 +910,7 @@ const CAActivityManager = ({
                         max={selectedActivity.rawMaxScore}
                         step={0.5}
                         value={value}
-                        disabled={selectedActivityLockedForEntry || !scoreEntryWindow.allowed || !requiredStudentIds.has(student.id)}
+                        disabled={isBusy || selectedActivityLockedForEntry || !scoreEntryWindow.allowed || !requiredStudentIds.has(student.id)}
                         onChange={(event) =>
                           setScoreEdits((prev) => ({ ...prev, [student.id]: event.target.value }))
                         }

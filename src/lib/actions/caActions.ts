@@ -7,6 +7,7 @@ import prisma from "@/src/lib/prisma";
 import { recordExamScores } from "@/src/lib/services/exam-recording";
 import { transitionExamEntryWindow } from "@/src/lib/services/exam-entry-window";
 import { recordCAActivityScores } from "@/src/lib/services/ca-score-recording";
+import { CAScoreEntryError } from "@/src/lib/ca-score-error";
 import { hasRecordedExam, activityEligibility } from "@/src/lib/academic-readiness-rules";
 import { claimTeacherCorrectionReview } from "@/src/lib/services/teacher-obligation-store";
 import { requireRole } from "@/src/lib/authz";
@@ -403,6 +404,18 @@ export async function bulkUpsertCAActivityScores(data: {
   activityId: number;
   rows: { studentId: string; rawScore: number; comment?: string }[];
 }) {
+  try {
+    return { success: true as const, ...await saveCAActivityScores(data) };
+  } catch (error) {
+    if (error instanceof CAScoreEntryError) return { success: false as const, error: error.message };
+    throw error;
+  }
+}
+
+async function saveCAActivityScores(data: {
+  activityId: number;
+  rows: { studentId: string; rawScore: number; comment?: string }[];
+}) {
   const parsed = parseActionInput(caBulkActivityScoreSchema, data);
   const { userId, schoolId } = await requireRole(["teacher"]);
 
@@ -424,7 +437,7 @@ export async function bulkUpsertCAActivityScores(data: {
   });
   if (!activity) throw new Error("CA activity not found.");
   if (activity.isLocked) {
-    throw new Error("This CA activity is locked. Score changes require an admin correction process.");
+    throw new CAScoreEntryError("This CA activity is locked. Refresh to view the saved scores. Changes require an admin correction process.");
   }
 
   await assertTeacherCanManageCAContext({
@@ -441,13 +454,7 @@ export async function bulkUpsertCAActivityScores(data: {
     term: activity.bucket.term,
     academicYear: activity.bucket.academicYear,
   });
-  await assertTeacherCAEntryWindowOpen({
-    schoolId,
-    teacherId: userId,
-    classId: activity.classId,
-    subjectId: activity.subjectId,
-    actionLabel: "Publishing CA scores",
-  });
+  // The recording transaction rechecks the live lesson window before writing.
 
   const studentIds = parsed.rows.map((row) => row.studentId);
   const uniqueStudentIds = new Set(studentIds);
@@ -456,7 +463,7 @@ export async function bulkUpsertCAActivityScores(data: {
   }
   const eligibleStudents = activity.class.students.filter((student) => activityEligibility(student, activity.activityDate) === "ELIGIBLE");
   if (eligibleStudents.some((student) => !uniqueStudentIds.has(student.id))) {
-    throw new Error(
+    throw new CAScoreEntryError(
       `Publish scores for all ${eligibleStudents.length} eligible students before locking this CA activity.`,
     );
   }
@@ -475,29 +482,45 @@ export async function bulkUpsertCAActivityScores(data: {
   const changedScores = writeResults.filter((result) => result.changed).map((result) => result.score);
   const allScores = writeResults.map((result) => result.score);
 
-  const events = changedScores.length > 0
-    ? await recordCAActivityScoreEvents({
-        schoolId,
-        activityId: parsed.activityId,
-        scoreIds: changedScores.map((score) => score.id),
-      })
-    : [];
-
-  await syncCAActivityScorePublishingObligation({
-    schoolId,
-    activityId: parsed.activityId,
-  });
-
-
-  revalidatePath("/list/ca");
-  revalidatePath("/list/ca", "page");
-  revalidatePath("/parent");
-  revalidatePath("/teacher");
-  revalidateDashboard(schoolId);
-  for (const studentId of new Set(parsed.rows.map((row) => row.studentId))) {
-    revalidateDocument(schoolId, "report-card", studentId);
+  let eventCount = 0;
+  let warning: string | null = null;
+  try {
+    const events = changedScores.length > 0
+      ? await recordCAActivityScoreEvents({
+          schoolId,
+          activityId: parsed.activityId,
+          scoreIds: changedScores.map((score) => score.id),
+        })
+      : [];
+    eventCount = events.length;
+  } catch {
+    warning = "Scores are saved and locked, but parent updates could not be confirmed. Ask an admin to review them; do not submit the scores again.";
+    console.error("CA scores committed; parent update preparation failed", { activityId: parsed.activityId });
   }
-  return { count: allScores.length, changedCount: changedScores.length, eventCount: events.length };
+
+  try {
+    await syncCAActivityScorePublishingObligation({
+      schoolId,
+      activityId: parsed.activityId,
+    });
+  } catch {
+    warning = warning ?? "Scores are saved and locked, but the accountability status could not be refreshed. Ask an admin to review it.";
+    console.error("CA scores committed; accountability sync failed", { activityId: parsed.activityId });
+  }
+  try {
+    revalidatePath("/list/ca");
+    revalidatePath("/list/ca", "page");
+    revalidatePath("/parent");
+    revalidatePath("/teacher");
+    revalidateDashboard(schoolId);
+    for (const studentId of new Set(parsed.rows.map((row) => row.studentId))) {
+      revalidateDocument(schoolId, "report-card", studentId);
+    }
+  } catch {
+    warning = warning ?? "Scores are saved and locked, but the page could not be refreshed. Reload to view the saved record.";
+    console.error("CA scores committed; cache refresh failed", { activityId: parsed.activityId });
+  }
+  return { count: allScores.length, changedCount: changedScores.length, eventCount, warning };
 }
 
 export async function requestCAActivityScoreCorrection(data: {

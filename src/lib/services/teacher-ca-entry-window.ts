@@ -18,6 +18,7 @@ export type CAEntryWindowStatus = {
   label: string;
   reason: string | null;
   unavailable?: boolean;
+  closesAt?: string;
 };
 
 type CAWindowPolicy = Pick<Awaited<ReturnType<typeof getTeacherAccountabilitySettings>>, "allowEarlyAttendanceMarking" | "attendanceOpenMinutesBeforeLesson" | "attendanceGraceMinutesAfterLesson" | "attendanceEscalateMinutesAfterLesson">;
@@ -113,10 +114,11 @@ export function evaluateTeacherCAEntryWindowStatus({ settings, lessons, subjectI
   if (openLesson) {
     return {
       allowed: true,
+      closesAt: new Date(now.getTime() + openLesson.closeAt.getTime() - clock.getTime()).toISOString(),
       label: `${openLesson.lesson.subject.name} lesson period (${formatTime(openLesson.startAt)}-${formatTime(openLesson.endAt)})`,
       reason: clock > openLesson.deadlineAt
         ? `This is already after the normal lesson deadline. Entry stays open until ${formatTime(openLesson.closeAt)}.`
-        : null,
+        : `Entry closes at ${formatTime(openLesson.closeAt)} (school time), including the configured after-lesson entry allowance.`,
     };
   }
 
