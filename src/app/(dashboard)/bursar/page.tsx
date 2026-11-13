@@ -80,10 +80,11 @@ function shortDate(date: Date | null) {
 }
 
 const BursarPage = async ({
-  searchParams,
+  searchParams: query,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
+  const searchParams = await query;
   const { userId, role, schoolId } = await requirePageSession(["admin", "bursar"]);
   const bursarProfile = role === "bursar"
     ? await prisma.bursar.findFirst({

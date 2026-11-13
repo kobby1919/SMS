@@ -20,10 +20,11 @@ import type { Term } from "@/src/generated/prisma";
 import { getActiveTimetablePublication, listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 const StudentPage = async ({
-  searchParams,
+  searchParams: query,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
+  const searchParams = await query;
   const { userId, schoolId } = await requirePageSession(["student"]);
 
   const student = await prisma.student.findFirst({
