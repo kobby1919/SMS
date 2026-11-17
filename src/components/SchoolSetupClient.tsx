@@ -113,7 +113,7 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
             </label>
           </div>
           <label className="block">
-            <span className="text-xs font-bold uppercase text-gray-500">Primary brand color</span>
+            <span className="text-xs font-bold uppercase text-gray-500">School document and email colour</span>
             <div className="mt-1 flex gap-2">
               <input
                 type="color"
@@ -128,7 +128,7 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
               />
             </div>
             <span className="mt-1 block text-xs text-gray-400">
-              Used on parent emails, receipts, and school-facing documents.
+              Used on supported school documents and parent emails. This does not change the dashboard theme.
             </span>
           </label>
           <label className="block">

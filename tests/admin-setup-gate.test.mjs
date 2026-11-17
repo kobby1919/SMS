@@ -32,6 +32,14 @@ function assertNotContains(source, needle, message) {
   assert.ok(!source.includes(needle), message);
 }
 
+test("school colour explains document and email scope without promising a dashboard theme", () => {
+  assertContains(setupClient, "School document and email colour", "Name the actual branding scope.");
+  assertContains(setupClient, "Used on supported school documents and parent emails. This does not change the dashboard theme.", "Make the dashboard limitation explicit.");
+  assertNotContains(setupClient, "Primary brand color", "Do not imply an application-wide theme.");
+  assertContains(setupClient, "value={values.primaryColor}", "Keep the saved colour connected to the controls.");
+  assertContains(onboardingService, 'primaryColor: input.primaryColor || "#2563eb"', "Preserve existing colour persistence and fallback.");
+});
+
 test("incomplete school setup keeps admins out of the live dashboard", () => {
   assertContains(
     authz,
